@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+{% block title %} Dashboard {% endblock %}
+
+<script>
+    {% block jquery %}
+
+        var endpoint = 'dashboard/data'
+        
+        var district_labels = []
+        var district_count = []
+
+        var district1_labels = []
+        var district1_count = []
+
+        var district2_labels = []
+        var district2_count = []
+      
+        $.ajax({
+             method: "GET",
+             url: endpoint,
+             success: function(data){
+                district_labels = data.district_labels
+                district_count = data.district_count
+
+                district1_labels = data.district1_labels
+                district1_count = data.district1_count
+
+                district2_labels = data.district2_labels
+                district2_count = data.district2_count
+
+                // console.log(labels)
+                // console.log(defaultData)
+
+                console.log(district1_labels)
+                console.log(district_count)
+                console.log(data.number)
+                console.log("hello")
+                setChart()
+    
+            },
+
+             error: function(error_data){
+                 console.log("Error")
+                 console.log(error_data)
+             }
+        })
+
+        function setChart(){
+            var ctx = document.getElementById('myChart'); //district
+            var ctx2 = document.getElementById('myChart2'); //district1
+            var ctx3 = document.getElementById('myChart3'); //district2
+           
+
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: district_labels,
+                    datasets: [{
+                        label: 'District 1',
+                        //data: [12, 19, 3, 5, 12, 3],
+                        data: district_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    }
+                }
+            });
+
+            var myChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: district1_labels,
+                    //labels: [12, 19, 3, 5, 12, 3],
+                    datasets: [{
+                        label: 'District 1',
+                        data: [12, 19, 3, 5, 12, 3],
+                        data: district1_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+        
+                options: {
+                    scaleShowValues: true,
+                    scales: {
+                        y: {beginAtZero: true},
+                        x: {
+                            ticks: {
+                                 maxRotation: 90,
+                                // minRotation: 30,
+                                padding: 0,
+                                autoSkip: false,
+                                fontSize: 10
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'linear'
+                    }
+                }
+            });
+
+            var myChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: district2_labels,
+                    //labels: [12, 19, 3, 5, 12, 3],
+                    datasets: [{
+                        label: 'District 2',
+                        //data: [12, 19, 3, 5, 12, 3],
+                        data: district2_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    },
+
+                    animation: {
+                        duration: 1000,
+                        easing: 'linear'
+                    }
+                }
+            });
+
+        } //close function
+
+    {% endblock %}
+</script>
+
+{% block content %}
+
+    {% for x in district2_labels %}
+    {{x}}
+    {% endfor %}
+
+    <ul>
+        <li><a href="incidents/view"> Incidents List </a></li>
+        <li><a href="/logout"> Logout </a></li>
+    </ul>
+
+    <div class="row">
+        <div class="col-sm-12" >
+            <h1>Accident Statistics</h1>
+        </div>
+    </div>
+    
+
+    <div class="col-sm-4 mt-4">
+        <canvas id="myChart" width="400" height="400"></canvas>
+    </div>
+    
+    <div class="col-sm-4 mt-4">
+        <canvas id="myChart2" width="500" height="400"></canvas>
+    </div>
+
+    <div class="col-sm-4 mt-4">
+        <canvas id="myChart3" width="400" height="400"></canvas>
+    </div>
+    
+{% endblock content %}
+
