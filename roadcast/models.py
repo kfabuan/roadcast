@@ -1,28 +1,61 @@
-from django.db import models
+from django.db import models 
 from datetime import datetime
 import os, random
+from django.db.models.deletion import CASCADE
 from django.utils import timezone
 from django.utils.html import mark_safe
+
+
 
 # Create your models here. This is the database structure
 
 now = timezone.now()
 
+class Tbl_district(models.Model):
+    DISTRICT = (
+        ('District 1', 'District 1'),
+        ('District 2', 'District 2'),
+    )
+    District = models.CharField(max_length=200, verbose_name='District', blank=True, choices=DISTRICT)
+    def __str__(self):
+        return self.District 
+  
+
+class Tbl_barangay(models.Model):
+    Barangay = models.CharField(max_length=200, verbose_name='Barangay', blank=True)
+    District = models.ForeignKey(Tbl_district, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+        return self.Barangay 
+
 class Tbl_pasig_incidents(models.Model):
+   
+    # DISTRICT = (
+    #     ('District 1', (
+    #         ('Santa Lucia', 'Sta. Lucia'),
+    #         ('Ugong', 'Ugong'),
+    #         )
+    #     ),
+    #     ('District 2', (
+    #             ('Brgy 2', 'Brgy 2'),
+    #             ('Lela', 'lela'),
+    #         )
+    #     ),
+    # )
     City = models.CharField(max_length=200, verbose_name='City', blank=False)
     UnitStation= models.CharField(max_length=200, verbose_name='Unit/Station', blank=False)
     CrimeOffense = models.CharField(max_length=200, verbose_name='Crime/Offense',blank=False)
     Week = models.IntegerField(verbose_name='Week',blank=True)
     Date = models.DateField(max_length=200, verbose_name='Date',blank=True)
     Time = models.TimeField(verbose_name='Time', blank=True)
-    Day = models.CharField(max_length=200, verbose_name='Time', blank=True)
+    Day = models.CharField(max_length=200, verbose_name='Day', blank=True)
     Incident_Type = models.CharField(max_length=200, verbose_name='Incident Type', blank=True)
     Number_of_Persons_Involved = models.IntegerField(verbose_name='# of Persons Involved',blank=True)
     Light = models.CharField(max_length=200, verbose_name='Light', blank=True)
     Weather = models.CharField(max_length=200, verbose_name='Weather', blank=True)
     Case_Status = models.CharField(max_length=200, verbose_name='Case Status', blank=True)
-    District = models.CharField(max_length=200, verbose_name='District', blank=True)
-    Barangay = models.CharField(max_length=200, verbose_name='Barangay', blank=True)
+    District = models.ForeignKey(Tbl_district, null=True, on_delete=models.SET_NULL)
+    Barangay = models.ForeignKey(Tbl_barangay, null=True, on_delete=models.SET_NULL) #foreign
     Address = models.CharField(max_length=200, verbose_name='Address', blank=True)
 
     Along_Avenue = models.CharField(max_length=200, verbose_name='Along Avenue', blank=True)
@@ -78,4 +111,3 @@ class Tbl_pasig_incidents(models.Model):
 
     def __str__(self):
         return '{}-{}-{}'.format(self.City, self.Barangay, self.Date )
-

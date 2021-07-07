@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Tbl_pasig_incidents
+from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district
 
 from django.views.generic import View #for charts
 from django.http import JsonResponse
@@ -16,7 +16,7 @@ class DashboardView (View):
         d2_brgy_distinct = []
         d2_brgy_distinct_count = []
 
-        d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District__icontains='District 1')).values_list('Barangay', flat=True).distinct()
+        d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District='1')).values_list('Barangay', flat=True).distinct()
 
         for dis in d2_brgys:
             d2_brgy_distinct.append(dis)
@@ -42,11 +42,16 @@ def get_data(request, *args, **kwargs):
     d2_brgy_distinct_count = []
 
     district = Tbl_pasig_incidents.objects.values_list('District', flat=True).distinct()
-    d1_brgys = Tbl_pasig_incidents.objects.filter(Q(District__icontains='District 1')).values_list('Barangay', flat=True).distinct()
-    d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District__icontains='District 2')).values_list('Barangay', flat=True).distinct()
-    
+    d1_brgys = Tbl_pasig_incidents.objects.filter(Q(District='1')).values_list('Barangay', flat=True).distinct()
+    d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District='2')).values_list('Barangay', flat=True).distinct()
+
+    district_distinct = ['D1', 'D2']
+    # d1_brgy_distinct = ['']
+    # d2_brgy_distinct = []
+
+
     for dis in district:
-        district_distinct.append(dis)
+        # district_distinct.append(dis)
         x = Tbl_pasig_incidents.objects.filter(District=dis).count()
         district_distinct_count.append(x)
 
@@ -91,3 +96,6 @@ def uploadcsv (request):
 
 def add_incident (request):
     return render (request, 'add_incident.html')
+
+def logout (request):
+    return render (request, 'logout.html')

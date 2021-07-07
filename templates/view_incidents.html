@@ -6,9 +6,43 @@
     <h1>Incidents List</h1>
     <ul>
         <li><a href="/incidents/add"> Add Incident </a></li>
-       
+        <li><a href="/dashboard"> Back </a></li>
     </ul>
-  
+
+    {% if pasig_incident_list %}
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>City</th>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Week</th>
+                        <th>Address</th>
+                        <th>Light</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- view ng list using loop -->
+                    {% for inc in pasig_incident_list %}
+                    <tr>
+                        <td>{{ inc.City }}</td>
+                        <td>{{ inc.Date }}</td>
+                        <td>{{ inc.Time }}</td>
+                        <td>{{ inc.Week }}</td>
+                        <td>{{ inc.Address }}</td>
+                        <td>{{ inc.Light }}</td>
+                       
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- if table has no data -->
+        {% else %}
+            <p>No records available.</p>
+        {% endif %}
 
 
 {% endblock %}

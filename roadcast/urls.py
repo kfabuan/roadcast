@@ -29,6 +29,7 @@ urlpatterns = [
     path('dashboard/data', views.get_data, name='data'),
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incidents/add', views.add_incident, name='add_incident'),
+     path('logout', views.logout, name='logout'),
 
 
 ]
