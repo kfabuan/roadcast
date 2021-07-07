@@ -17,7 +17,7 @@ class Tbl_pasig_incidents(models.Model):
     Time = models.TimeField(verbose_name='Time', blank=True)
     Day = models.CharField(max_length=200, verbose_name='Time', blank=True)
     Incident_Type = models.CharField(max_length=200, verbose_name='Incident Type', blank=True)
-    Number_of_Persons_Involved = models.IntegerField(max_length=200, verbose_name='# of Persons Involved',blank=True)
+    Number_of_Persons_Involved = models.IntegerField(verbose_name='# of Persons Involved',blank=True)
     Light = models.CharField(max_length=200, verbose_name='Light', blank=True)
     Weather = models.CharField(max_length=200, verbose_name='Weather', blank=True)
     Case_Status = models.CharField(max_length=200, verbose_name='Case Status', blank=True)

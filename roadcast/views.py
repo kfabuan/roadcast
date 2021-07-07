@@ -41,7 +41,7 @@ def get_data(request, *args, **kwargs):
     d2_brgy_distinct = []
     d2_brgy_distinct_count = []
 
-    district = Tbl_pasig_incidents.objects.values_list('district', flat=True).distinct()
+    district = Tbl_pasig_incidents.objects.values_list('District', flat=True).distinct()
     d1_brgys = Tbl_pasig_incidents.objects.filter(Q(District__icontains='District 1')).values_list('Barangay', flat=True).distinct()
     d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District__icontains='District 2')).values_list('Barangay', flat=True).distinct()
     
