@@ -80,7 +80,7 @@ class Tbl_pasig_incidents(models.Model):
     
     Suspect_Name = models.CharField(max_length=200, verbose_name='Suspect Name', blank=True)
     Suspect_Severity = models.CharField(max_length=200, verbose_name='Suspect Severity', blank=True)
-    Suspect_Age = models.IntegerField(verbose_name='Suspect Age', blank=True)
+    Suspect_Age = models.CharField(max_length=100, verbose_name='Suspect Age', blank=True)
     Suspect_Sex = models.CharField(max_length=200, verbose_name='Suspect Sex', blank=True)
     Suspect_Civil_Status = models.CharField(max_length=200, verbose_name='Suspect Civil_Status', blank=True)
     Suspect_Address = models.CharField(max_length=200, verbose_name='Suspect Address', blank=True)
@@ -94,7 +94,7 @@ class Tbl_pasig_incidents(models.Model):
     Victim_Type = models.CharField(max_length=200, verbose_name='Victim Type', blank=True)
     Victim_Name = models.CharField(max_length=200, verbose_name='Victim Name', blank=True)
     Victim_Severity = models.CharField(max_length=200, verbose_name='Victim Severity', blank=True)
-    Victim_Age = models.IntegerField(verbose_name='Victim Age', blank=True)
+    Victim_Age = models.CharField(max_length=100, verbose_name='Victim Age', blank=True)
     Victim_Sex = models.CharField(max_length=200, verbose_name='Victim Sex', blank=True)
     Victim_Civil_Status = models.CharField(max_length=200, verbose_name='Victim Civil_Status', blank=True)
     Victim_Address = models.CharField(max_length=200, verbose_name='Victim Address', blank=True)

@@ -20,8 +20,6 @@ class PasigBrgy(admin.ModelAdmin):
     list_display = ['id','Barangay', 'District']
    
     
-
-
 admin.site.register(Tbl_pasig_incidents, PasigIncidents) #2 parameters to lagi
 admin.site.register(Tbl_district, PasigDistrict)
 admin.site.register(Tbl_barangay, PasigBrgy)

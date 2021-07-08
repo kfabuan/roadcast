@@ -1,14 +1,462 @@
-{% extends 'base.html' %}
 
-{% block title %} Add Incident {% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>{% block title %} Add Incident {% endblock %}</title>
+      <link rel="stylesheet" href='add_incident.css'>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
+      
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" charset="utf-8"></script>
+      <script>function display_ct6() {
+          var x = new Date()
+          var ampm = x.getHours( ) >= 12 ? ' PM' : ' AM';
+          hours = x.getHours( ) % 12;
+          hours = hours ? hours : 12;
+          var x1=x.getMonth() + 1+ "/" + x.getDate() + "/" + x.getFullYear(); 
+          x1 = x1 + " - " +  hours + ":" +  x.getMinutes() + ":" +  x.getSeconds() + "" + ampm;
+          document.getElementById('ct6').innerHTML = x1;
+          display_c6();
+          }
+          function display_c6(){
+          var refresh=1000; // Refresh rate in milli seconds
+          mytime=setTimeout('display_ct6()',refresh)
+          }
+          display_c6()
+      </script>
+    </head>
+    <body onload=display_ct6();>
+    <input type="checkbox" id="check">
 
-{% block content %}
-    <h1>Add Incident</h1>
-    <ul>
-        <li><a href="/incidents/view"> Back </a></li>
-       
-    </ul>
+      <!--header area start-->
+      <header>
+        <label for="check">
+          <i class="fas fa-bars" id="sidebar_btn"></i>
+        </label>
+        <div class="left_area">
+          <h3>Road<span id="title">cast</span></h3>
+        </div>
+        <div class="right_area">
+          <a href="#" class="logout_btn">Logout</a>
+        </div>
+      </header>
+      <!--header area end-->
+
+      <!--mobile navigation bar start-->
+      <div class="mobile_nav">
+        <div class="nav_bar">
+          <img src="police.jpg" class="mobile_profile_image" alt="PNP Profile">
+          <i class="fa fa-bars nav_btn"></i>
+          <h4 id="user-type">Welcome Mr. Servidad</h4>
+        </div>
+        <div class="mobile_nav_items">
+        <a href="#"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
+        <a href="#"><i class="fas fa-cogs"></i><span>Summary of Reports</span></a>
+        <a href="#"><i class="fas fa-table"></i><span>List of Reports</span></a>
+        <a href="#"><i class="fas fa-th"></i><span>Add Incident Report</span></a>
+        <a href="#"><i class="fas fa-bell"></i><span>Notifications</span></a>
+        <a href="#"><i class="fas fa-sliders-h"></i><span>Settings</span></a>
+        </div>
+      </div>
+      <!--mobile navigation bar end-->
+
+      <!--sidebar start-->
+      <div class="sidebar">
+        <div class="profile_info">
+          <img src="police.jpg" class="profile_image" alt="PNP Profile">
+          <h4 id="user-type">Welcome Mr. Servidad</h4>
+        </div>
+        <a href="#"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
+        <a href="#"><i class="fas fa-cogs"></i><span>Summary of Reports</span></a>
+        <a href="#"><i class="fas fa-table"></i><span>List of Reports</span></a>
+        <a href="#"><i class="fas fa-th"></i><span>Add Incident Report</span></a>
+        <a href="#"><i class="fas fa-bell"></i><span>Notifications</span></a>
+        <a href="#"><i class="fas fa-sliders-h"></i><span>Settings</span></a>
+      </div>
+      <!--sidebar end-->
   
+      <div class="content">
+      <!--Date-->
+        <div class="top-content">
+          
+          <p id='date'>
+          <i class="fas fa-calendar-day" id="date-today-icon"></i>
+          <b id="date-today">Today: </b><span id="ct6"></span>
+          </p>
+        </div>
+        <!--Incident Details-->
+          <div class="card">
+          <div class="separator">Incident Details</div>
+          </div>
+          <form>
+        <div class="incident-details">
+        
+        <div class="card-incident">
+          <div class="item">Date Commited: <input type="date" class="form-field"></div>
+          <div class="item">Time Commited: <input type="time" id="currentTime" class="form-field"></div>
 
+          <div class="item">Collision Type: <select name="collision_type" id="collision_type" class="form-field">
+          <option value="">Choose Collision Type</option>
+          <option value="Angle Collision">Angle Collision</option>
+            <option value="Bumped From Behind">Bumped From Behind</option>
+            <option value="Clash">Clash</option>
+            <option value="Damage to Property">Damage to Property</option>
+            <option value="Head On">Head On</option>
+            <option value="Hit and Run">Hit and Run</option>
+            <option value="Hit Animals">Hit Animals</option>
+            <option value="Hit Object On Road">Hit Object On Road</option>
+            <option value="Hit Object Off Road">Hit Object Off Road</option>
+            <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
+            <option value="Hit Pedestrian">Hit Pedestrian</option>
+            <option value="Hit While Parked">Hit While Parked</option>
+            <option value="Multi Vehicle">Multi Vehicle</option>
+            <option value="Rear End">Rear End</option>
+            <option value="Self Accident">Self Accident</option>
+            <option value="Impact">Impact</option>
+            <option value="Sideswiped">Sideswiped</option>
+            <option value="Side Impact">Side Impact</option>
+            <option value="Right Angle">Right Angle</option>
+            <option value="Others">Others</option>
+          </select></div>
 
-{% endblock %}
+          <div class="item">Weather: <select name="weather" id="weather" class="form-field">
+          <option value="">Choose Weather</option>
+            <option value="Sun">Sun</option>
+            <option value="Fair">Fair</option>
+            <option value="Light Rain">Light Rain</option>
+            <option value="Rainy">Rainy</option>
+            <option value="Wind">Wind</option>
+            </select>
+          </div>
+
+          <div class="item">Surface Type: <select name="surface_type" id="surface_type" class="form-field">
+          <option value="">Choose Surface Type</option>
+            <option value="Asphalt">Asphalt</option>
+            <option value="Concrete">Concrete</option>
+            <option value="Soil">Soil</option>
+          </select></div>
+
+          <div class="item">Road Character: <select name="road_character" id="road_character" class="form-field">
+          <option value="">Choose Road Character</option>
+             <option value="Straight Flat">Straight/Flat</option>
+             <option value="Straight Incline">Straight/Incline</option>
+            <option value="Curve">Curve</option>
+            <option value="Curve Incline">Curve/Incline</option>
+            <option value="Upwards">Upwards</option>
+            <option value="Downwards">Downwards</option>
+          </select></div>
+
+          <div class="item">Surface Condition: <select class="form-field">
+          <option value="">Choose Surface Condition</option>
+            <option value="Dry">Dry</option>
+            <option value="Wet">Wet</option>
+            <option value="Sand">Sand</option>
+          </select></div>
+
+           <div class="item">Road Repair: <input type="radio" name="road-repair" id="road-yes" value="Yes">
+              <label for="road-yes">Yes</label>
+              <input type="radio" name="road-repair" id="road-no" value="No">
+              <label for="road-no">No</label>
+            </div>
+
+          <div class="item">Case Status: <select class="form-field">
+          <option value="">Choose Case Status</option>
+             <option value="Solved">Solved</option>
+             <option value="Unsolved">Unsolved</option>
+          </select></div>
+
+          <div class="item">Hit and Run: <input type="radio" name="hit-and-run" id="hit-yes" value="Yes">
+              <label for="hit-yes">Yes</label>
+              <input type="radio" name="hit-and-run" id="hit-no" value="No">
+              <label for="hit-no">No</label> </div>
+
+          <div class="item">Investigator's Name: <input type="text" class="form-field"></div>
+          <div class="item">Offense: <br>
+          <input type="checkbox" id="Damage to Property" name="Damage to Property"><label> Damage to Property</label>
+          <input type="checkbox" id="Physical Injury" name="Physical Injury"><label> Physical Injury</label><br>
+          <input type="checkbox" id="Self Accident" name="Self Accident"><label> Self Accident</label>
+          <input type="checkbox" id="Homicide" name="Homicide"><label> Homicide</label><br>
+          </div>
+
+         </div>
+         
+        </div>
+
+        <!--Place commited-->
+        <div class="card">
+          <div class="separator">Location Details</div>
+          </div>
+          <form>
+        <div class="incident-details">
+        
+        <div class="card-incident">
+          <div class="item">City: <input type="text" value="Pasig City" class="form-field" readonly></div>
+
+          <div class="item">Barangay: <select name="Barangay" id="Barangay" class="form-field" onchange="selectdistrict(event)">
+          <option value="">Choose a Barangay</option>
+          <option value="Bagong Ilog">Bagong Ilog</option>
+          <option value="Bagong Katipunan">Bagong Katipunan</option>
+          <option value="Bambang">Bambang</option>
+          <option value="Buting">Buting</option>
+          <option value="Caniogan">Caniogan</option>
+          <option value="Kalawaan">Kalawaan</option>
+          <option value="Kapasigan">Kapasigan</option>
+          <option value="Kapitolyo">Kapitolyo</option>
+          <option value="Malinao">Malinao</option>
+          <option value="Oranbo">Oranbo</option>
+          <option value="Palatiw">Palatiw</option>
+          <option value="Pineda">Pineda</option>
+          <option value="Sagad">Sagad</option>
+          <option value="San Antonio">San Antonio</option>
+          <option value="San Joaquin">San Joaquin</option>
+          <option value="San Jose">San Jose</option>
+          <option value="San Nicolas">San Nicolas</option>
+          <option value="Santa Cruz">Santa Cruz</option>
+          <option value="Santa Rosa">Santa Rosa</option>
+          <option value="Santo Tomas">Santo Tomas</option>
+          <option value="Sumilang">Sumilang</option>
+          <option value="Ugong">Ugong</option>
+          <option value="Dela Paz">Dela Paz</option>
+          <option value="Manggahan">Manggahan</option>
+          <option value="Maybunga">Maybunga</option>
+          <option value="Pinagbuhatan">Pinagbuhatan</option>
+          <option value="Rosario">Rosario</option>
+          <option value="San Miguel">San Miguel</option>
+          <option value="Santolan">Santolan</option>
+          <option value="Santa Lucia">Santa Lucia</option>
+          </select></div>
+          
+          <div class="item">District: <input type="text" id="district" value="" class="form-field" readonly></div>
+        
+          <script>
+          function selectdistrict(e){
+
+            if (e.target.value == "Dela Paz"||e.target.value == "Manggahan"||e.target.value == "Maybunga"||e.target.value == "Pinagbuhatan"||e.target.value == "Rosario"
+            ||e.target.value == "San Miguel"||e.target.value == "Santolan"||e.target.value == "Santa Lucia"){
+              var barangay = document.getElementById('district').value="District 2";
+            }
+            else{
+              var barangay = document.getElementById('district').value="District 1";
+            }
+           }
+          </script>
+          <div class="item">Place Commited: <input type="text" id="Place commited" class="form-field"></div>
+          <div class="item">Along: <input type="text" id="Along" class="form-field"></div>
+          <div class="item">Corner: <input type="text" id="Corner" class="form-field"></div>
+         </div>
+        </div>
+
+        <!--Person(s) Involved-->
+        
+        <div class="card">
+          <div class="separator">Person(s) Involved</div>
+          </div>
+          <div class="title">Suspect</div>
+          <form>
+        <div class="incident-details">
+        
+        <!--Suspect-->
+        <div class="card-incident">
+          <div class="item">Name: <input type="text" class="form-field"></div>
+          <div class="item">Age: <input type="number" class="form-field"></div>
+          <div class="item">Address: <input type="text" class="form-field"></div>
+          <div class="item">Civil Status: <select name="weather" id="weather" class="form-field">
+          <option value="">Choose Civil Status</option>
+          <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Widowed">Widowed</option>
+            <option value="Separated">Separated</option>
+            <option value="Divorced">Divorced</option>
+            </select>
+          </div>
+          <div class="item">Sex: <input type="radio" name="s_sex" id="s_male" value="Male">
+              <label for="s_male">Male</label>
+              <input type="radio" name="s_sex" id="s_female" value="Female">
+              <label for="s_female">Female</label>
+              </div>
+              
+         <div class="item">Driver's License: <input type="text" class="form-field"></div>
+          <div class="item">Type: <select class="form-field">
+          <option value="">Choose Type</option>
+            <option value="Driver">Driver</option>
+            <option value="Passenger">Passenger</option>
+            <option value="Pedestrian">Pedestrian</option>
+          </select></div>
+
+          <div class="item">Expiration Date: <input type="date" class="form-field"></div>
+          <div class="item">Vehicle Brand & Model: <input type="text" class="form-field"></div>
+
+        
+          <div class="item">Body Type: <select class="form-field">
+          <option value="">Choose Case Status</option>
+             <option value="Armored Car">Armored Car</option>
+              <option value="Alto">Alto</option>
+              <option value="Bicycle">Bicycle</option>
+              <option value="Bus">Bus</option>
+              <option value="Cab Chassis ">Cab Chassis </option>
+              <option value="Coupe">Coupe</option>
+              <option value="Electric Bike">Electric Bike</option>
+              <option value="Jitney">Jitney</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="MTC/MC">MTC/MC</option>
+              <option value="Object">Object</option>
+              <option value="Pedicab">Pedicab</option>
+              <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
+              <option value="Sedan">Sedan</option>
+              <option value="S-CUV">S-CUV</option>
+              <option value="Shuttle">Shuttle</option>
+              <option value="SUV">SUV</option>
+              <option value="Tricycle">Tricycle</option>
+              <option value="Train">Train</option>
+              <option value="Truck">Truck</option>
+              <option value="Truck/Trailer">Truck/Trailer</option>
+              <option value="Unidentified">Unidentified</option>
+              <option value="Pick-Up">Pick-Up</option>
+              <option value="Minivan">Minivan</option>
+              <option value="Van">Van</option>
+              <option value="Wagon">Wagon</option>
+              <option value="Ice Cream Cart">Ice Cream Cart</option>
+              <option value="Unidentified">Unidentified</option>
+              <option value="Shuttle Body">Shuttle Body</option>
+              <option value="Trike ">Trike </option>
+              <option value="Modern Jeepney">Modern Jeepney</option>
+              <option value="Others">Others</option>
+          </select></div>
+
+          <div class="item">Registered Owner: <input type="text" class="form-field"></div>
+          <div class="item">Plate Number: <input type="text" class="form-field"></div>
+
+          <div class="item">Status: <select class="form-field">
+          <option value="">Choose Suspect's Status</option>
+          <option value="Unharmed">Unharmed</option>
+          <option value="Harmed">Harmed</option>
+          <option value="Injured">Injured</option>
+          <option value="Self Accident">Self Accident</option>
+          <option value="Deceased">Deceased</option>
+          <option value="Identified">Identified</option>
+          <option value="Not Interested to Report">Not Interested to Report</option>
+          <option value="Arrested">Arrested</option>
+          <option value="Escaped">Escaped</option>
+          <option value="Unidentified">Unidentified</option>
+          </select></div></div></div>
+
+          <section></section>
+
+          <div class="title">Victim(s)</div>
+         
+        <div class="incident-details">
+        <!--Victim-->
+        <div class="card-incident">
+          <div class="item">Name: <input type="text" class="form-field"></div>
+          <div class="item">Age: <input type="number" class="form-field"></div>
+          <div class="item">Address: <input type="text" class="form-field"></div>
+
+          <div class="item">Civil Status: <select name="weather" id="weather" class="form-field">
+          <option value="">Choose Civil Status</option>
+          <option value="Single">Single</option>
+            <option value="Married">Married</option>
+            <option value="Widowed">Widowed</option>
+            <option value="Separated">Separated</option>
+            <option value="Divorced">Divorced</option>
+            </select>
+          </div>
+
+          <div class="item">Sex: <input type="radio" name="v_sex" id="v_male" value="Male">
+              <label for="v_male">Male</label>
+              <input type="radio" name="v_sex" id="v_female" value="Female">
+              <label for="v_female">Female</label>
+              </div>
+         <div class="item">Driver's License: <input type="text" class="form-field"></div>
+          <div class="item">Type: <select class="form-field">
+          <option value="">Choose Type</option>
+            <option value="Driver">Driver</option>
+            <option value="Passenger">Passenger</option>
+            <option value="Pedestrian">Pedestrian</option>
+          </select></div>
+          <div class="item">Expiration Date: <input type="date" class="form-field"></div>
+          <div class="item">Vehicle Brand & Model: <input type="text" class="form-field"></div>
+
+        
+          <div class="item">Body Type: <select class="form-field">
+          <option value="">Choose Case Status</option>
+             <option value="Armored Car">Armored Car</option>
+              <option value="Alto">Alto</option>
+              <option value="Bicycle">Bicycle</option>
+              <option value="Bus">Bus</option>
+              <option value="Cab Chassis ">Cab Chassis </option>
+              <option value="Coupe">Coupe</option>
+              <option value="Electric Bike">Electric Bike</option>
+              <option value="Jitney">Jitney</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="Motorcycle">Motorcycle</option>
+              <option value="MTC/MC">MTC/MC</option>
+              <option value="Object">Object</option>
+              <option value="Pedicab">Pedicab</option>
+              <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
+              <option value="Sedan">Sedan</option>
+              <option value="S-CUV">S-CUV</option>
+              <option value="Shuttle">Shuttle</option>
+              <option value="SUV">SUV</option>
+              <option value="Tricycle">Tricycle</option>
+              <option value="Train">Train</option>
+              <option value="Truck">Truck</option>
+              <option value="Truck/Trailer">Truck/Trailer</option>
+              <option value="Unidentified">Unidentified</option>
+              <option value="Pick-Up">Pick-Up</option>
+              <option value="Minivan">Minivan</option>
+              <option value="Van">Van</option>
+              <option value="Wagon">Wagon</option>
+              <option value="Ice Cream Cart">Ice Cream Cart</option>
+              <option value="Unidentified">Unidentified</option>
+              <option value="Shuttle Body">Shuttle Body</option>
+              <option value="Trike ">Trike </option>
+              <option value="Modern Jeepney">Modern Jeepney</option>
+              <option value="Others">Others</option>
+          </select></div>
+
+          <div class="item">Registered Owner: <input type="text" class="form-field"></div>
+          <div class="item">Plate Number: <input type="text" class="form-field"></div>
+
+          <div class="item">Status: <select class="form-field">
+          <option value="">Choose Suspect's Status</option>
+          <option value="Unharmed">Unharmed</option>
+          <option value="Harmed">Harmed</option>
+          <option value="Injured">Injured</option>
+          <option value="Self Accident">Self Accident</option>
+          <option value="Deceased">Deceased</option>
+          <option value="Identified">Identified</option>
+          <option value="Not Interested to Report">Not Interested to Report</option>
+          <option value="Arrested">Arrested</option>
+          <option value="Escaped">Escaped</option>
+          <option value="Unidentified">Unidentified</option>
+          </select>
+         </div>
+        </div>
+        
+</div>
+      <center><input type="button" value="(+)&nbsp;&nbsp;Add another victim" id="add_victim"></center>
+        <div class="card">
+          <div class="separator">Narrative Description of the Incident</div>
+         <textarea class="narrative" placeholder="A brief description of what happened or its details. . ." style="resize: none"></textarea> 
+      <center><button id="submit-form" value="">Submit</button></center>
+
+      <script type="text/javascript">
+      $(document).ready(function(){
+        $('.nav_btn').click(function(){
+          $('.mobile_nav_items').toggleClass('active');
+        });
+      });
+      </script>
+ 
+      <script>
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+          document.getElementById("currentTime").value = time;
+      </script>
+
+    </body>
+  </html>
