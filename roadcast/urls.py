@@ -15,6 +15,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from . import views
 
@@ -29,7 +31,8 @@ urlpatterns = [
     path('dashboard/data', views.get_data, name='data'),
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incidents/add', views.add_incident, name='add_incident'),
-     path('logout', views.logout, name='logout'),
+    path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
+    path('logout', views.logout, name='logout'),
 
 
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

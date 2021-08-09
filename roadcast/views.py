@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import HttpResponseRedirect
 from django.views.generic import View #for charts
 from django.http import JsonResponse
 from django.db.models import Q
@@ -86,8 +87,7 @@ def view_incidents (request):
     #pasig_incident_list = Tbl_pasig_incidents.objects.filter(Q(along_highway__icontains=term) |Q(corner_highway__icontains=term)).order_by('-id') 
     pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
     context = {
-        'pasig_incident_list': pasig_incident_list,
-        
+        'pasig_incident_list': pasig_incident_list,  
     }
     return render (request, 'view_incidents.html', context) 
 
@@ -95,7 +95,36 @@ def uploadcsv (request):
     return render (request, 'upload_csv.html')
 
 def add_incident (request):
-    return render (request, 'add_incident.html')
+    brgy_list = Tbl_barangay.objects.values_list('Barangay', flat=True).distinct()
+    context = {
+        'brgy_list': brgy_list,  
+    }
+    return render (request, 'add_incident.html', context)
+
+def processAddIncident(request):
+    city = "Pasig"
+    unitstation="Pasig City Police Station"
+    crime_offense=request.POST.get('display_offense')
+    date_committed = request.POST.get('DateCommitted') #name attribute of textbox
+    current_time = request.POST.get('currentTime')
+    col_type = request.POST.get('collision_type')
+    weather = request.POST.get('weather')
+    surface_type = request.POST.get('surface_type')
+    road_char = request.POST.get('road_character')
+    surface_cond = request.POST.get('surface_condition')
+    road_repair = request.POST.get('road-repair')
+    case_status = request.POST.get('case_status')
+    hit_and_run = request.POST.get('hit-and-run')
+    inv_name = request.POST.get('inv_name')
+    barangay = "1"
+    district = "1"
+    
+    print(date_committed)
+    print(current_time)
+    incident_record = Tbl_pasig_incidents.objects.create(City=city, UnitStation=unitstation, CrimeOffense=crime_offense, Barangay_id=barangay, District_id=district, Date=date_committed, Time=current_time, Incident_Type=col_type, Weather=weather, Surface_Condition=surface_cond, Surface_Type=surface_type, Road_Character=road_char)
+    incident_record.save()
+    return HttpResponseRedirect('/incidents/view')
+
 
 def logout (request):
     return render (request, 'logout.html')

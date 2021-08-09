@@ -17,7 +17,7 @@ class PasigDistrict(admin.ModelAdmin):
     list_display = ['District',]
 
 class PasigBrgy(admin.ModelAdmin):
-    list_display = ['id','Barangay', 'District']
+    list_display = ['id','Barangay', 'District_id']
    
     
 admin.site.register(Tbl_pasig_incidents, PasigIncidents) #2 parameters to lagi

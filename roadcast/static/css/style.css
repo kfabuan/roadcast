@@ -1,3 +1,7 @@
+h1 {
+  color:red !important; 
+}
+
 body{
     margin: 0;
     padding: 0;
@@ -265,7 +269,7 @@ body{
     color: #575756;
   }
 
-  #submit-form {
+  #submit_form {
   margin-top: 50px;
   margin-bottom: 60px;
   display: inline-block;

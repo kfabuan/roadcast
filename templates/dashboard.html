@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block title %} Dashboard {% endblock %}
 
+{% block style %}
+
+<style>
+  
+  
+</style>
+
+{% endblock %}
+
 <script>
     {% block jquery %}
 
@@ -185,9 +194,12 @@
 
 {% block content %}
 
+<div class="content">
+
     {% for x in district2_labels %}
     {{x}}
     {% endfor %}
+  
 
     <ul>
         <li><a href="incidents/view"> Incidents List </a></li>
@@ -212,6 +224,9 @@
     <div class="col-sm-4 mt-4">
         <canvas id="myChart3" width="400" height="400"></canvas>
     </div>
+
+
+</div>
     
 {% endblock content %}
 
