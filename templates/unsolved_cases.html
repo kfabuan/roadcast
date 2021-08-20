@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block design %}
+<style>
+    th, .level-title {
+        color: #050087;
+    }
+
+    
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <span class="me-2 fs-4 fw-bold level-title"> Urgency Level </span>
+        <li class="nav-item" role="presentation">
+            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-level-1" type="button" role="tab" aria-controls="pills-level-1" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;Level 1</button>
+        </li>
+        
+        <li class="nav-item" role="presentation">
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-2-tab" data-bs-toggle="pill" data-bs-target="#pills-level-2" type="button" role="tab" aria-controls="pills-level-2" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;Level 2</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-3-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-level-3" role="tab" aria-controls="pills-level-3" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;Level 3</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-4-tab" data-bs-toggle="pill" data-bs-target="#pills-level-4" type="button" role="tab" aria-controls="pills-level-4" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;Level 4</button>
+        </li>
+
+        <li>
+        <form action="">
+            <div class="input-group input-group-sm ">
+                <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
+            </div>
+        </form>
+</li>
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+          
+        <!-- tab for level 1-->
+        <div class="tab-pane fade show active" id="pills-level-1" role="tabpanel" aria-labelledby="pills-level-1-tab">
+            <table class="table table-hover " style="background-color: white;">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Blotter Number</th>
+                    <th scope="col">Statistician/Encoder</th>
+                    <th scope="col">Barangay Committed</th>
+                    <th scope="col">Date and Time Added</th>
+                    <th scope="col">Case Status</th>
+                    <th scope="col">Operation</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                    
+                    {% for incident in pasig_incident_list %}
+                    <tr>
+                      <td> {{ forloop.counter }}</td>
+                      <td>137403-202003-T-2020-03-0590</td>
+                      <td>Jheus Brian Lavilla</td>
+
+                      <td>{{ incident.62 }}</td>
+                      <td>{{ incident.5 }} - {{ incident.6 }}</td>
+                      <td>{{ incident.12 }}</td>
+                      <td> <a class="btn btn-outline-primary btn-sm" href="" role="button">View &nbsp; <i class="bi bi-eye-fill"></i></a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+              </table>
+        </div>
+
+        <!-- tab for level 2 -->
+        <div class="tab-pane fade" id="pills-level-2" role="tabpanel" aria-labelledby="pills-level-2-tab">
+           2
+        </div>
+
+        <!-- tab for level 3 -->
+        <div class="tab-pane fade" id="pills-level-3" role="tabpanel" aria-labelledby="pills-level-3-tab">
+           3
+        </div>
+
+        <!-- tab for level 4 -->
+        <div class="tab-pane fade" id="pills-level-4" role="tabpanel" aria-labelledby="pills-level-4-tab">
+4
+        </div>
+
+      </div>
+
+  </div> <!--closing content div-->
+{% endblock %}

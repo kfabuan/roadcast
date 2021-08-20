@@ -55,7 +55,7 @@ class Tbl_pasig_incidents(models.Model):
     Weather = models.CharField(max_length=200, verbose_name='Weather', blank=True, null=True)
     Case_Status = models.CharField(max_length=200, verbose_name='Case Status', blank=True, null=True)
     District = models.ForeignKey(Tbl_district, null=True, on_delete=models.SET_NULL)
-    Barangay = models.ForeignKey(Tbl_barangay, null=True, on_delete=models.SET_NULL) #foreign
+    Barangay_id = models.ForeignKey(Tbl_barangay, null=True, on_delete=models.SET_NULL) #foreign
     Address = models.CharField(max_length=200, verbose_name='Address', blank=True, null=True)
 
     Along_Avenue = models.CharField(max_length=200, verbose_name='Along Avenue', blank=True, null=True)

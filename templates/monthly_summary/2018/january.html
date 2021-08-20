@@ -1,0 +1,238 @@
+{% extends 'base.html' %}
+{% block title %} Home {% endblock %}
+
+{% block design %} {% endblock %}
+
+{% block content %}
+<div class="content">
+    <h1>January 2018: Summarize Statistic</h1>
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Graph/Chart</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Tabular</button>
+        </li>
+        
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+        <!-- tab for charts -->
+        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">.d..</div>
+
+        <!-- tab for tabular data -->
+        <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
+
+          <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
+            <caption>Crime offense count</caption>
+            <thead>
+              <tr>
+                <th scope="col">Offenses</th>
+                <th scope="col">Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for offense, offense_count in offense_data %}
+                <tr>
+                  <th scope="row">{{ offense }}</th>
+                  <td> {{ offense_count }}</td>
+                </tr>
+              {% endfor %}
+
+              <tr>
+                <th scope="row">TOTAL</th>
+                <td> <b>{{ offense_total }}  </b></td>
+              </tr>
+            </tbody>
+          </table>
+
+            <table class="table table-hover caption-top" style="background-color: white;">
+                <caption>List of vehicles</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Vehicles</th>
+                    <th scope="col">Month</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for vehicle, vehicle_count in vehicle_data %}
+                    <tr>
+                      <th scope="row"> {{ vehicle }}</th>
+                      <td> {{vehicle_count }}</td>
+                    </tr>
+                  {% endfor %}
+                 
+
+                  <!-- <tr>
+                    <th scope="row">Armored Car</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Bicycle</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Bus</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Cab Chassis</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Electric Bike</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Jitney</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Motorcycle</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Pedicab</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">PUJ/PUB/PUV</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Sedan</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">S-CUV</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Shuttle</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">SUV</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Truck/Trailer</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Train</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Tricycle</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Van</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Wagon</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Unidentified</th>
+                    <td>10</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Others</th>
+                    <td>10</td>
+                  </tr> -->
+                </tbody>
+            </table>
+
+            <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
+                <caption>Age</caption>
+                <thead>
+                  <tr>
+                    <td colspan="5">MALE</td>
+                    <td colspan="5">FEMALE</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Children (1-12)</td>
+                    <td>Adolescent (13-19)</td>
+                    <td>Adult (20-59)</td>
+                    <td>Geriatric (60+)</td>
+                    <td><b>TOTAL</b></td>
+
+                    <td>Children (1-12)</td>
+                    <td>Adolescent (13-19)</td>
+                    <td>Adult (20-59)</td>
+                    <td>Geriatric (60+)</td>
+                    <td><b>TOTAL</b></td>
+                  </tr>
+                  <tr>
+                    <td> {{ child_m }}</td>
+                    <td> {{ adolescent_m }}</td>
+                    <td> {{ adult_m }}</td>
+                    <td> {{ geriatric_m }}</td>
+                    <td><b> {{ age_total_m }}</b></td>
+
+
+                    <td> {{ child_f }}</td>
+                    <td> {{ adolescent_f }}</td>
+                    <td> {{ adult_f }}</td>
+                    <td> {{ geriatric_f }}</td>
+                    <td><b> {{ age_total_f }}</b></td>
+                  </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
+              <caption>District 1 Barangays</caption>
+              <thead>
+                <tr>
+                  <th scope="col">District 1</th>
+                  <th scope="col">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d1, d1_count in district1_data %}
+                  <tr>
+                    <th scope="row">{{ d1 }}</th>
+                    <td> {{ d1_count }}</td>
+                  </tr>
+                {% endfor %}
+
+                <tr>
+                  <th scope="row">TOTAL</th>
+                  <td><b>{{ d1_total }}</b></td>
+                </tr>
+              </tbody>
+            </table>
+
+          
+            <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
+              <caption>District 2 Barangays</caption>
+              <thead>
+                <tr>
+                  <th scope="col">District 2</th>
+                  <th scope="col">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for d2, d2_count in district2_data %}
+                  <tr>
+                    <th scope="row">{{ d2 }}</th>
+                    <td>{{ d2_count }}</td>
+                  </tr>
+                {% endfor %}
+
+                <tr>
+                  <th scope="row">TOTAL</th>
+                  <td><b>{{ d2_total }}</b></td>
+                </tr>
+              </tbody>
+            </table>
+            
+        </div>
+      </div>
+</div>
+  
+{% endblock %}

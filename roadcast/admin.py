@@ -10,7 +10,7 @@ admin.site.index_title = "Welcome to the Roadcast Admin Area"
 
 
 class PasigIncidents(admin.ModelAdmin):
-    list_display = ['City','UnitStation', 'CrimeOffense', 'Week', 'Date', 'Time', 'Day', 'District', 'Barangay','Address']
+    list_display = ['City','UnitStation', 'CrimeOffense', 'Week', 'Date', 'Time', 'Day', 'District', 'Barangay_id','Address']
     # search_fields =['user_fname', 'user_lname', 'user_email', 'user_position']
 
 class PasigDistrict(admin.ModelAdmin):

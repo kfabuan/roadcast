@@ -23,6 +23,7 @@
 
         var district2_labels = []
         var district2_count = []
+
       
         $.ajax({
              method: "GET",
@@ -37,13 +38,11 @@
                 district2_labels = data.district2_labels
                 district2_count = data.district2_count
 
+                
                 console.log(district_labels)
-                // console.log(defaultData)
 
                 console.log(district1_labels)
                 console.log(district_count)
-                console.log(data.number)
-                console.log("hello")
                 setChart()
     
             },
@@ -200,6 +199,19 @@
     {{x}}
     {% endfor %}
   
+   
+
+    {% for x in offense %}
+    <p>{{forloop.counter}}. {{ x }}</p>
+    {% endfor %}
+    
+    {% for x in distinct_offense %}
+    <p>{{forloop.counter}}. {{ x }}</p>
+    {% endfor %}
+
+    {% for x in offense_count %}
+    <p>{{forloop.counter}}. {{ x }}</p>
+    {% endfor %}
 
     <ul>
         <li><a href="incidents/view"> Incidents List </a></li>

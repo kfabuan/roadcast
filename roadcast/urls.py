@@ -32,6 +32,12 @@ urlpatterns = [
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
+    path('report', views.report_summary, name='report_summary'),
+    path('report/monthly', views.report_monthly, name='report_monthly'),
+    path('notification', views.notification, name='notification'),
+    path('signup/validation', views.sign_up_validation, name='sign_up_validation'),
+    path('unsolvedcases', views.unsolved_cases, name='unsolved_cases'),
+
     path('logout', views.logout, name='logout'),
 
 
