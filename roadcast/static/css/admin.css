@@ -1,0 +1,72 @@
+.btn-secondary{
+    background-color: rgb(21, 211, 94);
+    color: black;
+    border: grey;
+    border-radius: 12px;
+    margin-right: 20px;
+    
+}
+.btn-secondary:active{
+    background-color: #164e80;
+}
+.btn-secondary:hover{
+    background-color: #164e80;
+    
+}
+.roadcast{
+    position: relative;
+    left: 60px;
+}
+.left_area{
+    background-color: #1b5082; 
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 40px;
+    height: 30px;
+
+}
+.section{
+    font-family: "Roboto";
+    display: flex;
+    flex-direction: row;
+    margin-top: 50px;
+}
+
+.mr-sm-2{
+    margin-left: 50px;
+    width: 50%;
+}
+.box{
+    position: relative;
+    border-color:black;
+    border: 2px solid #164e80;
+    margin-top: 70px;
+    width: 100%;
+    height:60%;
+    overflow-y: scroll;
+}
+tr{
+    border: thin solid #1b5082;
+}
+.rep-box{
+    position: relative;
+    border-color:black;
+    border: 2px solid #164e80;
+    margin-top: 10px;
+    width: 100%;
+    height:80%;
+    overflow-y: scroll;
+}
+
+
+@media screen and (max-width: 780px){
+
+.top-content{
+    position: relative;
+    left: 0;
+}
+}
+.btn-group{
+    margin-top: 50px;
+}

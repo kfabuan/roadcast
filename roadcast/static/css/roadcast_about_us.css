@@ -1,0 +1,213 @@
+body{
+    background-color: #EDFAFF;
+
+ }
+
+ .bdy{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    min-width: 100vh;
+   /* background:linear-gradient(#0f4675, #0f4675 50%, #fff 50%, #fff 100%);
+    background-image: url(bg.png);
+    background-size: cover;*/
+
+ }
+ *{
+     margin:0;
+     padding:0;
+     box-sizing: border-box;
+     /* font-family:  */
+}
+
+.header{
+    height: 40px;
+}
+
+.navbar-style{
+    box-shadow: 0 5px 5px rgb(235, 235, 235);
+    /* text-transform: uppercse; */
+}
+
+.logo{
+    height: 60px;
+    padding: 2px 5px;
+}
+.icon-bar{
+    background: #0A5570;
+}
+
+STRONG{
+    font-size: 20px;
+    color:#0A5570;
+}
+
+li a{
+    color:darkblue;
+}
+
+
+
+/* .margin_btn{
+    margin-left:90px;
+} */
+
+
+
+a.btn{
+    margin-top: 50px;
+    margin-left:90px;
+    width: 150px; 
+    padding: 10px;
+    border-radius: 20px;
+}
+
+a.btn-first{
+    /* margin-top: 20px;
+    margin-left:110px; */
+    background-color: rgb(211, 211, 211);
+    border: 1px solid #0A5570;
+    color:black;
+}
+
+a.btn-second{
+    /* margin-top: 20px; */
+    margin-left:50px;
+    background-color: white;
+    border: 1px solid #0A5570;
+    color:black;
+}
+
+a.btn:hover{
+    background:  #0A5570;
+    border: none;
+    color:white;
+    box-shadow: 5px 5px 10px gainsboro;
+    transition: 0.3s;
+}
+
+.banner-info, .banner-image{
+    margin: 30px 0;
+}
+
+
+
+.container{
+    width: 1100px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.history{
+    padding: 50px;
+    text-align: center;
+}
+
+
+.About-title { /*About Us title sa image*/
+    position: absolute;
+    top: 95px;
+    left: 45px;
+    }
+    
+.About-1, .About-2 { /* "About Us" */
+    font-weight: bold;
+    font-size: 38px;
+    text-align: left;
+    }
+    
+.About-1 { /* "About" */
+    color: #1b5082;
+    margin-right: 4px;
+    }
+    
+.About-2 { /* "Us" */
+    color: #5a96d2;
+    }
+    
+.About-minor { /* "Get in touch..." */
+    font-size: 13px;
+    color: #1b5082;
+    letter-spacing: 1px;position: absolute;
+    top: 150px;
+    left: 45px;}
+
+.container .box{
+    position:relative;
+    width: 320px;
+    background: #fff;
+    padding:100px 40px 60px;
+    box-shadow: 0 15px 45px rgba(0,0,0,1);
+}
+
+.container .box:before{
+    content: '';
+    position:absolute;
+    height:100%;
+    width:100%;
+    top:0;
+    left:0;
+    background: #D60B00;
+    transform: scaleY(0);
+    transform-origin: top;
+    transition: transform 0.5s;
+}
+
+.container .box:hover:before{
+    transform: scaleY(1);
+    transform-origin: bottom;
+    transition: transform 0.5s;
+}
+
+.container .box h2{
+    position: absolute;
+    left: 40px;
+    top: 60px;
+    font-size: 4em;
+    font-weight:800;
+    z-index:1;
+    opacity: 0.5;
+    transition:0.5s;
+}
+
+.container .box:hover h2{
+    opacity: 1;
+    color:#fff;
+    transform: translate(-40px);
+}
+
+.container .box h3{
+    position:relative;
+    font-size: 1.5em;
+    z-index:2;
+    color:#333;
+    transition: 0.5s;
+}
+
+.container .box p{
+    position:relative;
+    z-index:2;
+    color:#555;
+    transition: 0.5s;
+}
+
+.container .box:hover h3, .container .box:hover p{
+    color:#fff;
+}
+
+/* 
+.intro-section .container .row{
+    height: 100vh;
+    min-height:840px;
+} */
+
+/* .intro-section{
+    position: relative;
+}
+
+.intro-section:before{
+  
+} */
+

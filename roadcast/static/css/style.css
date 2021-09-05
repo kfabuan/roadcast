@@ -1,22 +1,21 @@
 h1 {
-  color:#93abca;
+  color:red !important; 
 }
 
 body{
     margin: 0;
     padding: 0;
     font-family: "Roboto", sans-serif;
-    background-color:#edfaff;
   }
-  
+
   header{
     z-index: 1;
-    position: fixed;
     background: #1b5082;
     padding: 20px;
     width: calc(100% - 0%);
     top: 0;
     height: 30px;
+    position: fixed;
   }
   
   .left_area h3{
@@ -41,7 +40,7 @@ body{
     background: #19B3D3;
     text-decoration: none;
     float: right;
-    margin-top: -30px;
+    margin-top: -70px;
     margin-right: 40px;
     border-radius: 2px;
     font-size: 15px;
@@ -72,6 +71,7 @@ body{
   }
   
   .profile_info{
+    
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -187,11 +187,14 @@ body{
     right: 0;
     text-decoration: none;
     font-size: 14px;
+
   }
 
   #date-today, #date-today-icon {
     color: #1b5082;
     text-transform: uppercase;
+    margin-top: 50px;
+    float: right;
   }
 
   .separator{
@@ -258,8 +261,8 @@ body{
   .narrative{
     margin-top: 20px;
     height: 250px;
-    width: 97%;
-
+    width: 100%;
+    margin-left: 70px;
     padding: 20px;
     font-family: "Roboto", sans-serif;
     font-size: 14px;
@@ -295,11 +298,13 @@ body{
   transition: border-radius linear 0.05s, width linear 0.05s;
   }
   
+  
   /* Responsive CSS */
   
   @media screen and (max-width: 780px){
     .card-incident{
       flex-direction: column;
+      
     }
     .sidebar{
       display: none;
@@ -388,6 +393,7 @@ body{
   margin-bottom: 30px;
 }
 
+
 #date-today-icon {
   margin-right: 6px;
   font-size: 16px;
@@ -406,3 +412,9 @@ section {
   border-color: rgba(0,0,0,0.15);
   color: #575756;
 }
+
+@media screen and (max-width: 780px){
+  .card-incident{
+    flex-direction: column;
+   
+  }

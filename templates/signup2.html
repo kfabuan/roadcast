@@ -1,0 +1,97 @@
+{% extends 'base_signin&up.html' %}
+{% load static %}
+{% block title %} Sign Up | Page 1 {% endblock %}
+
+{% block design %} {% endblock %}
+
+{% block content %}
+     <div class="container-fluid">
+    <div class= "row px-5">
+      <div class ="col-lg-10 col-xl-9 card flex-row mx-auto px-0">
+    
+        <div class="card-body">
+
+             <a href="{% url 'index' %}"> <button class="btn close-btn fa fa-times"></button> </a>    
+                    <div class="logo1">
+                  <a href="{% url 'index' %}"> <img src="static/image/logo1.png" class="logo" /><STRONG> ROADCAST</STRONG> </a>
+           </div>
+                <h4 style="margin-top:-5px;text-align: center;">
+                Welcome, Sign Up Here 
+                </h4>
+
+                <form class="form-box px-3">
+               
+                            <span class="text-danger">*</span>  Age
+                            <div class="form-group form-input">  
+                            <span><i class="fa fa-child"></i></span>                        
+                              <input class="form-control" type="text" name="" placeholder=" " tabindex="10" required>
+                            </div>
+
+                            <span class="text-danger">*</span>  Birthdate
+                            <div class="form-group form-input" >                 
+                               <input class="form-control" type="Date" name="" placeholder=" " required>
+                            </div>                       
+                            
+                            <span class="text-danger">*</span>  Contact Number
+                            <div class="form-group form-input" >
+                            <span><i class="fa fa-phone "></i></span>  
+                              <input type="text" class="form-control" name =" "placeholder="ex. 09352165879" required>
+                            </div>
+
+                            <div class="form-row">
+                            <span class="text-danger">*</span>Type of Valid Id 
+                            <select class="form-select form-control " aria-label="Default select example">
+                                    <option > </option>
+                                <option value="Driver's Licensed">Driver's Licensed</option>
+                                    <option value="Passport">Passport</option>
+                                    <option value="Voter's Id">Voter's Id</option>
+                                    <option value="School Id ">School Id </option>
+                                    <option value="Tin Id">Tin Id</option>
+                                    <option value="SSS Id">SSS Id</option>
+                                </select>        
+                            </div>                        
+
+                            <span class="text-danger">*</span>Upload a Valid Id Picture
+                             <div class="custom-file" style="margin-top:5px; margin-left:5px;">
+                                <input type="file" class="custom-file-input" id="customFile">
+                                <label class="custom-file-label" for="customFile">Choose file</label>
+                            </div>
+
+                            <script>
+                                // Add the following code if you want the name of the file appear on select
+                                $(".custom-file-input").on("change", function() {
+                                var fileName = $(this).val().split("\\").pop();
+                                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+                                });
+                            </script>
+                        
+                        
+                        <nav aria-label="Page navigation example">
+                         <ul style="margin-top:15px;" class="pagination justify-content-end">                      
+                                <li class="page-item">  <a class="page-link" href="{% url 'signup1' %}"> Previous </a> </li>
+                                                               
+                              <li class="page-item justify-content-end">  <a class="page-link" href="{% url 'signup3' %}">Next</a> </li>
+                            </ul>
+                        </nav>                      
+
+           <hr class="my-4">
+                        
+            <div class="text-center mb-2">
+                Do have an account?
+                   <a href="{% url 'login' %}" class="register-link">
+                     Login Here
+                   </a>
+            </div>
+                </form>
+
+                </div>
+                <div class="img-right d-none d-md-flex"style="background-image: url({% static 'image/map.png' %});"> </div>
+            </div>
+            
+            </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

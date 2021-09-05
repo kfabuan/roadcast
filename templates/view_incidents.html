@@ -1,40 +1,60 @@
-{% extends 'base.html' %}
+{% extends 'nav_admin.html' %}
 
 {% block title %} Incidents List {% endblock %}
 
+{% block design %}
+<style>
+    th, .table-header, .page-title {
+        color: #050087;
+    }
+</style>
+
+{% endblock %}
+
 {% block content %}
 <div class="content">
-    <h1>Incidents List</h1>
-    <ul>
-        <li><a href="/incidents/add"> Add Incident </a></li>
-        <li><a href="/dashboard"> Back </a></li>
-    </ul>
+    <div class="row mb-4 mt-2">
+        <div class="col-3">
+            <span class="me-2 fs-4 fw-bold page-title"> Incident Reports List </span>
+        </div>
 
+        <div class="col-8">
+            <form action="">
+                <div class="input-group input-group-sm ">
+                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
+                </div>
+            </form>
+        </div>
+    </div>
     {% if pasig_incident_list %}
         <div class="table-responsive">
-            <table class="table table-bordered table-striped table-hover text-center">
+            <!-- <table class="table table-bordered table-striped table-hover text-center"> -->
+            <table class="table table-hover " style="background-color: white;">
+
                 <thead>
                     <tr>
-                        <th>City</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Week</th>
-                        <th>Address</th>
-                        <th>Light</th>
+                        <th class="table-header"></th>
+                        <th class="table-header">Blotter Number</th>
+                        <th class="table-header">Investigator</th>
+                        <th class="table-header">Barangay Committed</th>
+                        <th class="table-header">Date and Time Committed</th>
+                        <th class="table-header">Case Status</th>
+                        <th class="table-header">Operation</th>
                     </tr>
                 </thead>
 
                 <tbody>
-                    <!-- view ng list using loop -->
-                    {% for inc in pasig_incident_list %}
+                    {% for incident in pasig_incident_list %}
                     <tr>
-                        <td>{{ inc.City }}</td>
-                        <td>{{ inc.Date }}</td>
-                        <td>{{ inc.Time }}</td>
-                        <td>{{ inc.Week }}</td>
-                        <td>{{ inc.Address }}</td>
-                        <td>{{ inc.Light }}</td>
-                       
+                      <td> {{ forloop.counter }}</td>
+                      <td>137403-202003-T-2020-03-0590</td>
+                      <td>Jheus Brian Lavilla</td>
+
+                      <td>{{ incident.62 }}</td>
+                      <td>{{ incident.5 }} - {{ incident.6 }}</td>
+                      <td>{{ incident.12 }}</td>
+                      <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'sign_up_validation' %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td>
                     </tr>
                     {% endfor %}
                 </tbody>

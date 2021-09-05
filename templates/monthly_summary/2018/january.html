@@ -3,8 +3,217 @@
 
 {% block design %} {% endblock %}
 
+<script>
+  {% block jquery %}
+
+      var endpoint = 'monthly/data'
+      
+      var district_labels = []
+      var district_count = []
+
+      var district1_labels = []
+      var district1_count = []
+
+      var district2_labels = []
+      var district2_count = []
+
+      var offense_labels = []
+      var offense_count = []
+
+      var vehicle_labels = []
+      var vehicle_count = []
+
+    
+      $.ajax({
+           method: "GET",
+           url: endpoint,
+           success: function(monthly_data){
+              district_labels = monthly_data.district_labels
+              district_count = monthly_data.district_count
+
+              district1_labels = monthly_data.district1_labels
+              district1_count = monthly_data.district1_count
+
+              district2_labels = monthly_data.district2_labels
+              district2_count = monthly_data.district2_count
+
+              offense_labels = monthly_data.offense_labels
+              offense_count = monthly_data.offense_count
+
+              vehicle_labels = monthly_data.vehicle_labels
+              vehicle_count = monthly_data.vehicle_count
+
+              
+              console.log(district_labels)
+              console.log(district1_labels)
+              console.log(district_count)
+              console.log("WTF")
+              setChart()
+  
+          },
+
+           error: function(error_data){
+               console.log("Errorrsds")
+               console.log(error_data)
+           }
+      })
+
+      function setChart(){
+            var monthly_offense = document.getElementById('monthly_offense'); //weekly forecasting
+            var monthly_car = document.getElementById('monthly_car'); //weekly forecasting
+            var monthly_d1 = document.getElementById('monthly_d1'); //weekly forecasting
+            var monthly_d2 = document.getElementById('monthly_d2'); //weekly forecasting
+
+            
+            var chart = new Chart(monthly_offense, {
+                type: 'bar',
+                data: {
+                    labels: offense_labels,
+                    datasets: [{
+                        label: 'Offenses',
+                        //data: [12, 19, 3, 5, 12, 3],
+                        data: offense_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    }
+                }
+            });
+
+            var chart = new Chart(monthly_car, {
+                type: 'bar',
+                data: {
+                    labels: vehicle_labels,
+                    datasets: [{
+                        label: 'Vehicle',
+                        data: vehicle_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    }
+                }
+            });
+ 
+            var chart = new Chart(monthly_d1, {
+                type: 'bar',
+                data: {
+                    labels: district1_labels,
+                    datasets: [{
+                        label: 'District 1',
+                        //data: [12, 19, 3, 5, 12, 3],
+                        data: district1_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    scales: {
+                        y: {beginAtZero: true}
+                    },
+                }
+            });
+
+            var chart = new Chart(monthly_d2, {
+                type: 'bar',
+                data: {
+                    labels: district2_labels,
+                    datasets: [{
+                        label: 'District 2',
+                        //data: [12, 19, 3, 5, 12, 3],
+                        data: district2_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    }
+                }
+            });
+
+      } //close function
+
+  {% endblock %}
+</script>
+
 {% block content %}
 <div class="content">
+  <b id="date-today">Today: </b><span id="ct6"></span>
+
     <h1>January 2018: Summarize Statistic</h1>
     <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
@@ -17,7 +226,21 @@
       </ul>
       <div class="tab-content" id="pills-tabContent">
         <!-- tab for charts -->
-        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">.d..</div>
+        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+          
+          <div class=" row" style="border:0; margin:0; padding:0; height:10%">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item mb-4"><canvas id="monthly_offense" ></canvas></li>
+              <li class="list-group-item mb-4"><canvas id="monthly_car" ></canvas></li>
+              <li class="list-group-item mb-4"><canvas id="monthly_d1" ></canvas></li>
+              <li class="list-group-item mb-4"><canvas id="monthly_d2" ></canvas></li>
+
+            </ul>
+          </div>
+        
+          
+        </div>
 
         <!-- tab for tabular data -->
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">

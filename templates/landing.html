@@ -1,17 +1,30 @@
-{% extends 'base.html' %}
+{% extends 'base_landing.html' %}
 
 {% block title %} Home {% endblock %}
 
 {% block design %} {% endblock %}
 
 {% block content %}
-<div class="content">
-    <h1>Roadcast Landing Page</h1>
-    <ul>
-        <li><a href="/login"> Login </a></li>
-        <li><a href="/admin"> Admin </a></li>
-    </ul>
-</div>
+    <div class="container">
+      <div class="row">
+
+        <div class="col-sm-6 banner-info, text">
+          <h4> Welcome to </h4>
+          <h3> ROADCAST </h3>
+          
+            <a class ="btn btn-first" href="{% url 'login' %}"> Log In </a> 
+            <br><a class ="btn btn-second" href="{% url 'signup1' %}"> Sign Up </a>
+
+          
+        </div>
+
+        <div class="col-sm-6 banner-image">
+        <br>
+          <img src = "static/image/Picture2.png" class="img-responsive, map" readonly>
+        </div>
+
+      </div>
+    </div>
   
 
 

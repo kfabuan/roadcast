@@ -1,11 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'nav_admin.html' %}
 {% block title %} Dashboard {% endblock %}
 
-{% block style %}
+{% block design %}
 
 <style>
-  
-  
+    .vl {
+      border-left: 6px solid green;
+      height: 500px;
+    }
+
+    .count-title{
+        color:red;
+    }
 </style>
 
 {% endblock %}
@@ -54,10 +60,69 @@
         })
 
         function setChart(){
+            var line_date_forecast = document.getElementById('line_date_forecast'); //weekly forecasting
+            var line_time = document.getElementById('line_time'); //time
             var ctx = document.getElementById('myChart'); //district
             var ctx2 = document.getElementById('myChart2'); //district1
             var ctx3 = document.getElementById('myChart3'); //district2
-           
+            var pie_sex = document.getElementById('pie_sex'); //age
+            var bar_offense = document.getElementById('bar_offense'); //offenses
+
+            var line_date_forecast = new Chart(line_date_forecast, {
+                type: 'line',
+                data: {
+                    labels: ["Jan", "Feb", "Mar", "April","May", "June", "July"],
+                    datasets: [
+                        {
+                            label: 'Actual',
+                            data: [65, 59, 80, 81, 56, 55, 40],
+                            fill: false,
+                            borderColor: 'rgb(65,105,225)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Forecasted',
+                            data: [, , , , 59, 49, 57],
+                            fill: false,
+                            borderColor: 'rgb(255,140,0)',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Weekly Forecasting'
+                        }
+                    }
+                }
+            });
+
+            var line_time = new Chart(line_time, {
+                type: 'line',
+                data: {
+                    labels: ["0:00:00", "2:00:00", "4:00:00", "6:00:00","8:00:00", "10:00:00", "12:00:00","14:00:00","16:00:00","18:00:00","20:00:00","22:00:00",],
+                    datasets: [{
+                        label: 'Hazardous Time',
+                        data: [65, 59, 80, 81, 56, 55, 40, 12, 41, 17, 11, 21],
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend:{
+                            
+                        },
+                        title: {
+                            display: true,
+                            text: 'Accident Prone Time'
+                        }
+                    }
+                }
+            });
 
             var myChart = new Chart(ctx, {
                 type: 'bar',
@@ -126,6 +191,7 @@
         
                 options: {
                     scaleShowValues: true,
+                    indexAxis: 'y',
                     scales: {
                         y: {beginAtZero: true},
                         x: {
@@ -186,6 +252,72 @@
                 }
             });
 
+            var pie_sex = new Chart(pie_sex, {
+                type: 'pie',
+                data: {
+                    labels: [
+                        'Male',
+                        'Female',
+                    ],
+                    datasets: [{
+                        label: 'Age',
+                        data: [300, 50,],
+                        backgroundColor: [
+                        'rgb(54, 162, 235)',
+                        'rgb(255, 99, 132)',
+                        ],
+                        hoverOffset: 4
+                    }]
+                }, 
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Age Percentage'
+                        }
+                    }
+                }
+                
+            });
+
+            var bar_offense = new Chart(bar_offense, {
+                type: 'bar',
+                data: {
+                    labels: ["Damage to Property", "Homicide", "Self-Accident", "Physical Injury"],
+                    datasets: [{
+                        label: 'Monthly Crime/Offense',
+                        data: [12, 19, 3, 5],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    }
+                }
+            });
+
+
         } //close function
 
     {% endblock %}
@@ -194,8 +326,9 @@
 {% block content %}
 
 <div class="content">
+    <b id="date-today">Today: </b><span id="ct6"></span>
 
-    {% for x in district2_labels %}
+    <!-- {% for x in district2_labels %}
     {{x}}
     {% endfor %}
   
@@ -211,33 +344,94 @@
 
     {% for x in offense_count %}
     <p>{{forloop.counter}}. {{ x }}</p>
-    {% endfor %}
+    {% endfor %} -->
 
-    <ul>
-        <li><a href="incidents/view"> Incidents List </a></li>
-        <li><a href="/logout"> Logout </a></li>
-    </ul>
+    <div class="row" style="border:0; margin:0; padding:0;">
+        <!-- first half -->
+        <div class="col-sm-6">
+          <div class="">
+            <div class="card-body mb-4" style="background-color: white;">
+                <h5 class="card-title">Road Accident Cases</h5>
 
-    <div class="row">
-        <div class="col-sm-12" >
-            <h1>Accident Statistics</h1>
+                <div class="row">
+                    <div class="col-sm-4">
+                      <div class="card">
+                        <div class="card-body text-center">
+                          <h6 style="color: #a6a6a6;">This Week</h6>
+                          <h3>120</h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                      <div class="card">
+                        <div class="card-body text-center">
+                          <h6 style="color: #a6a6a6;">Yesterday</h6>
+                          <h3>120</h3>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-4">
+                        <div class="card">
+                          <div class="card-body text-center">
+                            <h6 style="color: #a6a6a6;">Today</h6>
+                            <h3>120</h3>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ratio ratio-4x3 mb-4">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.3756171236632!2d121.05804631478892!3d14.577659989817079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c86b3a6447c5%3A0xf602c3f3781447ff!2sPolice%20Community%20Precinct%201%20(San%20Antonio%2C%20Pasig)!5e0!3m2!1sen!2sph!4v1629793647940!5m2!1sen!2sph" style="width: 100%;"></iframe>
+            </div>
+          </div>
         </div>
-    </div>
+
+        <!-- second half -->
+        <div class="col-sm-6">
+              <div class="card-body mb-4" style="background-color: white;">
+                <div class="">
+                    <canvas id="line_date_forecast" height=""></canvas>
+                </div>
+              </div>
+  
+              <div class="card-body mb-4" style="background-color: white;">
+                <div class="">
+                    <canvas id="line_time" height=""></canvas>
+                </div>
+              </div>
+          </div>
+      </div>
+
+      <div class=" row" style="border:0; margin:0; padding:0;">
+        <ul class="list-group list-group-flush">
+          <!-- <li class="list-group-item"><canvas id="myChart" ></canvas></li> -->
+          <li class="list-group-item mb-4"><canvas id="myChart2" ></canvas></li>
+          <li class="list-group-item mb-4"><canvas id="myChart3" ></canvas></li>
+        </ul>
+      </div>
     
+      <div class="row" style="border:0; margin:0; padding:0;">
+        <div class="col-sm-4 mb-4">
+            <div class="card-body" style="background-color: white;">
+                <div class="">
+                    <canvas id="pie_sex" height="135"></canvas>
+                </div>
+            </div>
+        </div>
 
-    <div class="col-sm-4 mt-4">
-        <canvas id="myChart" width="400" height="400"></canvas>
-    </div>
-    
-    <div class="col-sm-4 mt-4">
-        <canvas id="myChart2" width="500" height="400"></canvas>
-    </div>
+        <div class="col-sm-8 mb-4">
+            <div class="card-body" style="background-color: white;">
+                <div class="">
+                    <canvas id="bar_offense" height="135"></canvas>
+                </div>
+            </div>
+        </div>
+      </div>
 
-    <div class="col-sm-4 mt-4">
-        <canvas id="myChart3" width="400" height="400"></canvas>
-    </div>
-
-
+  </div>
 </div>
     
 {% endblock content %}

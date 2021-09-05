@@ -1,0 +1,81 @@
+{% extends 'nav_genpub.html' %}
+{% block title %} Home {% endblock %}
+
+{% block design %}
+<style>
+    th, .level-title {
+        color: #050087;
+    }
+
+    
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <span class="me-2 fs-4 fw-bold level-title"> Settings </span>
+        <li class="nav-item" role="presentation">
+            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-account" type="button" role="tab" aria-controls="pills-account" aria-selected="true"><i class="bi bi-person-fill"></i>&nbsp;Account</button>
+        </li>
+        
+        <li class="nav-item" role="presentation">
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-2-tab" data-bs-toggle="pill" data-bs-target="#pills-password" type="button" role="tab" aria-controls="pills-password" aria-selected="false"><i class="bi bi-lock-fill"></i>&nbsp;Password</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-3-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-notifications" role="tab" aria-controls="pills-notifications" aria-selected="false"><i class="bi bi-bell-fill"></i>&nbsp;Notification</button>
+        </li>
+
+        <li class="nav-item" role="presentation">
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-4-tab" data-bs-toggle="pill" data-bs-target="#pills-help" type="button" role="tab" aria-controls="pills-help" aria-selected="false"><i class="bi bi-question-circle-fill"></i>&nbsp;Help</button>
+        </li>
+
+        <li>
+        <form action="">
+            <div class="input-group input-group-sm ">
+                <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
+            </div>
+        </form>
+</li>
+      </ul>
+      <div class="tab-content" id="pills-tabContent">
+          
+        <!-- tab for level 1-->
+        <div class="tab-pane fade show active" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab">
+           1
+        </div>
+
+        <!-- tab for level 2 -->
+        <div class="tab-pane fade" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab">
+           2
+        </div>
+
+        <!-- tab for level 3 -->
+        <div class="tab-pane fade" id="pills-notifications" role="tabpanel" aria-labelledby="pills-notifications-tab">
+
+            <div class="container" style="background-color: white; ">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" >
+                <label class="form-check-label" for="flexSwitchCheckDefault">Receive notification about newly added report in Whole Pasig City</label>
+            </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
+                <label class="form-check-label" for="flexSwitchCheckChecked">Receive notification about newly added report in specific barangays only</label>
+            </div>
+            </div>
+        </div>
+
+        <!-- tab for level 4 -->
+        <div class="tab-pane fade" id="pills-help" role="tabpanel" aria-labelledby="pills-help-tab">
+4
+        </div>
+
+      </div>
+
+  </div> <!--closing content div-->
+{% endblock %}

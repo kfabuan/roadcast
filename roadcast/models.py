@@ -29,6 +29,7 @@ class Tbl_barangay(models.Model):
         return self.Barangay 
 
 class Tbl_pasig_incidents(models.Model):
+  
    
     # DISTRICT = (
     #     ('District 1', (
@@ -110,4 +111,5 @@ class Tbl_pasig_incidents(models.Model):
     added_by = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
 
     def __str__(self):
-        return '{}-{}-{}'.format(self.City, self.Barangay, self.Date )
+        model = Tbl_barangay
+        return '{}-{}-{}'.format(self.City, model.Barangay, self.Date )

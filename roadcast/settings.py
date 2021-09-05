@@ -79,7 +79,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_roadcastapp',
-        'USERNAME': 'root',
+        'USER': 'root',
         'PASSWORD': '1234',
         'PORT': '3306',
         'HOST': 'localhost',

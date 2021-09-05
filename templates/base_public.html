@@ -14,9 +14,6 @@
 
     <!-- css -->
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/admin.css' %}">
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 
   
    {% block design %} {% endblock %}
@@ -72,14 +69,13 @@
         <div class="nav_bar">
           <img src="{% static 'image/police.jpg' %}" class="mobile_profile_image" alt="PNP Profile">
           <i class="fa fa-bars nav_btn"></i>
-          <h4 id="user-type">Welcome Mr. Servidad</h4>
+          <h4 id="user-type">Welcome Public</h4>
         </div>
         <div class="mobile_nav_items">
         <a href="/dashboard"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
-        <a href="/report"><i class="fas fa-cogs"></i><span>Summary of Reports</span></a>
         <a href="/incidents/view"><i class="fas fa-table"></i><span>List of Reports</span></a>
-        <a href="/incidents/add"><i class="fas fa-th"></i><span>Add Incident Report</span></a>
-        <a href="/notification"><i class="fas fa-bell"></i><span>Notifications</span></a>
+        <a href="/sendreport"><i class="fas fa-th"></i><span>Send Report</span></a>
+        <a href="settings/notification"><i class="fas fa-bell"></i><span>Notifications</span></a>
         <a href="#"><i class="fas fa-sliders-h"></i><span>Settings</span></a>
         </div>
       </div>
@@ -92,9 +88,8 @@
           <h4 id="user-type">Welcome Mr. Servidad</h4>
         </div>
         <a href="/dashboard"><i class="fas fa-desktop"></i><span>Dashboard</span></a>
-        <a href="/report"><i class="fas fa-cogs"></i><span>Summary of Reports</span></a>
         <a href="/incidents/view"><i class="fas fa-table"></i><span>List of Reports</span></a>
-        <a href="/incidents/add"><i class="fas fa-th"></i><span>Add Incident Report</span></a>
+        <a href="/incidents/add"><i class="fas fa-th"></i><span>Send Report</span></a>
         <a href="/notification"><i class="fas fa-bell"></i><span>Notifications</span></a>
         <a href="#"><i class="fas fa-sliders-h"></i><span>Settings</span></a>
       </div>
@@ -107,10 +102,10 @@
         $(document).ready(function(){
             {% block jquery %} {% endblock %}
         })
-      </script>
+    </script>
 
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
  
  <!-- Latest compiled and minified JavaScript -->

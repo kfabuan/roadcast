@@ -1,0 +1,72 @@
+{% extends 'nav_subrep.html' %}
+{% block title %} Home {% endblock %}
+
+{% block design %}
+<style>
+    th {
+        color: #050087;
+    }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <b id="date-today">Today: </b><span id="ct6"></span>
+
+        <!-- notifications for substation representative -->
+            <form action="">
+                <div class="input-group input-group-sm mb-3 mt-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
+                  </div>
+            </form>
+        
+            <table class="table" style="background-color: white;">
+                <tbody>
+                    <tr>
+                        <td> <input type="checkbox" name="" id=""></td>
+                        <td> 09/26/2020 15:25:00</td>
+                        <td> Chief of Police </td>
+                        <td> Appreciation Message</td>
+                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
+                    </tr>
+                   
+                    <tr>
+                        <td> <input type="checkbox" name="" id=""></td>
+                        <td> 09/26/2020 15:25:00</td>
+                        <td> Alert </td>
+                        <td> New Incident Report</td>
+                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
+                    </tr>
+        
+                    <tr>
+                        <td> <input type="checkbox" name="" id=""></td>
+                        <td> 09/26/2020 15:25:00</td>
+                        <td> Alert </td>
+                        <td> New Incident Report</td>
+                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
+                    </tr>
+        
+                    <tr>
+                        <td> <input type="checkbox" name="" id=""></td>
+                        <td> 09/26/2020 15:25:00</td>
+                        <td> Chief of Police </td>
+                        <td> Appreciation Message</td>
+                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
+                    </tr>
+        
+                    <tr>
+                        <td> <input type="checkbox" name="" id=""></td>
+                        <td> 09/26/2020 15:25:00</td>
+                        <td> Alert </td>
+                        <td> New Incident Report</td>
+                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        
+      </div>
+
+  </div> <!--closing content div-->
+{% endblock %}
