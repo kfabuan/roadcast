@@ -1,0 +1,128 @@
+  {% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+   {% block design %} {% endblock %}
+      <link rel="stylesheet" href="{% static 'css/signup.css' %}">
+      <meta charset="utf-8">
+     
+      <script src="https://kit.fontawesome.com/c84b46effb.js" crossorigin="anonymous"></script>
+      <script src="https://f001.backblazeb2.com/file/buonzz-assets/jquery.ph-locations-v1.0.0.js"></script>
+
+    <!-- header -->
+  <title>Roadcast | {% block title %} {% endblock %}</title>
+
+{% block content %} {% endblock %}       
+    <script>
+        $(document).ready(function(){
+            {% block jquery %} {% endblock %}
+        })
+    </script> 
+
+ 
+<script>
+    const signUpButton = document.getElementById('signUp');
+    const signInButton = document.getElementById('signIn');
+    const container = document.getElementById('container');
+
+    signUpButton.addEventListener('click', () => {
+      container.classList.add("right-panel-active");
+    });
+
+    signInButton.addEventListener('click', () => {
+      container.classList.remove("right-panel-active");
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.0/jquery.js"></script>
+        <!-- script type="text/javascript" src="../jquery.ph-locations.js"></script -->
+        <script type="text/javascript" src="https://f001.backblazeb2.com/file/buonzz-assets/jquery.ph-locations.js"></script>
+        <script type="text/javascript">
+
+        var my_handlers = {
+
+               fill_provinces:  function(){
+                   var region_code = $(this).val();
+                   $('#province').ph_locations('fetch_list', [{"region_code": region_code}]);
+
+               },
+
+               fill_cities: function(){
+                   var province_code = $(this).val();
+                   $('#city').ph_locations('fetch_list', [{"province_code": province_code}]);
+               },
+
+
+               fill_barangays: function(){
+                   var city_code = $(this).val();
+                   $('#barangay').ph_locations('fetch_list', [{"city_code": city_code}]);
+               }
+        };
+
+           $(function(){
+               $('#region').on('change', my_handlers.fill_provinces);
+               $('#province').on('change', my_handlers.fill_cities);
+               $('#city').on('change', my_handlers.fill_barangays);
+
+               $('#region').ph_locations({'location_type': 'regions'});
+               $('#province').ph_locations({'location_type': 'provinces'});
+               $('#city').ph_locations({'location_type': 'cities'});
+               $('#barangay').ph_locations({'location_type': 'barangays'});
+
+               $('#region').ph_locations('fetch_list');
+           });
+
+           var password = document.getElementById("password"), confirm_password = document.getElementById("confirm_password");
+
+          function validatePassword(){
+
+              if(password.value != confirm_password.value) {
+                  confirm_password.setCustomValidity("Passwords Don't Match");
+              }else {
+                  confirm_password.setCustomValidity('');
+              }
+          }
+
+          password.onchange = validatePassword;
+          confirm_password.onkeyup = validatePassword;
+       </script>
+       <script>    
+    var allValue = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P',
+                        'Q','R','S','T','U','V','W','X','Y','Z','a','b','c','d','e','f','g','h','i',
+                        'j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','1','2',
+                        '3','4','5','6','7','8','9','0']
+
+var cVal1 = allValue[Math.floor(Math.random()*allValue.length)];
+var cVal2 = allValue[Math.floor(Math.random()*allValue.length)];
+var cVal3 = allValue[Math.floor(Math.random()*allValue.length)];
+var cVal4 = allValue[Math.floor(Math.random()*allValue.length)];
+var cVal5 = allValue[Math.floor(Math.random()*allValue.length)];
+var cVal6 = allValue[Math.floor(Math.random()*allValue.length)];
+
+var cValue = cVal1+cVal2+cVal3+cVal4+cVal5+cVal6;
+//alert(cValue)
+
+captchaValue.innerHTML = cValue
+thisValue = "";
+
+inputCaptcha.addEventListener('change',function(){
+	thisValue = inputCaptcha.value;
+	//alert(thisValue)
+})
+
+submitBtn.addEventListener('click',function(){
+	if(cValue == thisValue){
+		alert('Valid');
+		document.logForm.submit()
+	}else if(inputCaptcha.value == ""){
+		alert('Invalid Captcha');
+	}else{
+		alert('Invalid Captcha');
+	}
+})
+
+</script>
+
+ </html>

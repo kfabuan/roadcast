@@ -1,0 +1,160 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} List of members {% endblock %}
+
+{% block content %}
+
+<div class="content">
+  <!--Date-->
+    <div class="top-content">
+      
+      <p id='date'>
+      <i class="fas fa-calendar-day" id="date-today-icon"></i>
+      <b id="date-today">Today: </b><span id="ct6"></span>
+      </p>
+    </div>
+    
+<div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" checked>
+  <label class="btn btn-outline-primary" for="btnradio1">Statistician</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio2">Representatives</label>
+
+  <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off">
+  <label class="btn btn-outline-primary" for="btnradio3">General Public</label>
+</div>
+  
+<div class="section"><h3 style="font-family: Roboto">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Members: &nbsp;</h3>
+ 
+    <form class="d-flex">
+      <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" style="font-family: Roboto">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  
+</div>
+<div class="box">
+<table class="table table-bordered" width="100%" cellpadding="30px" cellspacing="" style="text-align:center; overflow-y=scroll;" > 
+  <thead class="table-light">
+    <th>Photo</th>
+    <th>Name</th>
+    <th>District</th>
+    <th>Department</th>
+    <th>Position</th>
+    <th>Operation</th>
+  </thead>
+ <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-user-tie fa-3x"></i></td>
+    <td>Ryan Servidad</td>
+    <td>Pasig</td>
+    <td>Investigation</td>
+    <td>Colonel</td>
+    <td><a href=="#"><i class="fas fa-edit fa-lg"></a></i></td>
+  </tr>
+</table>
+</div>
+
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav_btn').click(function(){
+        $('.mobile_nav_items').toggleClass('active');
+      });
+
+      $('#submit_form').click(function(){
+        var selected_offense = new Array();
+        var chk_tbl_offense = document.getElementById("tbl_offense");
+        var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+        for (var i=0; i<selchk.length; i++) {
+          if(selchk[i].checked){
+            selected_offense.push(selchk[i].value);
+          }
+        }
+        if(selected_offense.length>0){
+          console.log(selected_offense);
+         // document.getElementById('display_offense').innerHTML=selected_offense;
+         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+
+          alert(selected_offense);
+          alert(tryyyy)
+        }
+
+        var incident_date = document.getElementById("DateCommitted").value;
+        alert(incident_date);
+
+        });
+
+    });
+    </script>
+  
+    <script>
+      var today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+{% endblock %}
+
+{% block jquery %} 
+
+{% endblock %}
+
+
+
+

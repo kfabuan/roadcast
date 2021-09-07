@@ -187,14 +187,12 @@ body{
     right: 0;
     text-decoration: none;
     font-size: 14px;
-
   }
 
   #date-today, #date-today-icon {
     color: #1b5082;
     text-transform: uppercase;
     margin-top: 50px;
-    float: right;
   }
 
   .separator{
@@ -412,9 +410,3 @@ section {
   border-color: rgba(0,0,0,0.15);
   color: #575756;
 }
-
-@media screen and (max-width: 780px){
-  .card-incident{
-    flex-direction: column;
-   
-  }

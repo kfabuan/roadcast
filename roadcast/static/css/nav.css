@@ -32,6 +32,7 @@ a {
     width: 100%;
     height: var(--header-height);
     position: fixed;
+    opacity:.5;
     top: 0;
     left: 0;
     display: flex;
@@ -184,3 +185,4 @@ a {
         padding-left: calc(var(--nav-width) + 188px)
     }
 }
+

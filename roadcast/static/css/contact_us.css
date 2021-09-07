@@ -1,14 +1,14 @@
 /* body & header */
 
 body {
-    background-color: #EDFAFF;
+    background-color: #fff;
     margin: 0;
     padding: 0;
     font-family: "Roboto", sans-serif;
 }
 
 .head {
-    width: 100%;
+    max-width: 100%;
     height: 50px;
     background-color: #edfaff;
 }
@@ -47,7 +47,7 @@ z-index: -1;
 
 .contact-title { /*Contact Us title sa image*/
 position: absolute;
-top: 95px;
+top: 35px;
 left: 45px;
 }
 
@@ -72,27 +72,24 @@ color: #1b5082;
 letter-spacing: 1px;
 
 position: absolute;
-top: 150px;
+top: 80px;
 left: 45px;
 }
 
 .white-contain { /* White container na nakapatong sa image */
-width: 75%;
+max-width: 75%;
 height: auto;
 display: flex;
 background-color: #fff;
 box-shadow: 0 0 0px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+/* margin-top: -160px; */
 
-margin-top: -160px;
+margin-top: 40px;
 margin-bottom: 60px;
 border-radius: 20px;
 position: relative;
 
 padding: 30px 40px 50px 40px;
-}
-
-.contact-title, .contact-minor{
-    left: 250px;
 }
 
 .block-1 {
@@ -106,7 +103,7 @@ padding: 30px 40px 50px 40px;
 }
 
 .block-3 {
-    width: auto;
+        width: auto;
     position: relative;
     top: 70px;
 }
@@ -135,7 +132,6 @@ padding: 30px 40px 50px 40px;
 
 .send-report {
     margin-bottom: 60px;
-    
 }
 
 .send-title { 
@@ -143,14 +139,13 @@ padding: 30px 40px 50px 40px;
     margin-bottom: 50px;
     margin-top: 20px;
     height: auto;
-    width: 75%;
+    max-width: 75%;
 
     border: 2px transparent dashed;
     border-radius: 1px 5px 1px 5px;
     border-color: rgba(0,0,0,0.15);
     padding: 30px 40px 30px 40px;
     color: #575756;
-    background-color: #fff;
 }
 
 .send-1, .send-2 { 
@@ -239,7 +234,7 @@ p {
     margin-top: 18px;
     margin-bottom: 20px;
     display: inline-block;
-    width: auto;
+    max-width: auto;
     height: auto;
   
     background:#333;
@@ -264,10 +259,14 @@ p {
     background: rgb(34, 32, 32);
   }
 
+  .email-small {
+      display: none;
+  }
+
   /* contact_number */
 
   .substation-c {
-    width: auto;
+    max-width: auto;
     text-align: left;
     padding: 50px 30px 20px 30px;
   }
@@ -284,4 +283,205 @@ p {
   #contact-icon {
       font-size: 16px;
       margin-right: 10px;
+  }
+
+
+@media only screen and (max-width:600px) {
+    
+.head {
+    height: 40px;
+}
+
+.contact-us, .about-us {
+    font-size: 10px;
+}
+
+.contact-1, .contact-2 { 
+display: none;
+}
+
+.contact-minor { 
+display: none;
+}
+
+/*start here */
+
+.white-contain { 
+max-width: 100%;
+margin-top: -55px;
+margin-bottom: 50px;
+}
+
+.block-1 {
+    width: 250px;
+    height: auto;
+} 
+
+.block-2 {
+    width: 250px;
+    height: auto;
+}
+
+.block-3 {
+    width: 0;
+    position: relative;
+    top: 70px;
+    right: -5px;
+}
+
+.email-big {
+    display: none;
+}
+
+.email-small {
+    display: inline-block;
+}
+
+.fas {
+    font-size: 30px;
+}
+
+#see-more {
+    font-size: 30px;
+}
+
+.send-title { 
+    text-align: center;
+    margin-bottom: 50px;
+    margin-top: 20px;
+    height: auto;
+    max-width: 60%;
+
+    border: 2px transparent dashed;
+    border-radius: 1px 5px 1px 5px;
+    border-color: rgba(0,0,0,0.15);
+    padding: 30px 40px 30px 40px;
+    color: #575756;
+}
+
+.send-1, .send-2 { 
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.send-1 { 
+    color: #1b5082;
+    margin-right: 4px;
+}
+
+.send-2 { 
+    color: #5a96d2;
+}
+
+.block-title {
+    color: #212121;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.block-content {
+    color: #605859;
+    font-size: 11px;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+#paper-icon { 
+    font-size: 30px;
+    color: #1b5082;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+
+.report-explain { 
+    color: #605859;
+    font-size: 10px;
+    letter-spacing: 0.9px;
+}
+
+p {
+    margin-bottom: 10px;
+}
+
+.white-contain-2 {
+    width: 81%;
+    height: auto;
+    display: flex;
+
+    margin-top: 20px;
+    margin-bottom: 60px;
+}
+
+#submit_form { 
+    font-size: 11px;
+  }
+  
+/* contact_number */
+
+  .substation-c {
+    max-width: auto;
+    text-align: left;
+    padding: 20px 10px 20px 10px;
+  }
+
+  .bold {
+      font-size: 14px;
+  }
+
+  .italic {
+      color: #605859;
+      font-size: 12px;
+  }
+
+  #contact-icon {
+      font-size: 14px;
+      margin-right: 10px;
+  }
+  }
+
+  /* For about_us */
+
+  .about, .services {
+    margin-bottom: 50px;
+  }
+
+  .about-desc, .history-desc {
+      width: 80%;
+      text-align: justify;
+  }
+
+  .about-title, .history-title {
+      margin-top: 50px;
+      margin-bottom: 30px;
+  }
+
+  .services-title {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+
+  .png {
+      width: 120px;
+      height: auto;
+  }
+
+  .service {
+      display: inline-block;
+      margin-left: 110px;
+      margin-right: 110px;
+  }
+  
+  .parag {
+      margin-top: 15px;
+      width: 200px;
+  }
+
+  .history {
+      background-color: #cedff2;
+      width: 100%;
+      height: auto;
+      padding-top: 5px;
+      padding-bottom: 50px;
   }

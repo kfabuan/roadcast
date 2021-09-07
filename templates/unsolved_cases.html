@@ -11,9 +11,8 @@
 {% endblock %}
 
 {% block content %}
-<div class="content">
     
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
         <span class="me-2 fs-4 fw-bold level-title"> Urgency Level </span>
         <li class="nav-item" role="presentation">
             <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-level-1" type="button" role="tab" aria-controls="pills-level-1" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;Level 1</button>
@@ -40,7 +39,7 @@
         </form>
 </li>
       </ul>
-      <div class="tab-content" id="pills-tabContent">
+      <div class="tab-content row" id="pills-tabContent">
           
         <!-- tab for level 1-->
         <div class="tab-pane fade show active" id="pills-level-1" role="tabpanel" aria-labelledby="pills-level-1-tab">
@@ -92,5 +91,4 @@
 
       </div>
 
-  </div> <!--closing content div-->
 {% endblock %}

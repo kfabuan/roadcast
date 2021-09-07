@@ -1,0 +1,136 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} View investigators {% endblock %}
+
+{% block content %}
+
+<div class="content">
+  <!--Date-->
+    <div class="top-content">
+      
+      <p id='date'>
+      <i class="fas fa-calendar-day" id="date-today-icon"></i>
+      <b id="date-today">Today: </b><span id="ct6"></span>
+      </p>
+    </div>
+     <div class="section"><h2 style="font-family: Roboto">&nbsp;&nbsp;&nbsp;<a href="/investigators"><i class="fas fa-chevron-left"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#164e80">New Incident &nbsp;</h2> </div>
+  
+    
+<div class="section"><h3 style="font-family: Roboto">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Investigators: &nbsp;</h3>
+ 
+    <form class="d-flex">
+      <input class="form-control me-2" type="Add"  style="font-family: Roboto">
+      <button class="btn btn-outline-success" type="submit">Search</button>
+    </form>
+  
+</div>
+
+<div class="box">
+<table class="table table-bordered" width="100%" cellpadding="30px" cellspacing="" style="text-align:center; overflow-y=scroll;" > 
+  <thead class="table-light">
+    <th>Blotter Number</th>
+    <th>Barangay Commited</th>
+    <th>Date and Time Added</th>
+    <th>Case</th>
+    <th>Operation</th>
+  </thead>
+ <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+  <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+  <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+  <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+  <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+  <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+  <tr>
+    <td>137403-202003-T-2020-03-0590</td>
+    <td>Santolan</td>
+    <td>03/20/2021 21:00:05</td>
+    <td>Unsolved</td>
+    <td><a href="#"><i class="fas fa-eye fa-lg"></i></td>
+  </tr>
+</table>
+</div>
+
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav_btn').click(function(){
+        $('.mobile_nav_items').toggleClass('active');
+      });
+
+      $('#submit_form').click(function(){
+        var selected_offense = new Array();
+        var chk_tbl_offense = document.getElementById("tbl_offense");
+        var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+        for (var i=0; i<selchk.length; i++) {
+          if(selchk[i].checked){
+            selected_offense.push(selchk[i].value);
+          }
+        }
+        if(selected_offense.length>0){
+          console.log(selected_offense);
+         // document.getElementById('display_offense').innerHTML=selected_offense;
+         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+
+          alert(selected_offense);
+          alert(tryyyy)
+        }
+
+        var incident_date = document.getElementById("DateCommitted").value;
+        alert(incident_date);
+
+        });
+
+    });
+    </script>
+  
+    <script>
+      var today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+{% endblock %}
+
+{% block jquery %} 
+
+{% endblock %}
+
+
+
+

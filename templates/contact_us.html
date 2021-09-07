@@ -1,11 +1,11 @@
-{% extends 'base_contactus.html' %}
+{% extends 'nav_main.html' %}
 
 {% block title %} Contact Us {% endblock %}
 
 {% block design %} {% endblock %}
 
 {% block content %}   
-    <div class="container,img-bg">
+    <div class="container img-bg">
         <img src="static/image/4.jpg" alt="Contact Us" style="max-width: 100%; height: auto; display: block;">
 
         <div class="contact-title">
@@ -37,7 +37,7 @@
             <p class="block-title">
                 Email Us
             </p>
-            <p>
+            <p class="text-wrap">
             <a href="mailto:pnp.pasigcity@gmail.com?subject=Get%20in%20touch" class="block-content">
                 pnp.pasigcity@gmail.com
             </a></p>
@@ -54,8 +54,8 @@
             <label class="send-1">Send a</label>
             <label class="send-2"> Report</label><br>
             <p class="report-explain">Want to send a report to Pasig City Police Station of an incident that had just occured? </p><br>
-            <!-- <button id="submit_form" type="submit" value="">Report an Incident</button> -->
-            <a class="btn" id="submit_form" href="{% url 'submit_report' %}" role="button" type="submit">Report an Incident</a>
+<center><a class="btn" href="{% url 'submit_report' %}" role="button" id="submit_form">Report an Incident</a></center>
+
         </div>
     </div>
 

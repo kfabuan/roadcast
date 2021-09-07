@@ -1,0 +1,244 @@
+{% extends 'nav_genpub.html' %}
+
+{% block title %} list of reports {% endblock %}
+
+{% block content %}
+
+
+
+<div class="content">
+  <!--Date-->
+    <div class="top-content">
+      
+      <p id='date'>
+      <i class="fas fa-calendar-day" id="date-today-icon"></i>
+      <b id="date-today">Today: </b><span id="ct6"></span>
+      </p>
+    </div>
+ <div class="section"><h2 style="font-family: Roboto">&nbsp;&nbsp;&nbsp;<a href="#"><i class="fas fa-chevron-left"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<font color="#164e80">New Incident &nbsp;</h2>
+
+  
+</div>
+ <!--Incident Details-->
+           
+            <div class="separator">Incident Details</div>
+           
+      
+            <form action="{% url 'process_add_incident' %}" method="post" enctype="multipart/form-data">
+      
+              <!-- cross-site request forgery -->
+
+              <!--{% csrf_token %} -->   
+              
+              <div class="incident-details">
+          <fieldset disabled>
+          <div class="card-incident">
+          
+            <div class="item">Date Commited: <br><input type="date" id="DateCommitted" name="DateCommitted" class="form-field" placeholder="Date"></div>
+            <div class="item">Time Commited: <br><input type="time" id="currentTime" class="form-field"></div>
+      
+            <div class="item">Collision Type: <br><select name="collision_type" id="collision_type" class="form-field">
+            <option value="" selected="true" disabled="disabled">Choose Collision Type</option>
+            <option value="Angle Collision" selected>Angle Collision</option>
+              <option value="Bumped From Behind">Bumped From Behind</option>
+              <option value="Clash">Clash</option>
+              <option value="Damage to Property">Damage to Property</option>
+              <option value="Head On">Head On</option>
+              <option value="Hit and Run">Hit and Run</option>
+              <option value="Hit Animals">Hit Animals</option>
+              <option value="Hit Object On Road">Hit Object On Road</option>
+              <option value="Hit Object Off Road">Hit Object Off Road</option>
+              <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
+              <option value="Hit Pedestrian">Hit Pedestrian</option>
+              <option value="Hit While Parked">Hit While Parked</option>
+              <option value="Multi Vehicle">Multi Vehicle</option>
+              <option value="Rear End">Rear End</option>
+              <option value="Self Accident">Self Accident</option>
+              <option value="Impact">Impact</option>
+              <option value="Sideswiped">Sideswiped</option>
+              <option value="Side Impact">Side Impact</option>
+              <option value="Right Angle">Right Angle</option>
+              <option value="Others">Others</option>
+            </select></div>
+      
+            <div class="item">Weather: <br><select name="weather" id="weather" class="form-field">
+            <option value="" selected="true" disabled="disabled">Choose Weather</option>
+              <option value="Sun" selected>Sun</option>
+              <option value="Fair">Fair</option>
+              <option value="Light Rain">Light Rain</option>
+              <option value="Rainy">Rainy</option>
+              <option value="Wind">Wind</option>
+              </select>
+            </div>
+      
+            <div class="item">Surface Type: <br><select name="surface_type" id="surface_type" class="form-field">
+            <option value="" selected="true" disabled="disabled">Choose Surface Type</option>
+              <option value="Asphalt" selected>Asphalt</option>
+              <option value="Concrete">Concrete</option>
+              <option value="Soil">Soil</option>
+            </select></div>
+      
+            <div class="item">Road Character: <br>
+            <select name="road_character" id="road_character" class="form-field">
+            <option value="" selected="true" id="disabledInput" disabled="disabled" placeholder="disabledSelect" disabled>Straight/Flat</option>
+               <option value="Straight Flat" selected>Straight/Flat</option>
+               <option value="Straight Incline">Straight/Incline</option>
+              <option value="Curve">Curve</option>
+              <option value="Curve Incline">Curve/Incline</option>
+              <option value="Upwards">Upwards</option>
+              <option value="Downwards">Downwards</option>
+            </select></div>
+      
+            <div class="item">Surface Condition: <br><select name="surface_condition" class="form-field">
+            <option value="" selected="true" disabled="disabled">Choose Surface Condition</option>
+              <option value="Dry" selected>Dry</option>
+              <option value="Wet">Wet</option>
+              <option value="Sand">Sand</option>
+            </select></div>
+      
+             <div class="item">Road Repair: <br>
+             <input type="radio" class="radio-space" name="road-repair" id="road-yes" value="Yes" checked>
+                <label for="road-yes" >Yes</label>
+                <input type="radio" class="radio-space" name="road-repair" id="road-no" value="No" >
+                <label for="road-no">No</label>
+              </div>
+      
+            <div class="item">Hit and Run: <br>
+            <input type="radio" name="hit-and-run" class="radio-space" id="hit-yes" value="Yes" checked>
+                <label for="hit-yes" >Yes</label>
+                <input type="radio" name="hit-and-run" class="radio-space" id="hit-no" value="No">
+                <label for="hit-no">No</label></div>
+      
+            
+            <div class="item">Offense: <br>
+      
+              <table id ="tbl_offense" width="100%">
+                <tr>
+                  <td>
+                    <input type="checkbox" class="radio-space" id="Damage to Property" name="Damage to Property" value="Damage to Property" checked><label> Damage to Property</label><br>
+                    <input type="checkbox" class="radio-space" id="Self Accident" name="Self Accident" value="Self Accident"><label> Self Accident</label><br>
+                    <input type="checkbox" class="radio-space" id="Physical Injury" name="Physical Injury" value="Physical Injury"><label> Physical Injury</label><br>
+                    <input type="checkbox" class="radio-space" id="Homicide" name="Homicide" value ="Homicide"><label> Homicide</label>
+                  </td>
+                </tr>
+              </table>
+              
+              <!-- <div class="item" id="display_offense">Offense: <input type="text" id="display_offense" name ="display_offense" class="form-field" value=""></div> -->
+            
+            </div>
+      
+           </div>
+           
+          </div>
+          <!--Place commited-->
+    
+      <div class="separator">Location Details</div>
+      
+      <fieldset disabled>
+      <form>
+    <div class="incident-details">
+    
+    <div class="card-incident">
+      <div class="item">City: <input type="text" value="Pasig City" class="form-field" readonly></div>
+
+      <div class="item">Barangay: <select name="Barangay" id="Barangay" class="form-field" onchange="selectdistrict(event)">
+      <option disabled="true" selected>Choose a Barangay</option>
+      {% for brgy in brgy_list %}
+      <option> {{ brgy }}</option>
+
+      {% endfor %}
+     <option value="Bagong Ilog">Bagong Ilog</option>
+      <option value="Bagong Katipunan">Bagong Katipunan</option>
+      <option value="Bambang" selected>Bambang</option>
+      <option value="Buting">Buting</option>
+      <option value="Caniogan">Caniogan</option>
+      <option value="Kalawaan">Kalawaan</option>
+      <option value="Kapasigan">Kapasigan</option>
+      <option value="Kapitolyo">Kapitolyo</option>
+      <option value="Malinao">Malinao</option>
+      <option value="Oranbo">Oranbo</option>
+      <option value="Palatiw">Palatiw</option>
+      <option value="Pineda">Pineda</option>
+      <option value="Sagad">Sagad</option>
+      <option value="San Antonio">San Antonio</option>
+      <option value="San Joaquin">San Joaquin</option>
+      <option value="San Jose">San Jose</option>
+      <option value="San Nicolas">San Nicolas</option>
+      <option value="Santa Cruz">Santa Cruz</option>
+      <option value="Santa Rosa">Santa Rosa</option>
+      <option value="Santo Tomas">Santo Tomas</option>
+      <option value="Sumilang">Sumilang</option>
+      <option value="Ugong">Ugong</option>
+      <option value="Dela Paz">Dela Paz</option>
+      <option value="Manggahan">Manggahan</option>
+      <option value="Maybunga">Maybunga</option>
+      <option value="Pinagbuhatan">Pinagbuhatan</option>
+      <option value="Rosario">Rosario</option>
+      <option value="San Miguel">San Miguel</option>
+      <option value="Santolan">Santolan</option>
+      <option value="Santa Lucia">Santa Lucia</option> 
+      </select></div>
+      
+     
+
+    <div class="item">Along: <input type="text" value="Market Avenue" class="form-field" ></div>
+    <div class="item">Corner: <input type="text" value="Marcos Highway" class="form-field" ></div>
+     <div class="item">Place Commited: <input type="text" id="place" value="Marcos Highway, Market Avenue, Barangay Bambang, Pasig City" class="form-field" ></div>
+     </div>
+      </div>
+     
+      <div class="separator">Narrative of the Incident</div>
+      <br><br>
+     <textarea class="narrative" placeholder="A brief description of what happened or its details. . ." ></textarea> 
+    <center><button id="submit_form" type="submit" value="">Submit </button></center>
+    
+     </form>
+     </fieldset>
+     
+<br><br>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav_btn').click(function(){
+        $('.mobile_nav_items').toggleClass('active');
+      });
+
+      $('#submit_form').click(function(){
+        var selected_offense = new Array();
+        var chk_tbl_offense = document.getElementById("tbl_offense");
+        var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+        for (var i=0; i<selchk.length; i++) {
+          if(selchk[i].checked){
+            selected_offense.push(selchk[i].value);
+          }
+        }
+        if(selected_offense.length>0){
+          console.log(selected_offense);
+         // document.getElementById('display_offense').innerHTML=selected_offense;
+         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+
+          alert(selected_offense);
+          alert(tryyyy)
+        }
+
+        var incident_date = document.getElementById("DateCommitted").value;
+        alert(incident_date);
+
+        });
+
+    });
+    </script>
+  
+    <script>
+      var today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+</div>
+
+{% endblock %}
+
+{% block jquery %} 
+
+{% endblock %}

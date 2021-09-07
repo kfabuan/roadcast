@@ -32,35 +32,35 @@ urlpatterns = [
     path('contactus', views.contact_us, name='contact_us'),
     path('contactno', views.contact_no, name='contact_no'),
 
-
-    path('signup1', views.sign_up1, name='signup1'),
-    path('signup2', views.sign_up2, name='signup2'),
-    path('signup3', views.sign_up3, name='signup3'),
+    path('signup', views.sign_up, name='sign_up'),
     path('signup/validation', views.sign_up_validation, name='sign_up_validation'),
-
-
     path('dashboard', DashboardView.as_view(), name='dashboard'),
     path('dashboard/data', views.get_data, name='data'),
-
-
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
-
     path('report/submit', views.submit_report, name='submit_report'),
-
     path('report', views.report_summary, name='report_summary'),
     path('report/monthly', Report_monthly.as_view(), name='report_monthly'),
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
 
     path('notification', views.notification, name='notification'),
+    path('public/notification', views.public_notification, name='public_notification'),
+
     path('substation/notification', views.sub_notification, name='sub_notification'),
-
-    
-
     path('unsolvedcases', views.unsolved_cases, name='unsolved_cases'),
 
-    path('logout', views.logout, name='logout'),
+    path('audit', views.admin_audit_trail, name='admin_audit_trail'),
+    path('memberlist', views.admin_list_members, name='admin_list_members'),
+    path('departments', views.admin_departments, name='admin_departments'),
+    path('investigators', views.admin_investigators, name='admin_investigators'),
+    path('investigator/view', views.admin_view_investigators, name='admin_view_investigators'),
+    # path('gen_notif', views.gen_notif, name='gen_notif'),
+    # path('gen_report', views.gen_report, name='gen_report'),
+    # path('rep_notif', views.rep_notif, name='rep_notif'),
+
+    
+    path('logout', views.login, name='logout'),
     path('settings/notification', views.notif_setting, name='public_notif_setting')
 
 

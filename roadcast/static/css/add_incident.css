@@ -141,10 +141,10 @@ label #sidebar_btn:hover{
 }
 
 .content{
-  width: (100% - 250px);
+  width: (100% - 200px);
   margin-top: 60px;
   padding: 20px;
-  margin-left: 250px;
+  margin-left: 90px;
   background: url(background.png) no-repeat;
   background-position: center;
   background-size: cover;

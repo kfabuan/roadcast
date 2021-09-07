@@ -1,39 +1,8 @@
-body{
-    background-color: #EDFAFF;
- }
-
- *{
-     margin:0;
-     padding:0;
-}
-
-.header{
-    height: 40px;
-}
-
-.navbar-style{
-    box-shadow: 0 5px 5px rgb(235, 235, 235);
-    /* text-transform: uppercse; */
-}
-
-.logo{
-    height: 60px;
-    padding: 2px 5px;
-}
 .icon-bar{
     background: #0A5570;
 }
 
-STRONG{
-    font-size: 20px;
-    color:#0A5570;
-}
-
-li a{
-    color:darkblue;
-}
-
-.map{
+.map{ /* IMG Map bg */
     width: 550px;
     height:600px;
     margin-left: -2px;
@@ -42,20 +11,18 @@ li a{
 
 .text{
     margin-top: 180px;
-    margin-left: -1px;
+    margin-left: -5px;
 }
 
-/* .margin_btn{
-    margin-left:90px;
-} */
-h3{
+h3{ /* ROADCAST */
     font-size: 60px;
     color:#0A5570;
     text-align: center;
     font-weight: bold;
 }
-h4{
-    font-size: 40px;
+
+h4{ /* Welcome to */
+    font-size: 38px;
     color:#0A5570;
     margin-top: 50px;
     text-align: center;
@@ -65,6 +32,7 @@ a.btn{
     margin-top: 50px;
     margin-left:100px;
     width: 70%; 
+    height: auto;
     padding: 10px;
     border-radius: 10px;
 }
@@ -72,24 +40,24 @@ a.btn{
 a.btn-first{
     margin-top: 20px;
     margin-left:15%;
-    background-color: rgb(211, 211, 211);
+    background-color: #0A5570;
     border: 1px solid #0A5570;
-    color:black;
+    color:white;
 }
 
 a.btn-second{
-    margin-top: 10px;
+    margin-top: 15px;
     margin-left:15%;
     background-color: white;
-    border: 1px solid #0A5570;
-    color:black;
+    border: 1px solid #b0c5ceb2;
+    color: #0A5570;
 }
 
 a.btn:hover{
-    background:  #0A5570;
+    background-color:#19B3D3;
     border: none;
     color:white;
-    box-shadow: 5px 5px 10px gainsboro;
+    box-shadow: 5px 5px 10px rgb(204, 204, 204);
     transition: 0.3s;
 }
 

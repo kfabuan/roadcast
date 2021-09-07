@@ -26,6 +26,27 @@ def contact_us(request):
 def contact_no(request):
     return render (request, 'contact_no.html') 
 
+def sign_up (request):
+    return render (request, 'sign_up.html')
+    
+def sign_up_validation (request):
+    return render (request, 'sign_up_validation.html')
+
+def admin_audit_trail(request):
+    return render (request, 'admin_audit_trail.html')  
+
+def admin_list_members(request):
+    return render (request, 'admin_list_members.html') 
+
+def admin_departments(request):
+    return render (request, 'admin_list_members.html')   
+
+def admin_investigators(request):
+    return render (request, 'admin_investigators.html')  
+
+def admin_view_investigators(request):
+    return render (request, 'admin_view_investigators.html')  
+
 class DashboardView (View):
     def get(self, request, *args, **kwargs):
         d2_brgy_distinct = []
@@ -437,17 +458,8 @@ def notification (request):
 def sub_notification (request):
     return render (request, 'sub_notification.html')
 
-def sign_up1 (request):
-    return render (request, 'signup1.html')
-    
-def sign_up2 (request):
-    return render (request, 'signup2.html')
-
-def sign_up3 (request):
-    return render (request, 'signup3.html')
-
-def sign_up_validation (request):
-    return render (request, 'signup.html')
+def public_notification (request):
+    return render (request, 'gen_notification.html')
 
 def unsolved_cases (request):
     cursor=connection.cursor()

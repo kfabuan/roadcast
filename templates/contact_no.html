@@ -1,13 +1,25 @@
-{% extends 'base_contactus.html' %}
+{% extends 'nav_main.html' %}
+{% load static %}
 
-{% block title %} Contact Us | Numbers {% endblock %}
-
-{% block design %} {% endblock %}
-
+{% block title %} Contact Us {% endblock %}
 {% block content %}
+
+    <center>
+
+    <!-- header -->
+
+    <!-- <header>
+        <div class="head">
+            <div class="head-links">
+                <a href="#" class="about-us">Contact Us</a>
+                <a href="#" class="about-us">About Us</a>
+            </div>
+        </div>
+    </header> -->
+
     <!-- content -->
-<center>
-    <div class="container, img-bg">
+   
+    <div class="container img-bg">
         <img src="static/image/4.jpg" alt="Contact Us" style="max-width: 100%; height: auto; display: block;">
 
         <div class="contact-title">
@@ -29,7 +41,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+            </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 2</b><br>
@@ -42,7 +58,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 3</b><br>
@@ -55,7 +75,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 4</b><br>
@@ -68,7 +92,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 5</b><br>
@@ -81,7 +109,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 6</b><br>
@@ -94,7 +126,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 7</b><br>
@@ -107,7 +143,11 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
         <div class="substation-c">
             <b class="bold">Pasig City Police Substation 8</b><br>
@@ -120,9 +160,14 @@
         </div>
 
         <br>
-        <div class="gmap_canvas" style="height: 200px; margin-top: -10px;"></div>
+        <div class="mapouter">
+            <div class="gmap_canvas">
+                <iframe class="gmap_iframe" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+            </div>
+    </div>
 
 
-        </div>
-</center>
-    {% endblock %}
+  </div>
+  </center>
+    
+{% endblock %}

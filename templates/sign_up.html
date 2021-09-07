@@ -1,0 +1,93 @@
+{% extends 'base_sign_up.html' %}
+
+{% block title %} Sign Up {% endblock %}
+
+{% block design %} {% endblock %}
+
+{% block content %}
+<body>
+
+
+<div class="container" id="container">
+      <div class="form-container sign-up-container">
+          <form action="" method="post">
+
+          <h1><font color="#191970">Account</font></h1>
+              <span> Please provide details for your account.</span>
+
+              <div class="address">
+                      <span class="text-danger">*</span>Type of Valid Id <select id="Valid Id" name="Valid Id" required> </select>
+                        <span class="text-danger">*</span>Upload a Valid Id Picture
+                            <div class="custom-file" style="margin-top:5px; margin-left:5px;">
+                                <input type="file" class="custom-file-input" id="customFile">
+                            </div>
+
+                            <script>
+                                $(".custom-file-input").on("change", function() {
+                                var fileName = $(this).val().split("\\").pop();
+                                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+                                });
+                            </script>
+                                <span class="text-danger">*</span>Username<input type="username" name="username" id="username" placeholder="Ex. example@gmail.com" required/>
+                                <span class="text-danger">*</span>Password<input type="password" name="password" id="password" placeholder="Password" required/>
+                                <span class="text-danger">*</span>Confirm Password<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required/>
+                                <div class="form-group form-input">
+                            <span class="text-danger">*</span>Security Test
+                            <div class="captcha">
+                               <div id="captchaValue"></div>
+                               <input id="inputCaptcha" type="text" name="" placeholder="Captcha" required>
+                            </div>
+                        </div>
+                <div class="login"> Already have an account? <a href="/login">Login</a> </div><br><br>
+              </div>
+                                <button type="submit" name="submit">Signup</button>
+              
+
+      </div>
+      <div class="form-container sign-in-container">
+
+              <h1><font color="#191970">Account</font></h1>
+              <span> Please provide details for your account.</span>
+
+              <div class="address">
+               <span class="text-danger">*</span>Name: <input type="text" name="name" placeholder="Last name, First Name, Middle Name" required/>
+               <span class="text-danger">*</span>Sex:<select id="sex" name="sex" required>
+                <option> </option>
+                <option> Female </option>
+                <option> Male </option>
+              </select>
+               <span class="text-danger">*</span>Age:<input type="text" name="age" placeholder="Enter your age" required/>
+               <span class="text-danger">*</span>Birthday:<input type="Date" name="Birtdate" required/>
+               <span class="text-danger">*</span>Home No./Street/ Subdivision <input type="text" name="street" placeholder="House # / Street" required/>
+               <span class="text-danger">*</span>City <select id="city" name="city" required></select>
+               <span class="text-danger">*</span>Barangay<select id="barangay" name="barangay" required></select>
+               <span class="text-danger">*</span>Zipcode<input type="text" name="Zipcode" placeholder="Zipcode" required/>
+               <span class="text-danger">*</span>Contact No. <input type="text" name="Contact No." placeholder="Contact No." required/>
+              </div>
+         
+
+              
+        </form>
+      </div>
+
+    <div class="overlay-container">
+      <div class="overlay">
+          <div class="overlay-panel overlay-left">
+              <img src="static/image/1.jpg" alt="Sign Up Part 1">
+              <h1>Go Back</h1>
+              <p>Check your personal information before signing up.</p>
+              <button class="ghost" id="signIn">Back</button>
+          </div>
+          <div class="overlay-panel overlay-right">
+              <img src="static/image/bg1.png" alt="Sign Up Part 2">
+              <h1>Next part is here!</h1>
+              <p>Continue to Enter your personal details and start journey with us</p>
+              <button class="ghost" id="signUp">Next</button>
+          </div>
+
+      </div>
+    </div>
+
+</div>
+
+    {% endblock %}
