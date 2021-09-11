@@ -48,6 +48,7 @@ urlpatterns = [
     path('public/notification', views.public_notification, name='public_notification'),
 
     path('substation/notification', views.sub_notification, name='sub_notification'),
+    
     path('unsolvedcases', views.unsolved_cases, name='unsolved_cases'),
 
     path('audit', views.admin_audit_trail, name='admin_audit_trail'),
@@ -55,13 +56,16 @@ urlpatterns = [
     path('departments', views.admin_departments, name='admin_departments'),
     path('investigators', views.admin_investigators, name='admin_investigators'),
     path('investigator/view', views.admin_view_investigators, name='admin_view_investigators'),
-    # path('gen_notif', views.gen_notif, name='gen_notif'),
+    path('public/incident/detail/<int:incident_id>/', views.pub_incident_detail_view, name='gen_incident_detail_view'),
+
     # path('gen_report', views.gen_report, name='gen_report'),
     # path('rep_notif', views.rep_notif, name='rep_notif'),
 
     
     path('logout', views.login, name='logout'),
-    path('settings/notification', views.notif_setting, name='public_notif_setting')
+    path('public/notification', views.pub_notif_inbox, name='pub_notif_inbox'),
+    path('public/notification/view', views.pub_notif_inbox, name='pub_notif_view')
+
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

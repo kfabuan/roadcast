@@ -6,8 +6,6 @@
     th, .level-title {
         color: #050087;
     }
-
-    
 </style>
 
 {% endblock %}
@@ -15,7 +13,7 @@
 {% block content %}
 <div class="content">
     
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+    <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
         <span class="me-2 fs-4 fw-bold level-title"> Settings </span>
         <li class="nav-item" role="presentation">
             <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-account" type="button" role="tab" aria-controls="pills-account" aria-selected="true"><i class="bi bi-person-fill"></i>&nbsp;Account</button>
@@ -42,10 +40,10 @@
         </form>
 </li>
       </ul>
-      <div class="tab-content" id="pills-tabContent">
+      <div class="tab-content row" id="pills-tabContent">
           
         <!-- tab for level 1-->
-        <div class="tab-pane fade show active" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab">
+        <div class="tab-pane fade show active row" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab">
            1
         </div>
 

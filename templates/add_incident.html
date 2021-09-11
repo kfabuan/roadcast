@@ -6,11 +6,15 @@
 
 <div class="content">
   <!--Date-->
+  <form action="{% url 'process_add_incident' %}" method="post" enctype="multipart/form-data">
+ <!-- cross-site request forgery -->
+ {% csrf_token %} 
+
     <div class="top-content">
       
       <p id='date'>
       <i class="fas fa-calendar-day" id="date-today-icon"></i>
-      <b id="date-today">Today: </b><span id="ct6"></span>
+      <b id="date-today" name="date-today">Today: </b><span id="ct6"></span>
       </p>
     </div>
     <!--Incident Details-->
@@ -18,13 +22,13 @@
       <div class="separator">Incident Details</div>
       </div>
 
-      <form action="{% url 'process_add_incident' %}" method="post" enctype="multipart/form-data">
 
-        <!-- cross-site request forgery -->
-        {% csrf_token %}    <div class="incident-details">
+    <div class="incident-details">
     
     <div class="card-incident">
-      <div class="item">Date Commited: <input type="date" id="DateCommitted" name="DateCommitted" class="form-field"></div>
+      <div class="item">Date Commited: <input type="date" id="DateCommitted" name="DateCommitted" class="form-field" onchange="dateFormat()"></div>
+      <!-- <div class="item">Date Commited: <br><input type="date" id="DateCommittedFormatted" name="DateCommittedFormatted" class="form-field" placeholder="Date"></div> -->
+
       <div class="item">Time Commited: <input type="time" id="currentTime" class="form-field"></div>
 
       <div class="item">Collision Type: <select name="collision_type" id="collision_type" class="form-field">
@@ -138,45 +142,45 @@
     <div class="card-incident">
       <div class="item">City: <input type="text" value="Pasig City" class="form-field" readonly></div>
 
-      <div class="item">Barangay: <select name="Barangay" id="Barangay" class="form-field" onchange="selectdistrict(event)">
+      <div class="item">Barangay: <select name="barangay" id="barangay" class="form-field" onchange="selectdistrict(event)">
       <option disabled="true" selected>Choose a Barangay</option>
-      {% for brgy in brgy_list %}
-      <option> {{ brgy }}</option>
+      <!-- {% for brgy in brgy_list %}
+      <option> {{ brgy }} </option>
 
-      {% endfor %}
-      <!-- <option value="Bagong Ilog">Bagong Ilog</option>
-      <option value="Bagong Katipunan">Bagong Katipunan</option>
-      <option value="Bambang">Bambang</option>
-      <option value="Buting">Buting</option>
-      <option value="Caniogan">Caniogan</option>
-      <option value="Kalawaan">Kalawaan</option>
-      <option value="Kapasigan">Kapasigan</option>
-      <option value="Kapitolyo">Kapitolyo</option>
-      <option value="Malinao">Malinao</option>
-      <option value="Oranbo">Oranbo</option>
-      <option value="Palatiw">Palatiw</option>
+      {% endfor %} -->
+      <option value="2">Bagong Ilog</option>
+      <option value="5">Bagong Katipunan</option>
+      <option value="3">Bambang</option>
+      <option value="27">Buting</option>
+      <option value="4">Caniogan</option>
+      <option value="6">Kalawaan</option>
+      <option value="7">Kapasigan</option>
+      <option value="8">Kapitolyo</option>
+      <option value="9">Malinao</option>
+      <option value="10">Oranbo</option>
+      <option value="11">Palatiw</option>
       <option value="Pineda">Pineda</option>
-      <option value="Sagad">Sagad</option>
-      <option value="San Antonio">San Antonio</option>
-      <option value="San Joaquin">San Joaquin</option>
-      <option value="San Jose">San Jose</option>
-      <option value="San Nicolas">San Nicolas</option>
-      <option value="Santa Cruz">Santa Cruz</option>
-      <option value="Santa Rosa">Santa Rosa</option>
-      <option value="Santo Tomas">Santo Tomas</option>
-      <option value="Sumilang">Sumilang</option>
-      <option value="Ugong">Ugong</option>
-      <option value="Dela Paz">Dela Paz</option>
-      <option value="Manggahan">Manggahan</option>
-      <option value="Maybunga">Maybunga</option>
-      <option value="Pinagbuhatan">Pinagbuhatan</option>
-      <option value="Rosario">Rosario</option>
-      <option value="San Miguel">San Miguel</option>
-      <option value="Santolan">Santolan</option>
-      <option value="Santa Lucia">Santa Lucia</option> -->
+      <option value="12">Sagad</option>
+      <option value="13">San Antonio</option>
+      <option value="14">San Joaquin</option>
+      <option value="15">San Jose</option>
+      <option value="16">San Nicolas</option>
+      <option value="29">Santa Cruz</option>
+      <option value="30">Santa Rosa</option>
+      <option value="17">Santo Tomas</option>
+      <option value="18">Sumilang</option>
+      <option value="1">Ugong</option>
+      <option value="19">Dela Paz</option>
+      <option value="20">Manggahan</option>
+      <option value="21">Maybunga</option>
+      <option value="22">Pinagbuhatan</option>
+      <option value="23">Rosario</option>
+      <option value="24">San Miguel</option>
+      <option value="26">Santolan</option>
+      <option value="25">Santa Lucia</option>
       </select></div>
       
-      <div class="item">District: <input type="text" id="district" value="" class="form-field" readonly></div>
+      <div class="item">District: <input type="text" id="district" name="district" value="" class="form-field" readonly></div>
     
       <script>
       function selectdistrict(e){
@@ -190,7 +194,7 @@
         }
        }
       </script>
-      <div class="item">Place Commited: <input type="text" id="Place commited" class="form-field"></div>
+      <div class="item">Place Commited: <input type="text" id="place_committed" name="place_committed" class="form-field"></div>
       <div class="item">Along: <input type="text" id="Along" class="form-field"></div>
       <div class="item">Corner: <input type="text" id="Corner" class="form-field"></div>
      </div>
@@ -207,9 +211,9 @@
     
     <!--Suspect-->
     <div class="card-incident">
-      <div class="item">Name: <input type="text" class="form-field"></div>
-      <div class="item">Age: <input type="number" class="form-field"></div>
-      <div class="item">Address: <input type="text" class="form-field"></div>
+      <div class="item">Name: <input type="text" name="sus_name" class="form-field"></div>
+      <div class="item">Age: <input type="number" name="sus_age" class="form-field"></div>
+      <div class="item">Address: <input type="text" name="sus_add" class="form-field"></div>
       <div class="item">Civil Status: <select name="sus_civil_status" id="sus_civil_status" class="form-field">
       <option value="">Choose Civil Status</option>
       <option value="Single">Single</option>
@@ -225,7 +229,7 @@
           <label for="s_female">Female</label>
           </div>
           
-     <div class="item">Driver's License: <input type="text" class="form-field"></div>
+     <div class="item">Driver's License: <input type="text" name="sus_drl" class="form-field"></div>
       <div class="item">Type: <select class="form-field">
       <option value="">Choose Type</option>
         <option value="Driver">Driver</option>
@@ -234,10 +238,10 @@
       </select></div>
 
       <div class="item">Expiration Date: <input type="date" class="form-field"></div>
-      <div class="item">Vehicle Brand & Model: <input type="text" class="form-field"></div>
+      <div class="item">Vehicle Brand & Model: <input type="text" name="sus_vec_model" class="form-field"></div>
 
     
-      <div class="item">Body Type: <select class="form-field">
+      <div class="item">Body Type: <select class="form-field" name="sus_vehicle_body_type">
       <option value="">Choose Case Status</option>
          <option value="Armored Car">Armored Car</option>
           <option value="Alto">Alto</option>
@@ -274,11 +278,11 @@
           <option value="Others">Others</option>
       </select></div>
 
-      <div class="item">Registered Owner: <input type="text" class="form-field"></div>
-      <div class="item">Plate Number: <input type="text" class="form-field"></div>
+      <div class="item">Registered Owner: <input type="text" name="sus_reg_owner" class="form-field"></div>
+      <div class="item">Plate Number: <input type="text" name="sus_plate_no" class="form-field"></div>
 
-      <div class="item">Status: <select class="form-field">
-      <option value="">Choose Suspect's Status</option>
+      <div class="item">Severity Status: <select name="sus_severity" class="form-field">
+      <option value="">Choose Suspect's Severity Status</option>
       <option value="Unharmed">Unharmed</option>
       <option value="Harmed">Harmed</option>
       <option value="Injured">Injured</option>
@@ -298,9 +302,9 @@
     <div class="incident-details">
     <!--Victim-->
     <div class="card-incident">
-      <div class="item">Name: <input type="text" class="form-field"></div>
-      <div class="item">Age: <input type="number" class="form-field"></div>
-      <div class="item">Address: <input type="text" class="form-field"></div>
+      <div class="item">Name: <input type="text" name="vic_name" class="form-field"></div>
+      <div class="item">Age: <input type="number" name="vic_age" class="form-field"></div>
+      <div class="item">Address: <input type="text" name="vic_add" class="form-field"></div>
 
       <div class="item">Civil Status: <select name="vic_civil_status" id="vic_civil_status" class="form-field">
       <option value="">Choose Civil Status</option>
@@ -317,7 +321,7 @@
           <input type="radio" name="v_sex" id="v_female" value="Female">
           <label for="v_female">Female</label>
           </div>
-     <div class="item">Driver's License: <input type="text" class="form-field"></div>
+     <div class="item">Driver's License: <input type="text" name="vic_drl" class="form-field"></div>
       <div class="item">Type: <select class="form-field">
       <option value="">Choose Type</option>
         <option value="Driver">Driver</option>
@@ -325,11 +329,11 @@
         <option value="Pedestrian">Pedestrian</option>
       </select></div>
       <div class="item">Expiration Date: <input type="date" class="form-field"></div>
-      <div class="item">Vehicle Brand & Model: <input type="text" class="form-field"></div>
+      <div class="item">Vehicle Brand & Model: <input type="text" name="vic_vec_model" class="form-field"></div>
 
     
-      <div class="item">Body Type: <select class="form-field">
-      <option value="">Choose Case Status</option>
+      <div class="item">Body Type: <select name="vic_vehicle_body_type" class="form-field">
+      <option value="">Choose Body Type</option>
          <option value="Armored Car">Armored Car</option>
           <option value="Alto">Alto</option>
           <option value="Bicycle">Bicycle</option>
@@ -365,11 +369,11 @@
           <option value="Others">Others</option>
       </select></div>
 
-      <div class="item">Registered Owner: <input type="text" class="form-field"></div>
-      <div class="item">Plate Number: <input type="text" class="form-field"></div>
+      <div class="item">Registered Owner: <input type="text" name="vic_reg_owner" class="form-field"></div>
+      <div class="item">Plate Number: <input type="text" name="vic_plate_no" class="form-field"></div>
 
-      <div class="item">Status: <select class="form-field">
-      <option value="">Choose Suspect's Status</option>
+      <div class="item">Severity Status: <select name="vic_severity" class="form-field">
+      <option value="">Choose Victim's Severity Status</option>
       <option value="Unharmed">Unharmed</option>
       <option value="Harmed">Harmed</option>
       <option value="Injured">Injured</option>
@@ -388,7 +392,7 @@
   <center><input type="button" value="(+)&nbsp;&nbsp;Add another victim" id="add_victim"></center>
     <div class="card">
       <div class="separator">Narrative Description of the Incident</div>
-     <textarea class="narrative" placeholder="A brief description of what happened or its details. . ." style="resize: none"></textarea> 
+     <textarea class="narrative" name="narrative" placeholder="A brief description of what happened or its details. . ." style="resize: none"></textarea> 
     <center><button id="submit_form" type="submit" value="">Submit </button></center>
     </div>
   </form>
@@ -398,6 +402,13 @@
     function chkBtn_OffenseValues() {
      
 
+    }
+
+    function dateFormat(){
+
+      var dt = new Date();
+        document.getElementById('DateCommitted').innerhtml = dt;
+        document.getElementById('DateCommittedFormatted').innerhtml = [dt.getFullYear, dt.getMonth, dt.getDate].join("-");
     }
   </script>
   <script type="text/javascript">
@@ -424,6 +435,8 @@
           alert(selected_offense);
           alert(tryyyy)
         }
+
+        
 
         var incident_date = document.getElementById("DateCommitted").value;
         alert(incident_date);

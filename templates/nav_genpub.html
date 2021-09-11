@@ -46,10 +46,10 @@
                         <a href="/incidents/view" class="nav_link"> <i class='fas fa-table nav_icon'></i> <span class="nav_name">List of Reports</span> </a>
                         <a href="/report/submit" class="nav_link"> <i class='bx bx-paper-plane nav_icon' ></i> <span class="nav_name">Send Report</span> </a>
                         <a href="/public/notification" class="nav_link"> <i class='fas fa-bell nav_icon' ></i> <span class="nav_name">Notifications</span> </a> 
-                        <a href="#" class="nav_link"> <i class='fas fa-cogs '></i> </i> <span class="nav_name">Settings</span> </a> 
+                        <a href="/public/settings" class="nav_link"> <i class='fas fa-cogs '></i> </i> <span class="nav_name">Settings</span> </a> 
                     </div>
                 </div> 
-                <a href="/logout" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">Logout</span> </a>
+                <a href="{% url 'index' %}" class="nav_link"> <i class='bx bx-log-out nav_icon'></i> <span class="nav_name">Logout</span> </a>
             </nav>
         </div>
         

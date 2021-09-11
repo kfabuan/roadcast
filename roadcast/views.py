@@ -153,7 +153,7 @@ def get_data(request, *args, **kwargs):
 def view_incidents (request):
     term = 'Marcos Highway' #since di parati nag ssearch si user, mag-eerror so mag lalagay ng blank para i-allow nya
     #pasig_incident_list = Tbl_pasig_incidents.objects.filter(Q(along_highway__icontains=term) |Q(corner_highway__icontains=term)).order_by('-id') 
-    # pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
+    #pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
 
     cursor=connection.cursor()
     cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
@@ -176,25 +176,84 @@ def add_incident (request):
 
 def processAddIncident(request):
     city = "Pasig"
-    unitstation="Pasig City Police Station"
+    unit_station="Pasig City Police Station"
     crime_offense=request.POST.get('display_offense')
+    #week
     date_committed = request.POST.get('DateCommitted') #name attribute of textbox
     current_time = request.POST.get('currentTime')
     col_type = request.POST.get('collision_type')
+    no_of_person_involved = "1"
+    light = "Day"
     weather = request.POST.get('weather')
-    surface_type = request.POST.get('surface_type')
-    road_char = request.POST.get('road_character')
-    surface_cond = request.POST.get('surface_condition')
-    road_repair = request.POST.get('road-repair')
     case_status = request.POST.get('case_status')
+    district = request.POST.get('district')
+    barangay = request.POST.get('barangay')
+    address = request.POST.get('place_committedangay')
+    #avenue
+    #road
+    #street
+    #bound
+    #highway
+    #others
+    surface_cond = request.POST.get('surface_condition')
+    surface_type = request.POST.get('surface_type')
+    road_class = "Ewan" #idk
+    road_repair = request.POST.get('road-repair')
     hit_and_run = request.POST.get('hit-and-run')
-    inv_name = request.POST.get('inv_name')
-    barangay = "1"
-    district = "1"
+    road_char = request.POST.get('road_character')
+
+    sus_name = request.POST.get('sus_name')
+    sus_severity = request.POST.get('sus_severity')
+    sus_age = request.POST.get('sus_age')
+    sus_sex = request.POST.get('s_sex')
+    sus_civil_status = request.POST.get('sus_civil_status')
+    sus_add = request.POST.get('sus_add')
+    sus_vehicle = "Ewan" #idk
+    sus_vehicle_body_type = request.POST.get('sus_vehicle_body_type')
+    sus_plate_no = request.POST.get('sus_plate_no')
+    sus_reg_owner = request.POST.get('sus_reg_owner')
+    sus_drl = request.POST.get('sus_drl')
+    sus_vec_model = request.POST.get('sus_vec_model')
+
+    #victim type
+    vic_name = request.POST.get('vic_name')
+    vic_severity = request.POST.get('vic_severity')
+    vic_age = request.POST.get('vic_age')
+    vic_sex = request.POST.get('v_sex')
+    vic_civil_status = request.POST.get('vic_civil_status')
+    vic_add = request.POST.get('vic_add')
+    vic_vehicle = "Ewan" #idk
+    vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+    vic_plate_no = request.POST.get('vic_plate_no')
+    vic_reg_owner = request.POST.get('vic_reg_owner')
+    vic_drl = request.POST.get('vic_drl')
+    vic_vec_model = request.POST.get('vic_vec_model')
+
+
+
+    narrative = request.POST.get('narrative')
+
+    date_today = request.POST.get('date-today')
+    added_by = "wala pa"
+
+
+    #inv_name = request.POST.get('inv_name')
     
     print(date_committed)
     print(current_time)
-    incident_record = Tbl_pasig_incidents.objects.create(City=city, UnitStation=unitstation, CrimeOffense=crime_offense, Barangay_id=barangay, District_id=district, Date=date_committed, Time=current_time, Incident_Type=col_type, Weather=weather, Surface_Condition=surface_cond, Surface_Type=surface_type, Road_Character=road_char)
+    incident_record = Tbl_pasig_incidents.objects.create(City=city, UnitStation=unit_station, CrimeOffense=crime_offense, Date=date_committed,               
+                    Time=current_time, Incident_Type=col_type, Number_of_Persons_Involved=no_of_person_involved, Light=light, Weather=weather, Case_Status=case_status, District_id = district, Barangay_id_id = barangay, Address = address, Surface_Condition=surface_cond, Surface_Type=surface_type, Road_Class=road_class, Road_Repair = road_repair, Hit_and_Run = hit_and_run, Road_Character=road_char, 
+    
+                    Suspect_Name=sus_name, Suspect_Severity=sus_severity,Suspect_Age=sus_age, Suspect_Sex=sus_sex, Suspect_Civil_Status = sus_civil_status, Suspect_Address=sus_add,  Suspect_Vehicle=sus_vehicle, Suspect_Vehicle_Body_Type=sus_vehicle_body_type, Suspect_Plate_No=sus_plate_no,Suspect_Reg_Owner=sus_reg_owner, Suspect_Drl_No=sus_drl, Suspect_Vehicle_Year_Model=sus_vec_model, 
+                    
+                    Victim_Name=vic_name, Victim_Severity=vic_severity,Victim_Age=vic_age, 
+                    Victim_Sex=vic_sex, Victim_Civil_Status = vic_civil_status, Victim_Address=vic_add, 
+                    Victim_Vehicle=vic_vehicle, Victim_Vehicle_Body_Type=vic_vehicle_body_type, 
+                    Victim_Plate_No=vic_plate_no,Victim_Reg_Owner=vic_reg_owner, 
+                    Victim_Drl_No=vic_drl, Victim_Vehicle_Year_Model=vic_vec_model,
+
+                    Narrative=narrative, date_added=date_today, added_by=added_by
+                    )
     incident_record.save()
     return HttpResponseRedirect('/incidents/view')
 
@@ -478,6 +537,18 @@ def logout (request):
 def submit_report (request):
     return render (request, 'submit_report.html')
 
-def notif_setting (request):
+def pub_notif_inbox (request):
     return render (request, 'public_notif_setting.html')
+
+def pub_notif_view (request):
+    return render (request, 'gen_notification_view.html')
+
+def pub_incident_detail_view (request, incident_id):
+
+    pasig_incident_detail = Tbl_pasig_incidents.objects.get(pk=incident_id)
+
+    context = {
+        "incident_detail": pasig_incident_detail,
+    }
+    return render (request, 'gen_incident_detail_view.html', context)
 
