@@ -39,6 +39,9 @@ urlpatterns = [
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
+
+    path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
+
     path('report/submit', views.submit_report, name='submit_report'),
     path('report', views.report_summary, name='report_summary'),
     path('report/monthly', Report_monthly.as_view(), name='report_monthly'),
