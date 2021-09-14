@@ -10,18 +10,8 @@ from itertools import chain
 from django.db import connection
 
 from django.contrib import messages #for csv upload
-<<<<<<< HEAD
-import pandas as pd
+
 import csv, io
-
-import datetime
-
-=======
-import csv, io
-
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
-
-
 
 def index(request): #landing/home
     return render (request, 'landing.html')
@@ -189,10 +179,7 @@ def add_incident (request):
     # GET request returns the value of the data with the specified key.
     if request.method == "GET":
         return render(request, 'add_incident.html', prompt)
-<<<<<<< HEAD
 
-=======
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
     csv_file = request.FILES['file']
 
     # let's check if it is a csv file
@@ -200,33 +187,21 @@ def add_incident (request):
         messages.error(request, 'THIS IS NOT A CSV FILE')
 
     data_set = csv_file.read().decode('UTF-8')
-<<<<<<< HEAD
     # data_set = pd.read_csv(csv_file, encoding= 'unicode_escape')
-=======
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
 
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
     io_string = io.StringIO(data_set)
     next(io_string)
 
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-<<<<<<< HEAD
         _, created = Tbl_pasig_incidents.objects.get_or_create(
             # Barangay=column[0],
             # District_id_id=column[1]
-
-=======
-        _, created = Tbl_pasig_incidents.objects.update_or_create(
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
             City=column[0],
             UnitStation=column[1],
             CrimeOffense=column[2],
             Week=column[3],
-<<<<<<< HEAD
             Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
-=======
-            Date=column[4],
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
             Time=column[5],
             Day=column[6],
             Incident_Type=column[7],
@@ -234,8 +209,6 @@ def add_incident (request):
             Light=column[9],
             Weather=column[10],
             Case_Status=column[11],
-<<<<<<< HEAD
-
             
             Address=column[12],
             Along_Avenue=column[13],
@@ -285,46 +258,10 @@ def add_incident (request):
             Barangay_id_id=column[60]
         )
 
-=======
-            District_id=column[12],
-            Barangay_id_id=column[13],
-            Address=column[14],
-            Along_Avenue=column[15],
-            Corner_Avenue=column[16],
-            Along_Road=column[17],
-            Corner_Road=column[18],
-            Along_Street=column[19],
-            Corner_Street=column[20],
-            Bound=column[21],
-            Along_Highway=column[22],
-            Corner_Highway=column[23],
-            Along_Boulevard=column[24],
-            Corner_Boulevard=column[25],
-            Others=column[26],
-
-            Surface_Condition=column[27],
-            Surface_Type=column[28], 
-            Road_Class=column[29], 
-            Road_Repair = column[30], 
-            Hit_and_Run = column[31], 
-            Road_Character=column[32], 
-    
-            Suspect_Name=column[33], Suspect_Severity=column[34],Suspect_Age=column[35], Suspect_Sex=column[36], Suspect_Civil_Status = column[37], Suspect_Address=column[38],  Suspect_Vehicle=column[39], Suspect_Vehicle_Body_Type=column[40], Suspect_Plate_No=column[41],Suspect_Reg_Owner=column[42], Suspect_Drl_No=column[43], Suspect_Vehicle_Year_Model=column[44], 
-            
-            Victim_Type=column[45],
-            Victim_Name=column[46], Victim_Severity=column[47],Victim_Age=column[48], 
-            Victim_Sex=column[49], Victim_Civil_Status = column[50], Victim_Address=column[51], 
-            Victim_Vehicle=column[52], Victim_Vehicle_Body_Type=column[53], 
-            Victim_Plate_No=column[54],Victim_Reg_Owner=column[55], 
-            Victim_Drl_No=column[56], Victim_Vehicle_Year_Model=column[57],
-
-            Narrative=column[58], date_added=column[59], added_by=column[60]
-        )
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
-    brgy_list = Tbl_barangay.objects.values_list('Barangay', flat=True).distinct()
-    context = {
-        'brgy_list': brgy_list,  
-    }
+        brgy_list = Tbl_barangay.objects.values_list('Barangay', flat=True).distinct()
+        context = {
+            'brgy_list': brgy_list,  
+        }
     return render (request, 'add_incident.html', context)
 
 def processAddIncident(request):
@@ -435,58 +372,9 @@ def processCSV (request):
     next(io_string)
 
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-<<<<<<< HEAD
         _, created = Tbl_barangay.objects.get_or_create(
             Barangay=column[0],
             District_id_id=column[1]
-=======
-        _, created = Tbl_pasig_incidents.objects.update_or_create(
-            City=column[0],
-            UnitStation=column[1],
-            CrimeOffense=column[2],
-            Week=column[3],
-            Date=column[4],
-            Time=column[5],
-            Day=column[6],
-            Incident_Type=column[7],
-            Number_of_Persons_Involved=column[8],
-            Light=column[9],
-            Weather=column[10],
-            Case_Status=column[11],
-            District_id=column[12],
-            Barangay_id_id=column[13],
-            Address=column[14],
-            Along_Avenue=column[15],
-            Corner_Avenue=column[16],
-            Along_Road=column[17],
-            Corner_Road=column[18],
-            Along_Street=column[19],
-            Corner_Street=column[20],
-            Bound=column[21],
-            Along_Highway=column[22],
-            Corner_Highway=column[23],
-            Along_Boulevard=column[24],
-            Corner_Boulevard=column[25],
-            Others=column[26],
-
-            Surface_Condition=column[27],
-            Surface_Type=column[28], 
-            Road_Class=column[29], 
-            Road_Repair = column[30], 
-            Hit_and_Run = column[31], 
-            Road_Character=column[32], 
-    
-            Suspect_Name=column[33], Suspect_Severity=column[34],Suspect_Age=column[35], Suspect_Sex=column[36], Suspect_Civil_Status = column[37], Suspect_Address=column[38],  Suspect_Vehicle=column[39], Suspect_Vehicle_Body_Type=column[40], Suspect_Plate_No=column[41],Suspect_Reg_Owner=column[42], Suspect_Drl_No=column[43], Suspect_Vehicle_Year_Model=column[44], 
-            
-            Victim_Type=column[45],
-            Victim_Name=column[46], Victim_Severity=column[47],Victim_Age=column[48], 
-            Victim_Sex=column[49], Victim_Civil_Status = column[50], Victim_Address=column[51], 
-            Victim_Vehicle=column[52], Victim_Vehicle_Body_Type=column[53], 
-            Victim_Plate_No=column[54],Victim_Reg_Owner=column[55], 
-            Victim_Drl_No=column[56], Victim_Vehicle_Year_Model=column[57],
-
-            Narrative=column[58], date_added=column[59], added_by=column[60]
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
         )
     context = {}
     return render(request, 'add_incident.html', context)

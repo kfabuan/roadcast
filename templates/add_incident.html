@@ -16,11 +16,7 @@
 
   {% else %}
       {{order}}
-<<<<<<< HEAD
       <form action="" method="POST" enctype="multipart/form-data">
-=======
-      <form action="" method="GET" enctype="multipart/form-data">
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
           {% csrf_token %}
           <label for="file1"> Upload a file</label>
           <input type="file" id="file1" name="file">

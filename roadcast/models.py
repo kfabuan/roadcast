@@ -114,23 +114,3 @@ class Tbl_pasig_incidents(models.Model):
         model = Tbl_barangay
         return '{}-{}-{}'.format(self.City, model.Barangay, self.Date )
 
-<<<<<<< HEAD
-
-=======
-class Tbl_add_members(models.Model):
-    Members_Type        = models.CharField(max_length=200, verbose_name='Type', blank=True, null=True)
-    Members_Substation  = models.CharField(max_length=200, verbose_name='Substation', blank=True, null=True)
-    Members_District    = models.CharField(max_length=200, verbose_name='District', blank=True, null=True)
-    Members_Fname       = models.CharField(max_length=200, verbose_name='First Name', blank=True, null=True)
-    Members_Lname       = models.CharField(max_length=200, verbose_name='Last Name', blank=True, null=True)
-    Members_Position    = models.CharField(max_length=200, verbose_name='Position', blank=True, null=True)
-    Members_Dept        = models.CharField(max_length=200, verbose_name='Department', blank=True, null=True)
-    Members_Email       = models.CharField(max_length=200, verbose_name='Email', blank=True, null=True)
-    Members_Password    = models.CharField(max_length=200, verbose_name='Password', blank=True, null=True)
-    Members_Pic         = models.CharField(max_length=200, verbose_name='Picture', blank=True, null=True) #for the mean time
-    Date_Added          = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True)
-    Added_By            = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
-
-    def __str__(self):
-        return self.Members_Fname 
->>>>>>> 121ed5489e44f1c5b21897ab544a7921ad797d78
