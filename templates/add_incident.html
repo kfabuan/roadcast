@@ -5,16 +5,37 @@
 {% block content %}
 
 <div class="content">
+
+  {% if messages %}
+      {% for message in messages %}
+          <div>
+              <!--| means OR operator-->
+              <strong>{{message|safe}}</strong>
+          </div>
+      {% endfor %}
+
+  {% else %}
+      {{order}}
+      <form action="" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          <label for="file1"> Upload a file</label>
+          <input type="file" id="file1" name="file">
+          <small>Only accepts CSV files</small>
+          <button type="submit">Upload</button>
+      </form>
+  {% endif %}
+
   <!--Date-->
   <form action="{% url 'process_add_incident' %}" method="post" enctype="multipart/form-data">
- <!-- cross-site request forgery -->
- {% csrf_token %} 
+    <!-- cross-site request forgery -->
+    {% csrf_token %} 
 
     <div class="top-content">
       
       <p id='date'>
       <i class="fas fa-calendar-day" id="date-today-icon"></i>
       <b id="date-today" name="date-today">Today: </b><span id="ct6"></span>
+      <input type="text" name="day_of_the_week" id="day_of_the_week" hidden>
       </p>
     </div>
     <!--Incident Details-->
@@ -29,7 +50,7 @@
       <div class="item">Date Commited: <input type="date" id="DateCommitted" name="DateCommitted" class="form-field" onchange="dateFormat()"></div>
       <!-- <div class="item">Date Commited: <br><input type="date" id="DateCommittedFormatted" name="DateCommittedFormatted" class="form-field" placeholder="Date"></div> -->
 
-      <div class="item">Time Commited: <input type="time" id="currentTime" class="form-field"></div>
+      <div class="item">Time Commited: <input type="time" id="currentTime" name="currentTime" class="form-field"></div>
 
       <div class="item">Collision Type: <select name="collision_type" id="collision_type" class="form-field">
       <option value="">Choose Collision Type</option>
@@ -159,7 +180,7 @@
       <option value="9">Malinao</option>
       <option value="10">Oranbo</option>
       <option value="11">Palatiw</option>
-      <option value="Pineda">Pineda</option>
+      <option value="28">Pineda</option>
       <option value="12">Sagad</option>
       <option value="13">San Antonio</option>
       <option value="14">San Joaquin</option>
@@ -230,7 +251,8 @@
           </div>
           
      <div class="item">Driver's License: <input type="text" name="sus_drl" class="form-field"></div>
-      <div class="item">Type: <select class="form-field">
+
+      <div class="item">Victim Type: <select class="form-field" id="vic_type" name="vic_type">
       <option value="">Choose Type</option>
         <option value="Driver">Driver</option>
         <option value="Passenger">Passenger</option>
@@ -240,7 +262,6 @@
       <div class="item">Expiration Date: <input type="date" class="form-field"></div>
       <div class="item">Vehicle Brand & Model: <input type="text" name="sus_vec_model" class="form-field"></div>
 
-    
       <div class="item">Body Type: <select class="form-field" name="sus_vehicle_body_type">
       <option value="">Choose Case Status</option>
          <option value="Armored Car">Armored Car</option>
@@ -430,16 +451,24 @@
         if(selected_offense.length>0){
           console.log(selected_offense);
          // document.getElementById('display_offense').innerHTML=selected_offense;
-         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+        // var tryyyy =  document.getElementById('display_offense').value=selected_offense;
 
-          alert(selected_offense);
-          alert(tryyyy)
+       //   alert(selected_offense);
+        //  alert(tryyyy)
         }
 
-        
+      
 
-        var incident_date = document.getElementById("DateCommitted").value;
-        alert(incident_date);
+        
+       // var dt = new Date();
+
+        dt = document.getElementById('DateCommitted').innerhtml;
+        
+        day = dt.getDay()
+        document.getElementById('day_of_the_week').innerhtml = day;
+
+        alert(dt);
+        alert(day);
 
         });
 

@@ -9,6 +9,13 @@ from collections import Counter
 from itertools import chain
 from django.db import connection
 
+from django.contrib import messages #for csv upload
+import pandas as pd
+import csv, io
+
+import datetime
+
+
 
 
 def index(request): #landing/home
@@ -52,7 +59,7 @@ class DashboardView (View):
         d2_brgy_distinct = []
         d2_brgy_distinct_count = []
 
-        d2_brgys = Tbl_pasig_incidents.objects.select_related('Barangay_id').filter(Q(District='1')).values_list('Barangay_id_id', flat=True).distinct()
+        d2_brgys = Tbl_pasig_incidents.objects.select_related('Barangay_id').filter(Q(District='1')).values_list('Barangay_id', flat=True).distinct()
 
         for dis in d2_brgys:
             d2_brgy_distinct.append(dis)
@@ -156,7 +163,7 @@ def view_incidents (request):
     #pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
 
     cursor=connection.cursor()
-    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
+    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id DESC")
     pasig_incident_list = cursor.fetchall()
 
     context = {
@@ -168,6 +175,96 @@ def uploadcsv (request):
     return render (request, 'upload_csv.html')
 
 def add_incident (request):
+    data = Tbl_pasig_incidents.objects.all()
+
+    # prompt is a context variable that can have different values depending on their context
+    prompt = {'order': 'Order of the CSV should be name, email, address, phone, profile',
+             'incident_csv': data }
+
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, 'add_incident.html', prompt)
+
+    csv_file = request.FILES['file']
+
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+
+    data_set = csv_file.read().decode('UTF-8')
+    # data_set = pd.read_csv(csv_file, encoding= 'unicode_escape')
+
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+        _, created = Tbl_pasig_incidents.objects.get_or_create(
+            # Barangay=column[0],
+            # District_id_id=column[1]
+
+            City=column[0],
+            UnitStation=column[1],
+            CrimeOffense=column[2],
+            Week=column[3],
+            Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
+            Time=column[5],
+            Day=column[6],
+            Incident_Type=column[7],
+            Number_of_Persons_Involved=column[8],
+            Light=column[9],
+            Weather=column[10],
+            Case_Status=column[11],
+
+            
+            Address=column[12],
+            Along_Avenue=column[13],
+            Corner_Avenue=column[14],
+            Along_Road=column[15],
+            Corner_Road=column[16],
+            Along_Street=column[17],
+            Corner_Street=column[18],
+            Bound=column[19],
+            Along_Highway=column[20],
+            Corner_Highway=column[21],
+            Along_Boulevard=column[22],
+            Corner_Boulevard=column[23],
+            Others=column[24],
+
+            Surface_Condition=column[25],
+            Surface_Type=column[26], 
+            Road_Class=column[27], 
+            Road_Repair = column[28], 
+            Hit_and_Run = column[29], 
+            Road_Character=column[30], 
+    
+            Suspect_Name=column[31], 
+            Suspect_Severity=column[32],
+            Suspect_Age=column[33], 
+            Suspect_Sex=column[34], 
+            Suspect_Civil_Status = column[35], 
+            Suspect_Address=column[36],  
+            Suspect_Vehicle=column[37], 
+            Suspect_Vehicle_Body_Type=column[38], 
+            Suspect_Plate_No=column[39],
+            Suspect_Reg_Owner=column[40], 
+            Suspect_Drl_No=column[41], Suspect_Vehicle_Year_Model=column[42], 
+            
+            Victim_Type=column[43],
+            Victim_Name=column[44], Victim_Severity=column[45],Victim_Age=column[46], 
+            Victim_Sex=column[47], Victim_Civil_Status = column[48], Victim_Address=column[49], 
+            Victim_Vehicle=column[50], Victim_Vehicle_Body_Type=column[51], 
+            Victim_Plate_No=column[52],Victim_Reg_Owner=column[53], 
+            Victim_Drl_No=column[54], Victim_Vehicle_Year_Model=column[55],
+
+            #Narrative=column[56], 
+            # date_added=column[57][6:] + "-" + column[57][3:5] + "-" + column[57][:2],
+            # added_by=column[58],
+
+            District_id=column[59],
+            Barangay_id_id=column[60]
+        )
+
     brgy_list = Tbl_barangay.objects.values_list('Barangay', flat=True).distinct()
     context = {
         'brgy_list': brgy_list,  
@@ -175,12 +272,14 @@ def add_incident (request):
     return render (request, 'add_incident.html', context)
 
 def processAddIncident(request):
+
     city = "Pasig"
     unit_station="Pasig City Police Station"
     crime_offense=request.POST.get('display_offense')
     #week
     date_committed = request.POST.get('DateCommitted') #name attribute of textbox
     current_time = request.POST.get('currentTime')
+    day = request.POST.get('day_of_the_week')
     col_type = request.POST.get('collision_type')
     no_of_person_involved = "1"
     light = "Day"
@@ -215,7 +314,7 @@ def processAddIncident(request):
     sus_drl = request.POST.get('sus_drl')
     sus_vec_model = request.POST.get('sus_vec_model')
 
-    #victim type
+    vic_type = request.POST.get('vic_type')
     vic_name = request.POST.get('vic_name')
     vic_severity = request.POST.get('vic_severity')
     vic_age = request.POST.get('vic_age')
@@ -233,29 +332,59 @@ def processAddIncident(request):
 
     narrative = request.POST.get('narrative')
 
-    date_today = request.POST.get('date-today')
+    # date_today = request.POST.get('date-today')
     added_by = "wala pa"
 
 
     #inv_name = request.POST.get('inv_name')
     
-    print(date_committed)
-    print(current_time)
-    incident_record = Tbl_pasig_incidents.objects.create(City=city, UnitStation=unit_station, CrimeOffense=crime_offense, Date=date_committed,               
-                    Time=current_time, Incident_Type=col_type, Number_of_Persons_Involved=no_of_person_involved, Light=light, Weather=weather, Case_Status=case_status, District_id = district, Barangay_id_id = barangay, Address = address, Surface_Condition=surface_cond, Surface_Type=surface_type, Road_Class=road_class, Road_Repair = road_repair, Hit_and_Run = hit_and_run, Road_Character=road_char, 
+    
+    incident_record = Tbl_pasig_incidents.objects.create(City=city, UnitStation=unit_station,               CrimeOffense=crime_offense,           Date=date_committed,               
+                    Time=current_time, Day = day, Incident_Type=col_type, Number_of_Persons_Involved=no_of_person_involved, Light=light, Weather=weather, Case_Status=case_status, District_id = district, Barangay_id_id = barangay, Address = address, Surface_Condition=surface_cond, Surface_Type=surface_type, Road_Class=road_class, Road_Repair = road_repair, Hit_and_Run = hit_and_run, Road_Character=road_char, 
     
                     Suspect_Name=sus_name, Suspect_Severity=sus_severity,Suspect_Age=sus_age, Suspect_Sex=sus_sex, Suspect_Civil_Status = sus_civil_status, Suspect_Address=sus_add,  Suspect_Vehicle=sus_vehicle, Suspect_Vehicle_Body_Type=sus_vehicle_body_type, Suspect_Plate_No=sus_plate_no,Suspect_Reg_Owner=sus_reg_owner, Suspect_Drl_No=sus_drl, Suspect_Vehicle_Year_Model=sus_vec_model, 
                     
+                    Victim_Type = vic_type,
                     Victim_Name=vic_name, Victim_Severity=vic_severity,Victim_Age=vic_age, 
                     Victim_Sex=vic_sex, Victim_Civil_Status = vic_civil_status, Victim_Address=vic_add, 
                     Victim_Vehicle=vic_vehicle, Victim_Vehicle_Body_Type=vic_vehicle_body_type, 
                     Victim_Plate_No=vic_plate_no,Victim_Reg_Owner=vic_reg_owner, 
                     Victim_Drl_No=vic_drl, Victim_Vehicle_Year_Model=vic_vec_model,
 
-                    Narrative=narrative, date_added=date_today, added_by=added_by
+                    Narrative=narrative, added_by=added_by
                     )
     incident_record.save()
     return HttpResponseRedirect('/incidents/view')
+
+def processCSV (request):
+    data = Tbl_pasig_incidents.objects.all()
+
+    # prompt is a context variable that can have different values depending on their context
+    prompt = {'order': 'Order of the CSV should be name, email, address, phone, profile',
+             'incident_csv': data }
+
+    # GET request returns the value of the data with the specified key.
+    if request.method == "GET":
+        return render(request, 'add_incident.html', prompt)
+    csv_file = request.FILES['file']
+
+    # let's check if it is a csv file
+    if not csv_file.name.endswith('.csv'):
+        messages.error(request, 'THIS IS NOT A CSV FILE')
+
+    data_set = csv_file.read().decode('UTF-8')
+
+    # setup a stream which is when we loop through each line we are able to handle a data in a stream
+    io_string = io.StringIO(data_set)
+    next(io_string)
+
+    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
+        _, created = Tbl_barangay.objects.get_or_create(
+            Barangay=column[0],
+            District_id_id=column[1]
+        )
+    context = {}
+    return render(request, 'add_incident.html', context)
 
 def report_summary (request):
     return render (request, 'report_summary.html')
@@ -270,7 +399,7 @@ class Report_monthly (View):
 
         d2_brgy_distinct = []
         d2_brgy_distinct_count = []
-
+        
         d1_brgys = Tbl_barangay.objects.filter(Q(District_id='1')).values_list('Barangay', flat=True).distinct()
         d2_brgys = Tbl_barangay.objects.filter(Q(District_id='2')).values_list('Barangay', flat=True).distinct()
 
@@ -550,5 +679,6 @@ def pub_incident_detail_view (request, incident_id):
     context = {
         "incident_detail": pasig_incident_detail,
     }
+    
     return render (request, 'gen_incident_detail_view.html', context)
 

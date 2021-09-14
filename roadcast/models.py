@@ -113,3 +113,5 @@ class Tbl_pasig_incidents(models.Model):
     def __str__(self):
         model = Tbl_barangay
         return '{}-{}-{}'.format(self.City, model.Barangay, self.Date )
+
+
