@@ -195,8 +195,7 @@ def add_incident (request):
 
     for column in csv.reader(io_string, delimiter=',', quotechar="|"):
         _, created = Tbl_pasig_incidents.objects.get_or_create(
-            # Barangay=column[0],
-            # District_id_id=column[1]
+            
             City=column[0],
             UnitStation=column[1],
             CrimeOffense=column[2],
