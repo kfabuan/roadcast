@@ -6,22 +6,40 @@
 
 <div class="content">
 
+  {% if success_message %}
+    <p class="alert alert-success">
+        <strong>{{ success_message|safe }}</strong>
+    </p>
+  {% endif %}
+
+  {% if error_message %}
+    <p class="alert alert-danger">
+        <strong>{{ error_message|safe }}</strong>
+    </p>
+  {% endif %}
+
+
   {% if messages %}
       {% for message in messages %}
-          <div>
-              <!--| means OR operator-->
-              <strong>{{message|safe}}</strong>
-          </div>
-      {% endfor %}
+          <p class="alert alert-danger">
+            <strong>{{ message|safe }}</strong>
+          </p>
+  {% endfor %}
 
   {% else %}
-      {{order}}
-      <form action="" method="POST" enctype="multipart/form-data">
+      
+      <form class="row" action="" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
-          <label for="file1"> Upload a file</label>
-          <input type="file" id="file1" name="file">
-          <small>Only accepts CSV files</small>
-          <button type="submit">Upload</button>
+
+          <div class="mb-3 col">
+              <input class="form-control" type="file" id="formFile" name="file" required>     
+          </div>
+
+          <div class="col">
+              <button type="submit" class="btn btn-primary">Upload</button>
+              <small>Only accepts CSV files</small>
+          </div>
+          
       </form>
   {% endif %}
 
@@ -35,7 +53,6 @@
       <p id='date'>
       <i class="fas fa-calendar-day" id="date-today-icon"></i>
       <b id="date-today" name="date-today">Today: </b><span id="ct6"></span>
-      <input type="text" name="day_of_the_week" id="day_of_the_week" hidden>
       </p>
     </div>
     <!--Incident Details-->
@@ -47,10 +64,12 @@
     <div class="incident-details">
     
     <div class="card-incident">
-      <div class="item">Date Commited: <input type="date" id="DateCommitted" name="DateCommitted" class="form-field" onchange="dateFormat()"></div>
-      <!-- <div class="item">Date Commited: <br><input type="date" id="DateCommittedFormatted" name="DateCommittedFormatted" class="form-field" placeholder="Date"></div> -->
+      <div class="item">Date Commited: <input type="date" id="DateCommitted" name="DateCommitted" class="form-field" required></div>
+      <input type="text" name="day_of_the_week" id="day_of_the_week" class="form-field" hidden>
+      <input type="text" name="week" id="week" class="form-field" hidden >
 
-      <div class="item">Time Commited: <input type="time" id="currentTime" name="currentTime" class="form-field"></div>
+
+      <div class="item">Time Commited: <input type="time" id="currentTime" name="currentTime" class="form-field" required></div>
 
       <div class="item">Collision Type: <select name="collision_type" id="collision_type" class="form-field">
       <option value="">Choose Collision Type</option>
@@ -133,19 +152,19 @@
         <table id ="tbl_offense">
           <tr>
             <td>
-              <input type="checkbox" id="Damage to Property" name="Damage to Property" value="Damage to Property"><label> Damage to Property</label>
-              <input type="checkbox" id="Physical Injury" name="Physical Injury" value="Physical Injury"><label> Physical Injury</label><br>
+              <input type="checkbox" class="chk_offense" id="Damage to Property" name="Damage to Property" value="Damage to Property"><label> Damage to Property</label>
+              <input type="checkbox" class="chk_offense" id="Physical Injury" name="Physical Injury" value="Physical Injury"><label> Physical Injury</label><br>
             </td>
           </tr>
 
           <tr>
             <td>
-              <input type="checkbox" id="Self Accident" name="Self Accident" value="Self Accident"><label> Self Accident</label>
-              <input type="checkbox" id="Homicide" name="Homicide" value ="Homicide"><label> Homicide</label><br>
+              <input type="checkbox" class="chk_offense" id="Self Accident" name="Self Accident" value="Self Accident"><label> Self Accident</label>
+              <input type="checkbox" class="chk_offense" id="Homicide" name="Homicide" value ="Homicide"><label> Homicide</label><br>
             </td>
           </tr>
         </table>
-        <div class="item" id="display_offense">offense: <input type="text" id="display_offense" name ="display_offense" class="form-field" value=""></div>
+        <div class="item">offense: <input type="text" id="display_offense" name ="display_offense" class="form-field" hidden></div>
 
       </div>
 
@@ -260,7 +279,7 @@
       </select></div>
 
       <div class="item">Expiration Date: <input type="date" class="form-field"></div>
-      <div class="item">Vehicle Brand & Model: <input type="text" name="sus_vec_model" class="form-field"></div>
+      <div class="item">Vehicle Brand/Model: <input type="text" name="sus_vehicle" class="form-field"></div>
 
       <div class="item">Body Type: <select class="form-field" name="sus_vehicle_body_type">
       <option value="">Choose Case Status</option>
@@ -350,7 +369,7 @@
         <option value="Pedestrian">Pedestrian</option>
       </select></div>
       <div class="item">Expiration Date: <input type="date" class="form-field"></div>
-      <div class="item">Vehicle Brand & Model: <input type="text" name="vic_vec_model" class="form-field"></div>
+      <div class="item">Vehicle Brand/Model: <input type="text" name="vic_vehicle" class="form-field"></div>
 
     
       <div class="item">Body Type: <select name="vic_vehicle_body_type" class="form-field">
@@ -419,26 +438,16 @@
   </form>
 
 </div>
-  <script>
-    function chkBtn_OffenseValues() {
-     
 
-    }
 
-    function dateFormat(){
-
-      var dt = new Date();
-        document.getElementById('DateCommitted').innerhtml = dt;
-        document.getElementById('DateCommittedFormatted').innerhtml = [dt.getFullYear, dt.getMonth, dt.getDate].join("-");
-    }
-  </script>
   <script type="text/javascript">
     $(document).ready(function(){
+
       $('.nav_btn').click(function(){
         $('.mobile_nav_items').toggleClass('active');
       });
 
-      $('#submit_form').click(function(){
+      $('.chk_offense').click(function(){
         var selected_offense = new Array();
         var chk_tbl_offense = document.getElementById("tbl_offense");
         var selchk = chk_tbl_offense.getElementsByTagName("input");
@@ -448,32 +457,60 @@
             selected_offense.push(selchk[i].value);
           }
         }
-        if(selected_offense.length>0){
-          console.log(selected_offense);
-         // document.getElementById('display_offense').innerHTML=selected_offense;
-        // var tryyyy =  document.getElementById('display_offense').value=selected_offense;
 
-       //   alert(selected_offense);
-        //  alert(tryyyy)
+        if(selected_offense.length>0){
+          document.getElementById('display_offense').value=selected_offense; 
+        }
+         
+      });
+
+      $('#DateCommitted').change(function(){
+        
+        dt_committed =  document.getElementById('DateCommitted').value;
+        dt = new Date(dt_committed);
+        day = dt.getDay();
+
+        year = new Date(dt.getFullYear(),0,1);
+        numberOfDays = Math.floor((dt - year) / (24 * 60 * 60 * 1000));
+        week = Math.ceil(( dt.getDay() + 1 + numberOfDays) / 7);
+         
+
+        document.getElementById('week').value = week;
+
+        if(day==0){
+          document.getElementById('day_of_the_week').value = "Sunday";
         }
 
+        if(day==1){
+          document.getElementById('day_of_the_week').value = "Monday";
+        }
+
+        if(day==2){
+          document.getElementById('day_of_the_week').value = "Tuesday";
+        }
+
+        if(day==3){
+          document.getElementById('day_of_the_week').value = "Wednesday";
+        }
+
+        if(day==4){
+          document.getElementById('day_of_the_week').value = "Thursday";
+        }
+
+        if(day==5){
+          document.getElementById('day_of_the_week').value = "Friday";
+        }
+        
+        if(day==6){
+          document.getElementById('day_of_the_week').value = "Saturday";
+        }
       
+      });
 
-        
-       // var dt = new Date();
-
-        dt = document.getElementById('DateCommitted').innerhtml;
-        
-        day = dt.getDay()
-        document.getElementById('day_of_the_week').innerhtml = day;
-
-        alert(dt);
-        alert(day);
-
-        });
 
     });
-    </script>
+
+  </script>
   
     <script>
       var today = new Date();
