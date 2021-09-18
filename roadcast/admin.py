@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district #Class in models.py
+from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report #Class in models.py
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 # Register your models here.
@@ -18,8 +18,12 @@ class PasigDistrict(admin.ModelAdmin):
 
 class PasigBrgy(admin.ModelAdmin):
     list_display = ['id','Barangay', 'District_id']
+
+class PasigReportedIncidents(admin.ModelAdmin):
+    list_display = ['image_tag','id','User_ID', 'Reported_City', 'Reported_Brgy','Report_Status']
    
     
 admin.site.register(Tbl_pasig_incidents, PasigIncidents) #2 parameters to lagi
 admin.site.register(Tbl_district, PasigDistrict)
 admin.site.register(Tbl_barangay, PasigBrgy)
+admin.site.register(Tbl_public_report, PasigReportedIncidents)

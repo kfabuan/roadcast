@@ -11,6 +11,15 @@ from django.utils.html import mark_safe
 
 now = timezone.now()
 
+def image_path(instance, filename):
+    basefilename, file_extension = os.path.splitext(filename)
+    chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvqxyz1234567890'
+    randomstr = ''.join((random.choice(chars)) for x in range(10))
+    _now = datetime.now()
+
+    return 'incident_images/{year}-{month}-{imageid}={basename}-{randomstring}{ext}'.format(imageid = instance,basename=basefilename, randomstring=randomstr, ext=file_extension, year=_now.strftime("%Y"), month=_now.strftime("%m"), day=_now.strftime("%d"))
+
+
 class Tbl_district(models.Model):
     DISTRICT = (
         ('District 1', 'District 1'),
@@ -29,8 +38,6 @@ class Tbl_barangay(models.Model):
         return self.Barangay 
 
 class Tbl_pasig_incidents(models.Model):
-  
-   
     # DISTRICT = (
     #     ('District 1', (
     #         ('Santa Lucia', 'Sta. Lucia'),
@@ -112,5 +119,30 @@ class Tbl_pasig_incidents(models.Model):
 
     def __str__(self):
         model = Tbl_barangay
-        return '{}-{}-{}'.format(self.City, model.Barangay, self.Date )
+        return '{}-{}-{}'.format(self.City, model.Barangay, self.Date)
+
+class Tbl_public_report(models.Model):
+    User_ID = models.CharField(max_length=200, verbose_name='User ID', blank=True)
+    Reported_City = models.CharField(max_length=200, verbose_name='City:', blank=True)
+    Reported_Brgy =  models.ForeignKey(Tbl_barangay, null=True, on_delete=models.SET_NULL) #foreign
+    Reported_District = models.CharField(max_length=200, verbose_name='District', blank=True)
+    Reported_Location = models.CharField(max_length=200, verbose_name='Location', blank=True)
+    Reported_Along = models.CharField(max_length=200, verbose_name='Along', blank=True)
+    Reported_Corner = models.CharField(max_length=200, verbose_name='Corner', blank=True)
+    Reported_Narrative = models.CharField(max_length=200, verbose_name='Narrative', blank=True)
+    Reported_Image_Proof = models.ImageField(upload_to=image_path,verbose_name='Proof of Incident', blank=True)
+    Reported_Date_and_Time = models.DateTimeField(default=now, verbose_name='Date Reported', blank=True)
+    Read_Status = models.CharField(max_length=200, verbose_name='Read', blank=True)
+    Report_Status = models.CharField(max_length=200, verbose_name='Report Status', blank=True)
+
+    def image_tag(self):
+        return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Reported_Image_Proof))
+
+    def __str__(self):
+        return '{}-{}-{}'.format(self.Reported_Date_and_Time,self.Reported_Brgy,self.Reported_City)
+
+
+
+
+
 

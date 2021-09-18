@@ -36,11 +36,16 @@ urlpatterns = [
     path('signup/validation', views.sign_up_validation, name='sign_up_validation'),
     path('dashboard', DashboardView.as_view(), name='dashboard'),
     path('dashboard/data', views.get_data, name='data'),
+
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
-
     path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
+
+
+    path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
+    path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
+
 
     path('report/submit', views.submit_report, name='submit_report'),
     path('report', views.report_summary, name='report_summary'),
@@ -63,6 +68,9 @@ urlpatterns = [
 
     # path('gen_report', views.gen_report, name='gen_report'),
     # path('rep_notif', views.rep_notif, name='rep_notif'),
+    #path('<int:incident_id>/public_incident_detail/', views.public_incident_detail, name='public_incident_detail'),
+
+    #path('<int:incident_id>/admin_incident_detail/', views.admin_incident_detail, name='admin_incident_detail'),
 
     
     path('logout', views.login, name='logout'),

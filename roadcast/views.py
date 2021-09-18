@@ -1,13 +1,16 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.views.generic import View #for charts
 from django.http import JsonResponse
 from django.db.models import Q
 from collections import Counter
 from itertools import chain
 from django.db import connection
+
+
+
 
 from django.contrib import messages #for csv upload
 
@@ -153,25 +156,46 @@ def get_data(request, *args, **kwargs):
     return JsonResponse(data) #http response
 
 def view_incidents (request):
-    term = 'Marcos Highway' #since di parati nag ssearch si user, mag-eerror so mag lalagay ng blank para i-allow nya
+    #term = 'Marcos Highway' since di parati nag ssearch si user, mag-eerror so mag lalagay ng blank para i-allow nya
     #pasig_incident_list = Tbl_pasig_incidents.objects.filter(Q(along_highway__icontains=term) |Q(corner_highway__icontains=term)).order_by('-id') 
     #pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
 
-    cursor=connection.cursor()
-    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id DESC")
-    pasig_incident_list = cursor.fetchall()
+    # cursor=connection.cursor()
+    # cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id DESC")
+    # pasig_incident_list = cursor.fetchall()
 
-    context = {
+    incident_type = request.GET.get('coltype') 
+  
+    barang= request.GET.get('barangay')
+    
+ 
+    all_entries = Tbl_pasig_incidents.objects.all()
+    context1 = {
+            'pasig_incident_list': all_entries,  
+        }
+
+    pasig_incident_list=Tbl_pasig_incidents.objects.filter(Q(Incident_Type=incident_type) & Q(Barangay_id_id=barang))
+    pasig_incident_list_it= Tbl_pasig_incidents.objects.filter(Q(Incident_Type=incident_type))
+    
+    pasig_incident_list_br= Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id=barang))
+    context3 = {
+        'pasig_incident_list': pasig_incident_list_br,  
+    }
+
+    context2 = {
         'pasig_incident_list': pasig_incident_list,  
     }
-    return render (request, 'view_incidents.html', context) 
+  
+    if bool(incident_type) & bool(barang):
+         return render (request, 'encoder_view_incidents.html', context2)
+    elif (incident_type==0):
+        return render (request, 'encoder_view_incidents.html', context3) 
+    else:
+        return render (request, 'encoder_view_incidents.html', context1) 
 
-def uploadcsv (request):
-    return render (request, 'upload_csv.html')
+
 
 def add_incident (request):
-    
-
     try:
         # GET request returns the value of the data with the specified key.
         if request.method == "GET":
@@ -240,7 +264,7 @@ def add_incident (request):
                 Victim_Plate_No=column[52],Victim_Reg_Owner=column[53], 
                 Victim_Drl_No=column[54], Victim_Vehicle_Year_Model=column[55],
 
-                #Narrative=column[56], 
+                Narrative=column[56], 
                 # date_added=column[57][6:] + "-" + column[57][3:5] + "-" + column[57][:2],
                 # added_by=column[58],
 
@@ -258,7 +282,6 @@ def add_incident (request):
             return render (request, 'add_incident.html', context)
     except:
         csv_file = request.FILES['file']
-
         # let's check if it is a csv file
         if not csv_file.name.endswith('.csv'):
             messages.error(request, 'Error: This is not a CSV file.')
@@ -329,10 +352,7 @@ def processAddIncident(request):
 
     # date_today = request.POST.get('date-today')
     added_by = "wala pa"
-
-
     #inv_name = request.POST.get('inv_name')
-    
     
     incident_record = Tbl_pasig_incidents.objects.create(
                     City=city, 
@@ -355,7 +375,7 @@ def processAddIncident(request):
                     Road_Class=road_class, 
                     Road_Repair = road_repair, 
                     Hit_and_Run = hit_and_run,
-                     Road_Character=road_char, 
+                    Road_Character=road_char, 
     
                     Suspect_Name=sus_name, 
                     Suspect_Severity=sus_severity,
@@ -413,6 +433,142 @@ def processCSV (request):
         )
     context = {}
     return render(request, 'add_incident.html', context)
+
+
+def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
+    try:
+        pasig_incident_detail = Tbl_pasig_incidents.objects.get(id=incident_id)
+
+    except Tbl_pasig_incidents.DoesNotExist:
+        raise Http404("Incident does not exist")
+
+    return render(request, 'encoder_view_incident_detail.html', {'pasig_incident_detail': pasig_incident_detail})
+
+def processEditIncident(request, incident_id):
+    incident_detail = get_object_or_404(Tbl_pasig_incidents, id=incident_id)
+
+    try:
+        crime_offense = request.POST.get('display_offense')
+        #week 
+        date_committed = request.POST.get('DateCommitted') #name attribute of textbox
+        current_time = request.POST.get('currentTime')
+        day = request.POST.get('day_of_the_week')
+        col_type = request.POST.get('collision_type')
+        #no_of_person_involved = "1"
+        #light = "Day"
+        weather = request.POST.get('weather')
+        case_status = request.POST.get('case_status')
+        district = request.POST.get('district')
+        barangay = request.POST.get('barangay')
+        address = request.POST.get('place_committed')
+        along = request.POST.get('along')
+        corner = request.POST.get('corner')
+        # road
+        # street
+        # bound
+        # highway
+        # others
+        surface_cond = request.POST.get('surface_condition')
+        surface_type = request.POST.get('surface_type')
+        road_class = "Ewan" #idk
+        road_repair = request.POST.get('road-repair')
+        hit_and_run = request.POST.get('hit-and-run')
+        road_char = request.POST.get('road_character')
+
+        sus_name = request.POST.get('sus_name')
+        sus_severity = request.POST.get('sus_severity')
+        sus_age = request.POST.get('sus_age')
+        sus_sex = request.POST.get('s_sex')
+        sus_civil_status = request.POST.get('sus_civil_status')
+        sus_add = request.POST.get('sus_add')
+        sus_vehicle = request.POST.get('sus_vehicle')
+        sus_vehicle_body_type = request.POST.get('sus_vehicle_body_type')
+        sus_plate_no = request.POST.get('sus_plate_no')
+        sus_reg_owner = request.POST.get('sus_reg_owner')
+        sus_drl = request.POST.get('sus_drl')
+        # sus_vec_model = request.POST.get('sus_vec_model')
+
+        vic_type = request.POST.get('vic_type')
+        vic_name = request.POST.get('vic_name')
+        vic_severity = request.POST.get('vic_severity')
+        vic_age = request.POST.get('vic_age')
+        vic_sex = request.POST.get('v_sex')
+        vic_civil_status = request.POST.get('vic_civil_status')
+        vic_add = request.POST.get('vic_add')
+        vic_vehicle = request.POST.get('vic_vehicle')
+        vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+        vic_plate_no = request.POST.get('vic_plate_no')
+        vic_reg_owner = request.POST.get('vic_reg_owner')
+        vic_drl = request.POST.get('vic_drl')
+    
+        narrative = request.POST.get('narrative')
+
+        # date_today = request.POST.get('date-today')
+        added_by = "wala pa"
+        inv_name = request.POST.get('inv_name')
+      
+    except (KeyError, Tbl_pasig_incidents.DoesNotExist): #KeyError is partner nung get_object_or_404
+        return render(request, 'encoder_view_incident_detail.html', {
+            'detail':incident_detail,
+            'error_message': "Problem Updating Record.",
+        })
+    else:
+        incident = Tbl_pasig_incidents.objects.get(id=incident_id) #kukunin yung row sa database na kapareha ng incident_id
+        incident.CrimeOffense=crime_offense         
+        # incident.Date=date_committed             
+        # incident.Time=current_time
+        # incident.Day = day 
+        incident.Incident_Type=col_type
+        # incident.Number_of_Persons_Involved=no_of_person_involve
+        # incident.Light=light 
+        incident.Weather=weather 
+        incident.Case_Status=case_status 
+        incident.District_id = district 
+        incident.Barangay_id_id = barangay 
+        incident.Address = address 
+        incident.Along_Avenue = along 
+        incident.Corner_Avenue = corner 
+
+        incident.Surface_Condition=surface_cond 
+        incident.Surface_Type=surface_type
+        incident.Road_Class=road_class
+        incident.Road_Repair = road_repair 
+        incident.Hit_and_Run = hit_and_run
+        incident.Road_Character=road_char
+
+        incident.Suspect_Name=sus_name
+        incident.Suspect_Severity=sus_severity
+        incident.Suspect_Age=sus_age 
+        incident.Suspect_Sex=sus_sex 
+        incident.Suspect_Civil_Status = sus_civil_status 
+        incident.Suspect_Address=sus_add  
+        incident.Suspect_Vehicle=sus_vehicle 
+        incident.Suspect_Vehicle_Body_Type=sus_vehicle_body_type 
+        incident.Suspect_Plate_No=sus_plate_no
+        incident.Suspect_Reg_Owner=sus_reg_owner 
+        incident.Suspect_Drl_No=sus_drl 
+        # Suspect_Vehicle_Year_Model=sus_vec_model 
+        
+        incident.Victim_Type = vic_type
+        incident.Victim_Name=vic_name 
+        incident.Victim_Severity=vic_severity
+        incident.Victim_Age=vic_age 
+        incident.Victim_Sex=vic_sex 
+        incident.Victim_Civil_Status = vic_civil_status 
+        incident.Victim_Address=vic_add 
+        incident.Victim_Vehicle=vic_vehicle 
+        incident.Victim_Vehicle_Body_Type=vic_vehicle_body_type 
+        incident.Victim_Plate_No=vic_plate_no
+        incident.Victim_Reg_Owner=vic_reg_owner 
+        incident.Victim_Drl_No=vic_drl 
+        # #Victim_Vehicle_Year_Model=vic_vec_model
+
+        incident.Narrative=narrative
+        # incident.added_by=added_by
+
+        incident.save()  #may changes or wala sa profile pic, save parin
+        return HttpResponseRedirect(reverse('incident_detail_view', args=(incident_id, ))) #name ng url yung gen_incident_detail_view NOT MISMONG URL
+
 
 def report_summary (request):
     return render (request, 'report_summary.html')
