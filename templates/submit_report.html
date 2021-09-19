@@ -1,1036 +1,161 @@
-{% extends 'nav_genpub.html' %}
-{% block title %} Submit Report {% endblock %}
+{% extends 'nav_admin.html' %}
 
-{% block design %} 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
 
-<style>
-  h1 {
-  color:red !important; 
-}
-
-body{
-  margin: 0;
-  padding: 0;
-  font-family: "Roboto", sans-serif;
-}
-
-header{
-  z-index: 1;
-  position: fixed;
-  background: #1b5082;
-  padding: 20px;
-  width: 100%;
-  top: 0;
-  height: 30px;
-}
-
-.left_area h3{
-  color: #fff;
-  margin: 0;
-  text-transform: uppercase;
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 1px;
-}
-
-#title {
-  margin-left: 2px;
-}
-
-.left_area span{
-  color: #19B3D3;
-}
-
-.logout_btn{
-  padding: 8px 15px 8px 15px;
-  background: #19B3D3;
-  text-decoration: none;
-  float: right;
-  margin-top: -30px;
-  margin-right: 40px;
-  border-radius: 2px;
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  transition: 0.5s;
-  transition-property: background;
-  border: none;
-}
-
-.logout_btn:hover{
-  background: #0B87A6;
-}
-
-.sidebar{
-  z-index: 1;
-  top: 0;
-  background: #1b5082;
-  margin-top: 70px;
-  padding-top: 30px;
-  position: fixed;
-  left: 0;
-  width: 250px;
-  height: calc(100% - 9%);
-  transition: 0.5s;
-  transition-property: left;
-  overflow-y: auto;
-}
-
-.profile_info{
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-
-.sidebar .profile_info .profile_image{
-  width: 100px;
-  height: 100px;
-  border-radius: 100px;
-  margin-bottom: 10px;
-}
-
-.sidebar .profile_info h4{
-  color: #ccc;
-  margin-top: 0;
-  margin-bottom: 20px;
-}
-
-.sidebar a{
-  color: #fff;
-  display: block;
-  width: 100%;
-  line-height: 60px;
-  text-decoration: none;
-  padding-left: 40px;
-  box-sizing: border-box;
-  transition: 0.5s;
-  transition-property: background;
-}
-
-.sidebar a:hover{
-  background: #19B3D3;
-}
-
-.sidebar i{
-  padding-right: 10px;
-}
-
-label #sidebar_btn{
-  z-index: 1;
-  color: #fff;
-  position: fixed;
-  cursor: pointer;
-  left: 220px;
-  font-size: 19px;
-  margin: 5px 0;
-  transition: 0.5s;
-  transition-property: color;
-}
-
-label #sidebar_btn:hover{
-  color: #19B3D3;
-}
-
-#check:checked ~ .sidebar{
-  left: -185px;
-}
-
-#check:checked ~ .sidebar a span{
-  display: none;
-}
-
-#check:checked ~ .sidebar a{
-  font-size: 20px;
-  margin-left: 165px;
-  width: 100%;
-}
-
-.content{
-  width: (100% - 250px);
-  margin-top: 60px;
-  padding: 20px;
-  margin-left: 250px;
-  background: url(background.png) no-repeat;
-  background-position: center;
-  background-size: cover;
-  height: auto;
-  transition: 0.5s;
-}
-
-#check:checked ~ .content{
-  margin-left: 60px;
-}
-
-#check:checked ~ .sidebar .profile_info{
-  display: none;
-}
-
-#check{
-  display: none;
-}
-
-.mobile_nav{
-  display: none;
-}
-
-.content .card p{
-  background: #fff;
-  padding-top: 50px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  opacity: 0.8;
-}
-
-.incident-details{
-  padding-top: 50px;
-}
-
-#date{
-  display: inline;
-  position: absolute;
-  padding-right: 20px;
-  right: 0;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-#date-today, #date-today-icon {
-  color: #1b5082;
-  text-transform: uppercase;
-}
-
-.separator{
-  position: relative;
-  margin: auto;
-  margin-top: 40px;
-  padding-top: 10px;
-  width: 100%;
-  height: 30px;
-  background-color:#0071b2;
-  color: #fff;
-  text-align: center;
-
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 2px;
-  font-size: 14px;
-}
-
-.incident-details{
-  margin-left: 200px;
-}
-
-.card-incident{
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.item{
-  width: 100%;
-  padding-top: 20px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.card-incident > div {
-  /* or - flex: 0 50% - or - flex-basis: 50% - */
-  flex: 50%; 
-
-  /*demo*/
-  margin-bottom: 10px;
-}
-
-input[type="date"],input[type="time"],input[type="text"],input[type="number"], select {
-  width: 75%;
-}
-
-.title{
-  height: 30px;
-  width: 180px;
-  color: #222;
-  background-color: #a8b2ce;
-  text-align: center;
-  padding-top: 10px;
-
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: 1px;
-  font-size: 12px;
-}
-
-#add_victim{
-  height: auto;
-  width: auto;
-  margin-top: 50px;
-  padding: 13px 17px 13px 17px;
-  font-size: 12px;
-
-  transition: 0.5s;
-}
-
-.narrative{
-  margin-top: 20px;
-  height: 250px;
-  width: 90%;
-
-  padding: 20px;
-  font-family: "Roboto", sans-serif;
-  font-size: 14px;
-  border: 1px transparent solid;
-  border-radius: 1px 5px 1px 5px;
-  outline-color: #0071b2;
-  border-color: rgba(0,0,0,0.15);
-  color: #575756;
-}
-
-#submit_form {
-  margin-top: 50px;
-  margin-bottom: 60px;
-  display: inline-block;
-  width: auto;
-  height: auto;
-
-  background:#333;
-
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  padding:15px 40px 15px 40px;
-
-  border-radius: 4px;
-  text-align:center;
-  position:relative;
-  cursor:pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px;
-  border-color: rgba(0,0,0,0.15);
-  transition: 0.5s;
-}
-
-#submit_form:hover{
-  background: rgb(34, 32, 32);
-}
-
-    
-#user-type {
-  margin-top: 10px;
-  margin-bottom: 30px;
-  }
-  
-  #date-today-icon {
-  margin-right: 6px;
-  font-size: 16px;
-  }
-  
-  section {
-  height: 50px;
-  }
-  
-  .form-field {
-  margin-top: 10px;
-  width: 80%;
-  font-size: 12px;
-  border: 1px  solid;
-  border-radius: 5px;
-  padding: 10px;
-  outline-color: #0071b2;
-  border-color: rgba(0,0,0,0.15);
-  color: #575756;
-  }
-  
-  .offense-other {
-  outline: 0;
-  border-width: 0 0 2px;
-  border-color: #575756
-  }
-  
-  .radio-space {
-  margin-left: 80px;
-  margin-top: 10px;
-  }
-  
-  input[type=radio], input[type="checkbox"]{
-  transform:scale(1.3);
-  margin-right: 8px;
-  }
-
-/* Responsive CSS */
-
-@media only screen and (max-width: 600px){
-
-.card-incident{
-  flex-direction: column;
-}
-
-.sidebar{
-  display: none;
-}
-
-#sidebar_btn{
-  display: none;
-}
-
-.content{
-  margin-left: 0;
-  margin-top: 0;
-  padding: 10px 20px;
-  transition: 0s;
-}
-
-#check:checked ~ .content{
-  margin-left: 0;
-}
-
-.mobile_nav{
-  display: block;
-  width: calc(100% - 0%);
-}
-
-.nav_bar{
-  background: #222;
-  max-width:  100%;
-  margin-top: 70px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-}
-
-.nav_bar .mobile_profile_image{
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-}
-
-.nav_bar .nav_btn{
-  color: #fff;
-  font-size: 22px;
-  cursor: pointer;
-  transition: 0.5s;
-  transition-property: color;
-}
-
-.nav_bar .nav_btn:hover{
-  color: #19B3D3;
-}
-
-.mobile_nav_items{
-  background: #2F323A;
-  display: none;
-}
-
-.mobile_nav_items a{
-  color: #fff;
-  display: block;
-  text-align: center;
-  letter-spacing: 1px;
-  line-height: 60px;
-  text-decoration: none;
-  box-sizing: border-box;
-  transition: 0.5s;
-  transition-property: background;
-}
-
-.mobile_nav_items a:hover{
-  background: #19B3D3;
-}
-
-.mobile_nav_items i{
-  padding-right: 10px;
-}
-
-.active{
-  display: block;
-}
-
-#date {
-  font-size: 12px;
-}
-
-.separator {
-  font-size: 11px;
-}
-
-.incident-details{
-  margin-left: 50px;
-}
-
-.narrative {
-  width: 80%;
-  height: 160px;
-  font-size: 12px;
-}
-
-.form-field {
-  font-size: 10px;
-}
-
-#status {
-  width: 80% !important;
-}
-}
-
-/* ------------------------------------------ for submit_report ------------------------------------------ */
-
-.upload-image {
-margin-top: 20px;
-height: auto;
-width: auto;
-
-font-size: 14px;
-border: 2px transparent dashed;
-border-radius: 1px 5px 1px 5px;
-border-color: rgba(0,0,0,0.15);
-color: #575756;
-}
-
-#upload_content {
-width: 100%;
-height: 350px;
-}
-
-.fa-cloud-upload-alt {
-margin-top: 70px;
-margin-bottom: 30px;
-font-size: 120px;
-color: #9eb5c9;
-}
-
-.upload-button {
-background-color: #3ee190;
-color: white;
-padding: 0.5rem;
-border-radius: 0.3rem;
-cursor: pointer;
-
-transition: 0.5s;
-}
-
-.upload-button:hover {
-background: #229e60;
-}
-
-#file-chosen{
-margin-left: 0.3rem;
-font-size: 12px;
-}
-
-.up-text {
-margin-top: 30px;
-}
-
-.upload-text {
-font-style: italic;
-}
-
-@media only screen and (max-width: 600px) {
-.upload-image {
-  font-size: 11px;
-  height: 280px;
-}
-
-.fa-cloud-upload-alt {
-  font-size: 90px;
-  margin-top: 40px;
-}
-
-#file-chosen {
-  font-size: 11px;
-}
-
-}
-
-/* ------------------------------------------ for submit_sucess ------------------------------------------ */
-
-.submit-content {
-width: auto;
-height: auto;
-}
-
-.submit-image {
-margin-top: 10px;
-}
-
-.sent-image {
-width: 380px;
-height: auto;
-}
-
-.submit-major {
-margin-top: -15px;
-font-weight: bold;
-letter-spacing: 1px;
-font-size: 26px;
-color: #707070;
-}
-
-.submit-minor {
-width: 450px;
-height: auto;
-
-margin-top: 15px;
-font-size: 16px;
-color: #707070;
-line-height: 1.4;
-}
-
-/* Responsive CSS */
-
-@media only screen and (max-width:600px) {
-
-.submit-image {
-margin-top: 10px;
-}
-
-.sent-image {
-  width: 280px;
-  height: auto;
-  margin-top: 50px;
-  }
-
-.submit-major {
-  font-size: 14px !important;
-  }
-  
-.submit-minor {
-  width: 250px !important;
-  font-size: 12px !important;
-  }
-
-#submit_form {
-  font-size: 12px !important;
-  }
-}
-
-/* ------------------------------------------ for assign investigator ------------------------------------------ */
-
-.card-content {
-  width: auto;
-  height: auto;
-
-  margin-top: 50px;
-  margin-bottom: 40px;
-  padding-top: 1px;
-  padding-bottom: 60px;
-
-  background-color: #fff;
-  border: none;
-	border-radius: 8px 8px 8px 8px;
-  box-shadow: 0 0 5px 0 rgba(61, 61, 61, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-#save-butt {
-  margin-top: 50px;
-  margin-right: 30px;
-  width: 150px;
-  height: auto;
-
-  background:#0073b5;
-
-  font-size: 14px;
-  font-weight: bold;
-  color: #fff;
-  padding:11px 20px 11px 20px;
-
-  border-radius: 8px;
-  cursor:pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  border: 1px;
-  border-color: rgba(0,0,0,0.15);
-  transition: 0.5s;
-}
-
-#save-butt:hover{
-  background: rgb(34, 32, 32);
-}
-
-#discard-butt {
-  margin-top: 50px;
-  width: 150px;
-  height: auto;
-
-  background:transparent;
-
-  font-size: 14px;
-  font-weight: bold;
-  color: #0073b5;
-  padding:10px 15px 10px 15px;
-
-  border: 2px solid;
-  border-color: #0073b5;
-  border-radius: 8px;
-  cursor:pointer;
-  appearance: none;
-  -webkit-appearance: none;
-  transition: 0.5s;
-}
-
-#discard-butt:hover{
-  color: rgb(34, 32, 32);
-  border-color: rgb(34, 32, 32);
-}
-
-.buttons {
-  text-align: center;
-}
-
-/* ------------------------------------------ for edit incident ------------------------------------------ */
-
-.edit-details {
-  display: inline-flex;
-}
-
-.edit-bg {
-  width: 250px;
-  height: 60px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  color: #525252;
-  background-color: #d4d4d4;
-  border-radius: 6px;
-  outline: none;
-  border: 1px solid;
-  border-color: #94949479;
-  margin-right: 0;
-  margin-bottom: -15px;
-  position: relative;
-  float: right;
-}
-
-.buttons-place {
-  position: relative;
-  margin-top: 40px;
-}
-
-@media only screen and (max-width: 600px) {
-  .edit-bg {
-    width: 200px;
-    height: auto;
-    font-size: 14px;
-  }
-
-  #date {
-    display: none;
-  }
-
-  #save-butt {
-    font-size: 12px;
-    margin-right: 10px;
-  }
-
-  #discard-butt {
-    font-size: 12px;
-  }
-}
-
-/* ------------------------------------------ for view incident ------------------------------------------ */
-
-#go-back {
-  font-size: 30px;
-  color: #525252;
-  margin-right: 15px;
-  margin-left: 20px;
-  cursor: pointer;
-}
-
-.back-title {
-  font-size: 18px;
-  font-weight: bold;
-  color: #0073b5;
-  letter-spacing: 1px;
-}
-
-@media only screen and (max-width: 600px) {
-  #go-back {
-    font-size: 20px;
-    margin-right: 15px;
-    margin-left: 20px;
-    margin-top: 10px;
-  }
-  
-  .back-title {
-    font-size: 14px;
-    margin-top: 10px;
-  }
-
-  #date {
-    display: none;
-  }
-}
-
-/* ------------------------------------------ for case notification for crime registrar ------------------------------------------ */
-
-.content-notif {
-  padding: 20px 20px 20px 30px;
-}
-
-.top-part {
-  display: flex;
-  margin-top: 30px;
-  margin-bottom: 5px;
-}
-
-#search-bar {
-  background-color: rgba(236, 236, 236, 0.733);
-  max-width: 60%;
-  height: 20px;
-  border: 1px  solid;
-  border-radius: 5px 0px 0px 5px;
-  padding: 10px 10px 10px 15px;
-  outline-color: #0071b2;
-  border-color: rgba(0,0,0,0.15);
-  color: #575756;
-  margin-right: -1px;
-  transition: 0.8s;
-}
-
-#search-bar:focus {
-  background-color: #fff;
-  box-shadow: 0 0 5px 0 rgba(61, 61, 61, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-}
-
-.submit-search, .archive {
-  height: auto;
-  padding: 5px 15px 5px 15px;
-  transition: 0.5s;
-  cursor: pointer;
-}
-
-.submit-search {
-  background-color: #F0F0F0;
-  margin-right: 30px;
-  max-width: auto;
-  border-radius: 0px 5px 5px 0px;
-  border: 1px  solid;
-  border-color: rgba(0,0,0,0.15);
-  color: #575756;
-}
-
-.archive {
-  background-color: #3ee190;
-  width: 130px;
-  border-radius: 6px;
-  border: 1px  transparent;
-}
-
-.submit-search:hover {
-  background-color: #B0B0B0;
-  color: #fff;
-}
-
-.archive:hover {
-  background-color: #229e60;
-  color: #fff;
-}
-
-#notif-ic {
-  font-size: 15px;
-  margin-right: 5px;
-}
-
-.notif-table {
-  width: 95%;
-  background-color: #fff;
-  padding: 15px;
-  border: 1px  solid;
-  border-radius: 6px;
-  border-color: rgba(0,0,0,0.15);
-  color: #575756;
-}
-
-.fa-archive {
-  font-size: 24px;
-  color: #575756;
-  cursor: pointer;
-  transition: 0.5s;
-}
-
-.fa-archive:hover {
-  color: #229e60;
-}
- 
-tr {
-  transition: 0.5s;
-}
-
-tr:hover {
-  background-color: #d8d8d588;
-}
-
-td {
-  padding: 7px;
-  cursor: pointer;
-}
-
-.table-blott, .table-date, .table-time, .table-case {
-  font-weight: bold;
-}
-
-.search-small {
-  display:none;
-}
-
-@media only screen and (max-width:600px) {
-  .content-notif {
-    padding: 0;
-  }
-  
-  #search-bar {
-    max-width: 35%;
-    padding: 5px 5px 5px 10px;
-  }
-
-  .search-full {
-    display: none;
-  }
-
-  .search-small {
-    display: inline;
-  }
-  
-  .submit-search {
-    margin-right: 15px;
-  }
-  
-  .archive {
-    width: auto;
-  }
-
-  .notif-table {
-    width: 95%;
-    padding: 10px;
-    font-size: 10px;
-  }
-  
-  .fa-archive {
-    font-size: 14px;
-  }
-  
-  td {
-    padding: 5px;
-  }
-
-  .table-case {
-    display:none; 
-  }
-}
-</style>
-
-{% endblock %}
+{% block title %} Add Members {% endblock %}
 
 {% block content %}
 
-      <div class="content">
- 
-        <!--Date-->
-          <div class="top-content">
-            
-            <p id='date'>
-                <i class="fas fa-calendar-day" id="date-today-icon"></i>
-                <b id="date-today">Today: </b><span id="ct6"></span>
-            </p>
-          </div>
-       
-            <form action="{% url 'process_add_incident' %}" method="post" enctype="multipart/form-data">
 
-          <br>
-          
-          <!--Place commited-->
-          <div class="card"  style="margin-left:-170px;">
-            <div class="separator">Place Commited Information</div>
-            
-            
-          <div class="incident-details">
-          
-          <div class="card-incident">
-            <div class="item">City: <br><input type="text" value="Pasig City" class="form-field" readonly></div>
-      
-            <div class="item">Barangay: <br><select name="Barangay" id="Barangay" class="form-field" onchange="selectdistrict(event)">
-            <option disabled="true" selected>Choose a Barangay</option>
-            {% for brgy in brgy_list %}
-            <option> {{ brgy }}</option>
-      
-            {% endfor %}
-            <!-- <option value="Bagong Ilog">Bagong Ilog</option>
-            <option value="Bagong Katipunan">Bagong Katipunan</option>
-            <option value="Bambang">Bambang</option>
-            <option value="Buting">Buting</option>
-            <option value="Caniogan">Caniogan</option>
-            <option value="Kalawaan">Kalawaan</option>
-            <option value="Kapasigan">Kapasigan</option>
-            <option value="Kapitolyo">Kapitolyo</option>
-            <option value="Malinao">Malinao</option>
-            <option value="Oranbo">Oranbo</option>
-            <option value="Palatiw">Palatiw</option>
-            <option value="Pineda">Pineda</option>
-            <option value="Sagad">Sagad</option>
-            <option value="San Antonio">San Antonio</option>
-            <option value="San Joaquin">San Joaquin</option>
-            <option value="San Jose">San Jose</option>
-            <option value="San Nicolas">San Nicolas</option>
-            <option value="Santa Cruz">Santa Cruz</option>
-            <option value="Santa Rosa">Santa Rosa</option>
-            <option value="Santo Tomas">Santo Tomas</option>
-            <option value="Sumilang">Sumilang</option>
-            <option value="Ugong">Ugong</option>
-            <option value="Dela Paz">Dela Paz</option>
-            <option value="Manggahan">Manggahan</option>
-            <option value="Maybunga">Maybunga</option>
-            <option value="Pinagbuhatan">Pinagbuhatan</option>
-            <option value="Rosario">Rosario</option>
-            <option value="San Miguel">San Miguel</option>
-            <option value="Santolan">Santolan</option>
-            <option value="Santa Lucia">Santa Lucia</option> -->
-            </select></div>
-            
-            <div class="item">District: <br><input type="text" id="district" value="" class="form-field" readonly></div>
-          
-            
-            <div class="item">Specific Location: <br><input type="text" id="Place commited" class="form-field"></div>
-            <div class="item">Along: <br><input type="text" id="Along" class="form-field"></div>
-            <div class="item">Corner: <br><input type="text" id="Corner" class="form-field"></div>
-           </div>
-          </div>
-      
-          <!-- Narrative description-->
+<div class="container">
 
-          <center>
-          
-            <div class="separator">Narrative Description of the Incident
-          </div>
-          <textarea class="narrative" placeholder="A brief description of what happened or its details. . ." style="resize: none"></textarea> 
-          
-          </center>
-          
-          <!-- Upload image-->
+  <!-- Upper Section (Maayos spacing hehe) -->
+  <section style="height: 25px;"></section>
 
-      
-            <div class="separator">Proof of the Incident
-        </div>
+    {% if success_message %}
+    <p class="alert alert-success">
+        <strong>{{ success_message|safe }}</strong>
+    </p>
+    {% endif %}
 
-        <div class="upload-image">
-            <div id="upload_content">
-            <center>
-        <i class="fas fa-cloud-upload-alt"></i><br>
+    {% if error_message %}
+    <p class="alert alert-danger">
+        <strong>{{ error_message|safe }}</strong>
+    </p>
+    {% endif %}
 
-        <input type="file" id="upload-button" data-max-file-size="2M" hidden> <!-- change the size of image if needed-->
-        <label for="upload-button" class="upload-button">Select Image</label>
-        <span id="file-chosen">No file chosen</span><br>
+    {% if messages %}
+      {% for message in messages %}
+          <p class="alert alert-danger">
+            <strong>{{ message|safe }}</strong>
+          </p>
+  {% endfor %}
+  {% endif%}
 
-        <div class="up-text">
-        <label class="upload-text">Upload an image of the incident (must not exceed 2MB)</label>
-        </div>
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report &nbsp;</h3>
 
-  
+  <section style="height: 30px;"></section>
+   
+
+  <!-- Main Content -->
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'submit_report' %}" class="row g-3">
+
+    {% csrf_token %}
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PLACE COMMITTED INFORMATION</label>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">City</label>
+        <input type="text" name="city" value="Pasig" class="form-control" readonly>
+      </div>
+
+       <div class="col-md-6">
+        <label for="" class="form-label">District</label>
+        <input type="text" id="district" name="district" value="" class="form-control" readonly>
+      </div>
+
+      <div class="col-md-12" style="margin-top: 9px;">
+        <label for="" class="col-sm-2 col-form-label">Barangay</label>
+
+        <select name="Barangay" id="Barangay" class="form-select form-control" onchange="selectdistrict(event)" required>
+            <option value="">Choose a barangay</option>
+            <option value="2">Bagong Ilog</option>
+            <option value="5">Bagong Katipunan</option>
+            <option value="3">Bambang</option>
+            <option value="27">Buting</option>
+            <option value="4">Caniogan</option>
+            <option value="6">Kalawaan</option>
+            <option value="7">Kapasigan</option>
+            <option value="8">Kapitolyo</option>
+            <option value="9">Malinao</option>
+            <option value="10">Oranbo</option>
+            <option value="11">Palatiw</option>
+            <option value="28">Pineda</option>
+            <option value="12">Sagad</option>
+            <option value="13">San Antonio</option>
+            <option value="14">San Joaquin</option>
+            <option value="15">San Jose</option>
+            <option value="16">San Nicolas</option>
+            <option value="29">Santa Cruz</option>
+            <option value="30">Santa Rosa</option>
+            <option value="17">Santo Tomas</option>
+            <option value="18">Sumilang</option>
+            <option value="1">Ugong</option>
+            <option value="19">Dela Paz</option>
+            <option value="20">Manggahan</option>
+            <option value="21">Maybunga</option>
+            <option value="22">Pinagbuhatan</option>
+            <option value="23">Rosario</option>
+            <option value="24">San Miguel</option>
+            <option value="26">Santolan</option>
+            <option value="25">Santa Lucia</option>
+          </select>
+      </div>
+
+      <script>
+        function selectdistrict(e){
+
+          if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
+          ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
+            var barangay = document.getElementById('district').value="2";
+          }
+          else{
+            var barangay = document.getElementById('district').value="1";
+          }
+        }
+      </script>
+
+    <div class="col-md-12">
+        <label for="" class="form-label" required>Address</label>
+        <input type="text" name ="address" class="form-control">
     </div>
-  </div>
 
-          <center><button id="submit_form" type="submit" value="">Submit</button></center>
-        </form>
+    <div class="col-md-6">
+        <label for="" class="form-label">Along</label>
+        <input type="text" id="along" name="along" class="form-control">
+    </div>
+
+    <div class="col-md-6">
+        <label for="" class="form-label">Corner</label>
+        <input type="text" id="corner"name="corner" class="form-control">
+    </div>
 
 
+    <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">NARRATIVE DESCRIPTION OF THE INCIDENT</label>
+
+    <textarea class="form-control" name="narrative" placeholder="A brief description of what happened or its details. . ." style="height: 100px" required></textarea> 
+
+
+    <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PROOF OF INCIDENT</label>
+    <input type="file" class="form-control" name="image" id="image" data-max-file-size="10M" required > <!-- change the size of image if needed-->
+    <section style="height: 15px;"></section>
+  
+    <center><button class="btn btn-success mb-5" id="submit_form" type="submit" value="">Submit Incident Report</button></center>
+</form>
+
+
+
+  <!-- Script -->
+    
+    <script>
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+
+   
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+      </script>
+
+
+    
+{% endblock %}
+  {% block jquery %} 
+  
   {% endblock %}

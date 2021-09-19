@@ -42,7 +42,6 @@ urlpatterns = [
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
     path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
 
-
     path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
     path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
 
@@ -68,14 +67,14 @@ urlpatterns = [
 
     # path('gen_report', views.gen_report, name='gen_report'),
     # path('rep_notif', views.rep_notif, name='rep_notif'),
-    #path('<int:incident_id>/public_incident_detail/', views.public_incident_detail, name='public_incident_detail'),
+    # path('<int:incident_id>/public_incident_detail/', views.public_incident_detail, name='public_incident_detail'),
 
     #path('<int:incident_id>/admin_incident_detail/', views.admin_incident_detail, name='admin_incident_detail'),
 
     
     path('logout', views.login, name='logout'),
     path('public/notification', views.pub_notif_inbox, name='pub_notif_inbox'),
-    path('public/notification/view', views.pub_notif_inbox, name='pub_notif_view')
+    path('public/notification/view', views.pub_notif_inbox, name='pub_notif_view'),
 
 
 

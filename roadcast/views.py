@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
-from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district
+from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import View #for charts
@@ -9,7 +9,7 @@ from collections import Counter
 from itertools import chain
 from django.db import connection
 
-
+from PIL import Image
 
 
 from django.contrib import messages #for csv upload
@@ -822,8 +822,11 @@ def notification (request):
     cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
     pasig_incident_list = cursor.fetchall()
 
+    pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
+
     data = {
-        'pasig_incident_list': pasig_incident_list,  
+        'pasig_incident_list': pasig_incident_list, 
+        'public_reports_list': pasig_public_reports 
     }
     return render (request, 'notification.html', data)
 
@@ -848,7 +851,55 @@ def logout (request):
 
 #PUBLIC
 def submit_report (request):
-    return render (request, 'submit_report.html')
+    try:
+        if request.method == "GET":
+            return render (request, 'submit_report.html')#Load view
+
+        user_id ="Nakay Dane Pa"
+        city = request.POST.get('city')
+        barangay = request.POST.get('Barangay')
+        district = request.POST.get('district')
+        address = request.POST.get('address')
+        along = request.POST.get('along')
+        corner = request.POST.get('corner')
+        narrative = request.POST.get('narrative')
+        recipient = "Admin"
+
+        if request.FILES.get('image'):
+            image_proof = request.FILES.get('image')
+
+        incident_report = Tbl_public_report.objects.create(
+                        User_ID = user_id,
+                        Reported_City=city, 
+                        Reported_Brgy_id=barangay,               
+                        Reported_District=district,           
+                        Reported_Location=address,               
+                        Reported_Along=along,
+                        Reported_Corner=corner, 
+                        Reported_Narrative = narrative,
+                        Reported_Image_Proof = image_proof,
+                        Report_Status = 'Unsolved',
+                        Read_Status='No',
+                        Recipient = recipient)
+        
+        incident_report.save()
+
+        context = {
+            'success_message':"Your report has been submitted!",
+        }
+        return render (request, 'submit_report.html', context)
+
+    except:
+        image_proof = request.FILES['image']
+        
+        if not image_proof.name.endswith('.png'| '.jpg'| '.jpeg'):
+            messages.error(request, 'Error: Invalid Image Format')
+
+        context = {
+            'error_message': "Error sending report!",
+        }
+
+        return render (request, 'submit_report.html', context)
 
 def pub_notif_inbox (request):
     return render (request, 'public_notif_setting.html')
@@ -863,6 +914,7 @@ def pub_incident_detail_view (request, incident_id):
     context = {
         "incident_detail": pasig_incident_detail,
     }
-    
     return render (request, 'gen_incident_detail_view.html', context)
+
+
 

@@ -5,8 +5,6 @@ from django.db.models.deletion import CASCADE
 from django.utils import timezone
 from django.utils.html import mark_safe
 
-
-
 # Create your models here. This is the database structure
 
 now = timezone.now()
@@ -129,9 +127,12 @@ class Tbl_public_report(models.Model):
     Reported_Location = models.CharField(max_length=200, verbose_name='Location', blank=True)
     Reported_Along = models.CharField(max_length=200, verbose_name='Along', blank=True)
     Reported_Corner = models.CharField(max_length=200, verbose_name='Corner', blank=True)
-    Reported_Narrative = models.CharField(max_length=200, verbose_name='Narrative', blank=True)
+    Reported_Narrative = models.CharField(max_length=800, verbose_name='Narrative', blank=True)
     Reported_Image_Proof = models.ImageField(upload_to=image_path,verbose_name='Proof of Incident', blank=True)
-    Reported_Date_and_Time = models.DateTimeField(default=now, verbose_name='Date Reported', blank=True)
+    Reported_Date = models.DateField(default=now, verbose_name='Date Reported', blank=True)
+    Reported_Time = models.TimeField(default=now, verbose_name='Date Reported', blank=True)
+
+    Recipient = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
     Read_Status = models.CharField(max_length=200, verbose_name='Read', blank=True)
     Report_Status = models.CharField(max_length=200, verbose_name='Report Status', blank=True)
 
@@ -139,7 +140,7 @@ class Tbl_public_report(models.Model):
         return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Reported_Image_Proof))
 
     def __str__(self):
-        return '{}-{}-{}'.format(self.Reported_Date_and_Time,self.Reported_Brgy,self.Reported_City)
+        return '{}-{}-{}'.format(self.Reported_Date,self.Reported_Brgy,self.Reported_City)
 
 
 

@@ -194,16 +194,16 @@
       <div class="item">District: <input type="text" name="district" id="district" value="{{pasig_incident_detail.District_id}}" class="form-field" readonly></div>
     
       <script>
-      function selectdistrict(e){
+        function selectdistrict(e){
 
-        if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
-        ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
-          var barangay = document.getElementById('district').value="2";
+          if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
+          ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
+            var barangay = document.getElementById('district').value="2";
+          }
+          else{
+            var barangay = document.getElementById('district').value="1";
+          }
         }
-        else{
-          var barangay = document.getElementById('district').value="1";
-        }
-       }
       </script>
       <div class="item">Place Commited: <input type="text" name="place_committed" class="form-field" value="{{pasig_incident_detail.Address}}"></div>
       <div class="item">Along: <input type="text" name="along" class="form-field" value="{{pasig_incident_detail.Along_Avenue}}"></div>

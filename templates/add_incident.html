@@ -222,16 +222,16 @@
       <div class="item">District: <input type="text" id="district" name="district" value="" class="form-field" readonly></div>
     
       <script>
-      function selectdistrict(e){
+        function selectdistrict(e){
 
-        if (e.target.value == "Dela Paz"||e.target.value == "Manggahan"||e.target.value == "Maybunga"||e.target.value == "Pinagbuhatan"||e.target.value == "Rosario"
-        ||e.target.value == "San Miguel"||e.target.value == "Santolan"||e.target.value == "Santa Lucia"){
-          var barangay = document.getElementById('district').value="2";
+          if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
+          ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
+            var barangay = document.getElementById('district').value="2";
+          }
+          else{
+            var barangay = document.getElementById('district').value="1";
+          }
         }
-        else{
-          var barangay = document.getElementById('district').value="1";
-        }
-       }
       </script>
       <div class="item">Place Commited: <input type="text" id="place_committed" name="place_committed" class="form-field"></div>
       <div class="item">Along: <input type="text" id="Along" class="form-field"></div>

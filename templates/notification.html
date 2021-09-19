@@ -7,8 +7,43 @@
         color: #050087;
     }
 
-  
+    .card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 0 solid transparent;
+    border-radius: 0;
+}
+.mailbox-widget .custom-tab .nav-item .nav-link {
+    border: 0;
+    color: #fff;
+    border-bottom: 3px solid transparent;
+}
+.mailbox-widget .custom-tab .nav-item .nav-link.active {
+    background: 0 0;
+    color: #fff;
+    border-bottom: 3px solid #2cd07e;
+}
+.no-wrap td, .no-wrap th {
+    white-space: nowrap;
+}
+.table td, .table th {
+    padding: .9375rem .4rem;
+    vertical-align: top;
+    border-top: 1px solid rgba(120,130,140,.13);
+}
+.font-light {
+    font-weight: 300;
+   
+}
 
+.link {
+    text-decoration: none;
+}
 
     
 </style>
@@ -25,28 +60,30 @@
         </p>
       </div>
 
+<div class="container"> 
 
-    <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
+    <div class="row">
+    <ul class="nav nav-pills mb-3 flex-row wait" id="pills-tab" role="tablist">
         <li class="nav-item " role="presentation">
-            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;General Public's Report</button>
+            <button class=" btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;General Public's Report</button>
         </li>
         
         <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-verification-tab" data-bs-toggle="pill" data-bs-target="#pills-public-verification" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;General Public's Verification</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-verification" id="pills-public-verification-tab" data-bs-toggle="pill" data-bs-target="#pills-public-verification" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;General Public's Verification</button>
         </li>
 
         <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-verification-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-incident" role="tab" aria-controls="pills-incident" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;New Incident Incident</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-incident" id="pills-incident-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-incident" role="tab" aria-controls="pills-incident" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;New Incident Incident</button>
         </li>
 
         <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-archives" type="button" role="tab" aria-controls="pills-archives" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;Archives</button>
+            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-archives" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-archives" type="button" role="tab" aria-controls="pills-archives" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;Archives</button>
         </li>
-        
+        </div>
     </ul>
       <div class="tab-content row" id="pills-tabContent">
         <!-- tab for public report -->
-        <div class="tab-pane fade show active" id="pills-public-report" role="tabpanel" aria-labelledby="pills-home-tab">
+        <div class="tab-pane fade " id="pills-public-report" role="tabpanel" aria-labelledby="pills-home-tab">
             <form action="">
                 <div class="input-group input-group-sm mb-3 mt-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
@@ -54,55 +91,45 @@
                   </div>
             </form>
             
-            <table class="table" style="background-color: white;">
-                <tbody>
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Jehus Labila </td>
-                        <td> Report Form: Marcos Highway South Bound, Barangay Ugong</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                        <td> <a href=""><i class="bi bi-archive-fill" style="color: black"></i></a></td>
-                    </tr>
-                   
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Jehus Labila </td>
-                        <td> Report Form: Marcos Highway South Bound, Barangay Ugong</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                        <td> <a href=""><i class="bi bi-archive-fill" style="color: black"></i></a></td>
-                    </tr>
-        
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Jehus Labila </td>
-                        <td> Report Form: Marcos Highway South Bound, Barangay Ugong</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                        <td> <a href=""><i class="bi bi-archive-fill" style="color: black"></i></a></td>
-                    </tr>
-        
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Jehus Labila </td>
-                        <td> Report Form: Marcos Highway South Bound, Barangay Ugong</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                        <td> <a href=""><i class="bi bi-archive-fill" style="color: black"></i></a></td>
-                    </tr>
-        
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Jehus Labila </td>
-                        <td> Report Form: Marcos Highway South Bound, Barangay Ugong</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                        <td> <a href=""><i class="bi bi-archive-fill" style="color: black"></i></a></td>
-                    </tr>
-                    
-                </tbody>
-            </table>
+             <!-- Mail list-->
+             <div class="table-responsive">
+                <table class="table email-table no-wrap table-hover v-middle mb-0 font-14">
+                    <tbody>
+
+                        {% for report in public_reports_list %}
+                        <!-- row -->
+                        <tr class =" {% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                            <!-- label -->
+                            <td class="pl-3">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="cst1" />
+                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                </div>
+                            </td>
+                            <!-- star -->
+                            <td><i class="fa fa-star text-warning"></i></td>
+                            <td>
+                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID }}</span>
+                            </td>
+                            <!-- Message -->
+                            <td>
+                                <a class="link text-decoration-none" href="">
+                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
+                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
+                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                    <span class="text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                </a>
+                            </td>
+                            <!-- Attachment -->
+                            <td><i class="fa fa-paperclip text-muted"></i></td>
+                            <!-- Time -->
+                            <td class="{% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}">{{ report.Reported_Date }} {{ report.Reported_Time }}</td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!--Close Mail-->
         
         </div>
 
@@ -226,9 +253,10 @@
 
         <!-- tab for archives -->
         <div class="tab-pane fade" id="pills-archives" role="tabpanel" aria-labelledby="pills-archives-tab">
-
+           
         </div>
 
       </div>
+    </div>
 
 {% endblock %}
