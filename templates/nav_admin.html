@@ -57,9 +57,8 @@
                         <a href="/incidents/view" class="nav_link"> <i class='fas fa-table nav_icon'></i> <span class="nav_name">List of Reports</span> </a>
                         <a href="/audit" class="nav_link"> <i class='bx bx-history nav_icon'></i> <span class="nav_name">Audit Trail</span> </a>
                         <a href="/unsolvedcases" class="nav_link"> <i class='bx bx-briefcase nav_icon' ></i> </i> <span class="nav_name">Unsolved Cases</span> </a> 
-                        <a href="/notification" class="nav_link"> <i class='fas fa-bell nav_icon' ></i> <span class="nav_name">Notifications</span> </a> 
+                        <a href="/notification" class="nav_link"> <i class='fas fa-bell nav_icon'></i><span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span> <span class="nav_name position-relative">Notifications</span> </a> 
                         <a href="#" class="nav_link"> <i class='fas fa-cogs '></i> </i> <span class="nav_name">Settings</span> </a> 
-                    
                     </div>
                 </div> 
                 <a href="{% url 'index' %}" class="nav_link"> <i class='bx bx-log-out '></i> <span class="nav_name">Logout</span> </a>

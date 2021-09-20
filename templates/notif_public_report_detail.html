@@ -1,0 +1,98 @@
+{% extends 'nav_admin.html' %}
+{% block title %} Message {% endblock %}
+
+{% block design %}
+<style>
+    
+    .table {
+        border-color: white;
+    }
+   
+
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="row g-4 mb-4">
+
+    <div class="col-8">
+      <div class="card">
+        <div class="card-header" style="background-color: white;">
+    
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td rowspan="3" style="width:15%" class="align-middle">                            
+                         <img src="/media/incident_images/police.jpg" alt=""class="rounded-circle float-end" style="width: 70px;"></center> 
+                        </td>
+                        <td class="text-end">From: </td>
+                        <td style="width:60%">{{ detail.User_ID }}</td>
+                        <td>{{ detail.Reported_Date }}</td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-end">To: </td>
+                        <td style="width:60%">{{ detail.Recipient }}</td>
+                        <td></td>
+                    </tr>
+
+                    <tr>
+                        <td class="text-end">Barangay: </td>
+                        <td style="width:60%">{{ detail.Reported_Brgy.Barangay }}</td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+            
+        </div>
+
+        <div class="card-body p-5">
+            <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Recipient: </label>
+             {{ detail.Recipient }},     <br><br>
+          
+            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Message Description: </p>
+            <p class="card-text"> {{ detail.Reported_Narrative }} </p>
+         
+            
+            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Incident Location: </p>
+            {{ detail.Reported_Location }} <br> <br>
+            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Proof: </p> 
+            <img src="/media/{{detail.Reported_Image_Proof}}" alt="" style="width: 400px;">
+
+
+        </div>
+      </div>
+    </div>
+
+
+    <div class="col-4">
+      <div class="card">
+        <div class="card-body">
+            <center>
+                <img src="/media/incident_images/police.jpg" alt=""class="rounded-circle" style="width: 200px;">
+            
+
+          <p class="align-middle mt-3">{{ detail.User_ID }}</p>
+
+          <p class="card-text">username@email.com</p>
+        </center>
+        
+        </div>
+      </div>
+    </div>
+    
+    </div>
+  </div>
+
+  <input type="text" name="unread_notif_count" id="unread_notif_count" value="{{ unread_notif_count }}" hidden>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+        unread_notif_count = document.getElementById('unread_notif_count').value;
+        document.getElementById('notif-count').innerHTML = unread_notif_count;
+    });
+</script>
+
+{% endblock %}

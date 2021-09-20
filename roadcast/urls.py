@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 
 from . import views
 
-from.views import DashboardView, Report_monthly
+from.views import DashboardView, Report_monthly, notif_public_report_detail
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -52,6 +52,8 @@ urlpatterns = [
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
 
     path('notification', views.notification, name='notification'),
+    path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
+
     path('public/notification', views.public_notification, name='public_notification'),
 
     path('substation/notification', views.sub_notification, name='sub_notification'),
@@ -63,7 +65,7 @@ urlpatterns = [
     path('departments', views.admin_departments, name='admin_departments'),
     path('investigators', views.admin_investigators, name='admin_investigators'),
     path('investigator/view', views.admin_view_investigators, name='admin_view_investigators'),
-    path('public/incident/detail/<int:incident_id>/', views.pub_incident_detail_view, name='gen_incident_detail_view'),
+    path('public/incident/detail/<str:incident_id>/', views.pub_incident_detail_view, name='gen_incident_detail_view'),
 
     # path('gen_report', views.gen_report, name='gen_report'),
     # path('rep_notif', views.rep_notif, name='rep_notif'),

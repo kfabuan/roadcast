@@ -818,17 +818,38 @@ def notification (request):
     # pasig_barangay_list = Tbl_barangay.objects.all().order_by('-id')
     # pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
 
+    #for new incident accident
     cursor=connection.cursor()
     cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
     pasig_incident_list = cursor.fetchall()
 
+    #for gen pub reports inbox
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
+    unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     data = {
         'pasig_incident_list': pasig_incident_list, 
-        'public_reports_list': pasig_public_reports 
+        'public_reports_list': pasig_public_reports,
+        'unread_notif_count': unread_notif_count
     }
     return render (request, 'notification.html', data)
+
+
+def notif_public_report_detail (request, gen_pub_report_id):
+
+    unread_public_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
+    unread_public_report.Read_Status = "Yes"
+    unread_public_report.save()
+    
+    #for gen pub reports inbox
+    unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+    data = {
+        'detail': unread_public_report,
+        'unread_notif_count': unread_notif_count,
+       
+    }
+    return render (request, 'notif_public_report_detail.html', data)
 
 def sub_notification (request):
     return render (request, 'sub_notification.html')
@@ -855,7 +876,7 @@ def submit_report (request):
         if request.method == "GET":
             return render (request, 'submit_report.html')#Load view
 
-        user_id ="Nakay Dane Pa"
+        user_id ="Faith Abuan"
         city = request.POST.get('city')
         barangay = request.POST.get('Barangay')
         district = request.POST.get('district')
@@ -913,6 +934,7 @@ def pub_incident_detail_view (request, incident_id):
 
     context = {
         "incident_detail": pasig_incident_detail,
+
     }
     return render (request, 'gen_incident_detail_view.html', context)
 
