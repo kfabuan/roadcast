@@ -8,6 +8,81 @@
         border-color: white;
     }
    
+    .card-group {
+        box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);
+        border-width: 0.5px !important;
+        
+    }
+
+    .message-item{
+        height: 100px;
+    }
+    
+    .mail-list {
+        height:690px !important;
+        overflow-y: scroll;
+        /* overflow: hidden; */
+    }
+
+    .msg-body {
+        height: 60%;
+        overflow-y: inherit;
+    }
+    /* Track */
+    .mail-list::-webkit-scrollbar-track {
+        /* box-shadow: inset 0 0 5px grey; */
+        position: absolute;
+        background: white;
+        /* display: none; */
+
+    }
+
+    /* Handle */
+    .mail-list::-webkit-scrollbar-thumb {
+        background:#e9e9e9;
+        border-radius: 4px;
+    }
+
+    /* Handle on hover */
+    .mail-list::-webkit-scrollbar-thumb:hover {
+        background: #a6a6a6; 
+
+    }
+
+    .mail-list::-webkit-scrollbar {
+        position:absolute;
+        z-index: 2;
+        width: 6px;
+        /* display: none; */
+    }
+
+    .mail-list {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
+    .label-blue {
+        text-transform: uppercase; 
+        font-size:11px; 
+        letter-spacing: 1px; 
+        font-weight: bold; 
+        color: #1b5082;
+    }
+    
+    .active-msg {
+        border-left-color: #1b5082;
+        border-left-width: 5px;
+        background-color: #fafafa;
+    }
+
+    @media (min-width: 2000px){
+            .modal-dialog {
+            max-width: 500px;
+            margin: 1.75rem auto;
+        }
+    }
+
+
 
 
 </style>
@@ -15,77 +90,181 @@
 
 {% block content %}
 
-<div class="row g-4 mb-4">
-
-    <div class="col-8">
-      <div class="card">
-        <div class="card-header" style="background-color: white;">
-    
-            <table class="table table-bordered">
-                <tbody>
-                    <tr>
-                        <td rowspan="3" style="width:15%" class="align-middle">                            
-                         <img src="/media/incident_images/police.jpg" alt=""class="rounded-circle float-end" style="width: 70px;"></center> 
-                        </td>
-                        <td class="text-end">From: </td>
-                        <td style="width:60%">{{ detail.User_ID }}</td>
-                        <td>{{ detail.Reported_Date }}</td>
-                    </tr>
-
-                    <tr>
-                        <td class="text-end">To: </td>
-                        <td style="width:60%">{{ detail.Recipient }}</td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td class="text-end">Barangay: </td>
-                        <td style="width:60%">{{ detail.Reported_Brgy.Barangay }}</td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
+<!-- <div class="container"> -->
+    <div class=" mb-3">
+        <div class="row main-body">
             
-        </div>
+            <!--mail list-->
+            <div class="card col-3 p-0 mail-list">
+                    <div class="card-header">
+                        Inbox
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        {% for report in public_reports_list %}
+                        <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
+                            <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
+                                <div class="row">
+                                    <div class="col-2"><img src="/media/police.jpg" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                    <div class="col-5">
+                                        <span style="font-size: 13px;" class=" text-muted">
+                                            {{ report.User_ID }}
 
-        <div class="card-body p-5">
-            <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Recipient: </label>
-             {{ detail.Recipient }},     <br><br>
-          
-            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Message Description: </p>
-            <p class="card-text"> {{ detail.Reported_Narrative }} </p>
-         
+                                            {% ifequal report.Read_Status 'No' %}
+                                            <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
+                                            {% endifequal %}
+                                        </span>
+                                    </div>
+                                    <div class="col-5"><span style="font-size: 13px; float:right;" class="">{{ report.Reported_Date }}</span></div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2">
+                                        <div class="custom-control custom-checkbox ps-2">
+                                            <!-- <input type="checkbox" class="custom-control-input" id="cst1" />
+                                            <label class="custom-control-label" for="cst1">&nbsp;</label> -->
+                                        </div>
+                                    </div>
+                                    <div class="col-8 fw-bold">{{ report.Reported_Brgy.Barangay }}</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-2"></div>
+                                    <div class="col-8"><p class=" text-truncate" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
+                                    <div class="col-2"><i class="fa fa-paperclip text-muted float-end"></i></div>
+                                </div>
+
+
+                            </li></a>
+                           
+                        {% endfor %}
+
+                    </ul>
+            </div>
+
+            <!--message-->
+            <div class="card col-7">
+                    <div class="card-header" style="background-color: white; ">
+                        <!-- <table class="table table-bordered">
+                            <tbody>
+                                <tr>
+                                    <td rowspan="3" style="width:15%" class="align-middle">                            
+                                     <img src="/media/incident_images/police.jpg" alt=""class="rounded-circle float-end" style="width: 70px;">
+                                    </td>
+                                    <td class="text-end">From: </td>
+                                    <td style="width:60%">{{ detail.User_ID }}</td>
+                                    <td>{{ detail.Reported_Date }}</td>
+                                </tr>
             
-            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Incident Location: </p>
-            {{ detail.Reported_Location }} <br> <br>
-            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Proof: </p> 
-            <img src="/media/{{detail.Reported_Image_Proof}}" alt="" style="width: 400px;">
+                                <tr>
+                                    <td class="text-end">To: </td>
+                                    <td style="width:60%">{{ detail.Recipient }}</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table> -->
+                        <div class="row">
+                            <div class="col-1 pe-3" style="background-color: white;">
+                                <div class="btn btn-light position-relative p-0 rounded-circle">
+                                    <div><img src="/media/incident_images/police.jpg" alt=""class="rounded-circle" style="width: 70px;"></div>
+                                    <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span>
+                                </div>
+                            </div>
 
+                            <div class="col-9 ms-4"  style="background-color: white;">
+                                <span class="fw-bold fs-4">{{ detail.User_ID }}</span>
+                                <p class="text-muted" style="font:small;"> Active Now</p>
+                            </div>
+                        </div>
+                    </div> <!--name header-->
 
-        </div>
-      </div>
-    </div>
-
-
-    <div class="col-4">
-      <div class="card">
-        <div class="card-body">
-            <center>
-                <img src="/media/incident_images/police.jpg" alt=""class="rounded-circle" style="width: 200px;">
-            
-
-          <p class="align-middle mt-3">{{ detail.User_ID }}</p>
-
-          <p class="card-text">username@email.com</p>
-        </center>
+                    <!--body-->
+                    <div class="m-3 msg-body"> 
+                            <label class="label-blue">Recipient: </label>
+                            {{ detail.Recipient }}    <br><br>
+                        
+                            <p class="label-blue">Message Description: </p>
+                            <p class="card-text"> {{ detail.Reported_Narrative }} </p>
+                            
+                            <p class="label-blue">Incident Location: </p>
+                            {{ detail.Reported_Location }} <br> <br>
         
-        </div>
-      </div>
-    </div>
-    
-    </div>
-  </div>
+                       
+                            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Proof: </p> 
+                            <div>
+                            </div>
 
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                <img src="/media/{{detail.Reported_Image_Proof}}" alt="" style="width: 250px;" class="img-fluid img-thumbnail">
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog" style="width: 900px !important; ">
+                                    <div class="modal-content" >
+                                        <div class="modal-body">
+                                            <img src="/media/{{detail.Reported_Image_Proof}}" alt=""  class="img-fluid img-thumbnail">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+        
+                        <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                    </div>
+
+                    <center>
+                     <div class="input-group position-absolute bottom-0 ps-4 pe-5 pb-2" style="width: 100%; ">
+                        <input type="text" class="form-control" placeholder="Send a message" style="background-color:#fafafa; border-radius:20px 0px 0 20px; border-style: none;">
+                        <button class="btn" type="button" style="background-color:#fafafa; border-radius:0px 20px 20px 0; border-style: none;">
+                            <i class="fas fa-paper-plane pe-3" ></i>
+                        </button>
+                      </div>
+                    </center>
+                <!--body--> 
+            </div>
+
+            <!--profile preview-->
+            <div class="card col-2 p-0" style="">
+                <div class="">
+                    <img src="/media/incident_images/police.jpg" class="card-img-top p-0" alt="...">
+                    <!-- <img src="/media/incident_images/police.jpg" class="" alt="..." style="width:60%; z-index:3; position:relative; top:-20%;left:20%;"> -->
+
+                    <center>
+                    <div class="card-body">
+                      <span class="mx-auto fw-bold text-uppercase">{{ detail.User_ID }}</span>
+                      <!-- <span class="badge rounded-pill bg-success ms-2" style="padding: 5px;"> </span> -->
+
+                      <p class="card-text " style="color: #1b5082; font:small;">@username</p>
+                    </div>
+                    </center>           
+                </div>
+                <ul class="list-group user-details" >
+                    <li class="list-group-item" style="border-style: none;">
+                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
+                        <span class="ms-2 p-0"> 09163709362</span>
+                    </li>
+
+                    <li class="list-group-item" style="border-style: none;">
+                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
+                        <p class="ms-2 p-0 text-wrap"> P. Paredes St., Sampaloc, Manila 1015</p>
+                    </li>
+
+                    <li class="list-group-item" style="border-style: none;">
+                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
+                        <span class="ms-2 p-0"> username@gmail.com </span>
+                    </li>
+
+                   
+
+                   
+                  </ul>
+
+            </div>
+
+        </div> <!--row-->
+    </div><!--card group-->
+ 
+<!-- </div> -->
   <input type="text" name="unread_notif_count" id="unread_notif_count" value="{{ unread_notif_count }}" hidden>
 
   <script type="text/javascript">

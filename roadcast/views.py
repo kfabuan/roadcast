@@ -842,12 +842,14 @@ def notif_public_report_detail (request, gen_pub_report_id):
     unread_public_report.save()
     
     #for gen pub reports inbox
+    pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
+    other_reports_by_user = Tbl_public_report.objects.get(id=gen_pub_report_id)
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     data = {
+        'public_reports_list': pasig_public_reports,
         'detail': unread_public_report,
         'unread_notif_count': unread_notif_count,
-       
     }
     return render (request, 'notif_public_report_detail.html', data)
 
