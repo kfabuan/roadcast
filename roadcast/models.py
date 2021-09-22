@@ -135,6 +135,9 @@ class Tbl_public_report(models.Model):
     Recipient = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
     Read_Status = models.CharField(max_length=200, verbose_name='Read', blank=True)
     Report_Status = models.CharField(max_length=200, verbose_name='Report Status', blank=True)
+    Assigned_Investigator = models.CharField(max_length=200, verbose_name='Investigator', blank=True)
+    Substation = models.CharField(max_length=200, verbose_name='Substation', blank=True)
+
 
     def image_tag(self):
         return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Reported_Image_Proof))

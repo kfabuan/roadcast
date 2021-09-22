@@ -45,6 +45,15 @@
         text-decoration: none;
     }
 
+    .table {
+        /* width: 100%; */
+        table-layout: fixed;
+    }
+    .controls-btn {
+        width: 100px;
+        background-color: violet;
+    }
+
     
 </style>
 
@@ -97,37 +106,37 @@
             </div>
              <!-- Mail list-->
              <div class="table-responsive mt-3">
-                <table class="table email-table no-wrap table-hover v-middle mb-0 font-14">
+                <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
                     <tbody>
 
                         {% for report in public_reports_list %}
                         <!-- row -->
                         <tr class =" {% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
                             <!-- label -->
-                            <td class="pl-3">
+                            <td class="pl-3"  style="width: 3%;">
                                 <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="cst1" />
                                     <label class="custom-control-label" for="cst1">&nbsp;</label>
                                 </div>
                             </td>
                             <!-- star -->
-                            <td><i class="fa fa-star text-warning"></i></td>
-                            <td>
+                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <td style="width: 15%;">
                                 <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID }}</span>
                             </td>
                             <!-- Message -->
-                            <td>
+                            <td class="text-truncate" style="width: 58%;">
                                 <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
                                     <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                    <span class="text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
                                 </a>
                             </td>
                             <!-- Attachment -->
-                            <td><i class="fa fa-paperclip text-muted"></i></td>
+                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
                             <!-- Time -->
-                            <td class="{% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}">{{ report.Reported_Date }} {{ report.Reported_Time }}</td>
+                            <td  style="width: 16%;"class="{% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ report.Reported_Date }} {{ report.Reported_Time }}</p></td>
                         </tr>
 
                         {% endfor %}
