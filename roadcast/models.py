@@ -121,7 +121,7 @@ class Tbl_add_members(models.Model):
     Members_Password    = models.CharField(max_length=200, verbose_name='Password', blank=True, null=True)
     Date_Added          = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True) #binago hehe
     Added_By            = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
-    Members_Pic         = models.ImageField(upload_to=image_path_incident_report, default='Profile/default.jpg', blank=True, null=True)
+    Members_Pic         = models.ImageField(upload_to=image_path, default='Profile/default.jpg', blank=True, null=True)
 
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Members_Pic))
@@ -404,7 +404,7 @@ class Tbl_public_report(models.Model):
     Reported_Along       = models.CharField(max_length=200, verbose_name='Along', blank=True)
     Reported_Corner      = models.CharField(max_length=200, verbose_name='Corner', blank=True)
     Reported_Narrative   = models.CharField(max_length=800, verbose_name='Narrative', blank=True)
-    Reported_Image_Proof = models.ImageField(upload_to=image_path,verbose_name='Proof of Incident', blank=True)
+    Reported_Image_Proof = models.ImageField(upload_to=image_path_incident_report,verbose_name='Proof of Incident', blank=True)
     Reported_Date        = models.DateField(default=now, verbose_name='Date Reported', blank=True)
     Reported_Time        = models.TimeField(default=now, verbose_name='Date Reported', blank=True)
 
