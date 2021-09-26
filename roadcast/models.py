@@ -10,7 +10,7 @@ from django.utils.html import mark_safe
 
 now = timezone.now()
 
-def image_path(instance, filename):
+def image_path_incident_report(instance, filename):
     basefilename, file_extension = os.path.splitext(filename)
     chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvqxyz1234567890'
     randomstr = ''.join((random.choice(chars)) for x in range(10))
@@ -121,7 +121,7 @@ class Tbl_add_members(models.Model):
     Members_Password    = models.CharField(max_length=200, verbose_name='Password', blank=True, null=True)
     Date_Added          = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True) #binago hehe
     Added_By            = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
-    Members_Pic         = models.ImageField(upload_to=image_path, default='Profile/default.jpg', blank=True, null=True)
+    Members_Pic         = models.ImageField(upload_to=image_path_incident_report, default='Profile/default.jpg', blank=True, null=True)
 
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Members_Pic))
