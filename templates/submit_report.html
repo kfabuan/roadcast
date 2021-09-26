@@ -12,25 +12,9 @@
   <!-- Upper Section (Maayos spacing hehe) -->
   <section style="height: 25px;"></section>
 
-    {% if success_message %}
-    <p class="alert alert-success">
-        <strong>{{ success_message|safe }}</strong>
-    </p>
-    {% endif %}
-
-    {% if error_message %}
-    <p class="alert alert-danger">
-        <strong>{{ error_message|safe }}</strong>
-    </p>
-    {% endif %}
-
-    {% if messages %}
-      {% for message in messages %}
-          <p class="alert alert-danger">
-            <strong>{{ message|safe }}</strong>
-          </p>
-  {% endfor %}
-  {% endif%}
+  {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> </p>{% endif %}
+  {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
+  {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
   <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report &nbsp;</h3>
 

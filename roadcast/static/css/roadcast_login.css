@@ -2,15 +2,17 @@ body{
     height: 100vh;
     background-color: #EDFAFF !important;
     display: flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
- }
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: "Roboto", sans-serif;
+}
  
  STRONG{
     font-size: 20px;
-    color:#0A5570;
+    color: #0A5570;
 }
+
  .card{
      overflow: hidden;
      border: 0 !important;
@@ -19,27 +21,28 @@ body{
  }
 
  .card .close-btn{
-     position:absolute;
-     top:10px;
-     right:10px;
-     width:15px;
-     height: 15px;
-     /* background: #888; */
-     color: black;
-     /* text-align:center;
-     line-height: center;
-     line-height:15px;
-     border-radius:15px; */
-     cursor:pointer;
+    position:absolute;
+    top:10px;
+    right:10px;
+    width:15px;
+    height: 15px;
+    color: black;
+    cursor:pointer;
+    margin-top: 10px;
+    margin-right: 10px;
+    font-size: 18px;
  }
+
  .logo1{
     text-align: center;
     margin-top: 20px;
-  }
+}
+
 .logo{
       height: 20px;
       padding: 2px 5px;
 }
+
 .img-right{
     width: 45%; 
     
@@ -64,8 +67,7 @@ body{
     padding-left: 40px;
     margin-bottom: 20px;
     box-sizing: border-box;
-    box-shadow: none;
-    border: 1px solid #00000020;
+    outline: none;
     border-radius: 50px;
     background: transparent;
 }
@@ -74,19 +76,11 @@ body{
     position: absolute;
     top:10px;
     padding-left: 15px;
-    color:#007bff;
+    color:#0D6EFD;
 }
 
-
-.container .close-btn{
-    position: absolute;
-    right: 20px;
-    top:15;
-    font-size: 18px;
-    cursor: pointer;
-}
 .container .close-btn:hover{
-    color:#3498db;
+    color:#0D6EFD;
 }
 
 .form-input input::placeholder{
@@ -112,17 +106,12 @@ body{
     border: none;
     cursor: pointer;
     border-radius: 50px;
-    background: #007bff;
     color: #fff;
     font-size:90%;
     font-weight: bold;
     letter-spacing: .1rem;
     transition: 0.5s;
     padding: 12px;
-}
-
-.form-box button[type="submit"]:hover{
-    background:#0069d9;
 }
 
 .forget-link, .register-link{
@@ -134,4 +123,3 @@ body{
     color:#0069d9;
     text-decoration:none;
 }
-

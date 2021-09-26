@@ -3,114 +3,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-    <!-- jQuery library -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Latest compiled JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <!-- Bootstrap core JS-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="js/scripts.js"></script>
   
    {% block design %} {% endblock %}
 
-    <!-- css -->
-    <link rel="stylesheet" href="{% static 'css/roadcast_landingpage.css' %}">
-
-    <!-- font -->
+    <!-- CSS -->
+    <link rel="stylesheet" href="{% static 'css/landing.css' %}">
+    <!-- Font -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css">
-
-     <!-- favicon & icons -->
-     <link rel="shortcut icon" href="{% static 'image/roadcast_icon.png' %}" type="image/x-icon">
-     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- Favicon & Icons -->
+    <link rel="shortcut icon" href="{% static 'image/roadcast_icon.png' %}" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+    <!-- Animations-->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
 
     <title>Roadcast | {% block title %} {% endblock %}</title>
-
-    <!-- New CSS codes added 09/07/2021 -->
-    <style>
-
-    * {
-      font-family: "Roboto", sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background-color: #EDFAFF;
-    }
-
-    .navbar {
-      height: auto; 
-      background-color: rgb(27, 38, 49); 
-      border-radius: 0;
-      box-shadow: 0 5px 5px rgb(235, 235, 235);
-    }
-
-    .main-name {
-    font-weight: 900;
-    font-size: 18px;
-    letter-spacing: 0.7px;
-    color: #fff;
-    }
-
-    .links {
-      transition: 0.5s;
-      font-weight: 400;
-    }
-
-    .logo {
-    width: 45px;
-    height: 45px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    margin-left: 30px;
-    margin-right: 10px;
-    }
-
-    .navbar-toggle {
-      background-color: #fff;
-    }
-
-    .links {
-      color: #fff;
-      font-size: 14px;
-    }
-    </style>
-</head>
-
-<body>
-
-    <!-- Navbar -->     
-
-    <nav class = "navbar navbar-style">
-        <div class = "container1">
-            <div class = "navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#micon">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
-            
-            <img class ="logo" src=" {% static 'image/logo1.png' %} " readonly><label class="main-name">ROAD</label><label class="main-name" style="color: #19B3D3">CAST</label>
+  </head>
+  
+  <body>
+        <!-- Navigation-->
+      <nav class="navbar navbar-expand-lg navbar-dark navbar-custom fixed-top">
+        <div class="container px-5">
+            <img src="static/image/logo1.png" style="width: 33px; margin-right: 8px;">
+            <a class="navbar-brand" href="{% url 'index' %}"><b>ROAD<span style="color: #19B3D3;">CAST</b></span></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login &nbsp;  </a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about_us' %}">About Us &nbsp;  </a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact_us' %}">Contact Us</a></li>
+                </ul>
             </div>
-
-                <div class="collapse navbar-collapse" id="micon">
-                  <ul class="nav navbar-nav navbar-right">
-                    <li> <a class="links" href="{% url 'index' %}"> Home </a> </li>
-                    <li> <a class="links" href="{% url 'about_us' %}"> About Us </a> </li>
-                    <li> <a class="links" href="{% url 'contact_us' %}"> Contact Us </a> </li>
-                  </ul>
-                </div>
-         </div>
+        </div>
     </nav>
-    
-       {% block content %} {% endblock %}
-       
+
+         {% block content %} {% endblock %}
+         
     <script>
         $(document).ready(function(){
             {% block jquery %} {% endblock %}
         })
     </script> 
 
- 
- </body>
- </html>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+    AOS.init();
+    </script>
+</body>
+</html>

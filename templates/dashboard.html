@@ -325,6 +325,25 @@
 
 {% block content %}
 
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+        <p>{{a.Members_Fname}}</p>
+        <p>{{a.Members_Lname}}</p>
+
+        {% endifequal %}
+
+    {% endfor %}
+
+    {% for b in pub %}
+        {% ifequal b.id request.session.public_id %}
+        <p>{{b.gen_surname}}</p>
+        <p>{{b.gen_fname}}</p>
+
+        {% endifequal %}
+
+    {% endfor %}
+
+
     <b id="date-today">Today: </b><span id="ct6"></span>
 
     <!-- {% for x in district2_labels %}

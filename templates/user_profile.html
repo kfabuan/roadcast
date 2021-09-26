@@ -1,0 +1,126 @@
+{% extends 'nav_genpub.html' %}
+{% load static %}
+{% block title %} Profile {% endblock %}
+
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data" action="">
+
+    {% csrf_token %}
+
+<div class="row" >
+    <img src="{% static 'image/city.gif'%}" class="img-fluid cover-bg" alt="Background Cover">
+</div>
+
+<div class="container profile-det">
+    <div class="row">
+
+        
+        <!-- Profile (left) -->
+        <div class="col-xl-8 card-layout">
+          <div class="card card-profile">
+            <div class="row justify-content-center">
+              <div class="col-lg-3 order-lg-2">
+                <div class="card-profile-image">
+                    <img src="/static/image/person.jpg" class="rounded-circle"> <!-- Profile picture of user goes here -->
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-header bg-light text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4">
+              <div class="d-flex justify-content-between">
+                <!-- For header ng card -->
+                <span></span>
+                <a class="verified" title="Verified User"><i class="fas fa-star"></i></a>
+              </div>
+            </div>
+
+            <!-- Stats goes here -->
+            <div class="card-body pt-0 pt-md-4">
+              <div class="row">
+                <div class="col">
+                  <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                    <div>
+
+                      <a href="#"><span class="heading">15</span></a>
+                      <span class="description">Saved reports</span>
+                      </div>
+
+                      <div>
+                      <a href="#"><span class="heading">10</span></a>
+                      <span class="description">Reports made</span>
+                      </div>
+
+                      <div>
+                      <a href="#"><span class="heading">15</span></a>
+                      <span class="description">Saved reports</span>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile details goes here -->
+              <div class="text-center">
+                <h3>
+                  Fname Lname<span class="font-weight-light"></span>
+                </h3>
+                <div class="h5 font-weight-300">
+                  <i class="ni location_pin mr-2"></i>@username, emailaddress@domain.com
+                </div>
+                <div class="h5 mt-4">
+                  <i class="ni business_briefcase-24 mr-2"></i>Barangay, City, Province
+                </div>
+                <div>
+                  <i class="ni education_hat mr-2"></i>Phone number, Gender, Birthday
+                </div>
+
+                <hr class="my-4">
+
+                <p>Hi, hindi ko alam pwede ilagay dito HAHHAHAHA for the mean time eto muna <3</p>
+                
+                <section style="height: 10px;"></section>
+
+                <!-- Edit button goes here -->
+                <button type="submit" class="btn btn-primary" style="border-radius: 50px;">
+                <i class="fas fa-pen" style="font-size: 14px"></i>&nbsp; Edit Profile</button>
+            </form>
+              
+                <section style="height: 20px;"></section>
+
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details (right) -->
+        <div class="col-xl-4 details-prof card-layout" >
+            <div class="card">
+            <div class="card-header bg-light">
+                <h5 class="right-panel">Section</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+
+              <li class="list-group-item">
+                <i class="fas fa-bookmark custom-icons"></i>
+                Ek ek lang
+              </li>
+
+              <li class="list-group-item">
+                <i class="fas fa-rocket custom-icons"></i>
+                More ek ek
+              </li>
+
+              <li class="list-group-item">
+                <i class="fas fa-rainbow custom-icons"></i>
+                Ek ek pa hehe
+              </li>
+
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+{% endblock %}

@@ -1,93 +1,335 @@
 {% extends 'base_sign_up.html' %}
 
-{% block title %} Sign Up {% endblock %}
+{% block title %} Create an Account {% endblock %}
 
 {% block design %} {% endblock %}
 
 {% block content %}
-<body>
 
+<!-- TO FIX PA YUNG RECAPTCHA & TERMS AND CONDITIONS HEHE <3 -->
 
-<div class="container" id="container">
-      <div class="form-container sign-up-container">
-          <form action="" method="post">
+<!-- CSS LANG NITO AY 'signup.css', WALA NG IBA HEHE  -->
 
-          <h1><font color="#191970">Account</font></h1>
-              <span> Please provide details for your account.</span>
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-primary alert-dismissible fade show" role="alert">
+  {{message}}
+</div>
+{% endfor %}
+{% endif %}
 
-              <div class="address">
-                      <span class="text-danger">*</span>Type of Valid Id <select id="Valid Id" name="Valid Id" required> </select>
-                        <span class="text-danger">*</span>Upload a Valid Id Picture
-                            <div class="custom-file" style="margin-top:5px; margin-left:5px;">
-                                <input type="file" class="custom-file-input" id="customFile">
-                            </div>
+<div class="page-content">
 
-                            <script>
-                                $(".custom-file-input").on("change", function() {
-                                var fileName = $(this).val().split("\\").pop();
-                                $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
-                                });
-                            </script>
-                                <span class="text-danger">*</span>Username<input type="username" name="username" id="username" placeholder="Ex. example@gmail.com" required/>
-                                <span class="text-danger">*</span>Password<input type="password" name="password" id="password" placeholder="Password" required/>
-                                <span class="text-danger">*</span>Confirm Password<input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm Password" required/>
-                                <div class="form-group form-input">
-                            <span class="text-danger">*</span>Security Test
-                            <div class="captcha">
-                               <div id="captchaValue"></div>
-                               <input id="inputCaptcha" type="text" name="" placeholder="Captcha" required>
-                            </div>
-                        </div>
-                <div class="login"> Already have an account? <a href="/login">Login</a> </div><br><br>
-              </div>
-                                <button type="submit" name="submit">Signup</button>
+  <div class="form-v1-content">
+    <div class="wizard-form">
+          <form class="form-register" action="{% url 'duplicate_gen' %}" method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div id="form-total">
+
+              <!-- SECTION 1 -->
+              <a href="{% url 'index' %}">
+              <i class="fas fa-times exit"></i>
+              </a>
+
+                <h2>
+                  <p class="step-icon"><span>01</span></p>
+                  <span class="step-text">Personal Details</span>
+                </h2>
+
+                <section>
+                <div class="inner">
+                <div class="wizard-header">
+                <h3 class="heading">Personal Details</h3>
+                <p>Hi, we're glad you're here! Do you already have an account? <a href="{% url 'login' %}" class="fw-bold text-primary">Log in </a>instead.</p>
+                </div>
               
-
-      </div>
-      <div class="form-container sign-in-container">
-
-              <h1><font color="#191970">Account</font></h1>
-              <span> Please provide details for your account.</span>
-
-              <div class="address">
-               <span class="text-danger">*</span>Name: <input type="text" name="name" placeholder="Last name, First Name, Middle Name" required/>
-               <span class="text-danger">*</span>Sex:<select id="sex" name="sex" required>
-                <option> </option>
-                <option> Female </option>
-                <option> Male </option>
-              </select>
-               <span class="text-danger">*</span>Age:<input type="text" name="age" placeholder="Enter your age" required/>
-               <span class="text-danger">*</span>Birthday:<input type="Date" name="Birtdate" required/>
-               <span class="text-danger">*</span>Home No./Street/ Subdivision <input type="text" name="street" placeholder="House # / Street" required/>
-               <span class="text-danger">*</span>City <select id="city" name="city" required></select>
-               <span class="text-danger">*</span>Barangay<select id="barangay" name="barangay" required></select>
-               <span class="text-danger">*</span>Zipcode<input type="text" name="Zipcode" placeholder="Zipcode" required/>
-               <span class="text-danger">*</span>Contact No. <input type="text" name="Contact No." placeholder="Contact No." required/>
+              <div class="row">
+                <div class="col">
+                  <input type="text" name="gen_fname" placeholder="First name" class="form-control custom-form text-capitalize" required> 
+                </div>
+                <div class="col">
+                  <input type="text" name="gen_surname" placeholder="Last name" class="form-control custom-form text-capitalize" required> 
+                </div>
               </div>
-         
 
+              <div class="row">
+                <div class="col">
+                  <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control custom-form" required> 
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <select id="sex" name="gen_sex" class="form-select" required>
+                    <option value="" selected="true" disabled="disabled">Sex</option>
+                    <option value="Female"> Female </option>
+                    <option value="Male"> Male </option>
+                    </select>
+                </div>
+                <div class="col">
+                  <input type="tel" name="gen_contact_no" minlength="11" maxlength="11" placeholder="Contact number" class="form-control custom-form" minlength="10" maxlength="10" required> 
+                </div>
+              </div> 
+
+              <div class="row">
+                <div class="col">
+                  <select id="region" name="gen_region" class="form-select" required>
+                    <option value="" selected="true" disabled="disabled">Region</option>
+                    <option value="1"> 1 </option>
+                    <option value="2"> 2 </option>
+                    <option value="3"> 3 </option>
+                    </select>
+                </div>
+              </div>
+
+              <div class="row">
+                  <div class="col">
+                    <select id="province" name="gen_province" class="form-select" required>
+                     <option value="" selected="true" disabled="disabled">Province</option>
+                      <option value="1"> 1 </option>
+                      <option value="2"> 2 </option>
+                      <option value="3"> 3 </option>
+                      </select>
+                  </div>
+                  <div class="col">
+                  <select id="city" name="gen_city" class="form-select" required>
+                    <option value="" selected="true" disabled="disabled">City</option>
+                    <option value="1"> 1 </option>
+                    <option value="2"> 2 </option>
+                    <option value="3"> 3 </option>
+                    </select>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <input type="text" name="gen_barangay" placeholder="Barangay" class="form-control custom-form text-capitalize" required>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 2 -->
+                <h2>
+                  <p class="step-icon"><span>02</span></p>
+                  <span class="step-text">Account Details</span>
+                </h2>
+                <section>
+                    <div class="inner">
+                      <div class="wizard-header">
+                <h3 class="heading">Account Details</h3>
+                <p>Please enter a unique email and password. Make sure to not share your account details to anyone.</p>
+              </div> 
+
+              <section style="height: 20px;"></section>
+
+              <div class="row">
+                <div class="col">
+                  <input type="email" name="gen_username" id="username" placeholder="Email address" class="form-control custom-form" required> 
+                </div>
+              </div>
+
+              <div class="row">
+                <p class="password">Note: Email address must be unique and in a valid format (e.g. user@domain.com).</p>
+              </div>
+
+              <section style="height: 25px;"></section>
+
+              <div class="row">
+                <div class="col">
+                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form" minlength="8" required> 
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" minlength="8" oninput="check(this)" required> 
+                </div>
+              </div>
+
+              <div class="row">
+                <p class="password">Note: Passwords must be at least 8 characters long.</p>
+              </div>
+
+              <section style="height: 45.4px;"></section>
+
+                </div>
+                </section>
+          
+                <!-- SECTION 3 -->
+                <h2>
+                  <p class="step-icon"><span>03</span></p>
+                  <span class="step-text">Verify Identity</span>
+                </h2>
+                <section>
+                    <div class="inner">
+                      <div class="wizard-header">
+                <h3 class="heading">Verify Identity</h3>
+                <p>Before we can build your account, we need to be certain that You are You. You only have to follow a few simple steps to help us provide a secure system together.</p>
+              </div>
+
+              <div class="row">
+                  <img src="static/image/selfie.png" class="img-fluid" alt="Upload Valid ID" style="margin-top: -20px;">
+              </div>
+
+              <div class="row">
+                <p class="password" style="margin-top: 15px;">Note: Roadcast will only be using your Identification Card (ID) for verification purposes.</p>
+              </div>
+
+              <section style="height: 2.8px;"></section>
+
+              </div>
+              </section>
               
+              <!-- SECTION 4 -->
+              <h2>
+                <p class="step-icon"><span>04</span></p>
+                <span class="step-text">Upload Valid ID</span>
+              </h2>
+              <section>
+                  <div class="inner">
+                    <div class="wizard-header">
+              <h3 class="heading">Upload Valid ID</h3>
+              <p>Upload a clear photo of yourself holding any of the valid IDs given below. Please make sure your ID is visible.</p>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <select id="Valid ID" name="gen_valid_id" class="form-select" required>
+                  <option value="" selected="true" disabled="disabled">Valid ID</option>
+                  <option value="UMID">UMID</option>
+                  <option value="Driver's License">Driver's License</option>
+                  <option value="PhilHealth ID">PhilHealth ID</option>
+                  <option value="SSS">SSS</option>
+                  <option value="Passport">Passport</option>
+                  <option value="Voters ID">Voters ID</option>
+                  <option value="Pag-IBIG ID">Pag-IBIG ID</option>
+                  <option value="Postal ID">Postal ID</option>
+                  <option value="PRC ID">PRC ID</option>
+                  <option value="National ID">National ID</option>
+                  </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <div class="imgUp">
+                  <div class="imagePreview">
+                  <label class="btn btn-primary upload-img">
+                      Upload a photo
+                      <input type="file" name="gen_upload_id" class="uploadFile" accept="image/*" style="width: 0px; height: 0px; overflow: hidden;" required>
+                      </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row">
+              <p class="password" style="margin-top: 15px;">Note: Failure to follow the instruction will result in account registration being denied.</p>
+            </div>
+            
+            <section style="height: 17.4px;"></section>
+
+            </div>
+            </section>
+
+          <!-- SECTION 5 -->
+
+          <!-- AAYUSIN PA YUNG RECAPTCHA PAG NA UP NA YUNG WEBSITE HEHE -->
+          <!--
+            Links for recaptcha:
+            https://www.google.com/recaptcha/admin/create
+            https://www.bronco.co.uk/our-ideas/how-to-add-google-recaptcha-to-a-form-phphtml/
+          -->
+
+                <h2>
+                  <p class="step-icon"><span>05</span></p>
+                  <span class="step-text">Security Test</span>
+                </h2>
+                <section>
+                <div class="inner">
+                      <div class="wizard-header">
+                <h3 class="heading">Security Test</h3>
+                <p>Last step for registration and you're done! We just need to make sure that you are a human.</p><br>
+              </div> 
+
+              <section style="height: 10px;"></section>
+
+              <div class="row">
+                <center>
+                <div class="g-recaptcha" data-sitekey="your_site_key"></div>
+                </center>
+              </div>
+
+              <section style="height: 40px;"></section>
+
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
+                <label class="form-check-label" for="flexCheckDefault">
+                  <p style="font-size: 15px;">By creating an account, you agree to the
+                    <a href="#" class="fw-bold text-primary">Terms of Use</a> and our
+                    <a href="#" class="fw-bold text-primary">Privacy Policy</a>.
+                  </p>
+                </label>
+                </div>
+
+                <section style="height: 3.5px;"></section>
+
+                <p class="password" style="margin-top: 0px;">Note: An email will be sent to your email address to notify you that your registration has been accepted. Make sure that </p>
+
+                <section style="height: 40px;"></section>
+
+                <center>
+                <div class="submit-btn">
+                  <button class="btn btn-primary submit-form btn-lg" id="submit" type=“submit”>Create an Account</button>
+                </div>
+
+                <section style="height: 5px;"></section>
+              </center>
+                  </div>
+                </section>
+            </div>    
         </form>
-      </div>
-
-    <div class="overlay-container">
-      <div class="overlay">
-          <div class="overlay-panel overlay-left">
-              <img src="static/image/1.jpg" alt="Sign Up Part 1">
-              <h1>Go Back</h1>
-              <p>Check your personal information before signing up.</p>
-              <button class="ghost" id="signIn">Back</button>
-          </div>
-          <div class="overlay-panel overlay-right">
-              <img src="static/image/bg1.png" alt="Sign Up Part 2">
-              <h1>Next part is here!</h1>
-              <p>Continue to Enter your personal details and start journey with us</p>
-              <button class="ghost" id="signUp">Next</button>
-          </div>
-
-      </div>
     </div>
-
+  </div>
 </div>
 
-    {% endblock %}
+<!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+    </script>
+
+    <script>
+       function check(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Please make sure your passwords match.');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
+    }
+    </script>
+
+    <script>
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1; //January is 0!
+    var yyyy = today.getFullYear();
+
+    if (dd < 10) {
+      dd = '0' + dd;
+    }
+
+    if (mm < 10) {
+      mm = '0' + mm;
+    } 
+        
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("datefield").setAttribute("max", today);
+    </script>
+
+{% endblock %}

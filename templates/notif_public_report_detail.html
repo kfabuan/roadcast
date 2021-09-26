@@ -69,6 +69,13 @@
         font-weight: bold; 
         color: #1b5082;
     }
+
+    .labels {
+        text-transform: uppercase; 
+        font-size:large; 
+        letter-spacing: 1px; 
+        font-weight: bold; 
+    }
     
     .active-msg {
         border-left-color: #1b5082;
@@ -92,7 +99,8 @@
     
 
     .card-main {
-        border-radius: 50px;
+        box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1);
+
     }
 
     .settings-btn {
@@ -131,17 +139,25 @@
 {% block content %}
 <section style="height: 10px;"></section>
 
+    {% if messages %}
+        {% for message in messages %}
+        <p class="alert alert-success">
+            <strong>{{ message|safe }}</strong>
+        </p>  
+        {% endfor %}
 
+    {% endif %}
+    
 <!-- <div class="container"> -->
-    <div class="mb-3 pe-3 card-main">
+    <div class="mb-3 card-main" style="border-radius: 0px 20px 20px 0">
         <div class="row main-body">
             
             <!--mail list-->
             <div class="card col-3 p-0 " style="border-radius: 20px 0 0 20px">
-                    <div class="card-header fw-bold">
-                        Public Reports Inbox
+                    <div class="card-header fw-bold" style="border-radius: 20px 0 0 0">
+                        <i class="bi bi-envelope-fill"></i>  Public Reports Inbox
                     </div>
-                    <ul class="list-group list-group-flush mail-list">
+                    <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 0 20px">
                         {% for report in public_reports_list %}
                         <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
                             <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
@@ -156,7 +172,9 @@
                                             {% endifequal %}
                                         </span>
                                     </div>
-                                    <div class="col-5"><span style="font-size: 13px; float:right;" class="">{{ report.Reported_Date }}</span></div>
+                                    <div class="col-5">
+                                        <span style="font-size: small; float:right;" class="">{{ report.Reported_Date }}</span>
+                                    </div>
                                 </div>
 
                                 <div class="row">
@@ -166,13 +184,35 @@
                                             <label class="custom-control-label" for="cst1">&nbsp;</label> -->
                                         </div>
                                     </div>
-                                    <div class="col-8 fw-bold">{{ report.Reported_Brgy.Barangay }}</div>
+                                    <div class="col-8 ">
+                                        <span style="" class="fw-bold">{{ report.Reported_Brgy.Barangay }}</span>
+                                       
+                                    </div>
+                                    <div class="col-2">
+                                            {% ifnotequal report.Assigned_Investigator '' %}
+                                                {% ifequal report.Report_Status 'Solved' %}
+                                                <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
+                                                {% endifequal %}
+
+                                                {% ifequal report.Report_Status 'Unsolved' %}
+                                                <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Assigned</span>
+                                                {% endifequal %}
+                                            {% endifnotequal %}         
+
+                                            {% ifequal report.Report_Status 'Invalid' %}
+                                            <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
+                                            {% endifequal %}
+                                    </div>
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-2"></div>
+                                    <div class="col-2">
+                                        {% ifnotequal report.Reported_Image_Proof '' %}
+                                            <i class="fa fa-paperclip text-muted float-end"></i>
+                                        {% endifnotequal %}
+                                    </div>
                                     <div class="col-8"><p class=" text-truncate" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
-                                    <div class="col-2"><i class="fa fa-paperclip text-muted float-end"></i></div>
+                                    <div class="col-2"></div>
                                 </div>
 
 
@@ -202,23 +242,23 @@
                             <div class="col-2 ms-4"  style="background-color: white;">
                               <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
                                 <div id="myDIV" class="showw">
-                                    <form action="">
+                                    <form action="{% url 'process_assigning' detail.id %}" method="POST">
+                                        {% csrf_token %}
                                         <p class="label-blue">Assign Investigator </p> 
-                                        <select class="form-select form-select-sm" aria-label=".form-select-sm example" required>
-                                            <option value=""></option>
-                                            <option value="1">Investigator One</option>
-                                            <option value="2">Investigator Two</option>
-                                            <option value="3">Investigator Three</option>
+                                        <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
+                                            <option value="">Choose Investigator</option>
+                                            {% for inv in investigators_list %}
+                                                <option value="{{ inv.id }}" {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
+                                            {% endfor %}
                                         </select>
 
                                         <p class="label-blue mt-3">Assign Substation </p> 
-                                        <select class="form-select form-select-sm" aria-label=".form-select-sm example" required>
-                                            <option value=""></option>
-                                            <option value="1">Substation One</option>
-                                            <option value="2">Substation Two</option>
-                                            <option value="3">Substation Three</option>
+                                        <select  name="select-substation" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
+                                            <option value="" {% ifequal detail.Substation.Substation null %} selected {% endifequal %}>Forward to:</option>
+                                            {% for sub in substation_list %}
+                                                <option value="{{ sub.id }}" {% ifequal detail.Substation.Substation sub.Substation %} selected {% endifequal %}>{{ sub.Substation }}</option>      
+                                            {% endfor %}
                                         </select>
-
                                         <button type="submit" class="btn btn-primary btn-sm mt-3">Investigate Case</button>
                                     </form>
                                 </div>               
@@ -244,6 +284,10 @@
                             </div>
                         </div>
 
+                            <label class="labels {% ifequal detail.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %} ">[ Report Status: </label>
+                            <label class="labels {% ifequal detail.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %}">{{ detail.Report_Status }} ] </label>
+
+                            <br><br>
 
                             <label class="label-blue">Recipient: </label>
                             {{ detail.Recipient }}    <br><br>

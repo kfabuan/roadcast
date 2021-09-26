@@ -20,7 +20,7 @@ from django.conf.urls.static import static
 
 from . import views
 
-from.views import DashboardView, Report_monthly, notif_public_report_detail
+from.views import DashboardView, Report_monthly, deletesession, notif_public_report_detail, user_profile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,6 +34,9 @@ urlpatterns = [
 
     path('signup', views.sign_up, name='sign_up'),
     path('signup/validation', views.sign_up_validation, name='sign_up_validation'),
+    path('update', views.duplicate_gen, name='duplicate_gen'), #sign up validation
+    path('landing', views.logout, name='logout'),
+
     path('dashboard', DashboardView.as_view(), name='dashboard'),
     path('dashboard/data', views.get_data, name='data'),
 
@@ -53,7 +56,9 @@ urlpatterns = [
 
     path('notification', views.notification, name='notification'),
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
+    path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
 
+    
     path('public/notification', views.public_notification, name='public_notification'),
 
     path('substation/notification', views.sub_notification, name='sub_notification'),
@@ -74,7 +79,8 @@ urlpatterns = [
     #path('<int:incident_id>/admin_incident_detail/', views.admin_incident_detail, name='admin_incident_detail'),
 
     
-    path('logout', views.login, name='logout'),
+    path('logout', views.deletesession, name='logout'),
+    path('profile/user', views.user_profile, name="user_profile"),
     path('public/notification', views.pub_notif_inbox, name='pub_notif_inbox'),
     path('public/notification/view', views.pub_notif_inbox, name='pub_notif_view'),
 

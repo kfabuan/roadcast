@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
-from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report
+from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import View #for charts
@@ -8,19 +8,123 @@ from django.db.models import Q
 from collections import Counter
 from itertools import chain
 from django.db import connection
-
+from django.core.cache import cache
 from PIL import Image
-
-
 from django.contrib import messages #for csv upload
-
 import csv, io
+from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth.decorators import login_required, permission_required
+from datetime import datetime,timedelta
+from django.utils import timezone
+from datetime import datetime
+from django.db.models import Avg
+from datetime import date
+
+
 
 def index(request): #landing/home
     return render (request, 'landing.html')
 
+def login_f8(request):
+    try:
+        #landing ng login / wala pang process
+        if request.method =="GET":
+            return render(request, 'login.html') 
+
+        #start na if may process / nag login na si user
+
+        gen_pub_list = tbl_genpub_users.objects.all()
+        authorized_list = Tbl_add_members.objects.all()
+
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        count_gen = tbl_genpub_users.filter(gen_username=username, gen_pass= password)
+        count_authorized = Tbl_add_members.filter(Members_Email=username, Members_Password = password)
+
+        if count_gen and count_authorized is not None:
+            context = {
+                    'count_gen':count_gen,
+                    'count_authorized': count_authorized,
+                }
+
+            return render (request, 'login.html', context)
+
+    
+    #ito if may error sa process ni user :)
+    except:
+        messages.success(request, ("Oops! Please check your email or password"))
+        return render(request, 'login.html')
+
+
+
 def login(request):
+    if request.method == 'POST':
+        # try:
+        username = request.POST['username']
+        password = request.POST['password']
+        a = False
+        b = False
+        
+        try:
+            members = Tbl_add_members.objects.get(Members_Email = username)
+            a = True
+        except:
+            a = False
+            print('none')
+        try:
+            public = tbl_genpub_users.objects.get(gen_username = username)
+            b= True
+        except:
+            b = False
+            print('none')
+        
+        if a:
+            if (members.Members_Email == username) and (members.Members_Password == password):
+
+                submit = tbl_audit( username = username, password = password)
+                submit.save()
+
+                authorized_session = Tbl_add_members.objects.get(Members_Email=username, Members_Password = password)
+
+                request.session['authorized_id'] = authorized_session.id
+
+                return HttpResponseRedirect('/dashboard')
+            else: 
+                messages.success(request, ("Oops! Please check your email or password"))
+                return render(request, 'login.html')
+            
+        if b:
+            if (public.gen_username == username) and (public.gen_pass == password):
+                submit = tbl_audit(username = username, password = password)
+                submit.save()
+
+                public_session = tbl_genpub_users.objects.get(gen_username=username, gen_pass= password)
+
+                request.session['public_id'] = public_session.id
+
+                return HttpResponseRedirect('/dashboard')
+            else: 
+               messages.success(request, ("Oops! Please check your email or password"))
+               return render(request, 'login.html')
     return render (request, 'login.html') 
+
+def deletesession(request):
+
+    try:
+        if request.session['public_id']:
+            del request.session['public_id']
+    
+    except:
+        pass
+
+    try:
+        if request.session['authorized_id']:
+            del request.session['authorized_id']
+    except:
+        pass
+
+    return HttpResponseRedirect('/login')
 
 def about_us(request):
     return render (request, 'about_us.html') 
@@ -34,8 +138,54 @@ def contact_no(request):
 def sign_up (request):
     return render (request, 'sign_up.html')
     
-def sign_up_validation (request):
-    return render (request, 'sign_up_validation.html')
+def duplicate_gen (request): #Jew
+    if request.method=="POST": #save data when button is clicked
+        gen_surname = request.POST["gen_surname"].title()
+        gen_fname = request.POST["gen_fname"].title()
+        gen_sex = request.POST["gen_sex"]
+        gen_bday = request.POST["gen_bday"]
+        gen_region = request.POST["gen_region"].title()
+        gen_province = request.POST["gen_province"].title()
+        gen_city = request.POST["gen_city"].title()
+        gen_barangay = request.POST["gen_barangay"].title()
+        gen_contact_no = request.POST["gen_contact_no"]
+        gen_username = request.POST["gen_username"]
+        gen_pass = request.POST["gen_pass"]
+        gen_valid_id = request.POST["gen_valid_id"]
+        gen_upload_id = request.POST["gen_valid_id"]
+
+        #save image to database 
+        if request.FILES.get("gen_upload_id"):
+            gen_upload_id = request.FILES.get('gen_upload_id')
+        else:
+            gen_upload_id = 'Public/default.png'
+
+        # members = tbl_genpub_users.objects.get(gen_username = gen_username)
+        # print(members)
+        if tbl_genpub_users.objects.filter(gen_username = gen_username):
+            # context = {'error': 'error yern, alreay reg'}
+            messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
+            return render(request, 'sign_up.html')  
+
+        if Tbl_add_members.objects.filter(Members_Email=gen_username):
+            messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
+            return HttpResponseRedirect('signup')
+
+        submit = tbl_genpub_users.objects.create(gen_surname = gen_surname,gen_fname = gen_fname, gen_sex = gen_sex, gen_bday=gen_bday, gen_region = gen_region, gen_province = gen_province, gen_city = gen_city,
+        gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id )#,gen_upload_id=gen_upload_id
+        submit.save()
+        # return redirect(request, 'login.html')  
+        return HttpResponseRedirect(reverse('login'))
+        # return HttpResponseRedirect('/incidents/view')
+    return render(request, 'sign_up.html')
+            
+def success(request):
+    return render(request, 'submit_success.html')
+
+def sign_up_validation (request): #Jew
+    list = tbl_genpub_users.objects.all()
+    context={'list':list}
+    return render (request, 'sign_up_validation.html',context)
 
 def admin_audit_trail(request):
     return render (request, 'admin_audit_trail.html')  
@@ -52,6 +202,16 @@ def admin_investigators(request):
 def admin_view_investigators(request):
     return render (request, 'admin_view_investigators.html')  
 
+
+def is_valid(param):
+    return param != "" and param is not None
+def is_not_valid(param):
+    return param == "" and param is None
+
+def daterange(start_date, end_date):
+    for n in range(int((end_date - start_date).days)):
+        yield start_date + timedelta(n)
+
 class DashboardView (View):
     def get(self, request, *args, **kwargs):
         d2_brgy_distinct = []
@@ -63,6 +223,42 @@ class DashboardView (View):
             d2_brgy_distinct.append(dis)
             x = Tbl_pasig_incidents.objects.filter(Barangay_id=dis).count()
             d2_brgy_distinct_count.append(x)
+
+        #FOR FORECASTING
+        today = date.today() 
+
+        earliest_day= date(2019,1,1)
+        a_week= date(2019,1,1)
+        test=date.today() + timedelta(7)
+
+        end_date=date(2019,2,28)+ timedelta(7)
+
+        # end_date=date(2019,2,28)
+        forecast_query_set= Tbl_pasig_incidents.objects.filter(Date__gte=earliest_day, Date__lte=a_week).count()
+        limit = Tbl_forecast.objects.all().count()
+        start_i=0
+        end_i=7
+        i_day=6
+        count=0
+        for insert_date in daterange(earliest_day,test):
+
+            date_exist=Tbl_forecast.objects.filter(Date=insert_date,).exists()
+
+
+            if not date_exist:
+                incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
+                create= Tbl_forecast.objects.create(Date=insert_date.strftime("%Y-%m-%d"), Incidents=incident_count, Averages=0)
+            else:
+                incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
+                create= Tbl_forecast.objects.filter(Date=insert_date.strftime("%Y-%m-%d")).update(Incidents=incident_count)
+
+                while i_day < limit:
+                    count_avg=Tbl_forecast.objects.all().order_by('Date')[start_i:end_i].aggregate(Avg('Incidents'))
+                    nth=Tbl_forecast.objects.all().order_by('Date')[i_day]
+                    insert=Tbl_forecast.objects.filter(Date=nth.Date).update(Averages=count_avg['Incidents__avg'])
+                    start_i += 1
+                    end_i += 1
+                    i_day += 1 #may mali dito di gumagana yung iteration
 
         #CRIME/OFFENSE
         offense =[]
@@ -79,6 +275,11 @@ class DashboardView (View):
             x = offense.count(dis)
             offense_count.append(x)
             
+
+
+        all_authorized = Tbl_add_members.objects.all()  
+
+        pub = tbl_genpub_users.objects.all()  
         data = {
             "district2_labels": d2_brgys,
             "district2_count": d2_brgy_distinct_count,
@@ -86,6 +287,9 @@ class DashboardView (View):
             "offense":offense,
             "distinct_offense":distinct_offense,
             "offense_count": offense_count,
+
+            "all": all_authorized,
+            "pub": pub,
         }
         
         return render (request, 'dashboard.html', data)
@@ -127,7 +331,7 @@ def get_data(request, *args, **kwargs):
 
     #CRIME/OFFENSE
     offense =[]
-    offenses = Tbl_pasig_incidents.objects.values_list('CrimeOffense', flat=True)
+    offenses = Tbl_pasig_incidents.objects.filter(~Q(CrimeOffense='')).values_list('CrimeOffense', flat=True)
 
     str = ",".join(offenses)
     offense = str.split(",")
@@ -155,6 +359,7 @@ def get_data(request, *args, **kwargs):
 
     return JsonResponse(data) #http response
 
+
 def view_incidents (request):
     #term = 'Marcos Highway' since di parati nag ssearch si user, mag-eerror so mag lalagay ng blank para i-allow nya
     #pasig_incident_list = Tbl_pasig_incidents.objects.filter(Q(along_highway__icontains=term) |Q(corner_highway__icontains=term)).order_by('-id') 
@@ -164,42 +369,49 @@ def view_incidents (request):
     # cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id DESC")
     # pasig_incident_list = cursor.fetchall()
 
-    incident_type = request.GET.get('coltype') 
-  
-    barang= request.GET.get('barangay')
+   if request.method=="GET":
+        incident_type = request.GET.get('coltype') 
+        barang= request.GET.get('barangay')
+        from_date =  request.GET.get('from_date')
+        to_date =   request.GET.get('to_date')
     
- 
-    all_entries = Tbl_pasig_incidents.objects.all()
-    context1 = {
-            'pasig_incident_list': all_entries,  
-        }
-
-    pasig_incident_list=Tbl_pasig_incidents.objects.filter(Q(Incident_Type=incident_type) & Q(Barangay_id_id=barang))
-    pasig_incident_list_it= Tbl_pasig_incidents.objects.filter(Q(Incident_Type=incident_type))
-    
-    pasig_incident_list_br= Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id=barang))
-    context3 = {
-        'pasig_incident_list': pasig_incident_list_br,  
-    }
-
-    context2 = {
-        'pasig_incident_list': pasig_incident_list,  
-    }
-  
-    if bool(incident_type) & bool(barang):
-         return render (request, 'encoder_view_incidents.html', context2)
-    elif (incident_type==0):
-        return render (request, 'encoder_view_incidents.html', context3) 
-    else:
-        return render (request, 'encoder_view_incidents.html', context1) 
+        if is_valid(from_date) & is_valid(to_date):
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Date BETWEEN "'+from_date+'" AND "'+to_date+'"')
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
+                
+        elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'"')
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
+   
+        if bool(incident_type) & bool(barang) :
+            if incident_type=="Collision":
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Barangay_id_id = "'+barang+'"')
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
+            elif barang=="0":
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'"')
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
+            
+            else:
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"')
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
+        else:
+            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents')
+            return render (request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model})
 
 
 
 def add_incident (request):
     try:
-        # GET request returns the value of the data with the specified key.
+        #Landing page ng add incident page / wala pang process
         if request.method == "GET":
-            return render(request, 'add_incident.html')
+            member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+            investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+            brgy_list = Tbl_barangay.objects.all()
+            context = {
+                'brgy_list': brgy_list, 
+                'investigators_list': investigators_list
+            }
+            return render(request, 'add_incident.html', context)
 
         csv_file = request.FILES['file']
         data_set = csv_file.read().decode('ISO-8859-1')
@@ -272,8 +484,7 @@ def add_incident (request):
                 Barangay_id_id=column[60]
             )
 
-            brgy_list = Tbl_barangay.objects.values_list('Barangay', flat=True).distinct()
-
+            brgy_list = Tbl_barangay.objects.all()
             context = {
                 'brgy_list': brgy_list, 
                 'success_message':"Successfully Added!",
@@ -297,7 +508,7 @@ def processAddIncident(request):
     city = "Pasig"
     unit_station = "Pasig City Police Station"
     crime_offense = request.POST.get('display_offense')
-    #week 
+    week = request.POST.get('week') 
     date_committed = request.POST.get('DateCommitted') #name attribute of textbox
     current_time = request.POST.get('currentTime')
     day = request.POST.get('day_of_the_week')
@@ -309,34 +520,33 @@ def processAddIncident(request):
     district = request.POST.get('district')
     barangay = request.POST.get('barangay')
     address = request.POST.get('place_committed')
-    #avenue
-    #road
-    #street
-    #bound
-    #highway
-    #others
+    along = request.POST.get('along')
+    corner = request.POST.get('corner')
+   
     surface_cond = request.POST.get('surface_condition')
     surface_type = request.POST.get('surface_type')
-    road_class = "Ewan" #idk
     road_repair = request.POST.get('road-repair')
     hit_and_run = request.POST.get('hit-and-run')
     road_char = request.POST.get('road_character')
 
-    sus_name = request.POST.get('sus_name')
+    sus_type = request.POST.get('sus_type')
+    sus_fname = request.POST.get('sus_fname')
+    sus_lname = request.POST.get('sus_lname')
     sus_severity = request.POST.get('sus_severity')
     sus_age = request.POST.get('sus_age')
     sus_sex = request.POST.get('s_sex')
     sus_civil_status = request.POST.get('sus_civil_status')
     sus_add = request.POST.get('sus_add')
-    sus_vehicle = request.POST.get('sus_vehicle')
+    sus_vehicle = request.POST.get('sus_vehicle') #brand/model
     sus_vehicle_body_type = request.POST.get('sus_vehicle_body_type')
     sus_plate_no = request.POST.get('sus_plate_no')
     sus_reg_owner = request.POST.get('sus_reg_owner')
     sus_drl = request.POST.get('sus_drl')
-    # sus_vec_model = request.POST.get('sus_vec_model')
+    sus_drl_exp = request.POST.get('sus_drl_exp')
 
     vic_type = request.POST.get('vic_type')
-    vic_name = request.POST.get('vic_name')
+    vic_fname = request.POST.get('vic_fname')
+    vic_lname = request.POST.get('vic_lname')
     vic_severity = request.POST.get('vic_severity')
     vic_age = request.POST.get('vic_age')
     vic_sex = request.POST.get('v_sex')
@@ -347,59 +557,74 @@ def processAddIncident(request):
     vic_plate_no = request.POST.get('vic_plate_no')
     vic_reg_owner = request.POST.get('vic_reg_owner')
     vic_drl = request.POST.get('vic_drl')
+    vic_drl_exp = request.POST.get('vic_drl_exp')
+
    
     narrative = request.POST.get('narrative')
 
-    # date_today = request.POST.get('date-today')
-    added_by = "wala pa"
-    #inv_name = request.POST.get('inv_name')
+    added_by = "For now encoder"
+    inv_name = request.POST.get('inv_name')
     
     incident_record = Tbl_pasig_incidents.objects.create(
-                    City=city, 
-                    UnitStation=unit_station,               
-                    CrimeOffense=crime_offense,           
-                    Date=date_committed,               
-                    Time=current_time, 
-                    Day = day, 
-                    Incident_Type=col_type, 
-                    Number_of_Persons_Involved=no_of_person_involved, 
-                    Light=light, 
-                    Weather=weather, 
-                    Case_Status=case_status, 
+                    City        = city, 
+                    UnitStation = unit_station,               
+                    CrimeOffense= crime_offense, 
+                    Week        = week,          
+                    Date        = date_committed,               
+                    Time        = current_time, 
+                    Day         = day, 
+                    Incident_Type   = col_type, 
+                    Number_of_Persons_Involved  = no_of_person_involved, 
+                    Light       = light, 
+                    Weather     = weather, 
+                    Case_Status = case_status, 
                     District_id = district, 
                     Barangay_id_id = barangay, 
-                    Address = address, 
+                    Address        = address,
+                    Along          = along,
+                    Corner         = corner,
 
-                    Surface_Condition=surface_cond, 
-                    Surface_Type=surface_type, 
-                    Road_Class=road_class, 
-                    Road_Repair = road_repair, 
-                    Hit_and_Run = hit_and_run,
-                    Road_Character=road_char, 
+                    Surface_Condition   = surface_cond, 
+                    Surface_Type        = surface_type, 
+                    Road_Repair         = road_repair, 
+                    Hit_and_Run         = hit_and_run,
+                    Road_Character      = road_char, 
     
-                    Suspect_Name=sus_name, 
-                    Suspect_Severity=sus_severity,
-                    Suspect_Age=sus_age, 
-                    Suspect_Sex=sus_sex, 
+                    Suspect_Type        = sus_type,
+                    Suspect_Fname       = sus_fname, 
+                    Suspect_Lname       = sus_lname, 
+                    Suspect_Severity    = sus_severity,
+                    Suspect_Age         = sus_age, 
+                    Suspect_Sex         = sus_sex, 
                     Suspect_Civil_Status = sus_civil_status, 
-                    Suspect_Address=sus_add,  
-                    Suspect_Vehicle=sus_vehicle, 
-                    Suspect_Vehicle_Body_Type=sus_vehicle_body_type, 
-                    Suspect_Plate_No=sus_plate_no,
-                    Suspect_Reg_Owner=sus_reg_owner, 
-                    Suspect_Drl_No=sus_drl, 
-                    # Suspect_Vehicle_Year_Model=sus_vec_model, 
-                    
-                    Victim_Type = vic_type,
-                    Victim_Name=vic_name, Victim_Severity=vic_severity,Victim_Age=vic_age, 
-                    Victim_Sex=vic_sex, Victim_Civil_Status = vic_civil_status, Victim_Address=vic_add, 
-                    Victim_Vehicle=vic_vehicle, Victim_Vehicle_Body_Type=vic_vehicle_body_type, 
-                    Victim_Plate_No=vic_plate_no,Victim_Reg_Owner=vic_reg_owner, 
-                    Victim_Drl_No=vic_drl, 
-                    #Victim_Vehicle_Year_Model=vic_vec_model,
+                    Suspect_Address     = sus_add,  
+                    Suspect_Vehicle     = sus_vehicle, 
+                    Suspect_Vehicle_Body_Type   = sus_vehicle_body_type, 
+                    Suspect_Plate_No    = sus_plate_no,
+                    Suspect_Reg_Owner   = sus_reg_owner, 
+                    Suspect_Drl_No      = sus_drl, 
+                    Suspect_Drl_Exp     = sus_drl_exp, 
 
-                    Narrative=narrative, 
-                    added_by=added_by )
+                    
+                    Victim_Type         = vic_type,
+                    Victim_Fname        = vic_fname, 
+                    Victim_Lname        = vic_lname, 
+                    Victim_Severity     = vic_severity,
+                    Victim_Age          = vic_age, 
+                    Victim_Sex          = vic_sex, 
+                    Victim_Civil_Status = vic_civil_status, 
+                    Victim_Address      = vic_add, 
+                    Victim_Vehicle      = vic_vehicle, 
+                    Victim_Vehicle_Body_Type = vic_vehicle_body_type, 
+                    Victim_Plate_No          = vic_plate_no,
+                    Victim_Reg_Owner         = vic_reg_owner, 
+                    Victim_Drl_No            = vic_drl, 
+                    Victim_Drl_Exp           = vic_drl_exp, 
+
+                    Narrative    = narrative, 
+                    Investigator = inv_name,
+                    added_by     = added_by,
+                    archive      = "No" )
                     
     incident_record.save()
     return HttpResponseRedirect('/incidents/view')
@@ -437,21 +662,30 @@ def processCSV (request):
 
 def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
     try:
+        member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+        investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+        substation_list = Tbl_substation.objects.all()
+        brgy_list = Tbl_barangay.objects.all()
+        all_incidents = Tbl_pasig_incidents.objects.all()
         pasig_incident_detail = Tbl_pasig_incidents.objects.get(id=incident_id)
 
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
 
-    return render(request, 'encoder_view_incident_detail.html', {'pasig_incident_detail': pasig_incident_detail})
+    return render(request, 'encoder_view_incident_detail.html', 
+        {'pasig_incident_detail': pasig_incident_detail,
+         'all_incidents': all_incidents,
+         'investigators_list': investigators_list,
+         'substation_list': substation_list,
+         'brgy_list':brgy_list })
 
 def processEditIncident(request, incident_id):
     incident_detail = get_object_or_404(Tbl_pasig_incidents, id=incident_id)
 
     try:
-        crime_offense = request.POST.get('display_offense')
-        #week 
+        crime_offense = request.POST.get('display_offense') 
         date_committed = request.POST.get('DateCommitted') #name attribute of textbox
-        current_time = request.POST.get('currentTime')
+        incident_time = request.POST.get('incidentTime')
         day = request.POST.get('day_of_the_week')
         col_type = request.POST.get('collision_type')
         #no_of_person_involved = "1"
@@ -463,19 +697,16 @@ def processEditIncident(request, incident_id):
         address = request.POST.get('place_committed')
         along = request.POST.get('along')
         corner = request.POST.get('corner')
-        # road
-        # street
-        # bound
-        # highway
-        # others
+   
         surface_cond = request.POST.get('surface_condition')
         surface_type = request.POST.get('surface_type')
-        road_class = "Ewan" #idk
         road_repair = request.POST.get('road-repair')
         hit_and_run = request.POST.get('hit-and-run')
         road_char = request.POST.get('road_character')
 
-        sus_name = request.POST.get('sus_name')
+        sus_type = request.POST.get('sus_type')
+        sus_fname = request.POST.get('sus_fname')
+        sus_lname = request.POST.get('sus_lname')
         sus_severity = request.POST.get('sus_severity')
         sus_age = request.POST.get('sus_age')
         sus_sex = request.POST.get('s_sex')
@@ -486,10 +717,11 @@ def processEditIncident(request, incident_id):
         sus_plate_no = request.POST.get('sus_plate_no')
         sus_reg_owner = request.POST.get('sus_reg_owner')
         sus_drl = request.POST.get('sus_drl')
-        # sus_vec_model = request.POST.get('sus_vec_model')
+        sus_drl_exp = request.POST.get('sus_drl_exp')
 
         vic_type = request.POST.get('vic_type')
-        vic_name = request.POST.get('vic_name')
+        vic_fname = request.POST.get('vic_fname')
+        vic_lname = request.POST.get('vic_lname')
         vic_severity = request.POST.get('vic_severity')
         vic_age = request.POST.get('vic_age')
         vic_sex = request.POST.get('v_sex')
@@ -500,11 +732,11 @@ def processEditIncident(request, incident_id):
         vic_plate_no = request.POST.get('vic_plate_no')
         vic_reg_owner = request.POST.get('vic_reg_owner')
         vic_drl = request.POST.get('vic_drl')
+        vic_drl_exp = request.POST.get('vic_drl_exp')
+
     
         narrative = request.POST.get('narrative')
-
-        # date_today = request.POST.get('date-today')
-        added_by = "wala pa"
+        # added_by = "Encoder"
         inv_name = request.POST.get('inv_name')
       
     except (KeyError, Tbl_pasig_incidents.DoesNotExist): #KeyError is partner nung get_object_or_404
@@ -515,9 +747,9 @@ def processEditIncident(request, incident_id):
     else:
         incident = Tbl_pasig_incidents.objects.get(id=incident_id) #kukunin yung row sa database na kapareha ng incident_id
         incident.CrimeOffense=crime_offense         
-        # incident.Date=date_committed             
-        # incident.Time=current_time
-        # incident.Day = day 
+        incident.Date=date_committed             
+        incident.Time=incident_time
+        incident.Day = day 
         incident.Incident_Type=col_type
         # incident.Number_of_Persons_Involved=no_of_person_involve
         # incident.Light=light 
@@ -531,12 +763,13 @@ def processEditIncident(request, incident_id):
 
         incident.Surface_Condition=surface_cond 
         incident.Surface_Type=surface_type
-        incident.Road_Class=road_class
         incident.Road_Repair = road_repair 
         incident.Hit_and_Run = hit_and_run
         incident.Road_Character=road_char
 
-        incident.Suspect_Name=sus_name
+        incident.Suspect_Type = sus_type
+        incident.Suspect_Fname=sus_fname
+        incident.Suspect_Lname=sus_lname
         incident.Suspect_Severity=sus_severity
         incident.Suspect_Age=sus_age 
         incident.Suspect_Sex=sus_sex 
@@ -547,10 +780,11 @@ def processEditIncident(request, incident_id):
         incident.Suspect_Plate_No=sus_plate_no
         incident.Suspect_Reg_Owner=sus_reg_owner 
         incident.Suspect_Drl_No=sus_drl 
-        # Suspect_Vehicle_Year_Model=sus_vec_model 
+        incident.Suspect_Drl_Exp=sus_drl_exp
         
         incident.Victim_Type = vic_type
-        incident.Victim_Name=vic_name 
+        incident.Victim_Fname=vic_fname
+        incident.Victim_Lname=vic_lname  
         incident.Victim_Severity=vic_severity
         incident.Victim_Age=vic_age 
         incident.Victim_Sex=vic_sex 
@@ -561,9 +795,11 @@ def processEditIncident(request, incident_id):
         incident.Victim_Plate_No=vic_plate_no
         incident.Victim_Reg_Owner=vic_reg_owner 
         incident.Victim_Drl_No=vic_drl 
-        # #Victim_Vehicle_Year_Model=vic_vec_model
+        incident.Victim_Drl_Exp=vic_drl_exp
+
 
         incident.Narrative=narrative
+        incident.Investigator_id=inv_name
         # incident.added_by=added_by
 
         incident.save()  #may changes or wala sa profile pic, save parin
@@ -605,7 +841,7 @@ class Report_monthly (View):
 
         #2. CRIME/OFFENSE STATS - monthly
         offense = []
-        offenses = Tbl_pasig_incidents.objects.values_list('CrimeOffense', flat=True)
+        offenses = Tbl_pasig_incidents.objects.filter(~Q(CrimeOffense='')).values_list('CrimeOffense', flat=True)
 
         str = ",".join(offenses)
         offense = str.split(",")
@@ -640,8 +876,8 @@ class Report_monthly (View):
         suspect_age_m = []
         victim_age_m = []
 
-        suspect_age_m = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Male')).values_list('Suspect_Age', flat=True)
-        victim_age_m = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Male')).values_list('Victim_Age', flat=True)
+        suspect_age_m = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Male') & ~Q(Suspect_Age ='')).values_list('Suspect_Age', flat=True)
+        victim_age_m = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Male')& ~Q(Victim_Age ='')).values_list('Victim_Age', flat=True)
 
         age_combined_m = list(chain(suspect_age_m, victim_age_m))
         age_total_m = child_m = adolescent_m = adult_m = geriatric_m = 0
@@ -659,7 +895,7 @@ class Report_monthly (View):
             x = age_combined_m.count(adult)
             adult_m = adult_m + x
         
-        for geriatric in range(60, max(age_combined_m)+1):
+        for geriatric in range(60, 120):
             x = age_combined_m.count(geriatric)
             geriatric_m = geriatric_m + x
 
@@ -689,7 +925,7 @@ class Report_monthly (View):
             x = age_combined_f.count(adult)
             adult_f = adult_f + x
         
-        for geriatric in range(60, max(age_combined_f)+1):
+        for geriatric in range(60, 120):
             x = age_combined_f.count(geriatric)
             geriatric_f = geriatric_f + x
 
@@ -836,9 +1072,15 @@ def notification (request):
 
 
 def notif_public_report_detail (request, gen_pub_report_id):
+    member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+    investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+    substation_list = Tbl_substation.objects.all()
 
     unread_public_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
     unread_public_report.Read_Status = "Yes"
+    #unread_public_report.Report_Status = "Unsolved"
+    # unread_public_report.Substation_id = ""
+
     unread_public_report.save()
     
     #for gen pub reports inbox
@@ -850,8 +1092,29 @@ def notif_public_report_detail (request, gen_pub_report_id):
         'public_reports_list': pasig_public_reports,
         'detail': unread_public_report,
         'unread_notif_count': unread_notif_count,
+        'investigators_list': investigators_list,
+        'substation_list': substation_list
     }
     return render (request, 'notif_public_report_detail.html', data)
+
+def processAssigning (request, report_id):
+    investigator = request.POST.get('select-investigator')
+    substation = request.POST.get('select-substation')
+    public_report = Tbl_public_report.objects.get(id=report_id)
+
+    public_report.Assigned_Investigator_id = investigator
+    public_report.Substation_id = substation
+    public_report.save()
+
+    context = {
+            'success_message':"Your report has been submitted!",
+            }
+    messages.success(request, "Your data has been saved!")
+    return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
+
+
+
+
 
 def sub_notification (request):
     return render (request, 'sub_notification.html')
@@ -901,7 +1164,7 @@ def submit_report (request):
                         Reported_Corner=corner, 
                         Reported_Narrative = narrative,
                         Reported_Image_Proof = image_proof,
-                        Report_Status = 'Unsolved',
+                        Report_Status = '',
                         Read_Status='No',
                         Recipient = recipient)
         
@@ -940,5 +1203,15 @@ def pub_incident_detail_view (request, incident_id):
     }
     return render (request, 'gen_incident_detail_view.html', context)
 
+# Audit trail - Jew
 
+def admin_audit_trail(request, ):
+
+    audit = tbl_audit.objects.all()
+    context={'audit':audit}
+ 
+    return render (request, 'admin_audit_trail_members.html',context)  
+
+def user_profile(request):
+    return render (request, 'user_profile.html')
 

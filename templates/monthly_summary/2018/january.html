@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'nav_admin.html' %}
 {% block title %} Home {% endblock %}
 
 {% block design %} {% endblock %}
@@ -211,7 +211,7 @@
 </script>
 
 {% block content %}
-<div class="content">
+
   <b id="date-today">Today: </b><span id="ct6"></span>
 
     <h1>January 2018: Summarize Statistic</h1>
@@ -228,17 +228,20 @@
         <!-- tab for charts -->
         <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
-          
-          <div class=" row" style="border:0; margin:0; padding:0; height:10%">
-            <ul class="list-group list-group-flush">
+          <!-- <div class="col"></div>
+          <div class="" style="border:0; margin:0; padding:0; height:10%">
+            <ul class="">
               <li class="list-group-item mb-4"><canvas id="monthly_offense" ></canvas></li>
               <li class="list-group-item mb-4"><canvas id="monthly_car" ></canvas></li>
               <li class="list-group-item mb-4"><canvas id="monthly_d1" ></canvas></li>
               <li class="list-group-item mb-4"><canvas id="monthly_d2" ></canvas></li>
 
             </ul>
-          </div>
-        
+          </div> -->
+          <canvas id="monthly_offense" ></canvas>
+          <canvas id="monthly_car" ></canvas>
+          <canvas id="monthly_d1" ></canvas>
+          <canvas id="monthly_d2" ></canvas>
           
         </div>
 
@@ -456,6 +459,6 @@
             
         </div>
       </div>
-</div>
+
   
 {% endblock %}

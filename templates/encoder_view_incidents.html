@@ -1,4 +1,4 @@
-{% extends 'nav_encoder.html' %}
+{% extends 'nav_admin.html' %}
 
 {% block title %} Incidents List {% endblock %}
 
@@ -16,6 +16,7 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="row mb-4 mt-2">
         <div class="col-3">
             <span class="me-2 fs-4 fw-bold page-title"> Incident Reports List </span>
@@ -25,10 +26,12 @@
             <form action="">
                 <div class="input-group input-group-sm ">
                     <form action = "" method="GET">
+                    {% comment %} {% csrf_token %} {% endcomment %}
                     <div class="input-group mb-3">
                    
-                    <select class="form-select" id="inputGroupSelect02" name="coltype" > 
-                        <option value="0" selected>Collision type</option>
+                    <select class="form-select" id="inc_type" name="coltype" > 
+                    
+                        <option value="Collision" selected>Collision type</option>
                         <option value="Bumped From Behind">Bumped From Behind</option>
                         <option value="Angle Collision">Angle Collision</option>
                         <option value="Clash">Clash</option>
@@ -52,7 +55,7 @@
                     </select>
                     
                     
-                    <select class="form-select" id="inputGroupSelect02" name="barangay">
+                    <select class="form-select" id="barang" name="barangay">
                         <option value="0" selected>Barangay</option>
                         <option value="2">Bagong Ilog</option>
                         <option value="5">Bagong Katipunan</option>
@@ -85,8 +88,8 @@
                         <option value="26">Santolan</option>
                         <option value="25">Santa Lucia</option>
                     </select>
-                    <input type="date" class="form-select" value="currentTime" id="inputGroupSelect02">
-                    <input type="time" class="form-select" id="inputGroupSelect02"> 
+                    <input type="date" class="form-select" id="from_date" name="from_date">
+                    <input type="date" class="form-select" id="to_date" value="" name="to_date"> 
                    <input type="submit">
                     </div>
                    
@@ -95,6 +98,8 @@
             </form>
         </div>
     </div>
+  
+   
     {% if pasig_incident_list %}
         <div class="table-responsive">
             <!-- <table class="table table-bordered table-striped table-hover text-center"> -->
@@ -120,15 +125,17 @@
 
                       <td>{{incident.id}}</td>
                       <td>{{incident.Incident_Type}}</td>
+
                       <td>{{ incident.Barangay_id.Barangay }}</td>
                       <td>{{ incident.Date }} - {{ incident.Time }}</td>
                       <td>{{ incident.Case_Status }}</td>
-                      <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'incident_detail_view' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
+                      <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'admin_incident_detail' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
         <!-- if table has no data -->
         {% else %}
             <p>No records available.</p>
