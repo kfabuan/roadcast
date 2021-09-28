@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
-from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast
+from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import View #for charts
@@ -9,7 +9,7 @@ from collections import Counter
 from itertools import chain
 from django.db import connection
 from django.core.cache import cache
-from PIL import Image
+# from PIL import Image
 from django.contrib import messages #for csv upload
 import csv, io
 from django.contrib.auth import authenticate, logout, login
@@ -400,7 +400,7 @@ def view_incidents (request):
 
 
 
-def add_incident (request):
+def add_incident (request): #add using CSV
     try:
         #Landing page ng add incident page / wala pang process
         if request.method == "GET":
@@ -503,7 +503,7 @@ def add_incident (request):
 
         return render (request, 'add_incident.html', context)
 
-def processAddIncident(request):
+def processAddIncident(request): #Add using forms
 
     city = "Pasig"
     unit_station = "Pasig City Police Station"
@@ -561,7 +561,6 @@ def processAddIncident(request):
 
    
     narrative = request.POST.get('narrative')
-
     added_by = "For now encoder"
     inv_name = request.POST.get('inv_name')
     
@@ -605,7 +604,6 @@ def processAddIncident(request):
                     Suspect_Drl_No      = sus_drl, 
                     Suspect_Drl_Exp     = sus_drl_exp, 
 
-                    
                     Victim_Type         = vic_type,
                     Victim_Fname        = vic_fname, 
                     Victim_Lname        = vic_lname, 
@@ -622,7 +620,7 @@ def processAddIncident(request):
                     Victim_Drl_Exp           = vic_drl_exp, 
 
                     Narrative    = narrative, 
-                    Investigator = inv_name,
+                    Investigator_id = inv_name,
                     added_by     = added_by,
                     archive      = "No" )
                     
@@ -659,6 +657,10 @@ def processCSV (request):
     context = {}
     return render(request, 'add_incident.html', context)
 
+def processDeleteIncident (request, incident_id):
+    Tbl_pasig_incidents.objects.filter(id=incident_id)
+    messages.success(request, ("Successfully Deleted!"))
+    return HttpResponseRedirect('view_incidents')
 
 def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
     try:
@@ -1072,6 +1074,7 @@ def notification (request):
 
 
 def notif_public_report_detail (request, gen_pub_report_id):
+
     member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
     investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     substation_list = Tbl_substation.objects.all()
@@ -1085,15 +1088,17 @@ def notif_public_report_detail (request, gen_pub_report_id):
     
     #for gen pub reports inbox
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
-    other_reports_by_user = Tbl_public_report.objects.get(id=gen_pub_report_id)
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
+    #to see admin replies <3
+    admin_responses = Tbl_public_report_response.objects.filter(Report_id = gen_pub_report_id)
     data = {
         'public_reports_list': pasig_public_reports,
         'detail': unread_public_report,
         'unread_notif_count': unread_notif_count,
         'investigators_list': investigators_list,
-        'substation_list': substation_list
+        'substation_list': substation_list,
+        'admin_responses': admin_responses
     }
     return render (request, 'notif_public_report_detail.html', data)
 
@@ -1106,15 +1111,21 @@ def processAssigning (request, report_id):
     public_report.Substation_id = substation
     public_report.save()
 
-    context = {
-            'success_message':"Your report has been submitted!",
-            }
     messages.success(request, "Your data has been saved!")
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
 
+def processAdmin_Reply (request, report_id):
+    admin_reply = request.POST.get('admin_reply')
 
+    admin_responses = Tbl_public_report_response.objects.create(
+                    Sender        = "Admin",
+                    Response = admin_reply,
+                    Report_id = report_id, )
 
+    admin_responses.save()
+
+    return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
 def sub_notification (request):
     return render (request, 'sub_notification.html')
@@ -1164,7 +1175,7 @@ def submit_report (request):
                         Reported_Corner=corner, 
                         Reported_Narrative = narrative,
                         Reported_Image_Proof = image_proof,
-                        Report_Status = '',
+                        Report_Status = 'Unsolved',
                         Read_Status='No',
                         Recipient = recipient)
         

@@ -91,12 +91,26 @@
         }
     }
 
-    .txt-reply {
-        box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1);
-        width: 95%; bottom: 3%; border-radius:20px;
+    .div-reply {
+        /* box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1); */
+        width: 100%;
+        min-height: 60px;
+        bottom: 3%; 
+        /* border-radius:20px; */
         border: none !important; outline:none !important
     }
+
+    .txt-reply {
+        background-color:#e8f4f8; 
+        /* border-radius:20px 0px 0 20px;  */
+        border-style: none;
+    }
     
+    .btn-reply {
+        background-color:#e8f4f8; 
+        /* border-radius:0px 20px 20px 0;  */
+        border-style: none;
+    }
 
     .card-main {
         box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1);
@@ -162,7 +176,7 @@
                         <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
                             <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
                                 <div class="row">
-                                    <div class="col-2"><img src="/media/police.jpg" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                    <div class="col-2"><img src="/media/incident_images/user.png" alt="" style="width: 35px;" class="rounded-circle"></div>
                                     <div class="col-5">
                                         <span style="font-size: 13px;" class=" text-muted">
                                             {{ report.User_ID }}
@@ -189,15 +203,19 @@
                                        
                                     </div>
                                     <div class="col-2">
-                                            {% ifnotequal report.Assigned_Investigator '' %}
+                                            {% if report.Assigned_Investigator_id %}
                                                 {% ifequal report.Report_Status 'Solved' %}
                                                 <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
                                                 {% endifequal %}
 
                                                 {% ifequal report.Report_Status 'Unsolved' %}
-                                                <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Assigned</span>
+                                                <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
                                                 {% endifequal %}
-                                            {% endifnotequal %}         
+
+                                            {% else %}
+                                            <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
+
+                                            {% endif %}         
 
                                             {% ifequal report.Report_Status 'Invalid' %}
                                             <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
@@ -229,7 +247,7 @@
                         <div class="row">
                             <div class="col-1 pe-3" style="background-color: white;">
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
-                                    <div><img src="/media/incident_images/police.jpg" alt=""class="rounded-circle" style="width: 70px;"></div>
+                                    <div><img src="/media/incident_images/user.png" alt=""class="rounded-circle" style="width: 70px;"></div>
                                     <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span>
                                 </div>
                             </div>
@@ -324,15 +342,37 @@
 
                             {% endifnotequal %}
                         <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
+                       
+                            {% if admin_responses %}
+                                {% for responses in admin_responses %}
+                                    <center><hr style="width: 97%"></center>
+
+                                <div class="row" style="min-height: 40px; width: 100%;">
+                                    <div class="col-1"><img src="/media/incident_images/police.jpg" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                    <div class="col-10">
+                                        <b>Admin</b> <br>
+                                        <span style="font-size: small;" class="text-muted">{{ responses.Response_Date }} {{ responses.Response_Time }}</span> <br>
+                                        {{ responses.Response }}  
+
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                            <p class="text-muted"> <i>No replies available. </i></p>
+                            {% endif %}
                     </div>
 
                 <center>
-                    <div class="input-group position-absolute txt-reply">
-                        <input type="text" class="form-control p-3" placeholder="Reply to {{ detail.User_ID }}'s message" style="background-color:#e8f4f8; border-radius:20px 0px 0 20px; border-style: none;">
-                        <button class="btn" type="button" style="background-color:#e8f4f8; border-radius:0px 20px 20px 0; border-style: none;">
+                    <form action="{% url 'process_admin_reply' detail.id %}" method="POST">
+                        {% csrf_token %}
+
+                    <div class="input-group div-reply">
+                        <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">
+                        <button class="btn btn-reply" type="submit">
                             <i class="fas fa-paper-plane pe-2" style="color: #1b5082; font-size: large;" ></i>
                         </button>
                     </div>
+                    </form>
                 </center>
                     
                 
@@ -343,7 +383,7 @@
             <!--profile preview-->
             <div class="card col-2 p-0" style="border-radius: 0px 20px 20px 0px;"> <!--tr tl br bl-->
                 <div class="">
-                    <img src="/media/incident_images/police.jpg" class="card-img-top p-0" alt="..." style="border-radius: 0px 20px 0px 0px; !important">
+                    <img src="/media/incident_images/user.png" class="card-img-top p-0" alt="..." style="border-radius: 0px 20px 0px 0px; !important">
                     <!-- <img src="/media/incident_images/police.jpg" class="" alt="..." style="width:60%; z-index:3; position:relative; top:-20%;left:20%;"> -->
                     <center>
                     <div class="card-body">

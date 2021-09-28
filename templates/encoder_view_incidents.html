@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block content %}
-
+{% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
     <div class="row mb-4 mt-2">
         <div class="col-3">
             <span class="me-2 fs-4 fw-bold page-title"> Incident Reports List </span>
@@ -129,7 +129,7 @@
                       <td>{{ incident.Barangay_id.Barangay }}</td>
                       <td>{{ incident.Date }} - {{ incident.Time }}</td>
                       <td>{{ incident.Case_Status }}</td>
-                      <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'admin_incident_detail' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
+                      <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'incident_detail_view' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
                     </tr>
                     {% endfor %}
                 </tbody>

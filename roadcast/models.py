@@ -325,8 +325,6 @@ class Tbl_pasig_incidents(models.Model):
         ('Others', 'Others'),
     )
 
-    
-
 
     City            = models.CharField(max_length=200, verbose_name='City', blank=True, null=True)
     UnitStation     = models.CharField(max_length=200, verbose_name='Unit/Station', blank=True, null=True)
@@ -406,7 +404,7 @@ class Tbl_public_report(models.Model):
     Reported_Narrative   = models.CharField(max_length=800, verbose_name='Narrative', blank=True)
     Reported_Image_Proof = models.ImageField(upload_to=image_path_incident_report,verbose_name='Proof of Incident', blank=True)
     Reported_Date        = models.DateField(default=now, verbose_name='Date Reported', blank=True)
-    Reported_Time        = models.TimeField(default=now, verbose_name='Date Reported', blank=True)
+    Reported_Time        = models.TimeField(default=now, verbose_name='Time Reported', blank=True)
 
     Recipient               = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
     Read_Status             = models.CharField(max_length=200, verbose_name='Read', blank=True)
@@ -421,18 +419,18 @@ class Tbl_public_report(models.Model):
         return '{}-{}-{}'.format(self.Reported_Date,self.Reported_Brgy,self.Reported_City)
 
 #Admin Responses to General Public
-# class Tbl_public_report_response (models.Model):
-#     Response_id     = models.AutoField(primary_key=True)
-#     Report          = models.ForeignKey(Tbl_public_report,null=True, on_delete=models.SET_NULL, related_name='Report_id') #foreign
-#     Sender          = models.CharField(max_length=200, verbose_name ='Sender', blank=True)
-#     Receiver        = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL, related_name='Receiver_id') #foreign
-#     Response        = models.CharField(max_length=200, verbose_name='Response', blank=True)
-#     Response_Date   = models.DateField(default=now, verbose_name='Response_Date', blank=True, null=True)
-
-#     def __str__(self):
-#         return '{}-{}-{}'.format(self.Receiver,self.Response_id,self.Reported_City)
+class Tbl_public_report_response (models.Model):
+    Response_id     = models.AutoField(primary_key=True)
+    Report          = models.ForeignKey(Tbl_public_report,null=True, on_delete=models.SET_NULL, related_name='Report_id') #foreign
+    Sender          = models.CharField(max_length=200, verbose_name ='Sender', blank=True)
+    Receiver        = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL, related_name='Receiver_id') #foreign
+    Response        = models.CharField(max_length=200, verbose_name='Response', blank=True, null=True)
+    Response_Date   = models.DateField(default=now, verbose_name='Response Date', blank=True, null=True)
+    Response_Time   = models.TimeField(default=now, verbose_name='Response Time', blank=True, null=True)
 
 
+    def __str__(self):
+        return '{}-{}-{}'.format(self.Receiver,self.Response_id,self.Reported_City)
 
 class Tbl_forecast(models.Model):
     Date = models.DateField(max_length=200, verbose_name='Dates', blank=True, primary_key=True)

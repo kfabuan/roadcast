@@ -44,7 +44,6 @@ urlpatterns = [
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
     path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
-
     path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
     path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
 
@@ -57,10 +56,9 @@ urlpatterns = [
     path('notification', views.notification, name='notification'),
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
+    path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
 
-    
     path('public/notification', views.public_notification, name='public_notification'),
-
     path('substation/notification', views.sub_notification, name='sub_notification'),
     
     path('unsolvedcases', views.unsolved_cases, name='unsolved_cases'),
