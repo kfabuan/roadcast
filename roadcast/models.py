@@ -345,6 +345,8 @@ class Tbl_pasig_incidents(models.Model):
     Address         = models.CharField(max_length=200, verbose_name='Address', blank=True, null=True)
     Along           = models.CharField(max_length=200, verbose_name='Along', blank=True, null=True)
     Corner          = models.CharField(max_length=200, verbose_name='Corner', blank=True, null=True)
+    Latitude          = models.CharField(max_length=200, verbose_name='Latitude', blank=True, null=True)
+    Longitude          = models.CharField(max_length=200, verbose_name='Longitude', blank=True, null=True)
    
     Surface_Condition   = models.CharField(max_length=200, verbose_name='Surface Condition', blank=True, null=True, choices= SURFACE_CONDITION)
     Surface_Type        = models.CharField(max_length=200, verbose_name='Surface Type', blank=True, null=True, choices= SURFACE_TYPE)
