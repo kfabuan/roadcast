@@ -37,7 +37,7 @@ urlpatterns = [
     path('update', views.duplicate_gen, name='duplicate_gen'), #sign up validation
     path('landing', views.logout, name='logout'),
 
-    path('dashboard', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('dashboard/data', views.get_data, name='data'),
 
     path('incidents/view', views.view_incidents, name='view_incidents'),

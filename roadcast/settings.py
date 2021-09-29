@@ -81,8 +81,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_roadcastapp',
         'USER': 'root',
-        'PASSWORD': '1234',
-        'PORT': '3306',
+        'PASSWORD': '',
+        'PORT': '',
         'HOST': 'localhost',
         'OPTIONS': { 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",}
     }

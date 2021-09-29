@@ -1,5 +1,11 @@
+<<<<<<< HEAD
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response
+=======
+from django.shortcuts import render, get_object_or_404, reverse
+from requests.api import request #get_object_or_404 & reverse for processEdit
+from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast
+>>>>>>> 8c1ec94042fdeb65fdcd215122728076eeebd6b9
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import View #for charts
@@ -19,7 +25,8 @@ from django.utils import timezone
 from datetime import datetime
 from django.db.models import Avg
 from datetime import date
-
+from urllib.parse import urlencode
+import requests
 
 
 def index(request): #landing/home
@@ -212,7 +219,33 @@ def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
         yield start_date + timedelta(n)
 
+def extract_lat_lng(address_postal):
+    #FOR GOOGLE MAPS
+    
+    API_KEY='AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI'
+    endpoint=f'https://maps.googleapis.com/maps/api/geocode/json?'
+                    
+    params={
+        'key':API_KEY,
+        'address':address_postal
+    }
+    urlparams= urlencode(params)
+    url=f"{endpoint}{urlparams}"
+        
+    r= requests.get(url)
+    if r.status_code not in range(200,299):
+        return {}
+    latlng={}
+    try:
+        latlng= r.json()['results'][0]['geometry']['location']
+    except:
+        pass
+    return latlng.get('lat'),latlng.get('lng')
+
+                
+    #END FOR GOOGLE MAPS
 class DashboardView (View):
+   
     def get(self, request, *args, **kwargs):
         d2_brgy_distinct = []
         d2_brgy_distinct_count = []
@@ -223,17 +256,19 @@ class DashboardView (View):
             d2_brgy_distinct.append(dis)
             x = Tbl_pasig_incidents.objects.filter(Barangay_id=dis).count()
             d2_brgy_distinct_count.append(x)
+        
+        
 
+        pwet=extract_lat_lng('163, Dr. Pilapil St. San Miguel Pasig City')
         #FOR FORECASTING
         today = date.today() 
 
-        earliest_day= date(2019,1,1)
+        earliest_day= Tbl_pasig_incidents.objects.all().order_by("Date")[0].Date
+        
         a_week= date(2019,1,1)
         test=date.today() + timedelta(7)
 
         end_date=date(2019,2,28)+ timedelta(7)
-
-        # end_date=date(2019,2,28)
         forecast_query_set= Tbl_pasig_incidents.objects.filter(Date__gte=earliest_day, Date__lte=a_week).count()
         limit = Tbl_forecast.objects.all().count()
         start_i=0
@@ -259,7 +294,7 @@ class DashboardView (View):
                     start_i += 1
                     end_i += 1
                     i_day += 1 #may mali dito di gumagana yung iteration
-
+        #END OF FORECASTING
         #CRIME/OFFENSE
         offense =[]
         new_crime = []
@@ -280,6 +315,7 @@ class DashboardView (View):
         all_authorized = Tbl_add_members.objects.all()  
 
         pub = tbl_genpub_users.objects.all()  
+        
         data = {
             "district2_labels": d2_brgys,
             "district2_count": d2_brgy_distinct_count,
@@ -290,6 +326,8 @@ class DashboardView (View):
 
             "all": all_authorized,
             "pub": pub,
+            'url':pwet
+            
         }
         
         return render (request, 'dashboard.html', data)
@@ -400,7 +438,12 @@ def view_incidents (request):
 
 
 
+<<<<<<< HEAD
 def add_incident (request): #add using CSV
+=======
+def add_incident (request):
+    
+>>>>>>> 8c1ec94042fdeb65fdcd215122728076eeebd6b9
     try:
         #Landing page ng add incident page / wala pang process
         if request.method == "GET":
@@ -482,12 +525,16 @@ def add_incident (request): #add using CSV
 
                 District_id=column[59],
                 Barangay_id_id=column[60]
+               
             )
 
             brgy_list = Tbl_barangay.objects.all()
+            
             context = {
                 'brgy_list': brgy_list, 
                 'success_message':"Successfully Added!",
+                'url':'url'
+                
             }
 
             return render (request, 'add_incident.html', context)
@@ -499,6 +546,7 @@ def add_incident (request): #add using CSV
 
         context = {
             'error_message': "Error uploading file. Please check file format.",
+            
         }
 
         return render (request, 'add_incident.html', context)

@@ -12,6 +12,9 @@
     .count-title{
         color:red;
     }
+        #map {
+    height: 100%;
+    }
 </style>
 
 {% endblock %}
@@ -376,7 +379,7 @@
                       <div class="card">
                         <div class="card-body text-center">
                           <h6 style="color: #a6a6a6;">This Week</h6>
-                          <h3>120</h3>
+                          <h3>(14.5668728, 121.0828496)</h3>
                         </div>
                       </div>
                     </div>
@@ -405,19 +408,45 @@
                 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.3756171236632!2d121.05804631478892!3d14.577659989817079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c86b3a6447c5%3A0xf602c3f3781447ff!2sPolice%20Community%20Precinct%201%20(San%20Antonio%2C%20Pasig)!5e0!3m2!1sen!2sph!4v1629793647940!5m2!1sen!2sph" style="width: 100%;"></iframe>
             </div>
           </div>
+         
         </div>
+        Address: <input type=text name="address" id='address'>
+        Latitude: <input type=text name="lat" id='lat'>
+        Longitude: <input type=text name="long" id='long'>
+        
+        
+        <div id="googleMap" style="width:50%;height:700px;"></div>
+            <script>
+            function initMap() {
+            const myLatLng = { lat: 14.5668728, lng: 121.0828496 };
+            const map = new google.maps.Map(document.getElementById("googleMap"), {
+                zoom: 17,
+                center: myLatLng,
+            });
 
+            new google.maps.Marker({
+                position: myLatLng,
+                map,
+                title: "Hello World!",
+            });
+            }
+            
+            </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap">
+
+</script>
         <!-- second half -->
         <div class="col-sm-6">
               <div class="card-body mb-4" style="background-color: white;">
                 <div class="">
-                    <canvas id="line_date_forecast" height=""></canvas>
+                    <canvas id="line_date_forecast" height="100"></canvas>
                 </div>
               </div>
   
               <div class="card-body mb-4" style="background-color: white;">
                 <div class="">
-                    <canvas id="line_time" height=""></canvas>
+                    <canvas id="line_time" height="100"></canvas>
                 </div>
               </div>
           </div>
