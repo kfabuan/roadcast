@@ -12,8 +12,13 @@
     .count-title{
         color:red;
     }
-        #map {
-    height: 100%;
+
+    .card {
+            box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
+            border-radius: 15px;
+        }
+    .card-body {
+        border-radius: 15px;
     }
 </style>
 
@@ -22,10 +27,7 @@
 <script>
     {% block jquery %}
 
-        var endpoint = 'dashboard/data'
-        
-        var district_labels = []
-        var district_count = []
+        var endpoint = '/dashboard/data'
 
         var district1_labels = []
         var district1_count = []
@@ -33,13 +35,18 @@
         var district2_labels = []
         var district2_count = []
 
-      
+        var offense_labels = []
+        var offense_count = []
+
+        var sex_labels = []
+        var sex_count = []
+
+        var time_count = []
+
         $.ajax({
              method: "GET",
              url: endpoint,
              success: function(data){
-                district_labels = data.district_labels
-                district_count = data.district_count
 
                 district1_labels = data.district1_labels
                 district1_count = data.district1_count
@@ -47,11 +54,14 @@
                 district2_labels = data.district2_labels
                 district2_count = data.district2_count
 
-                
-                console.log(district_labels)
+                offense_labels = data.offense_labels
+                offense_count = data.offense_count
 
-                console.log(district1_labels)
-                console.log(district_count)
+                sex_labels = data.sex_labels
+                sex_count = data.sex_count
+
+                time_count = data.time_count
+             
                 setChart()
     
             },
@@ -108,7 +118,7 @@
                     labels: ["0:00:00", "2:00:00", "4:00:00", "6:00:00","8:00:00", "10:00:00", "12:00:00","14:00:00","16:00:00","18:00:00","20:00:00","22:00:00",],
                     datasets: [{
                         label: 'Hazardous Time',
-                        data: [65, 59, 80, 81, 56, 55, 40, 12, 41, 17, 11, 21],
+                        data: time_count,
                         fill: false,
                         borderColor: 'rgb(75, 192, 192)',
                         tension: 0.1
@@ -130,11 +140,11 @@
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: district_labels,
+                    labels: ['District 1', 'District 2'],
                     datasets: [{
                         label: 'District 1',
                         //data: [12, 19, 3, 5, 12, 3],
-                        data: district_count,
+                        data: [1,2],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -165,11 +175,9 @@
             var myChart = new Chart(ctx2, {
                 type: 'bar',
                 data: {
-                    //labels: district1_labels,
-                    labels: ["A", "b", "c", "d", "e", "f"],
+                    labels: district1_labels,
                     datasets: [{
                         label: 'District 1',
-                        data: [12, 19, 3, 5, 12, 3],
                         data: district1_count,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -194,18 +202,10 @@
         
                 options: {
                     scaleShowValues: true,
-                    indexAxis: 'y',
+                    indexAxis: 'x',
                     scales: {
-                        y: {beginAtZero: true},
-                        x: {
-                            ticks: {
-                                 maxRotation: 90,
-                                // minRotation: 30,
-                                padding: 0,
-                                autoSkip: false,
-                                fontSize: 10
-                            }
-                        }
+                        xAxes: [{ stacked: true }],
+                        yAxes: [{ stacked: true }]
                     },
                     animation: {
                         duration: 1000,
@@ -218,10 +218,8 @@
                 type: 'bar',
                 data: {
                     labels: district2_labels,
-                    //labels: [12, 19, 3, 5, 12, 3],
                     datasets: [{
                         label: 'District 2',
-                        //data: [12, 19, 3, 5, 12, 3],
                         data: district2_count,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -258,16 +256,15 @@
             var pie_sex = new Chart(pie_sex, {
                 type: 'pie',
                 data: {
-                    labels: [
-                        'Male',
-                        'Female',
-                    ],
+                    labels: sex_labels,
                     datasets: [{
-                        label: 'Age',
-                        data: [300, 50,],
+                        label: 'Sex',
+                        data: sex_count,
                         backgroundColor: [
                         'rgb(54, 162, 235)',
                         'rgb(255, 99, 132)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
                         ],
                         hoverOffset: 4
                     }]
@@ -279,7 +276,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Age Percentage'
+                            text: 'Sex Distribution'
                         }
                     }
                 }
@@ -289,10 +286,10 @@
             var bar_offense = new Chart(bar_offense, {
                 type: 'bar',
                 data: {
-                    labels: ["Damage to Property", "Homicide", "Self-Accident", "Physical Injury"],
+                    labels: offense_labels,
                     datasets: [{
-                        label: 'Monthly Crime/Offense',
-                        data: [12, 19, 3, 5],
+                        label: 'Yearly Crime/Offense',
+                        data: offense_count,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
@@ -328,7 +325,7 @@
 
 {% block content %}
 
-    {% for a in all %}
+    <!-- {% for a in all %}
         {% ifequal a.id request.session.authorized_id %}
         <p>{{a.Members_Fname}}</p>
         <p>{{a.Members_Lname}}</p>
@@ -344,28 +341,12 @@
 
         {% endifequal %}
 
-    {% endfor %}
-
-
-    <b id="date-today">Today: </b><span id="ct6"></span>
-
-    <!-- {% for x in district2_labels %}
-    {{x}}
-    {% endfor %}
-  
-   
-
-    {% for x in offense %}
-    <p>{{forloop.counter}}. {{ x }}</p>
-    {% endfor %}
-    
-    {% for x in distinct_offense %}
-    <p>{{forloop.counter}}. {{ x }}</p>
-    {% endfor %}
-
-    {% for x in offense_count %}
-    <p>{{forloop.counter}}. {{ x }}</p>
     {% endfor %} -->
+
+
+
+    <b id="date-today">Today: </b><span id="ct6"></span> 
+
 
     <div class="row" style="border:0; margin:0; padding:0;">
         <!-- first half -->
@@ -378,8 +359,8 @@
                     <div class="col-sm-4">
                       <div class="card">
                         <div class="card-body text-center">
-                          <h6 style="color: #a6a6a6;">This Week</h6>
-                          <h3>(14.5668728, 121.0828496)</h3>
+                          <h6 style="color: #a6a6a6;">This Week: {{week_num }}</h6>
+                          <h3>{{ this_week }}</h3>
                         </div>
                       </div>
                     </div>
@@ -388,7 +369,7 @@
                       <div class="card">
                         <div class="card-body text-center">
                           <h6 style="color: #a6a6a6;">Yesterday</h6>
-                          <h3>120</h3>
+                          <h3>{{ yesterday_total }}</h3>
                         </div>
                       </div>
                     </div>
@@ -397,82 +378,79 @@
                         <div class="card">
                           <div class="card-body text-center">
                             <h6 style="color: #a6a6a6;">Today</h6>
-                            <h3>120</h3>
+                            <h3>{{ this_day }}</h3>
                         </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="ratio ratio-4x3 mb-4">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.3756171236632!2d121.05804631478892!3d14.577659989817079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c86b3a6447c5%3A0xf602c3f3781447ff!2sPolice%20Community%20Precinct%201%20(San%20Antonio%2C%20Pasig)!5e0!3m2!1sen!2sph!4v1629793647940!5m2!1sen!2sph" style="width: 100%;"></iframe>
+            <div class="card" style="height: 540px;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.3756171236632!2d121.05804631478892!3d14.577659989817079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c86b3a6447c5%3A0xf602c3f3781447ff!2sPolice%20Community%20Precinct%201%20(San%20Antonio%2C%20Pasig)!5e0!3m2!1sen!2sph!4v1629793647940!5m2!1sen!2sph" style="width: 100%; border-radius: 15px; height: 100%;"></iframe>
             </div>
           </div>
-         
         </div>
-        Address: <input type=text name="address" id='address'>
-        Latitude: <input type=text name="lat" id='lat'>
-        Longitude: <input type=text name="long" id='long'>
-        
-        
-        <div id="googleMap" style="width:50%;height:700px;"></div>
-            <script>
-            function initMap() {
-            const myLatLng = { lat: 14.5668728, lng: 121.0828496 };
-            const map = new google.maps.Map(document.getElementById("googleMap"), {
-                zoom: 17,
-                center: myLatLng,
-            });
 
-            new google.maps.Marker({
-                position: myLatLng,
-                map,
-                title: "Hello World!",
-            });
-            }
-            
-            </script>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap">
-
-</script>
         <!-- second half -->
         <div class="col-sm-6">
-              <div class="card-body mb-4" style="background-color: white;">
-                <div class="">
-                    <canvas id="line_date_forecast" height="100"></canvas>
+                <div class="card mb-4">
+                    <div class="card-body" style="background-color: white;">
+                        <div class="">
+                            <canvas id="line_date_forecast" height=""></canvas>
+                        </div>
+                    </div>
                 </div>
-              </div>
-  
-              <div class="card-body mb-4" style="background-color: white;">
-                <div class="">
-                    <canvas id="line_time" height="100"></canvas>
+
+                <div class="card mb-4">
+                    <div class="card-body" style="background-color: white;">
+                        <div class="">
+                            <canvas id="line_time" height=""></canvas>
+                        </div>
+                    </div>
                 </div>
-              </div>
           </div>
       </div>
 
-      <div class=" row" style="border:0; margin:0; padding:0;">
-        <ul class="list-group list-group-flush">
-          <!-- <li class="list-group-item"><canvas id="myChart" ></canvas></li> -->
-          <li class="list-group-item mb-4"><canvas id="myChart2" ></canvas></li>
-          <li class="list-group-item mb-4"><canvas id="myChart3" ></canvas></li>
-        </ul>
+      <div class="row" style="border:0; margin:0; padding:0;">
+        <div class="col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body" style="background-color: white;">
+                    <div class="">
+                        <canvas id="myChart2" height="135"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body" style="background-color: white;">
+                    <div class="">
+                        <canvas id="myChart3" height="135"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
       </div>
+
     
       <div class="row" style="border:0; margin:0; padding:0;">
         <div class="col-sm-4 mb-4">
-            <div class="card-body" style="background-color: white;">
-                <div class="">
-                    <canvas id="pie_sex" height="135"></canvas>
+            <div class="card">
+                <div class="card-body" style="background-color: white;">
+                    <div class="">
+                        <canvas id="pie_sex" height="135"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="col-sm-8 mb-4">
-            <div class="card-body" style="background-color: white;">
-                <div class="">
-                    <canvas id="bar_offense" height="135"></canvas>
+            <div class="card">
+                <div class="card-body" style="background-color: white;">
+                    <div class="">
+                        <canvas id="bar_offense" height="135"></canvas>
+                    </div>
                 </div>
             </div>
         </div>

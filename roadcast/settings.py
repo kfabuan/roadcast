@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'roadcast',
-    'multiselectfield',
 ]
 
 MIDDLEWARE = [
@@ -81,8 +80,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'db_roadcastapp',
         'USER': 'root',
-        'PASSWORD': '',
-        'PORT': '',
+        'PASSWORD': '1234',
+        'PORT': '3306',
         'HOST': 'localhost',
         'OPTIONS': { 'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",}
     }

@@ -387,13 +387,11 @@ class Tbl_pasig_incidents(models.Model):
     date_added      = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True)
     added_by        = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
     archive         = models.CharField(max_length=200, verbose_name='Archive', blank=True, null=True, choices=YES_NO)
-
+    read_status     = models.CharField(max_length=200, default="No", verbose_name='Read', blank=True, null=True, choices=YES_NO)
 
     def __str__(self):
         model = Tbl_barangay
         return '{}-{}-{}'.format(self.City, model.Barangay, self.Date)
-
-
 
 class Tbl_public_report(models.Model):
     User_ID = models.CharField(max_length=200, verbose_name='User ID', blank=True)

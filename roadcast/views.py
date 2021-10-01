@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response
-=======
-from django.shortcuts import render, get_object_or_404, reverse
-from requests.api import request #get_object_or_404 & reverse for processEdit
-from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast
->>>>>>> 8c1ec94042fdeb65fdcd215122728076eeebd6b9
-from django.core.exceptions import ObjectDoesNotExist
+from requests.api import request
+# from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
 from django.views.generic import View #for charts
 from django.http import JsonResponse
@@ -20,14 +15,16 @@ from django.contrib import messages #for csv upload
 import csv, io
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required, permission_required
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta, date
 from django.utils import timezone
-from datetime import datetime
+
 from django.db.models import Avg
-from datetime import date
+import datetime
 from urllib.parse import urlencode
 import requests
+from django.core.paginator import Paginator 
 
+today = date.today()
 
 def index(request): #landing/home
     return render (request, 'landing.html')
@@ -240,159 +237,206 @@ def extract_lat_lng(address_postal):
         latlng= r.json()['results'][0]['geometry']['location']
     except:
         pass
-    return latlng.get('lat'),latlng.get('lng')
-
-                
+    return latlng.get('lat'),latlng.get('lng')      
     #END FOR GOOGLE MAPS
+
+
 class DashboardView (View):
    
     def get(self, request, *args, **kwargs):
-        d2_brgy_distinct = []
-        d2_brgy_distinct_count = []
 
-        d2_brgys = Tbl_pasig_incidents.objects.select_related('Barangay_id').filter(Q(District='1')).values_list('Barangay_id', flat=True).distinct()
+        # FOR FORECASTING
+        # today = date.today() 
 
-        for dis in d2_brgys:
-            d2_brgy_distinct.append(dis)
-            x = Tbl_pasig_incidents.objects.filter(Barangay_id=dis).count()
-            d2_brgy_distinct_count.append(x)
+        # earliest_day= Tbl_pasig_incidents.objects.all().order_by("Date")[0].Date
         
+        # a_week= date(2019,1,1)
+        # test=date.today() + timedelta(7)
+
+        # end_date=date(2019,2,28)+ timedelta(7)
+        # forecast_query_set= Tbl_pasig_incidents.objects.filter(Date__gte=earliest_day, Date__lte=a_week).count()
+        # limit = Tbl_forecast.objects.all().count()
+        # start_i=0
+        # end_i=7
+        # i_day=6
+        # count=0
+        # for insert_date in daterange(earliest_day,test):
+
+        #     date_exist=Tbl_forecast.objects.filter(Date=insert_date,).exists()
+
+
+        #     if not date_exist:
+        #         incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
+        #         create= Tbl_forecast.objects.create(Date=insert_date.strftime("%Y-%m-%d"), Incidents=incident_count, Averages=0)
+        #     else:
+        #         incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
+        #         create= Tbl_forecast.objects.filter(Date=insert_date.strftime("%Y-%m-%d")).update(Incidents=incident_count)
+
+        #         while i_day < limit:
+        #             count_avg=Tbl_forecast.objects.all().order_by('Date')[start_i:end_i].aggregate(Avg('Incidents'))
+        #             nth=Tbl_forecast.objects.all().order_by('Date')[i_day]
+        #             insert=Tbl_forecast.objects.filter(Date=nth.Date).update(Averages=count_avg['Incidents__avg'])
+        #             start_i += 1
+        #             end_i += 1
+        #             i_day += 1 #may mali dito di gumagana yung iteration
+        # END OF FORECASTING
+
+        all_total = Tbl_pasig_incidents.objects.count()
+
         
+        yesterday = today - timedelta(days=1)
+        year, week_num, day_of_week =  date.today().isocalendar()
 
-        pwet=extract_lat_lng('163, Dr. Pilapil St. San Miguel Pasig City')
-        #FOR FORECASTING
-        today = date.today() 
-
-        earliest_day= Tbl_pasig_incidents.objects.all().order_by("Date")[0].Date
-        
-        a_week= date(2019,1,1)
-        test=date.today() + timedelta(7)
-
-        end_date=date(2019,2,28)+ timedelta(7)
-        forecast_query_set= Tbl_pasig_incidents.objects.filter(Date__gte=earliest_day, Date__lte=a_week).count()
-        limit = Tbl_forecast.objects.all().count()
-        start_i=0
-        end_i=7
-        i_day=6
-        count=0
-        for insert_date in daterange(earliest_day,test):
-
-            date_exist=Tbl_forecast.objects.filter(Date=insert_date,).exists()
-
-
-            if not date_exist:
-                incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
-                create= Tbl_forecast.objects.create(Date=insert_date.strftime("%Y-%m-%d"), Incidents=incident_count, Averages=0)
-            else:
-                incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
-                create= Tbl_forecast.objects.filter(Date=insert_date.strftime("%Y-%m-%d")).update(Incidents=incident_count)
-
-                while i_day < limit:
-                    count_avg=Tbl_forecast.objects.all().order_by('Date')[start_i:end_i].aggregate(Avg('Incidents'))
-                    nth=Tbl_forecast.objects.all().order_by('Date')[i_day]
-                    insert=Tbl_forecast.objects.filter(Date=nth.Date).update(Averages=count_avg['Incidents__avg'])
-                    start_i += 1
-                    end_i += 1
-                    i_day += 1 #may mali dito di gumagana yung iteration
-        #END OF FORECASTING
-        #CRIME/OFFENSE
-        offense =[]
-        new_crime = []
-        offenses = Tbl_pasig_incidents.objects.values_list('CrimeOffense', flat=True)
-
-        str = ",".join(offenses)
-        offense = str.split(",")
-
-        distinct_offense= set(offense)
-        offense_count = []
-
-        for dis in distinct_offense:
-            x = offense.count(dis)
-            offense_count.append(x)
-            
+        this_week = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year, Date__week=week_num,).count()
+        yesterday_total = Tbl_pasig_incidents.objects.filter(Date__gte = yesterday, Date__lt = today).count()
+        this_day = Tbl_pasig_incidents.objects.filter(Date__gte = today, Date__lte = today, Date__year__gte=today.year, Date__year__lte=today.year).count()
 
 
         all_authorized = Tbl_add_members.objects.all()  
-
         pub = tbl_genpub_users.objects.all()  
         
         data = {
-            "district2_labels": d2_brgys,
-            "district2_count": d2_brgy_distinct_count,
-            "new_crime": new_crime,
-            "offense":offense,
-            "distinct_offense":distinct_offense,
-            "offense_count": offense_count,
+            "all_total": all_total,
+            "this_week": this_week,
+            "week_num": week_num,
+            "yesterday_total":yesterday_total,
+            "this_day": this_day,
+         
+
+          
 
             "all": all_authorized,
-            "pub": pub,
-            'url':pwet
+            "pub": pub,  
             
         }
         
         return render (request, 'dashboard.html', data)
 
 def get_data(request, *args, **kwargs):
-    district_distinct = []
-    district_distinct_count = []
+   
+    #District 1
+    d1_brgys = []
+    d1_brgys_count = []
+    d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
+    
+    for brgy in d1_brgys_list:
+        d1_brgys.append(brgy)
+        x = Tbl_pasig_incidents.objects.filter(
+                                    Date__year__gte=today.year,
+                                    Date__year__lte=today.year,
+                                    # Date__month__gte=today.month,
+                                    # Date__month__lte=today.month,
+                                    Barangay_id__Barangay = brgy).count()        
+        d1_brgys_count.append(x)
 
-    d1_brgy_distinct = []
-    d1_brgy_distinct_count = []
-
-    d2_brgy_distinct = []
-    d2_brgy_distinct_count = []
-
-    district = Tbl_pasig_incidents.objects.values_list('District', flat=True).distinct()
-    d1_brgys = Tbl_pasig_incidents.objects.filter(Q(District='1')).values_list('Barangay_id_id', flat=True).distinct()
-    d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District='2')).values_list('Barangay_id_id', flat=True).distinct()
-
-    district_distinct = ['D1', 'D2']
-    # d1_brgy_distinct = ['']
-    # d2_brgy_distinct = []
-
-
-    for dis in district:
-        # district_distinct.append(dis)
-        x = Tbl_pasig_incidents.objects.filter(District=dis).count()
-        district_distinct_count.append(x)
-
-    for dis in d1_brgys:
-        d1_brgy_distinct.append(dis)
-        x = Tbl_pasig_incidents.objects.filter(Barangay_id_id=dis).count()
-        d1_brgy_distinct_count.append(x)
-
-    for dis in d2_brgys:
-        d2_brgy_distinct.append(dis)
-        x = Tbl_pasig_incidents.objects.filter(Barangay_id_id=dis).count()
-        d2_brgy_distinct_count.append(x)
+    #District 2
+    d2_brgys = []
+    d2_brgys_count = []
+    d2_brgys_list = Tbl_barangay.objects.filter(District_id = '2').values_list('Barangay', flat=True)
+    
+    for brgy in d2_brgys_list:
+        d2_brgys.append(brgy)
+        x = Tbl_pasig_incidents.objects.filter(
+                                    Date__year__gte=today.year,
+                                    Date__year__lte=today.year,
+                                    # Date__month__gte=today.month,
+                                    # Date__month__lte=today.month,
+                                    Barangay_id__Barangay = brgy).count()                          
+        d2_brgys_count.append(x)
 
 
     #CRIME/OFFENSE
-    offense =[]
-    offenses = Tbl_pasig_incidents.objects.filter(~Q(CrimeOffense='')).values_list('CrimeOffense', flat=True)
+    offense = []
+    offenses = Tbl_pasig_incidents.objects.exclude(Q(CrimeOffense__isnull=True) | Q(CrimeOffense__exact='') ).values_list('CrimeOffense', flat=True)
 
     str = ",".join(offenses)
     offense = str.split(",")
 
-    distinct_offense= set(offense)
+    offenses_distict = set(offense)
+    offense_labels = []
     offense_count = []
-    offense_total = 0
-    
-    for dis in distinct_offense:
-        x = offense.count(dis)
+
+    for off in offenses_distict:
+        if off == '':
+            off = 'none'
+        offense_labels.append(off)
+        x = Tbl_pasig_incidents.objects.filter(
+                                    Date__year__gte=today.year,
+                                    Date__year__lte=today.year,
+                                    # Date__month__gte=today.month,
+                                    # Date__month__lte=today.month,
+                                    CrimeOffense = off).exclude(CrimeOffense__isnull=True).count()   
         offense_count.append(x)
-        offense_total = offense_total + int(x)
+
+    #Sex 
+    suspect_sex = []
+    victim_sex = []
+
+    suspect_sex = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year,).values_list('Suspect_Sex', flat=True)
+    victim_sex = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year,).values_list('Victim_Sex', flat=True)
+
+    sex_combined = list(chain(suspect_sex, victim_sex))
+    sex_distinct = set(sex_combined)
+    sex_labels = []
+    sex_count = []
+
+    for sex in sex_distinct:
+        if sex == '':
+            sex = 'blank'
+            sex_labels.append(sex)
+            x = sex_combined.count('')
+            sex_count.append(x)
+
+        else:
+            sex_labels.append(sex)
+            x = sex_combined.count(sex)
+            sex_count.append(x)
+    
+    #Time Plot
+    # time(hour = 0, minute = 0, second = 0)
+    am12 = datetime.time(0, 0, 0)
+    am2  = datetime.time(2, 0, 0)
+    am4  = datetime.time(4, 0, 0)
+    am6  = datetime.time(6, 0, 0)
+    am8  = datetime.time(8, 0, 0)
+    am10 = datetime.time(10, 0, 0)
+    pm12 = datetime.time(12, 0, 0)
+    pm2 = datetime.time(14, 0, 0)
+    pm4 = datetime.time(16, 0, 0)
+    pm6 = datetime.time(18, 0, 0)
+    pm8 = datetime.time(20, 0, 0)
+    pm10 = datetime.time(22, 0, 0)
+
+    
+    am12_am2 = Tbl_pasig_incidents.objects.filter(Time__gte = am12, Time__lt = am2, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    am2_am4 = Tbl_pasig_incidents.objects.filter(Time__gte = am2, Time__lt = am4, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    am4_am6 = Tbl_pasig_incidents.objects.filter(Time__gte = am4, Time__lt = am6, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    am8_am10 = Tbl_pasig_incidents.objects.filter(Time__gte = am8, Time__lt = am10, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    am10_pm12 = Tbl_pasig_incidents.objects.filter(Time__gte = am10, Time__lt = pm12, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    pm12_pm2 = Tbl_pasig_incidents.objects.filter(Time__gte = pm12, Time__lt = pm2, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    pm2_pm4 = Tbl_pasig_incidents.objects.filter(Time__gte = pm2, Time__lt = pm4, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    pm4_pm6 = Tbl_pasig_incidents.objects.filter(Time__gte = pm4, Time__lt = pm6, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    pm6_pm8 = Tbl_pasig_incidents.objects.filter(Time__gte = pm6, Time__lt = pm8, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    pm8_pm10 = Tbl_pasig_incidents.objects.filter(Time__gte = pm8, Time__lt = pm10, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    pm10_am12 = Tbl_pasig_incidents.objects.filter(Time__gte = pm10, Time__lt = am12, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+
+    time_count = [am12_am2, am2_am4,am4_am6, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
+
 
     data = {
-        "district_labels": district_distinct,
-        "district_count": district_distinct_count,
+            "district2_labels": d2_brgys,
+            "district2_count": d2_brgys_count,
 
-        "district1_labels": d1_brgy_distinct,
-        "district1_count": d1_brgy_distinct_count,
+            "district1_labels": d1_brgys,
+            "district1_count": d1_brgys_count,
 
-        "district2_labels": d2_brgy_distinct,
-        "district2_count": d2_brgy_distinct_count,
-      
+            "offense_labels":offense_labels,
+            "offense_count": offense_count,
+
+            "sex_labels": sex_labels,
+            "sex_count": sex_count,
+
+            "time_count":time_count
     }
 
     return JsonResponse(data) #http response
@@ -414,36 +458,42 @@ def view_incidents (request):
         to_date =   request.GET.get('to_date')
     
         if is_valid(from_date) & is_valid(to_date):
-            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Date BETWEEN "'+from_date+'" AND "'+to_date+'"')
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
                 
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
-            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'"')
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
    
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
-                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Barangay_id_id = "'+barang+'"')
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Barangay_id_id = "'+barang+'" order by id DESC')
                 return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
             elif barang=="0":
-                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'"')
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" order by id DESC')
                 return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
             
             else:
-                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"')
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
                 return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
         else:
-            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents')
-            return render (request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model})
+            unread_count = Tbl_pasig_incidents.objects.filter(read_status = "No").count()
+            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents order by id DESC')
+            
+            paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
+            page_number = request.GET.get('page') #ganto talaga
+            incident_model = paginator.get_page(page_number) #ito ren, except sa var name
+
+             
+            # context = {'user_list': user_list}
+            # return render (request, 'users/index.html', context)
+            return render (request, 'encoder_view_incidents.html',
+                                    {"pasig_incident_list":incident_model,"unread_count": unread_count
+                                    })
 
 
 
-<<<<<<< HEAD
 def add_incident (request): #add using CSV
-=======
-def add_incident (request):
-    
->>>>>>> 8c1ec94042fdeb65fdcd215122728076eeebd6b9
     try:
         #Landing page ng add incident page / wala pang process
         if request.method == "GET":
@@ -570,6 +620,8 @@ def processAddIncident(request): #Add using forms
     address = request.POST.get('place_committed')
     along = request.POST.get('along')
     corner = request.POST.get('corner')
+    latitude = request.POST.get('lat')
+    longitude = request.POST.get('long')
    
     surface_cond = request.POST.get('surface_condition')
     surface_type = request.POST.get('surface_type')
@@ -591,6 +643,11 @@ def processAddIncident(request): #Add using forms
     sus_reg_owner = request.POST.get('sus_reg_owner')
     sus_drl = request.POST.get('sus_drl')
     sus_drl_exp = request.POST.get('sus_drl_exp')
+    if sus_drl_exp:
+        sus_drl_exp = request.POST.get('sus_drl_exp')
+    else:
+        sus_drl_exp = None
+
 
     vic_type = request.POST.get('vic_type')
     vic_fname = request.POST.get('vic_fname')
@@ -606,6 +663,10 @@ def processAddIncident(request): #Add using forms
     vic_reg_owner = request.POST.get('vic_reg_owner')
     vic_drl = request.POST.get('vic_drl')
     vic_drl_exp = request.POST.get('vic_drl_exp')
+    if vic_drl_exp:
+        vic_drl_exp = request.POST.get('sus_drl_exp')
+    else:
+        vic_drl_exp = None
 
    
     narrative = request.POST.get('narrative')
@@ -630,6 +691,8 @@ def processAddIncident(request): #Add using forms
                     Address        = address,
                     Along          = along,
                     Corner         = corner,
+                    Latitude       = latitude,
+                    Longitude     = longitude,
 
                     Surface_Condition   = surface_cond, 
                     Surface_Type        = surface_type, 
@@ -673,6 +736,7 @@ def processAddIncident(request): #Add using forms
                     archive      = "No" )
                     
     incident_record.save()
+    messages.success(request, ("Incident details successfully added!"))
     return HttpResponseRedirect('/incidents/view')
 
 def processCSV (request):
@@ -708,7 +772,7 @@ def processCSV (request):
 def processDeleteIncident (request, incident_id):
     Tbl_pasig_incidents.objects.filter(id=incident_id)
     messages.success(request, ("Successfully Deleted!"))
-    return HttpResponseRedirect('view_incidents')
+    return HttpResponseRedirect('/incidents/view')
 
 def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
     try:
@@ -718,6 +782,8 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
         brgy_list = Tbl_barangay.objects.all()
         all_incidents = Tbl_pasig_incidents.objects.all()
         pasig_incident_detail = Tbl_pasig_incidents.objects.get(id=incident_id)
+        pasig_incident_detail.read_status = "Yes"
+        pasig_incident_detail.save()
 
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")

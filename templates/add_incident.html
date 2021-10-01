@@ -151,8 +151,8 @@ function initMap() {
       center: {lat: 14.580466330345176 , lng: 121.09153585874454},
       zoom: 15
     });
-    var input = document.getElementById('searchInput');
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    var input = document.getElementById('place_committed');
+    // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
     var autocomplete = new google.maps.places.Autocomplete(input);
     autocomplete.bindTo('bounds', map);
@@ -204,7 +204,7 @@ function initMap() {
       
         // Location details
        
-        document.getElementById('place_committed').value = place.formatted_address;
+        // document.getElementById('place_committed').value = place.formatted_address;
         document.getElementById('lat').value = place.geometry.location.lat();
         document.getElementById('lon').value = place.geometry.location.lng();
     });
@@ -213,11 +213,11 @@ function initMap() {
    
     <!-- Upper Section (Maayos spacing hehe) -->
     <section style="height: 25px;"></section>
-    {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> </p>{% endif %}
+    <!-- {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> </p>{% endif %}
     {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
     {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
-   
+    -->
    <div class="row">
        <div class="col-7">
             <h3 class="page-title" style="text-shadow:1px 1px 3px #c6c6c6;">CREATE AN INCIDENT REPORT <i class="bi bi-plus-circle"></i>  </h3>
@@ -458,26 +458,13 @@ function initMap() {
                                 }
                             </script>
 
+                          
+
                             <div class="form-floating mb-3">
-                                <input id="searchInput" class="form-control form-select-sm" type="text" placeholder="Enter a location"> 
-                                <input type="text" id="place_committed" name="place_committed" class="form-control form-select-sm">                         
+                                <input type="text" name="place_committed" id="place_committed" class="form-control form-control-sm">
                                 <label for="" style="font-size: small;" class="text-muted">Place Committed</label>
                             </div>
 
-                            <!-- <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="text" id="Along" class="form-control form-control-sm">
-                                        <label for="" style="font-size: small;" class="text-muted">Along</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="text" id="Corner" class="form-control form-control-sm">
-                                        <label for="" style="font-size: small;" class="text-muted">Corner</label>
-                                    </div>
-                                </div>
-                            </div> -->
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <input type="text" name="along" value="" placeholder="Along" class="form-control form-control-sm">
@@ -487,7 +474,7 @@ function initMap() {
                                 </div>
                             </div>
 
-                            <div class="row g-2 mb-3">
+                            <div class="row g-2">
                                 <div class="col-6">
                                     <div class="form-floating">
                                         <input type="date" id="DateCommitted" name="DateCommitted" class="form-control-sm form-control" required>                                        
@@ -506,10 +493,10 @@ function initMap() {
                             </div>
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <input type="text" id="lat" name="lat" placeholder="Latitude" class="form-control form-control-sm">
+                                    <input type="text" id="lat" name="lat" placeholder="Latitude" class="form-control form-control-sm" hidden>
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" id="lon" name="long" placeholder="Corner" class="form-control form-control-sm">
+                                    <input type="text" id="lon" name="long" placeholder="Longitude" class="form-control form-control-sm" hidden>
                                 </div>
                             </div>
                         </div> <!--card body-->
@@ -646,7 +633,7 @@ function initMap() {
                             </div>
 
                             <div class="form-floating">
-                                <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-smd">
+                                <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-sm">
                                 <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
                             </div>
 
@@ -660,7 +647,7 @@ function initMap() {
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="date" name="sus_drl_exp" class="form-control form-control-sm" required>
+                                        <input type="date" name="sus_drl_exp" class="form-control form-control-sm">
                                         <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                     </div>
                                 </div>
@@ -840,7 +827,7 @@ function initMap() {
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="date" name="vic_drl_exp" class="form-control form-control-sm" required>
+                                        <input type="date" name="vic_drl_exp" class="form-control form-control-sm">
                                         <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                     </div>
                                 </div>
@@ -883,7 +870,7 @@ function initMap() {
                 <div class="mapouter" style="height: 100%;">
                     <div id="map" style="width:100%;height:100%;"></div>
                 </div>
-            </div>
+             </div>
             <!-- Close Map-->
             </div>
 
@@ -968,18 +955,46 @@ function initMap() {
             }
 
           });
+
+          Date.prototype.getWeek = function (dowOffset) {
+            /*getWeek() was developed by Nick Baicoianu at MeanFreePath: http://www.meanfreepath.com */
+
+                dowOffset = typeof(dowOffset) == 'number' ? dowOffset : 0; //default dowOffset to zero
+                var newYear = new Date(this.getFullYear(),0,1);
+                var day = newYear.getDay() - dowOffset; //the day of week the year begins on
+                day = (day >= 0 ? day : day + 7);
+                var daynum = Math.floor((this.getTime() - newYear.getTime() - 
+                (this.getTimezoneOffset()-newYear.getTimezoneOffset())*60000)/86400000) + 1;
+                var weeknum;
+                //if the year starts before the middle of a week
+                if(day < 4) {
+                    weeknum = Math.floor((daynum+day-1)/7) + 1;
+                    if(weeknum > 52) {
+                        nYear = new Date(this.getFullYear() + 1,0,1);
+                        nday = nYear.getDay() - dowOffset;
+                        nday = nday >= 0 ? nday : nday + 7;
+                        /*if the next year starts before the middle of
+                        the week, it is week #1 of that year*/
+                        weeknum = nday < 4 ? 1 : 53;
+                    }
+                }
+                else {
+                    weeknum = Math.floor((daynum+day-1)/7);
+                }
+                return weeknum;
+            };
     
           $('#DateCommitted').change(function(){
             
             dt_committed =  document.getElementById('DateCommitted').value;
             dt = new Date(dt_committed);
             day = dt.getDay();
-    
-            year = new Date(dt.getFullYear(),0,1);
-            numberOfDays = Math.floor((dt - year) / (24 * 60 * 60 * 1000));
-            week = Math.ceil(( dt.getDay() + 1 + numberOfDays) / 7);
-             
-    
+
+            // year = new Date(dt.getFullYear(),0,1);
+            // numberOfDays = Math.floor((dt - year) / (24 * 60 * 60 * 1000));
+            // week = Math.ceil(( dt.getDay() + 1 + numberOfDays) / 7);
+            
+            week = dt.getWeek()
             document.getElementById('week').value = week;
     
             if(day==0){

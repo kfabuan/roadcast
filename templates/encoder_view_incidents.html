@@ -16,10 +16,11 @@
 {% endblock %}
 
 {% block content %}
-{% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
+{% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
     <div class="row mb-4 mt-2">
         <div class="col-3">
-            <span class="me-2 fs-4 fw-bold page-title"> Incident Reports List </span>
+            <span class="me-2 fs-4 fw-bold page-title"> Incident Reports List</span>
+            <span class="badge bg-primary"> {{unread_count}} </span>
         </div>
 
         <div class="col-8">
@@ -108,7 +109,7 @@
                 <thead>
                     <tr>
                         {% comment %} <th class="table-header"></th> {% endcomment %}
-                        <th class="table-header">Blotter ID</th>
+                        <th class="table-header">#</th>
                         <th class="table-header">Incident Type</th>
                         <th class="table-header">Barangay Committed</th>
                         <th class="table-header">Date and Time Committed</th>
@@ -119,21 +120,50 @@
 
                 <tbody>
                     {% for incident in pasig_incident_list %}
-                    <tr>
-                      {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
+                        {% ifequal incident.read_status 'No' %}
+                     
+                            <tr class="fw-bold" style="background-color: azure;"> 
+                                {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
 
+                                <td>{{incident.id}}</td>
+                                <td>{{incident.Incident_Type}}</td>
+                                <td>{{ incident.Barangay_id.Barangay }}</td>
+                                <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                <td>{{ incident.Case_Status }}</td>
+                                <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'incident_detail_view' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
+                            </tr>
 
-                      <td>{{incident.id}}</td>
-                      <td>{{incident.Incident_Type}}</td>
+                        {% else %}
+                            <tr class="text-muted">
+                                {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
 
-                      <td>{{ incident.Barangay_id.Barangay }}</td>
-                      <td>{{ incident.Date }} - {{ incident.Time }}</td>
-                      <td>{{ incident.Case_Status }}</td>
-                      <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'incident_detail_view' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
-                    </tr>
+                                <td>{{incident.id}}</td>
+                                <td>{{incident.Incident_Type}}</td>
+                                <td>{{ incident.Barangay_id.Barangay }}</td>
+                                <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                <td>{{ incident.Case_Status }}</td>
+                                <td> <a class="btn btn-outline-primary btn-sm" href="{% url 'incident_detail_view' incident.id %}" role="button">View &nbsp;<i class="bi bi-eye"></i></a></td> 
+                            </tr>
+                            
+                        {% endifequal %}
                     {% endfor %}
                 </tbody>
             </table>
+        
+            <!-- sa ibaba ng table tag closing mo lagay :) -->
+            <ul class="pagination">
+            {% if pasig_incident_list.has_previous %}
+
+                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page= {{pasig_incident_list.previous_page_number}}">Previous</a></li>
+            {% endif %}
+
+            {% if pasig_incident_list.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{pasig_incident_list.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{pasig_incident_list.paginator.num_pages}}">Last</a></li>
+            {% endif %}
+
+            </ul>
         </div>
         
         <!-- if table has no data -->
