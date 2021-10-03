@@ -1,0 +1,188 @@
+{% extends 'nav_admin.html' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+{% block title %} Add Members {% endblock %}
+
+{% block content %}
+
+
+{% if messages %}
+     {% for message in messages %}
+     <p class="alert alert-danger">
+      <strong>{{message}}</strong>
+     </p>
+     {% endfor %}
+{% endif %}
+
+<div class="container">
+
+  <!-- Upper Section -->
+  <section style="height: 25px;"></section>
+
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="float: right;">
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="location.href = '/members/add'" checked>
+    <label class="btn btn-outline-primary" for="btnradio1">Members</label>
+    
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  onclick="location.href = '/departments/add'"> 
+    <label class="btn btn-outline-primary" for="btnradio2">Departments</label>
+  </div>
+    
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Add Members &nbsp;</h3>
+
+  <section style="height: 35px;"></section>
+
+  <!-- Main Content -->
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'duplicate_members' %}" class="row g-3">
+
+    {% csrf_token %}
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">Department</label>
+        <select name="Members_Dept" class="form-select" required>
+          <option selected selected="true" disabled="disabled">Select a department</option>
+          {% for department in departments %}
+    
+          <option value="{{ department.id }}">{{ department.Dept_Dept }}</option>
+
+          {% endfor %}
+
+        </select>
+      </div>
+
+      <div class="col-md-6" style="margin-top: 9px;">
+        <label for="" class="col-sm-2 col-form-label">Substation</label>
+        <select class="form-select" name="Members_Substation" required>
+            <option selected selected="true" disabled="disabled">Select a substation</option>
+            {% for substation in substations %}
+    
+          <option value="{{ substation.id }}">{{ substation.Substation }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+        <div class="col-md-6">
+        <label for="" class="col-sm-2 col-form-label">District</label>
+        <input class="form-control" name="Members_District" type="text" value="Pasig" aria-label="" readonly>
+      </div>
+
+
+      <section style="height: 15px;"></section>
+      <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PERSONAL DETAILS</label>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">First name</label>
+        <input type="text" name="Members_Fname" class="form-control text-capitalize" id="" required>
+      </div>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">Last name</label>
+        <input type="text" name="Members_Lname" class="form-control text-capitalize" id="" required>
+      </div>
+      
+      <div class="col-md-6">
+        <label for="" class="col-sm-2 col-form-label">Member Type</label>
+        <select class="form-select" name="Members_User" aria-label="D" required>
+            <option selected selected="true" disabled="disabled">Select a type</option>
+            {% for membertype in membertypes %}
+    
+          <option value="{{ membertype.id }}">{{ membertype.Member_Type }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="" class="col-sm-2 col-form-label">Position</label>
+        <select class="form-select" name="Members_Position" aria-label="Default select example" required>
+            <option selected selected="true" disabled="disabled">Select a position</option>
+            {% for position in positions %}
+    
+          <option value="{{ position.id }}">{{ position.Position }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <section style="height: 15px;"></section>
+      <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">ACCOUNT DETAILS</label>
+      
+      <div class="col-md-6">
+        <label for="" class="form-label">Username</label>
+        <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">@</span>
+        <input type="text" name="Members_Username" class="form-control" aria-label="Username" aria-describedby="basic-addon1" required>
+        </div>
+      </div>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Email</label>
+      <input type="email" name="Members_Email" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Password</label>
+      <input type="password" minlength="8" name="Members_Password" id="password" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Confirm Password</label>
+      <input type="password" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required>
+    </div>
+
+    <div class="col-md-3">
+        <label for="formFile" class="form-label">Upload a profile picture</label>
+        <input class="form-control" name="Members_Pic" type="file" id="formFile" accept="image/*">
+      </div>
+
+    {% for a in all %}
+      {% ifequal a.id request.session.authorized_id %}
+    <input type="hidden" name="Added_By" value="{{ a.Members_Position }}, {{ a.Members_Fname }} {{a.Members_Lname}}">
+      {% endifequal %}
+    {% endfor %}
+
+    <section style="height: 15px;"></section>
+
+    <center>
+    <div class="col-12">
+      <button type="submit" name="submit" class="btn btn-primary">Add member</button>
+    </div>
+    </center>
+  </form>
+
+  <section style="height: 35px;"></section>
+
+  <!-- Script -->
+    <script>
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+      </script>
+
+      <script>
+        function check(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Please make sure your passwords match.');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
+      }
+      </script>
+
+  {% endblock %}
+  
+  {% block jquery %} 
+  
+  {% endblock %}

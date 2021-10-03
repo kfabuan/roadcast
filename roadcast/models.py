@@ -38,21 +38,7 @@ def image_path2(instance, filename):
 
 # Dane's codes
 class Tbl_add_departments(models.Model):
-    DEPARTMENTS = (
-        ('Anti-Cybercrime Group', 'Anti-Cybercrime Group'),
-        ('Anti-Kidnapping Group', 'Anti-Kidnapping Group'),
-        ('Aviation Security Group', 'Aviation Security Group'),
-        ('Civil Security Group', 'Civil Security Group'),
-        ('Criminal Investigation and Detection Group', 'Criminal Investigation and Detection Group'),
-        ('Drug Enforcement Group', 'Drug Enforcement Group'),
-        ('Highway Patrol Group', 'Highway Patrol Group'),
-        ('Integrity Monitoring and Enforcement Group', 'Integrity Monitoring and Enforcement Group'),
-        ('Intelligence Group', 'Intelligence Group'),
-        ('Maritime Group', 'Maritime Group'),
-        ('Police Security and Protection Group', 'Police Security and Protection Group'),
-        ('Special Action Force', 'Special Action Force')
-    )
-    Dept_Dept           =  models.CharField(max_length=200, verbose_name='Department', blank=True, choices=DEPARTMENTS)
+    Dept_Dept           =  models.CharField(max_length=200, verbose_name='Department', blank=True)
     def __str__(self):
         return self.Dept_Dept 
 
@@ -70,7 +56,7 @@ class Tbl_substation(models.Model):
     )
     Substation          = models.CharField(max_length=200, verbose_name='Substation', blank=True, choices=SUBSTATION)
     def __str__(self):
-        return self.Substation
+         return self.Substation
 
 class Tbl_member_type(models.Model):
     MEMBERTYPE = (
@@ -85,26 +71,46 @@ class Tbl_member_type(models.Model):
 
 class Tbl_position(models.Model):
     POSITION = (
-        ('Police General (PGEN)', 'Police General (PGEN)'),
-        ('Police Lieutenant General (PLTGEN)', 'Police Lieutenant General (PLTGEN)'),
-        ('Police Major General (PMGEN)', 'Police Major General (PMGEN)'),
-        ('Police Brigadier General (PBGEN)', 'Police Brigadier General (PBGEN)'),
-        ('Police Colonel (PCOL)', 'Police Colonel (PCOL)'),
-        ('Police Lieutenant Colonel (PLTCOL)', 'Police Lieutenant Colonel (PLTCOL)'),
-        ('Police Major (PMAJ)', 'Police Major (PMAJ)'),
-        ('Police Captain (PCPT)', 'Police Captain (PCPT)'),
-        ('Police Lieutenant (PLT.)', 'Police Lieutenant (PLT.)'),
-        ('Police Executive Master Sergeant (PEMS)', 'Police Executive Master Sergeant (PEMS)'),
-        ('Police Chief Master Sergeant (PCMS)', 'Police Chief Master Sergeant (PCMS)'),
-        ('Police Senior Master Sergeant (PSMS)', 'Police Senior Master Sergeant (PSMS)'),
-        ('Police Master Sergeant (PMSg)', 'Police Master Sergeant (PMSg)'),
-        ('Police Staff Sergeant (PSSg)', 'Police Staff Sergeant (PSSg)'),
-        ('Police Corporal (PCpl)', 'Police Corporal (PCpl)'),
-        ('Patrolman / Patrolwoman (Pat)', 'Patrolman / Patrolwoman (Pat)')
+        # ('Police General (PGEN)', 'Police General (PGEN)'),
+        # ('Police Lieutenant General (PLTGEN)', 'Police Lieutenant General (PLTGEN)'),
+        # ('Police Major General (PMGEN)', 'Police Major General (PMGEN)'),
+        # ('Police Brigadier General (PBGEN)', 'Police Brigadier General (PBGEN)'),
+        # ('Police Colonel (PCOL)', 'Police Colonel (PCOL)'),
+        # ('Police Lieutenant Colonel (PLTCOL)', 'Police Lieutenant Colonel (PLTCOL)'),
+        # ('Police Major (PMAJ)', 'Police Major (PMAJ)'),
+        # ('Police Captain (PCPT)', 'Police Captain (PCPT)'),
+        # ('Police Lieutenant (PLT.)', 'Police Lieutenant (PLT.)'),
+        # ('Police Executive Master Sergeant (PEMS)', 'Police Executive Master Sergeant (PEMS)'),
+        # ('Police Chief Master Sergeant (PCMS)', 'Police Chief Master Sergeant (PCMS)'),
+        # ('Police Senior Master Sergeant (PSMS)', 'Police Senior Master Sergeant (PSMS)'),
+        # ('Police Master Sergeant (PMSg)', 'Police Master Sergeant (PMSg)'),
+        # ('Police Staff Sergeant (PSSg)', 'Police Staff Sergeant (PSSg)'),
+        # ('Police Corporal (PCpl)', 'Police Corporal (PCpl)'),
+        # ('Patrolman / Patrolwoman (Pat)', 'Patrolman / Patrolwoman (Pat)')
+        
+        ('NUP', 'NUP'),
+        ('Pat', 'Pat'),
+        ('PCpl', 'PCpl'),
+        ('PSSg', 'PSSg'),
+        ('PMGSg', 'PMGSg'),
+        ('PSMSg', 'PSMSg'),
+        ('PCMSg', 'PCMSg'),
+        ('PEMSg', 'PEMSg'),
+        ('PLT', 'PLT'),
+        ('PCAP', 'PCAP'),
+        ('PMAJ', 'PMAJ'),
+        ('PLTCOL', 'PLTCOL'),
+        ('PCOL', 'PCOL'),
+        ('PBGEN', 'PBGEN'),
+        ('PMGEN','PMGEN'),
+        ('PLTGEN', 'PLTGEN'),
+        ('PGEN', 'PGEN')
     )
+
     Position            = models.CharField(max_length=200, verbose_name='Position', blank=True, choices=POSITION)
     def __str__(self):
         return self.Position 
+
 
 class Tbl_add_members(models.Model):
     #Foreign keys
@@ -112,16 +118,19 @@ class Tbl_add_members(models.Model):
     Members_Dept        = models.ForeignKey(Tbl_add_departments, null=True, on_delete=models.SET_NULL) 
     Members_User        = models.ForeignKey(Tbl_member_type, null=True, on_delete=models.SET_NULL) #Admin/ Crime/ Subrep / Investigator
     Members_Substation  = models.ForeignKey(Tbl_substation, null=True, on_delete=models.SET_NULL)
-    Members_Position   = models.ForeignKey(Tbl_position, null=True, on_delete=models.SET_NULL) #Rank of police
+    Members_Position    = models.ForeignKey(Tbl_position, null=True, on_delete=models.SET_NULL) #Rank of police
 
     Members_District    = models.CharField(max_length=200, verbose_name='Members District', blank=True, null=True)
     Members_Fname       = models.CharField(max_length=200, verbose_name='First Name', blank=True, null=True)
     Members_Lname       = models.CharField(max_length=200, verbose_name='Last Name', blank=True, null=True)
     Members_Email       = models.EmailField(max_length=200, verbose_name='Email', blank=True, null=True)
+    Members_Username    = models.CharField(max_length=200, verbose_name='Username', blank=True, null=True) 
     Members_Password    = models.CharField(max_length=200, verbose_name='Password', blank=True, null=True)
-    Date_Added          = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True) #binago hehe
+    Date_Added          = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True) 
     Added_By            = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
     Members_Pic         = models.ImageField(upload_to=image_path, default='Profile/default.jpg', blank=True, null=True)
+    Edit_By             = models.CharField(max_length=200, verbose_name='Edit By', default='Have not been edited yet', blank=True, null=True)
+    Date_Edit           = models.DateField(verbose_name='Date Added', blank=True, null=True) 
 
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Members_Pic))
@@ -129,37 +138,40 @@ class Tbl_add_members(models.Model):
     def __str__(self):
         return self.Members_Fname
 
+
+
 class tbl_genpub_users(models.Model):
-    gen_surname = models.CharField(max_length=50, blank=True, null=True)
-    gen_fname = models.CharField(max_length=50, blank=True, null=True)
-    gen_sex = models.CharField(max_length=50, blank=True,null=True)
-    gen_bday = models.DateTimeField(max_length=50,blank=True,null=True)
-    gen_region = models.CharField(max_length=50,blank=True, null=True)
-    gen_province = models.CharField(max_length=50,blank=True, null=True)
-    gen_city = models.CharField(max_length=50,blank=True, null=True)
-    gen_barangay = models.CharField(max_length=50,blank=True, null=True)
-    gen_contact_no = models.CharField(max_length=50,blank=True, null=True)
-    gen_username = models.CharField(max_length=50,blank=True, null=True,)
-    gen_pass = models.CharField(max_length=50, blank=True,null=True)
-    # gen_cpass = models.CharField(max_length=50, blank=True,null=True)
-    gen_valid_id = models.CharField(max_length=50,blank=True,null=True)
-    gen_upload_id = models.ImageField(upload_to=image_path2, default='Public/default.jpg', blank=True, null=True)
-    date_signed_up = models.DateTimeField(auto_now_add=True,blank=True, null=True)
- 
+    gen_surname     = models.CharField(max_length=50, blank=True, null=True)
+    gen_fname       = models.CharField(max_length=50, blank=True, null=True)
+    gen_sex         = models.CharField(max_length=50, blank=True,null=True)
+    gen_bday        = models.DateTimeField(max_length=50,blank=True,null=True)
+    gen_region      = models.CharField(max_length=50,blank=True, null=True)
+    gen_province    = models.CharField(max_length=50,blank=True, null=True)
+    gen_city        = models.CharField(max_length=50,blank=True, null=True)
+    gen_barangay    = models.CharField(max_length=50,blank=True, null=True)
+    gen_contact_no  = models.CharField(max_length=50,blank=True, null=True)
+    gen_username    = models.CharField(max_length=50,blank=True, null=True,)
+    gen_pass        = models.CharField(max_length=50, blank=True,null=True)
+    gen_valid_id    = models.CharField(max_length=50,blank=True,null=True)
+    gen_upload_id   = models.ImageField(upload_to=image_path2, default='Public/default.jpg', blank=True, null=True)
+    gen_profile     = models.ImageField(upload_to=image_path2, default='Public/default.jpg', blank=True, null=True)
+    date_signed_up  = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    date_edit       = models.DateField(blank=True, null=True) 
+    
+    Read_Status         = models.CharField(max_length=200, verbose_name='Read', blank=True)
+    is_verified         = models.BooleanField(default=False)
+    is_email_verified = models.BooleanField(default=False)
+
     def image_tag(self):
-            return mark_safe('<img src="media/%s" width="50" height="50" />'%(self.gen_upload_id))
+            return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.gen_upload_id))
 
     def __str__(self):
         return self.gen_surname
 
 class tbl_audit(models.Model):
-    Members_id = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
-    Genpub_id = models.ForeignKey(tbl_genpub_users, null=True, on_delete=models.SET_NULL) #foreign
     username =models.CharField(max_length=50, blank=True, null=True)
     password = models.CharField(max_length=50, blank=True, null=True)
     date_logged_in = models.DateTimeField(auto_now_add=True,blank=True, null=True)
-    # date_logged_out = models.DateTimeField(auto_now=True,blank=True, null=True)
-
     def __str__(self):
         return self.username
 
@@ -356,7 +368,7 @@ class Tbl_pasig_incidents(models.Model):
     Suspect_Fname        = models.CharField(max_length=200, verbose_name='Suspect First Name', blank=True, null=True)
     Suspect_Lname        = models.CharField(max_length=200, verbose_name='Suspect Last Name', blank=True, null=True)
     Suspect_Severity    = models.CharField(max_length=200, verbose_name='Suspect Severity', blank=True, null=True, choices=SEVERITY)
-    Suspect_Age         = models.CharField(max_length=100, verbose_name='Suspect Age', blank=True, null=True)
+    Suspect_Age         = models.IntegerField(max_length=100, verbose_name='Suspect Age', blank=True, null=True)
     Suspect_Sex         = models.CharField(max_length=200, verbose_name='Suspect Sex', blank=True, null=True, choices=SEX)
     Suspect_Civil_Status = models.CharField(max_length=200, verbose_name='Suspect Civil_Status', blank=True, null=True, choices=CIVIL_STATUS)
     Suspect_Address      = models.CharField(max_length=200, verbose_name='Suspect Address', blank=True, null=True)
@@ -371,7 +383,7 @@ class Tbl_pasig_incidents(models.Model):
     Victim_Fname        = models.CharField(max_length=200, verbose_name='Victim First Name', blank=True, null=True)
     Victim_Lname        = models.CharField(max_length=200, verbose_name='Victim Last Name', blank=True, null=True)    
     Victim_Severity     = models.CharField(max_length=200, verbose_name='Victim Severity', blank=True, null=True, choices=SEVERITY)
-    Victim_Age          = models.CharField(max_length=100, verbose_name='Victim Age', blank=True, null=True)
+    Victim_Age          = models.IntegerField(max_length=100, verbose_name='Victim Age', blank=True, null=True)
     Victim_Sex          = models.CharField(max_length=200, verbose_name='Victim Sex', blank=True, null=True, choices=SEX)
     Victim_Civil_Status = models.CharField(max_length=200, verbose_name='Victim Civil_Status', blank=True, null=True, choices=CIVIL_STATUS)
     Victim_Address      = models.CharField(max_length=200, verbose_name='Victim Address', blank=True, null=True)

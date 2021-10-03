@@ -1,4 +1,4 @@
-{% extends 'base_signin&up.html' %}
+{% extends 'base_signin.html' %}
 
 {% load static %}
 
@@ -12,8 +12,8 @@
  {{ count_gen }} {{ count_authorized }}
   {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-      {{message}}
+    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+      <b>{{message}}</b>
     </div>
     {% endfor %}
   {% endif %}

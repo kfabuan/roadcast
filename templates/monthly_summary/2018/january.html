@@ -1,464 +1,553 @@
 {% extends 'nav_admin.html' %}
 {% block title %} Home {% endblock %}
 
-{% block design %} {% endblock %}
+{% block design %}
+  <style>
+    .card {
+        box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
+        border-radius: 15px;
+    }
+    .card-body {
+        border-radius: 15px;
+    }
 
-<script>
-  {% block jquery %}
+    .table-sm {
+        border-radius: 15px !important;
+        margin-bottom: 0rem !important;     
+    }
 
-      var endpoint = 'monthly/data'
-      
-      var district_labels = []
-      var district_count = []
+    .tabular {
+      padding: 0rem 0rem 0rem 0rem !important;
+    }
 
-      var district1_labels = []
-      var district1_count = []
+    th, td {
+      padding-left: 1rem !important;
+    }
 
-      var district2_labels = []
-      var district2_count = []
+    .rad_bl {
+      border-bottom-left-radius: 15px !important;
+    }
 
-      var offense_labels = []
-      var offense_count = []
+    .rad_br {
+      border-bottom-right-radius: 15px !important;
+    }
 
-      var vehicle_labels = []
-      var vehicle_count = []
+    .rad_tl {
+      border-top-left-radius: 15px !important;
+    }
 
-    
-      $.ajax({
-           method: "GET",
-           url: endpoint,
-           success: function(monthly_data){
-              district_labels = monthly_data.district_labels
-              district_count = monthly_data.district_count
+    .rad_tr {
+      border-top-right-radius: 15px !important;
+    }
 
-              district1_labels = monthly_data.district1_labels
-              district1_count = monthly_data.district1_count
+    .b-no-border {
+      border-bottom-width: 0px !important;
+    }
+  </style>
+{% endblock %}
 
-              district2_labels = monthly_data.district2_labels
-              district2_count = monthly_data.district2_count
 
-              offense_labels = monthly_data.offense_labels
-              offense_count = monthly_data.offense_count
 
-              vehicle_labels = monthly_data.vehicle_labels
-              vehicle_count = monthly_data.vehicle_count
 
-              
-              console.log(district_labels)
-              console.log(district1_labels)
-              console.log(district_count)
-              console.log("WTF")
-              setChart()
-  
-          },
-
-           error: function(error_data){
-               console.log("Errorrsds")
-               console.log(error_data)
-           }
-      })
-
-      function setChart(){
-            var monthly_offense = document.getElementById('monthly_offense'); //weekly forecasting
-            var monthly_car = document.getElementById('monthly_car'); //weekly forecasting
-            var monthly_d1 = document.getElementById('monthly_d1'); //weekly forecasting
-            var monthly_d2 = document.getElementById('monthly_d2'); //weekly forecasting
-
-            
-            var chart = new Chart(monthly_offense, {
-                type: 'bar',
-                data: {
-                    labels: offense_labels,
-                    datasets: [{
-                        label: 'Offenses',
-                        //data: [12, 19, 3, 5, 12, 3],
-                        data: offense_count,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1,
-                        //fill: true, if line ang type
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {beginAtZero: true}
-                    }
-                }
-            });
-
-            var chart = new Chart(monthly_car, {
-                type: 'bar',
-                data: {
-                    labels: vehicle_labels,
-                    datasets: [{
-                        label: 'Vehicle',
-                        data: vehicle_count,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1,
-                        //fill: true, if line ang type
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {beginAtZero: true}
-                    }
-                }
-            });
- 
-            var chart = new Chart(monthly_d1, {
-                type: 'bar',
-                data: {
-                    labels: district1_labels,
-                    datasets: [{
-                        label: 'District 1',
-                        //data: [12, 19, 3, 5, 12, 3],
-                        data: district1_count,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1,
-                        //fill: true, if line ang type
-                    }]
-                },
-                options: {
-                    indexAxis: 'y',
-                    scales: {
-                        y: {beginAtZero: true}
-                    },
-                }
-            });
-
-            var chart = new Chart(monthly_d2, {
-                type: 'bar',
-                data: {
-                    labels: district2_labels,
-                    datasets: [{
-                        label: 'District 2',
-                        //data: [12, 19, 3, 5, 12, 3],
-                        data: district2_count,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)'
-                        ],
-                        borderWidth: 1,
-                        //fill: true, if line ang type
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {beginAtZero: true}
-                    }
-                }
-            });
-
-      } //close function
-
-  {% endblock %}
-</script>
 
 {% block content %}
 
+
   <b id="date-today">Today: </b><span id="ct6"></span>
 
-    <h1>January 2018: Summarize Statistic</h1>
-    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
-        <li class="nav-item" role="presentation">
-          <button class="nav-link active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Graph/Chart</button>
-        </li>
-        <li class="nav-item" role="presentation">
-          <button class="nav-link" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Tabular</button>
-        </li>
-        
-      </ul>
-      <div class="tab-content" id="pills-tabContent">
+  <div class="container">
+    
+    </script>
+    <form id="report_form" action="{% url 'monthly_report' %}" method="POST" class="row row-cols-lg-auto g-3 align-items-center mb-4" style="float: right;">
+     {% csrf_token %}
+        <div class="col-12">
+            <select class="form-select form-select-sm" name="select_month" id="select_month" required>
+                <option vallue="">Select a month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+        </div>
+      
+        <div class="col-12">
+            <select class="form-select form-select-sm" name="select_year" id="select_year" required>
+                <option value="">Select a year</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+            </select>
+        </div>
+      
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary" id="submit_form">Submit</button>
+        </div>
+    </form>
+
+    <h1 class="mb-4 mt-2">{{month }} {{year}}: Summarize Statistics</h1>
+
+    <div class="row">
+        <ul class="nav nav-pills flex-row mb-3" id="pills-tab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class=" btn btn-outline-success btn-sm ms-3 active" id="pills-home-tab" data-bs-toggle="pill" data-bs-target="#pills-home" type="button" role="tab" aria-controls="pills-home" aria-selected="true">Graph/Chart</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="btn btn-outline-success btn-sm ms-2" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-profile" type="button" role="tab" aria-controls="pills-profile" aria-selected="false">Tabular</button>
+            </li>
+            
+        </ul>
+    </div>
+      <div class="tab-content row" id="pills-tabContent">
         <!-- tab for charts -->
-        <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+        <div class="tab-pane fade show active  " id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
 
-          <!-- <div class="col"></div>
-          <div class="" style="border:0; margin:0; padding:0; height:10%">
-            <ul class="">
-              <li class="list-group-item mb-4"><canvas id="monthly_offense" ></canvas></li>
-              <li class="list-group-item mb-4"><canvas id="monthly_car" ></canvas></li>
-              <li class="list-group-item mb-4"><canvas id="monthly_d1" ></canvas></li>
-              <li class="list-group-item mb-4"><canvas id="monthly_d2" ></canvas></li>
+          <div class="row" style="border:0; margin:0; padding:0;">
+              <div class="col-sm-6 mb-4">
+                  <div class="card">
+                      <div class="card-body" style="background-color: white;">
+                          <canvas id="myChart2" height="150"></canvas>
+                      </div>
+                  </div>
+              </div>
 
-            </ul>
-          </div> -->
-          <canvas id="monthly_offense" ></canvas>
-          <canvas id="monthly_car" ></canvas>
-          <canvas id="monthly_d1" ></canvas>
-          <canvas id="monthly_d2" ></canvas>
+              <div class="col-sm-6 mb-4">
+                  <div class="card">
+                      <div class="card-body" style="background-color: white;">
+                          <canvas id="myChart3" height="150"></canvas>
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+          <div class="row" style="border:0; margin:0; padding:0;">
+            <div class="col-sm-4 mb-4">
+                <div class="card" style="">
+                    <div class="card-body" style="background-color: white;">
+                        <canvas id="pie_sex"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-4 mb-4">
+              <div class="card">
+                  <div class="card-body" style="background-color: white;">
+                      <div class="">
+                        <canvas id="line_time" height="300"></canvas>
+                      </div>
+                  </div>
+              </div>
+            </div>
+    
+            <div class="col-sm-4 mb-4">
+                <div class="card">
+                    <div class="card-body" style="background-color: white;">
+                        <div class="">
+                            <canvas id="bar_offense" height="300"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        
           
         </div>
 
         <!-- tab for tabular data -->
         <div class="tab-pane fade" id="pills-profile" role="tabpanel" aria-labelledby="pills-profile-tab">
 
-          <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
-            <caption>Crime offense count</caption>
-            <thead>
-              <tr>
-                <th scope="col">Offenses</th>
-                <th scope="col">Count</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for offense, offense_count in offense_data %}
-                <tr>
-                  <th scope="row">{{ offense }}</th>
-                  <td> {{ offense_count }}</td>
-                </tr>
-              {% endfor %}
+            <div class="row">
 
-              <tr>
-                <th scope="row">TOTAL</th>
-                <td> <b>{{ offense_total }}  </b></td>
-              </tr>
-            </tbody>
-          </table>
+                <div class="col-sm-6">
 
-            <table class="table table-hover caption-top" style="background-color: white;">
-                <caption>List of vehicles</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Vehicles</th>
-                    <th scope="col">Month</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {% for vehicle, vehicle_count in vehicle_data %}
-                    <tr>
-                      <th scope="row"> {{ vehicle }}</th>
-                      <td> {{vehicle_count }}</td>
-                    </tr>
-                  {% endfor %}
+                  <div class="card mb-3">
+                    <div class="card-body tabular">
+                      <table class="table table-sm table-hover">
+                        <thead class="table-primary">
+                          <tr>
+                            <th scope="col" class="rad_tl b-no-border">District 1</th>
+                            <th scope="col" class="rad_tr b-no-border">Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for d1, d1_count in district1_data %}
+                            <tr>
+                              <td scope="row">{{ forloop.counter}}. {{ d1 }}</td>
+                              <td> {{ d1_count }}</td>
+                            </tr>
+                          {% endfor %}
+
+                          <tr class="table-active">
+                            <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                            <td class="rad_br b-no-border"><b>{{ d1_brgys_total }}</b></td>
+                          </tr>
+                        </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div class="card mb-3">
+                <div class="card-body tabular">
+                  <table class="table table-sm table-hover">
+                    <thead class="table-primary ">
+                      <tr>
+                        <th scope="col" class="rad_tl b-no-border">District 2</th>
+                        <th scope="col" class="rad_tr b-no-border">Count</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for d2, d2_count in district2_data %}
+                        <tr>
+                          <td scope="row">{{ forloop.counter}}. {{ d2 }}</td>
+                          <td>{{ d2_count }}</td>
+                        </tr>
+                      {% endfor %}
+
+                      <tr class="table-active">
+                        <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                        <td class="rad_br b-no-border"><b>{{ d2_brgys_total }}</b></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+                    
+                </div>
+
+                <div class="col-sm-6">
+
+                  <div class="card mb-3">
+                      <div class="card-body tabular">
+                        <table class="table table-sm table-hover">
+                          <thead class="table-primary ">
+                            <tr>
+                              <th scope="col" class="rad_tl b-no-border">Male Age</th>
+                              <th scope="col" class="rad_tr b-no-border">Count</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                              <tr>
+                                  <td scope="row">1. Children (1-12)</td>
+                                  <td> {{ child_m }}</td>
+                              </tr>
+      
+                              <tr>
+                                  <td scope="row">2. Adolescent (13-19)</td>
+                                  <td>  {{ adolescent_m }}</td>
+                              </tr>
+      
+                              <tr>
+                                  <td scope="row">3. Adult (20-59)</td>
+                                  <td> {{ adult_m }}</td>
+                              </tr>
+      
+                              <tr>
+                                  <td scope="row">4. Geriatric (60+)</td>
+                                  <td> {{ geriatric_m }}</td>
+                              </tr>
+      
+                              <tr class="table-active">
+                                  <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                                  <td class="rad_br b-no-border"><b> {{ age_total_m }}</b></td>
+                              </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                  </div>
+                  
                  
+                  <div class="card mb-3">
+                    <div class="card-body tabular">
+                      <table class="table table-sm table-hover">
+                        <thead class="table-primary ">
+                          <tr>
+                            <th scope="col" class="rad_tl b-no-border">Female Age</th>
+                            <th scope="col" class="rad_tr b-no-border">Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td scope="row">1. Children (1-12)</td>
+                                <td> {{ child_f }}</td>
+                            </tr>
 
-                  <!-- <tr>
-                    <th scope="row">Armored Car</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Bicycle</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Bus</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Cab Chassis</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Electric Bike</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Jitney</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Motorcycle</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Pedicab</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">PUJ/PUB/PUV</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Sedan</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">S-CUV</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Shuttle</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">SUV</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Truck/Trailer</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Train</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Tricycle</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Van</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Wagon</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Unidentified</th>
-                    <td>10</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">Others</th>
-                    <td>10</td>
-                  </tr> -->
-                </tbody>
-            </table>
+                            <tr>
+                                <td scope="row">2. Adolescent (13-19)</td>
+                                <td>  {{ adolescent_f }}</td>
+                            </tr>
 
-            <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
-                <caption>Age</caption>
-                <thead>
-                  <tr>
-                    <td colspan="5">MALE</td>
-                    <td colspan="5">FEMALE</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>Children (1-12)</td>
-                    <td>Adolescent (13-19)</td>
-                    <td>Adult (20-59)</td>
-                    <td>Geriatric (60+)</td>
-                    <td><b>TOTAL</b></td>
+                            <tr>
+                                <td scope="row">3. Adult (20-59)</td>
+                                <td> {{ adult_f }}</td>
+                            </tr>
 
-                    <td>Children (1-12)</td>
-                    <td>Adolescent (13-19)</td>
-                    <td>Adult (20-59)</td>
-                    <td>Geriatric (60+)</td>
-                    <td><b>TOTAL</b></td>
-                  </tr>
-                  <tr>
-                    <td> {{ child_m }}</td>
-                    <td> {{ adolescent_m }}</td>
-                    <td> {{ adult_m }}</td>
-                    <td> {{ geriatric_m }}</td>
-                    <td><b> {{ age_total_m }}</b></td>
+                            <tr>
+                                <td scope="row">4. Geriatric (60+)</td>
+                                <td> {{ geriatric_f }}</td>
+                            </tr>
+
+                            <tr class="table-active">
+                              <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                              <td class="rad_br b-no-border"><b> {{ age_total_f }}</b></td>
+                            </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
 
 
-                    <td> {{ child_f }}</td>
-                    <td> {{ adolescent_f }}</td>
-                    <td> {{ adult_f }}</td>
-                    <td> {{ geriatric_f }}</td>
-                    <td><b> {{ age_total_f }}</b></td>
-                  </tr>
-                </tbody>
-            </table>
+                  <div class="card mb-3">
+                    <div class="card-body tabular">
+                      <table class="table table-sm table-hover">
+                        <thead class="table-primary ">
+                        <tr>
+                          <th scope="col" class="rad_tl b-no-border">Offenses</th>
+                          <th scope="col" class="rad_tr b-no-border">Count</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for offense, offense_count in offense_data %}
+                          <tr>
+                            <td scope="row"> {{ forloop.counter}}. {{ offense }}</td>
+                            <td> {{ offense_count }}</td>
+                          </tr>
+                        {% endfor %}
 
-            <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
-              <caption>District 1 Barangays</caption>
-              <thead>
-                <tr>
-                  <th scope="col">District 1</th>
-                  <th scope="col">Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for d1, d1_count in district1_data %}
-                  <tr>
-                    <th scope="row">{{ d1 }}</th>
-                    <td> {{ d1_count }}</td>
-                  </tr>
-                {% endfor %}
+                        <tr class="table-active">
+                          <th scope="row" class="rad_bl b-no-border fw-bold">Total:</th>
+                          <td class="rad_br b-no-border"> <b>{{ offense_total }}  </b></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
 
-                <tr>
-                  <th scope="row">TOTAL</th>
-                  <td><b>{{ d1_total }}</b></td>
-                </tr>
-              </tbody>
-            </table>
-
-          
-            <table class="table table-hover  table-bordered caption-top" style="background-color: white;">
-              <caption>District 2 Barangays</caption>
-              <thead>
-                <tr>
-                  <th scope="col">District 2</th>
-                  <th scope="col">Count</th>
-                </tr>
-              </thead>
-              <tbody>
-                {% for d2, d2_count in district2_data %}
-                  <tr>
-                    <th scope="row">{{ d2 }}</th>
-                    <td>{{ d2_count }}</td>
-                  </tr>
-                {% endfor %}
-
-                <tr>
-                  <th scope="row">TOTAL</th>
-                  <td><b>{{ d2_total }}</b></td>
-                </tr>
-              </tbody>
-            </table>
-            
+                <div class="card mb-3">
+                  <div class="card-body tabular">
+                    <table class="table table-sm table-hover">
+                      <thead class="table-primary ">
+                          <tr>
+                            <th scope="col" class="rad_tl b-no-border">Vehicles</th>
+                            <th scope="col" class="rad_tr b-no-border">Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for vehicle, vehicle_count in vehicle_data %}
+                            <tr>
+                              <th scope="row"> {{ vehicle }}</th>
+                              <td> {{vehicle_count }}</td>
+                            </tr>
+                          {% endfor %}
+                          <tr class="table-active">
+                            <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                            <td class="rad_br b-no-border"><b>{{ vehicle_total }}  </b></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                
+                 
+                
+            </div>
         </div>
-      </div>
-
+    </div>
+    
+</div>
   
+<script>
+$(document).ready(function(){
+
+  var line_time = document.getElementById('line_time'); //time
+  var ctx2 = document.getElementById('myChart2'); //district1
+  var ctx3 = document.getElementById('myChart3'); //district1
+  var pie_sex = document.getElementById('pie_sex'); //sex
+  var bar_offense = document.getElementById('bar_offense'); //offenses
+
+
+        var myChart = new Chart(ctx2, {
+          type: 'bar',
+          data: {
+              labels: [{% for x in district1_labels %} '{{x}}', {% endfor %}],
+              datasets: [{
+                  label: 'District 1',
+                  data: [{% for x in district1_count %} {{x}}, {% endfor %}],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1,
+                  //fill: true, if line ang type
+              }]
+          },
+  
+          options: {
+              scaleShowValues: true,
+              indexAxis: 'x',
+              scales: {
+                  xAxes: [{ stacked: true }],
+                  yAxes: [{ stacked: true }]
+              },
+              animation: {
+                  duration: 1000,
+                  easing: 'linear'
+              }
+          }
+      });
+
+      var myChart = new Chart(ctx3, {
+          type: 'bar',
+          data: {
+              labels:[{% for x in district2_labels %} '{{x}}', {% endfor %}],
+              datasets: [{
+                  label: 'District 2',
+                  data: [{% for x in district2_count %} {{x}}, {% endfor %}],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1,
+                  //fill: true, if line ang type
+              }]
+          },
+          options: {
+              scales: {
+                  y: {beginAtZero: true}
+              },
+
+              animation: {
+                  duration: 1000,
+                  easing: 'linear'
+              }
+          }
+      });
+
+      var pie_sex = new Chart(pie_sex, {
+          type: 'doughnut',
+          data: {
+              labels: [{% for x in sex_labels %} '{{x}}', {% endfor %}],
+              datasets: [{
+                  label: 'Sex',
+                  data:  [{% for x in sex_count %} {{x}}, {% endfor %}],
+                  backgroundColor: [
+                  'rgb(54, 162, 235)',
+                  'rgb(255, 99, 132)',
+                  'rgba(75, 192, 192, 1)',
+                  'rgba(153, 102, 255, 1)',
+                  ],
+                  hoverOffset: 4
+              }]
+          }, 
+          options: {
+              plugins: {
+                  legend: {
+                      position: 'bottom'
+                  },
+                  title: {
+                      display: true,
+                      text: 'Sex Distribution'
+                  }
+              }
+          }
+          
+      });
+
+      var line_time = new Chart(line_time, {
+          type: 'line',
+          data: {
+              labels: ["0:00:00", "2:00:00", "4:00:00", "6:00:00","8:00:00", "10:00:00", "12:00:00","14:00:00","16:00:00","18:00:00","20:00:00","22:00:00",],
+              datasets: [{
+                  label: 'Hazardous Time',
+                  data:  [{% for x in time_count %} {{x}}, {% endfor %}],
+                  fill: false,
+                  borderColor: 'rgb(75, 192, 192)',
+                  tension: 0.1
+              }]
+          },
+          options: {
+              plugins: {
+                  legend:{
+                      
+                  },
+                  title: {
+                      display: true,
+                      text: 'Accident Prone Time'
+                  }
+              }
+          }
+      });
+
+      var bar_offense = new Chart(bar_offense, {
+          type: 'bar',
+          data: {
+              labels: [{% for x in offense_labels %} '{{x}}', {% endfor %}],
+              datasets: [{
+                  label: 'Yearly Crime/Offense',
+                  data: [{% for x in offense_count %} {{x}}, {% endfor %}],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1,
+                  //fill: true, if line ang type
+              }]
+          },
+          options: {
+              scales: {
+                  y: {beginAtZero: true}
+              }
+          }
+      });
+
+
+  }); //last
+  </script>
+
 {% endblock %}

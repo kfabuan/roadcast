@@ -78,24 +78,36 @@
             var ctx = document.getElementById('myChart'); //district
             var ctx2 = document.getElementById('myChart2'); //district1
             var ctx3 = document.getElementById('myChart3'); //district2
-            var pie_sex = document.getElementById('pie_sex'); //age
+            var pie_sex = document.getElementById('pie_sex'); //sex
             var bar_offense = document.getElementById('bar_offense'); //offenses
 
             var line_date_forecast = new Chart(line_date_forecast, {
                 type: 'line',
                 data: {
-                    labels: ["Jan", "Feb", "Mar", "April","May", "June", "July"],
+                    labels: [ 
+
+                    {%for i in datelist%}
+                    '{{i.Date}}',
+                    {%endfor%}
+
+                    ],
                     datasets: [
                         {
-                            label: 'Actual',
-                            data: [65, 59, 80, 81, 56, 55, 40],
+                            label: 'No. of incidents',
+                            data: [
+                                    {%for j in reversed_datelist_values%}
+                                    {{j.Incidents}},
+                                    {%endfor%}
+                                    ],
                             fill: false,
                             borderColor: 'rgb(65,105,225)',
                             tension: 0.1
                         },
                         {
                             label: 'Forecasted',
-                            data: [, , , , 59, 49, 57],
+                            data: [,,,,,,,{%for k in reversed_datelist_values_forecast%}
+                                    {{k.Averages}},
+                                    {%endfor%}],
                             fill: false,
                             borderColor: 'rgb(255,140,0)',
                             tension: 0.1
@@ -254,7 +266,7 @@
             });
 
             var pie_sex = new Chart(pie_sex, {
-                type: 'pie',
+                type: 'doughnut',
                 data: {
                     labels: sex_labels,
                     datasets: [{
@@ -385,11 +397,60 @@
                 </div>
             </div>
 
-            <div class="card" style="height: 540px;">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3861.3756171236632!2d121.05804631478892!3d14.577659989817079!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3397c86b3a6447c5%3A0xf602c3f3781447ff!2sPolice%20Community%20Precinct%201%20(San%20Antonio%2C%20Pasig)!5e0!3m2!1sen!2sph!4v1629793647940!5m2!1sen!2sph" style="width: 100%; border-radius: 15px; height: 100%;"></iframe>
-            </div>
+                <!-- <div class="card" style="height: 540px;">
+                    <div id="map"></div>
+                </div>
           </div>
+        </div> -->
+
+        <div class="card mb-4">
+            <div class="ratio ratio-4x3 ">
+                <div id="map"></div>
+            </div>
         </div>
+      </div>
+    </div>
+
+        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
+
+        <script type="text/javascript">
+
+            var locations = [
+        
+            {% for i in markers_json %}
+        
+            ['{{i.Address}}',{{i.Latitude}},{{i.Longitude}}],
+        
+            {% endfor %}
+        
+            ]
+            var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 13,
+              center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
+              mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+        
+            var infowindow = new google.maps.InfoWindow();
+        
+            var marker, i;
+        
+            for (i = 0; i < locations.length; i++) {
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                map: map
+              });
+        
+              google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                return function() {
+                  infowindow.setContent(locations[i][0]);
+                  infowindow.open(map, marker);
+                }
+              })(marker, i));
+            }
+          </script>
+        
+
+
 
         <!-- second half -->
         <div class="col-sm-6">
@@ -409,7 +470,7 @@
                     </div>
                 </div>
           </div>
-      </div>
+    </div>
 
       <div class="row" style="border:0; margin:0; padding:0;">
         <div class="col-sm-6 mb-4">
@@ -454,9 +515,7 @@
                 </div>
             </div>
         </div>
-      </div>
-
-</div>
+    </div>
     
 {% endblock content %}
 

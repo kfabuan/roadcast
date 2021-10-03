@@ -1,0 +1,128 @@
+{% extends 'nav_admin.html' %}
+{% load static %}
+{% block design %}<link rel="stylesheet" href="{% static 'css/member_prof.css' %}">{% endblock %}
+{% block title %} Member Profile {% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <!-- Upper Section (Maayos spacing hehe) -->
+    <section style="height: 25px;"></section>
+  
+    <div class="section">
+      <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
+        <a href="{% url 'admin_list_members' %}"" style="text-decoration: none; color: #1b5082">Member Details</a> 
+        <span style="font-size: 20px;">| &nbsp; {{members.Members_Fname }} {{members.Members_Lname }}</span>
+      </h3>
+  
+    <section style="height: 40px;"></section>
+  
+    <!-- Main Content -->
+      <div class="container">
+        <div class="main-body">
+              <div class="row gutters-sm">
+                <div class="col-md-4 mb-3">
+                  <div class="card">
+                    <div class="card-body">
+                      <div class="d-flex flex-column align-items-center text-center">
+                        <section style="height: 85px"></section>
+                        <img src="/media/{{members.Members_Pic}}" alt="Profile Picture" class="rounded-circle" style="width: 205px; height: 205px; object-fit: cover">
+                        <div class="mt-3">
+                          <h4>{{members.Members_Fname }} {{members.Members_Lname }}</h4>
+                          <p class="text-secondary mb-1"><span class="badge rounded-pill 
+                            {% if members.Members_User.Member_Type  == 'Admin'%} bg-custom4 
+                            {% elif members.Members_User.Member_Type  == 'Crime Statistician'%} bg-custom2 
+                            {% elif members.Members_User.Member_Type  == 'Investigator'%} bg-custom 
+                            {% else %} bg-custom3  
+                            {% endif %}">{{members.Members_User }}</span>&nbsp; | &nbsp;{{members.Members_Position }}</p>
+                          <p class="text-muted font-size-sm">@{{members.Members_Username }}</p>
+                          <section style="height: 60px"></section>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <div class="card mb-3">
+                    <div class="card-body" style="padding-left: 50px; padding-right: 50px; padding-top: 35px; padding-bottom: 35px;">
+
+                      <section style="height: 10px"></section>
+                      <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">OTHER INFORMATION</label>
+                      <section style="height: 35px"></section>
+
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Department</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Members_Dept }} Department
+                        </div>
+                      </div>
+                      <hr>
+
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Substation</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Members_Substation }}
+                        </div>
+                      </div>
+
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">District</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Members_District }} District
+                        </div>
+                      </div>
+
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Email</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Members_Email }}
+                        </div>
+                      </div>
+
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Password</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Members_Password }}
+                        </div>
+                      </div>
+
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Date Added</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Date_Added }} &nbsp; | &nbsp; By {{ members.Added_By }}
+                        </div>
+                      </div>
+
+                      <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Last Edit</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {{members.Date_Edit }} &nbsp; | &nbsp; By {{ members.Edit_By }}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <section style="height: 50px;"></section>
+{% endblock %}

@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'roadcast',
+    
 ]
 
 MIDDLEWARE = [
@@ -107,6 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
 
@@ -119,6 +121,17 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+#Email Config
+
+EMAIL_FROM_PUBLIC=''
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'naviliansquads@gmail.com'
+EMAIL_HOST_PASSWORD = 'Naviliansquadkwatro4'
 
 
 # Static files (CSS, JavaScript, Images)
@@ -140,3 +153,5 @@ MEDIA_URL = '/media/'
 
 
 # AUTH_USER_MODEL ='auth.Tbl_add_members'
+
+

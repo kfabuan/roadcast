@@ -13,7 +13,7 @@
 {% if messages %}
 {% for message in messages %}
 <div class="alert alert-primary alert-dismissible fade show" role="alert">
-  {{message}}
+  <b>{{message}}</b>
 </div>
 {% endfor %}
 {% endif %}
@@ -66,6 +66,7 @@
                     <option value="" selected="true" disabled="disabled">Sex</option>
                     <option value="Female"> Female </option>
                     <option value="Male"> Male </option>
+                    <option value="Other"> Other </option>
                     </select>
                 </div>
                 <div class="col">
@@ -277,7 +278,7 @@
 
                 <section style="height: 3.5px;"></section>
 
-                <p class="password" style="margin-top: 0px;">Note: An email will be sent to your email address to notify you that your registration has been accepted. Make sure that </p>
+                <p class="password" style="margin-top: 0px;">Note: An email will be sent to your email address for you to further verify. Please check your email in a bit.</p>
 
                 <section style="height: 40px;"></section>
 
@@ -303,6 +304,7 @@
       }
     </script>
 
+<!-- Password match -->
     <script>
        function check(input) {
         if (input.value != document.getElementById('password').value) {
@@ -314,10 +316,11 @@
     }
     </script>
 
+<!-- Maximum date is today -->
     <script>
     var today = new Date();
     var dd = today.getDate();
-    var mm = today.getMonth() + 1; //January is 0!
+    var mm = today.getMonth() + 1; 
     var yyyy = today.getFullYear();
 
     if (dd < 10) {

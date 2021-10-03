@@ -1,0 +1,57 @@
+{% extends 'base_signin.html' %}
+
+{% load static %}
+
+{% block title %} Login {% endblock %}
+
+{% block design %} {% endblock %}
+
+{% block content %}
+<center>
+<div class="container">
+ {{ count_gen }} {{ count_authorized }}
+
+  <div class= "row px-3">
+    <div class ="col-lg-10 col-xl-9 card flex-row mx-auto px-0">
+      <div class="img-right d-none d-md-flex"><img src="{%static 'image/mail.png'%}"style="width: 120%; background-repeat: no-repeat;"></img></div>
+
+        <div class="card-body" style="width: 55%;">
+
+        <div style="text-align: center;">
+           <a href="{% url 'index' %}"><img src="{%static 'image/logo1.png'%}" style="width: 35px; height: auto; margin-right: 8px;"><STRONG><label style="color: #1b5082;">ROAD</label><label style="color: #19B3D3;">CAST</label></STRONG></a>
+         </div>
+
+         <a href="{% url 'index' %}"><i class="btn close-btn fas fa-times"></i></a>
+        
+        <div >
+        <center>
+          <h6 style="margin-top: 70px; margin-bottom: 15px; ">You've succesfully verified your email address.</h6>
+          <h6>Please try to login to your account</h6>
+        </center>
+        </div>
+              {% csrf_token %}
+                  <div class="mb-3" style="margin-top: 90px; width:70%; border-radius: 50px;">
+                    <a href = {%url 'login' %} class="btn btn-primary btn-block" style="border-radius: 50px;">
+                      Login
+                    </a>
+                </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+</center>
+
+<script type="text/javascript">
+  $(document).ready(function(){
+
+   
+    $('#btn-login').click(function(){
+      var chk_tbl_offense = document.getElementById("tbl_offense");
+      var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+    });
+
+  });
+
+{% endblock %}

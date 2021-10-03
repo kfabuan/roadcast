@@ -1,515 +1,1028 @@
-{% extends 'nav_encoder.html' %}
+{% extends 'nav_admin.html' %}
 
-{% block title %} Add Incident {% endblock %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI"></script>
 
+{% block title %} View Detail {% endblock %}
 
+{% block design %}
+    <style>
+        body {
+            background-color: #f8fcfd;
+            position: relative;
+            padding-right: 0;
+            /* padding-left: 0; */
+            margin-right: 2%;
+        }
+        .label-blue {
+            text-transform: uppercase; 
+            font-size:small; 
+            letter-spacing: 0.5px; 
+            font-weight: bold; 
+            color: #1b5082;
+        }
+
+        .card {
+            box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);
+            border-radius: 15px;
+        }
+
+        .card-header {
+            --bs--bg-opacity:1
+            background-color: #fff;
+            border-radius: 13px 13px 0 0 !important;
+            margin:0;
+        }
+
+        .gmap_iframe, .mapouter {
+            border-radius: 15px !important;
+            margin-bottom: -3px;
+            margin-right: -1px;
+        }
+        .mapouter{
+            overflow:hidden;
+            background:none!important;
+        }
+
+        .form-control, .form-select {
+            border-radius: 15px !important;
+        }
+
+        .chk_offense {
+            
+            font-size:small; 
+            border-color: #ced4da !important; 
+            border-radius: 10px !important;
+            color: gray;
+        }
+
+        .container {
+            position: absolute !important;
+            width: auto;
+            top:35%;
+            /* background-color: tomato;  */
+            padding-left: 3%;
+        }
+
+        .cover-bg {
+            height: 350px !important;
+            background-size: 100% auto;
+            background-position: top !important;
+            object-fit: cover;
+            border-radius:50px 50px 0px 0px;
+        }
+
+        .page-title {
+            text-transform: uppercase; 
+            font-size:xx-large; 
+            /* letter-spacing: 0.5px; 
+            font-weight:bolder;  */
+            color: white;
+            text-shadow:1px 1px 3px #c6c6c6;
+        }
+
+        .page-subheading {
+            /* text-transform: uppercase;  */
+            font-size:medium; 
+            letter-spacing: 0.5px; 
+            font-weight: normal; 
+            color: white;
+            margin-left: 2px;
+            text-shadow:1px 1px 3px #c6c6c6;"
+        }
+
+        .bg-custom {
+            --bs-bg-opacity: 1;
+            background-color: #0F4C81!important;
+        }
+        .bg-custom2 {
+            --bs-bg-opacity: 1;
+            background-color: #033FFF!important;
+        }
+        .bg-custom3 {
+            --bs-bg-opacity: 1;
+            background-color: #787A91!important;
+        }
+        .bg-custom4 {
+            --bs-bg-opacity: 1;
+            background-color: #FFA41B!important;
+        }
+
+        .inv-txt {
+            border-style: none;
+            background-color: transparent; 
+            color: white;
+            font-weight: bold;
+            padding: 0;
+            margin: 0;
+        }
+
+        .badge {
+            padding-top: 1px;
+            padding-bottom: 1px;
+        }
+        option {
+           color: black !important;
+        }
+
+        .csv-btn:hover{
+            border-radius: 15px;
+            background-color: #033FFF;
+            color:black !important;
+            font-weight: normal;
+        }
+
+    </style>
+{% endblock %}
 
 {% block content %}
+<div class="row header-img">
+    <img src="/static/image/city.gif" class="img-fluid cover-bg" alt="Background Cover">
+</div>
 
-<div class="content">
-  <!--Date-->
-  
-    <div class="top-content">
-      
-      <p id='date'>
-      <i class="fas fa-calendar-day" id="date-today-icon"></i>
-      <b id="date-today">Today: </b><span id="ct6"></span>
-      </p>
-    </div>
-    <!--Incident Details-->
-      <div class="card">
-      <div class="separator">Incident Details</div>
-      </div>
-
-    <!-- <fieldset disabled> -->
-
- 
-
-      <form action="{% url 'process_edit_incident' pasig_incident_detail.id %}" method="post" enctype="multipart/form-data" >
-        <!-- cross-site request forgery -->
-        {% csrf_token %}  
-
-    <div class="incident-details">
-    
-    <div class="card-incident">
-      <div class="item">Date Commited: <input type="text" id="DateCommitted" name="DateCommitted" class="form-field" value="{{ pasig_incident_detail.Date }}"></div>
-      <div class="item">Time Commited: <input type="text" class="form-field" value={{ pasig_incident_detail.Time }}></div>
-
-      <div class="item">Collision Type: 
-        <select name="collision_type" id="collision_type" class="form-field">
-        <option value="">Choose Collision Type</option>
-        <option value="Angle Collision" {% ifequal pasig_incident_detail.Incident_Type 'Angle Collision' %} selected {% endifequal %}>Angle Collision</option>
-        <option value="Bumped From Behind" {% ifequal pasig_incident_detail.Incident_Type 'Bumped From Behind' %} selected {% endifequal %}>Bumped From Behind</option>
-        <option value="Clash" {% ifequal pasig_incident_detail.Incident_Type 'Clash' %} selected {% endifequal %}>Clash</option>
-        <option value="Damage to Property" {% ifequal pasig_incident_detail.Incident_Type 'Damage to Property' %} selected {% endifequal %}>Damage to Property</option>
-        <option value="Head On" {% ifequal pasig_incident_detail.Incident_Type 'Head On' %} selected {% endifequal %}>Head On</option>
-        <option value="Hit and Run" {% ifequal pasig_incident_detail.Incident_Type 'Hit and Run' %} selected {% endifequal %}>Hit and Run</option>
-        <option value="Hit Animals" {% ifequal pasig_incident_detail.Incident_Type 'Hit Animals' %} selected {% endifequal %}>Hit Animals</option>
-        <option value="Hit Object On Road" {% ifequal pasig_incident_detail.Incident_Type 'Hit Object On Road' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Object On Road</option>
-        <option value="Hit Object Off Road" {% ifequal pasig_incident_detail.Incident_Type 'Hit Object Off Road' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Object Off Road</option>
-        <option value="Hit Parked Vehicle" {% ifequal pasig_incident_detail.Incident_Type 'Hit Parked Vehicle' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Parked Vehicle</option>
-        <option value="Hit Pedestrian" {% ifequal pasig_incident_detail.Incident_Type 'Hit Pedestrian' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Pedestrian</option>
-        <option value="Hit While Parked" {% ifequal pasig_incident_detail.Incident_Type 'Hit While Parked' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit While Parked</option>
-        <option value="Multi Vehicle" {% ifequal pasig_incident_detail.Incident_Type 'Multi Vehicle' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Multi Vehicle</option>
-        <option value="Rear End" {% ifequal pasig_incident_detail.Incident_Type 'Rear End' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Rear End</option>
-        <option value="Self Accident" {% ifequal pasig_incident_detail.Incident_Type 'Self Accident' %} selected {% endifequal %}>Self Accident</option>
-        <option value="Impact" {% ifequal pasig_incident_detail.Incident_Type 'Impact' %} selected {% endifequal %}>Impact</option>
-        <option value="Sideswiped" {% ifequal pasig_incident_detail.Incident_Type 'Sideswiped' %} selected {% endifequal %}>Sideswiped</option>
-        <option value="Side Impact" {% ifequal pasig_incident_detail.Incident_Type 'Side Impact' %} selected {% endifequal %}>Side Impact</option>
-        <option value="Right Angle" {% ifequal pasig_incident_detail.Incident_Type 'Right Angle' %} selected {% endifequal %}>Right Angle</option>
-        <option value="Others" {% ifequal pasig_incident_detail.Incident_Type 'Others' %} selected {% endifequal %}>Others</option>
-      </select></div>
-
-
-      <div class="item">Weather: <select name="weather" id="weather" class="form-field">
-        <option value="">Choose Weather</option>
-        <option value="Sun" {% ifequal pasig_incident_detail.Weather 'Sun' %} selected {% endifequal %}>Sun</option>
-        <option value="Fair" {% ifequal pasig_incident_detail.Weather 'Fair' %} selected {% endifequal %}>Fair</option>
-        <option value="Light Rain" {% ifequal pasig_incident_detail.Weather 'Light Rain' %} selected {% endifequal %}>Light Rain</option>
-        <option value="Rainy" {% ifequal pasig_incident_detail.Weather 'Rainy' %} selected {% endifequal %}>Rainy</option>
-        <option value="Windy" {% ifequal pasig_incident_detail.Weather 'Windy' %} selected {% endifequal %}>Windy</option>
-        </select>
-      </div>
-
-      <div class="item">Surface Type: <select name="surface_type" id="surface_type" class="form-field">
-      <option value="">Choose Surface Type</option>
-        <option value="Asphalt" {% ifequal pasig_incident_detail.Surface_Type 'Asphalt' %} selected {% endifequal %}>Asphalt</option>
-        <option value="Concrete" {% ifequal pasig_incident_detail.Surface_Type 'Concrete' %} selected {% endifequal %}>Concrete</option>
-        <option value="Soil" {% ifequal pasig_incident_detail.Surface_Type 'Soil' %} selected {% endifequal %}>Soil</option>
-      </select></div>
-
-      <div class="item">Road Character: <select name="road_character" id="road_character" class="form-field">
-      <option value="">Choose Road Character</option>
-        <option value="Straight Flat" {% ifequal pasig_incident_detail.Road_Character 'Straight Flat' %} selected {% endifequal %}>Straight/Flat</option>
-        <option value="Straight Incline" {% ifequal pasig_incident_detail.Road_Character 'Straight Incline' %} selected {% endifequal %}>Straight/Incline</option>
-        <option value="Curve" {% ifequal pasig_incident_detail.Road_Character 'Curve' %} selected {% endifequal %}>Curve</option>
-        <option value="Curve Incline" {% ifequal pasig_incident_detail.Road_Character 'Curve Incline' %} selected {% endifequal %}>Curve/Incline</option>
-        <option value="Upwards" {% ifequal pasig_incident_detail.Road_Character 'Upwards' %} selected {% endifequal %}>Upwards</option>
-        <option value="Downwards" {% ifequal pasig_incident_detail.Road_Character 'Downwards' %} selected {% endifequal %}>Downwards</option>
-      </select></div>
-
-      <div class="item">Surface Condition: <select name="surface_condition" class="form-field">
-      <option value="">Choose Surface Condition</option>
-        <option value="Dry" {% ifequal pasig_incident_detail.Surface_Condition 'Dry' %} selected {% endifequal %}>Dry</option>
-        <option value="Wet" {% ifequal pasig_incident_detail.Surface_Condition 'Wet' %} selected {% endifequal %}>Wet</option>
-        <option value="Sand" {% ifequal pasig_incident_detail.Surface_Condition 'Sand' %} selected {% endifequal %}>Sand</option>
-      </select></div>
-
-       <div class="item">Road Repair: <input type="radio" name="road-repair" id="road-yes" value="Yes"{% ifequal pasig_incident_detail.Road_Repair 'Yes' %} checked {% endifequal %}>
-          <label for="road-yes">Yes</label>
-          <input type="radio" name="road-repair" id="road-no" value="No" {% ifequal pasig_incident_detail.Road_Repair 'No' %} checked {% endifequal %}>
-          <label for="road-no">No</label>
-        </div>
-
-      <div class="item">Case Status: <select name ="case_status" class="form-field">
-      <option value="">Choose Case Status</option>
-      <option value="Solved" {% ifequal pasig_incident_detail.Case_Status 'Solved' %} selected {% endifequal %}>Solved</option>
-      <option value="Unsolved" {% ifequal pasig_incident_detail.Case_Status 'Unsolved' %} selected {% endifequal %}>Unsolved</option>
-      </select></div>
-
-      <div class="item">Hit and Run: <input type="radio" name="hit-and-run" id="hit-yes" value="Yes" {% ifequal pasig_incident_detail.Hit_and_Run 'Yes' %} checked {% endifequal %}>
-    
-          <label for="hit-yes">Yes</label>
-
-          <input type="radio" name="hit-and-run" id="hit-no" value="No" {% ifequal pasig_incident_detail.Hit_and_Run 'No' %} checked {% endifequal %}>
-          <label for="hit-no">No</label> </div>
-
-      <div class="item">Investigator: <select name ="inv_name" class="form-field">
-          <option value="">Choose Case Investigator</option>
-          <option value="">Dummy Investigator 1</option>
-          <option value="">Dummy Investigator 2</option>
-
-        </select>
-      </div>
-
-      <div class="item" value="">Offense: <br>
-
-        <table id ="tbl_offense">
-          <tr>
-            <td>
-              <input type="checkbox" class="chk_offense" value="Damage to Property" {% if 'Damage to Property' in pasig_incident_detail.CrimeOffense %} checked {% endif %}><label> Damage to Property</label>
-              <input type="checkbox" class="chk_offense" value="Physical Injury" {% if 'Physical Injury' in pasig_incident_detail.CrimeOffense %} checked {% endif %}><label> Physical Injury</label><br>
-            </td>
-          </tr>
-
-          <tr>
-            <td>
-              <input type="checkbox" class="chk_offense" value="Self Accident" {% if 'Self Accident' in pasig_incident_detail.CrimeOffense %} checked {% endif %}><label> Self Accident</label>
-              <input type="checkbox" class="chk_offense" value ="Homicide" {% if 'Homicide' in pasig_incident_detail.CrimeOffense %} checked {% endif %}><label> Homicide</label><br>
-            </td>
-          </tr>
-        </table>
-        <div class="item"> <input type="text" id="display_offense" name ="display_offense" class="form-field" value="{{ pasig_incident_detail.CrimeOffense }}" hidden></div>
-
-      </div>
-
-     </div>
-     
-    </div>
-
-    <!--Place commited-->
-    <div class="card">
-      <div class="separator">Location Details</div>
-      </div>
-      <form>
-    <div class="incident-details">
-    
-    <div class="card-incident">
-      <div class="item">City: <input type="text" value="{{pasig_incident_detail.City}}" class="form-field" readonly></div>
-
-      <div class="item">Barangay: <select name="barangay" id="Barangay" class="form-field" onchange="selectdistrict(event)">
-      <option value="">Choose a Barangay</option>
-      <option value="2">Bagong Ilog</option>
-      <option value="5" {% ifequal pasig_incident_detail.Barangay_id_id 5 %} selected {% endifequal %}>Bagong Katipunan</option>
-      <option value="3" {% ifequal pasig_incident_detail.Barangay_id_id 6 %} selected {% endifequal %}>Bambang</option>
-      <option value="27"{% ifequal pasig_incident_detail.Barangay_id_id 27 %} selected {% endifequal %}>Buting</option>
-      <option value="4" {% ifequal pasig_incident_detail.Barangay_id_id 4 %} selected {% endifequal %}>Caniogan</option>
-      <option value="6" {% ifequal pasig_incident_detail.Barangay_id_id 6 %} selected {% endifequal %}>Kalawaan</option>
-      <option value="7" {% ifequal pasig_incident_detail.Barangay_id_id 7 %} selected {% endifequal %}>Kapasigan</option>
-      <option value="8" {% ifequal pasig_incident_detail.Barangay_id_id 8 %} selected {% endifequal %}>Kapitolyo</option>
-      <option value="9" {% ifequal pasig_incident_detail.Barangay_id_id 9 %} selected {% endifequal %}>Malinao</option>
-      <option value="10"{% ifequal pasig_incident_detail.Barangay_id_id 10 %} selected {% endifequal %}>Oranbo</option>
-      <option value="11"{% ifequal pasig_incident_detail.Barangay_id_id 11 %} selected {% endifequal %}>Palatiw</option>
-      <option value="28"{% ifequal pasig_incident_detail.Barangay_id_id 28 %} selected {% endifequal %}>Pineda</option>
-      <option value="12"{% ifequal pasig_incident_detail.Barangay_id_id 12 %} selected {% endifequal %}>Sagad</option>
-      <option value="13"{% ifequal pasig_incident_detail.Barangay_id_id 13 %} selected {% endifequal %}>San Antonio</option>
-      <option value="14"{% ifequal pasig_incident_detail.Barangay_id_id 14 %} selected {% endifequal %}>San Joaquin</option>
-      <option value="15"{% ifequal pasig_incident_detail.Barangay_id_id 15 %} selected {% endifequal %}>San Jose</option>
-      <option value="16"{% ifequal pasig_incident_detail.Barangay_id_id 16 %} selected {% endifequal %}>San Nicolas</option>
-      <option value="29"{% ifequal pasig_incident_detail.Barangay_id_id 29 %} selected {% endifequal %}>Santa Cruz</option>
-      <option value="30"{% ifequal pasig_incident_detail.Barangay_id_id 30 %} selected {% endifequal %}>Santa Rosa</option>
-      <option value="17"{% ifequal pasig_incident_detail.Barangay_id_id 17 %} selected {% endifequal %}>Santo Tomas</option>
-      <option value="18"{% ifequal pasig_incident_detail.Barangay_id_id 18 %} selected {% endifequal %}>Sumilang</option>
-      <option value="1" {% ifequal pasig_incident_detail.Barangay_id_id 1 %} selected {% endifequal %}>Ugong</option>
-      <option value="19"{% ifequal pasig_incident_detail.Barangay_id_id 19 %} selected {% endifequal %}>Dela Paz</option>
-      <option value="20"{% ifequal pasig_incident_detail.Barangay_id_id 20 %} selected {% endifequal %}>Manggahan</option>
-      <option value="21"{% ifequal pasig_incident_detail.Barangay_id_id 21 %} selected {% endifequal %}>Maybunga</option>
-      <option value="22"{% ifequal pasig_incident_detail.Barangay_id_id 22 %} selected {% endifequal %}>Pinagbuhatan</option>
-      <option value="23"{% ifequal pasig_incident_detail.Barangay_id_id 23 %} selected {% endifequal %}>Rosario</option>
-      <option value="24"{% ifequal pasig_incident_detail.Barangay_id_id 24 %} selected {% endifequal %}>San Miguel</option>
-      <option value="26"{% ifequal pasig_incident_detail.Barangay_id_id 26 %} selected {% endifequal %}>Santolan</option>
-      <option value="25"{% ifequal pasig_incident_detail.Barangay_id_id 25 %} selected {% endifequal %}>Santa Lucia</option>
-      </select></div>
-      
-      <div class="item">District: <input type="text" name="district" id="district" value="{{pasig_incident_detail.District_id}}" class="form-field" readonly></div>
-    
-      <script>
-        function selectdistrict(e){
-
-          if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
-          ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
-            var barangay = document.getElementById('district').value="2";
-          }
-          else{
-            var barangay = document.getElementById('district').value="1";
-          }
-        }
-      </script>
-      <div class="item">Place Commited: <input type="text" name="place_committed" class="form-field" value="{{pasig_incident_detail.Address}}"></div>
-      <div class="item">Along: <input type="text" name="along" class="form-field" value="{{pasig_incident_detail.Along_Avenue}}"></div>
-      <div class="item">Corner: <input type="text" name="corner" class="form-field" value="{{pasig_incident_detail.Corner_Avenue}}"></div>
-     </div>
-    </div>
-
-    <!--Person(s) Involved-->
-    
-    <div class="card">
-      <div class="separator">Person(s) Involved</div>
-      </div>
-      <div class="title">Suspect</div>
-      <form>
-    <div class="incident-details">
-    
-    <!--Suspect-->
-    <div class="card-incident">
-      <div class="item">Name: <input type="text" name="sus_name" class="form-field" value="{{pasig_incident_detail.Suspect_Name}}"></div>
-      <div class="item">Age: <input type="number" name="sus_age" class="form-field" value={{pasig_incident_detail.Suspect_Age}}></div>
-      <div class="item">Address: <input type="text" name="sus_add" class="form-field" value="{{pasig_incident_detail.Suspect_Address}}"></div>
-      <div class="item">Civil Status: <select name="sus_civil_status" id="sus_civil_status" class="form-field" >
-        <option value="">Choose Civil Status</option>
-        <option value="Single" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Single' %} selected {% endifequal %}>Single</option>
-        <option value="Married" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Married' %} selected {% endifequal %}>Married</option>
-        <option value="Widowed" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Widowed' %} selected {% endifequal %}>Widowed</option>
-        <option value="Separated" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
-        <option value="Divorced" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
-        </select>
-      </div>
-     
-      <div class="item">Sex: 
-          <input type="radio" name="s_sex" id="s_male" value="Male" {% ifequal pasig_incident_detail.Suspect_Sex 'Male' %} checked {% endifequal %}>
-          <label for="s_male" >Male</label>
-
-          <input type="radio" name="s_sex" id="s_female" value="Female" {% ifequal pasig_incident_detail.Suspect_Sex 'Female' %} checked {% endifequal %}>
-          <label for="s_female">Female</label>
-      </div>
- 
-      <div class="item">Driver's License: <input type="text" name = "sus_drl" class="form-field" value="{{pasig_incident_detail.Suspect_Drl_No}}"></div>
-      <div class="item">Type: <select name="sus_type" class="form-field">
-        <option value="">Choose Type</option>
+<div class="container">
+    <script>
+        function initMap() {
+            var myLatLng = { lat: {{pasig_incident_detail.Latitude}}, lng: {{pasig_incident_detail.Longitude}} };
+            var map = new google.maps.Map(document.getElementById('map'), {
+              center: {lat: {{pasig_incident_detail.Latitude}} , lng: {{pasig_incident_detail.Longitude}}},
+              zoom: 17
+            });
+            
+              new google.maps.Marker({
+                position: myLatLng,
+                map,
+                title: "{{pasig_incident_detail.Address}}",
+            });
+            var input = document.getElementById('searchInput');
+            //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
         
-          <option value="Driver" selected>Driver</option>
-          <option value="Passenger">Passenger</option>
-          <option value="Pedestrian">Pedestrian</option>
-        </select></div>
-
-      <div class="item">Expiration Date: <input type="date" class="form-field"></div>
-      <div class="item">Vehicle Brand & Model: <input type="text" class="form-field" name ="sus_vehicle" value="{{pasig_incident_detail.Suspect_Vehicle}}"></div>
-    
-      <div class="item">Body Type: <select class="form-field" name="sus_vehicle_body_type" id="sus_vehicle_body_type">
-          <option value="">Choose Case Status</option>
-          <option value="Armored Car" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Armored Car' %} selected {% endifequal %}>Armored Car</option>
-          <option value="Alto" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Alto' %} selected {% endifequal %}>Alto</option>
-          <option value="Bicycle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Bicycle' %} selected {% endifequal %}>Bicycle</option>
-          <option value="Private Bus" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Bus' %} selected {% endifequal %}>Bus</option>
-          <option value="PUB - Public Utility Bus" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUB - Public Utility Bus' %} selected {% endifequal %}>PUB - Public Utility Bus</option>    
-          <option value="Cab Chassis" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Cab Chassis' %} selected {% endifequal %}>Cab Chassis </option>
-          <option value="Coupe" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Coupe' %} selected {% endifequal %}>Coupe</option>
-          <option value="Electric Bike" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Electric Bike' %} selected {% endifequal %}>Electric Bike</option>
-          <option value="Jitney"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Jitney' %} selected {% endifequal %}>Jitney</option>
-          <option value="Hatchback"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Hatchback' %} selected {% endifequal %}>Hatchback</option>
-          <option value="Motorcycle"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Motorcycle' %} selected {% endifequal %}>Motorcycle</option>
-          <option value="MTC/MC"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'MTC/MC' %} selected {% endifequal %}>MTC/MC</option>
-          <option value="Object"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Object' %} selected {% endifequal %}>Object</option>
-          <option value="Pedicab"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Pedicab' %} selected {% endifequal %}>Pedicab</option>
-          <option value="PUJ - Public Utility Jeep" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUJ - Public Utility Jeep' %} selected {% endifequal %}>PUJ - Public Utility Jeep</option>
-          <option value="PUV- Public Utility Vehicle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUV- Public Utility Vehicle' %} selected {% endifequal %}>PUV- Public Utility Vehicle</option>
-          <option value="Sedan" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Sedan' %} selected {% endifequal %}>Sedan</option>
-          <option value="S-CUV" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'S-CUV' %} selected {% endifequal %}>S-CUV</option>
-          <option value="Shuttle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Shuttle' %} selected {% endifequal %}>Shuttle</option>
-          <option value="SUV" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'SUV' %} selected {% endifequal %}>SUV</option>
-          <option value="Tricycle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Tricycle' %} selected {% endifequal %}>Tricycle</option>
-          <option value="Train" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Train' %} selected {% endifequal %}>Train</option>
-          <option value="Truck" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Truck' %} selected {% endifequal %}>Truck</option>
-          <option value="Trailer" {% ifequal 'Trailer' pasig_incident_detail.Suspect_Vehicle_Body_Type %} selected {% endifequal %}>Trailer</option>
-          <option value="Unidentified" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
-          <option value="Pick-Up" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Pick-Up' %} selected {% endifequal %}>Pick-Up</option>
-          <option value="Minivan" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Minivan' %} selected {% endifequal %}>Minivan</option>
-          <option value="Van" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Van' %} selected {% endifequal %}>Van</option>
-          <option value="Wagon" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Wagon' %} selected {% endifequal %}>Wagon</option>
-          <option value="Cart" {% ifequal 'Cart' pasig_incident_detail.Suspect_Vehicle_Body_Type %} selected {% endifequal %}>Cart</option>
-          <option value="Shuttle" {% ifequal 'Shuttle' pasig_incident_detail.Suspect_Vehicle_Body_Type %} selected {% endifequal %}>Shuttle</option>
-          <option value="Modern Jeepney" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Modern Jeepney' %} selected {% endifequal %}>Modern Jeepney</option>
-          <option value="Others" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Others' %} selected {% endifequal %}>Others</option>
-      </select></div>
-
-      <div class="item">Registered Owner: <input type="text" name="sus_reg_owner" class="form-field" value="{{pasig_incident_detail.Suspect_Reg_Owner}}"></div>
-      <div class="item">Plate Number: <input type="text" name="sus_plate_no" class="form-field" value="{{pasig_incident_detail.Suspect_Plate_No}}"></div>
-
-      <div class="item">Status: <select class="form-field" name ="sus_severity">
-        <option value="">Choose Suspect's Status</option>
-        <option value="Unharmed" {% ifequal pasig_incident_detail.Suspect_Severity 'Unharmed' %} selected {% endifequal %}>Unharmed</option>
-        <option value="Harmed"{% ifequal pasig_incident_detail.Suspect_Severity 'Harmed' %} selected {% endifequal %}>Harmed</option>
-        <option value="Injured"{% ifequal pasig_incident_detail.Suspect_Severity 'Injured' %} selected {% endifequal %}>Injured</option>
-        <option value="Self Accident"{% ifequal pasig_incident_detail.Suspect_Severity 'Self Accident' %} selected {% endifequal %}>Self Accident</option>
-        <option value="Deceased"{% ifequal pasig_incident_detail.Suspect_Severity 'Deceased' %} selected {% endifequal %}>Deceased</option>
-        <option value="Identified"{% ifequal pasig_incident_detail.Suspect_Severity 'Identified' %} selected {% endifequal %}>Identified</option>
-        <option value="Not Interested to Report"{% ifequal pasig_incident_detail.Suspect_Severity 'Not Interested to Report' %} selected {% endifequal %}>Not Interested to Report</option>
-        <option value="Arrested"{% ifequal pasig_incident_detail.Suspect_Severity 'Arrested' %} selected {% endifequal %}>Arrested</option>
-        <option value="Escaped"{% ifequal pasig_incident_detail.Suspect_Severity 'Escaped' %} selected {% endifequal %}>Escaped</option>
-        <option value="Unidentified"{% ifequal pasig_incident_detail.Suspect_Severity 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
-        </select></div></div></div>
-
-      <section></section>
-
-      <div class="title">Victim(s)</div>
-     
-    <div class="incident-details">
-    <!--Victim-->
-    <div class="card-incident">
-      <div class="item">Name: <input type="text" name="vic_name" class="form-field" value="{{pasig_incident_detail.Victim_Name}}"></div>
-      <div class="item">Age: <input type="number" name="vic_age" class="form-field" value="{{pasig_incident_detail.Victim_Age}}"></div>
-      <div class="item">Address: <input type="text" name="vic_add" class="form-field" value="{{pasig_incident_detail.Address}}"></div>
-
-      <div class="item">Civil Status: <select name="vic_civil_status" id="vic_civil_status" class="form-field">
-      <option value="">Choose Civil Status</option>
-      <option value="Single" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Single' %} selected {% endifequal %}>Single</option>
-        <option value="Married" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Married' %} selected {% endifequal %}>Married</option>
-        <option value="Widowed" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Widowed' %} selected {% endifequal %}>Widowed</option>
-        <option value="Separated" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
-        <option value="Divorced" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
-        </select>
-      </div>
-
-      <div class="item">Sex: <input type="hidden" id="victim1_sex" value="{{pasig_incident_detail.Victim_Sex}}">
-          <input type="radio" name="v_sex" id="v_male" value="Male" {% ifequal pasig_incident_detail.Victim_Sex 'Male' %} checked {% endifequal %}>
-          <label for="v_male">Male</label>
-
-          <input type="radio" name="v_sex" id="v_female" value="Female" {% ifequal pasig_incident_detail.Victim_Sex 'Female' %} checked {% endifequal %}>
-          <label for="v_female">Female</label>
-      </div>
-
-    
-     <div class="item">Driver's License: <input type="text" name="vic_drl" class="form-field" value="{{pasig_incident_detail.Victim_Drl_No}}"></div>
-      <div class="item">Type: <select name="vic_type" class="form-field">
-      <option value="">Choose Type</option>
-      <option value="{{pasig_incident_detail.Victim_Type}}" selected>{{pasig_incident_detail.Victim_Type}}</option>
-        <option value="Driver" {% ifequal pasig_incident_detail.Victim_Type 'Driver' %} selected {% endifequal %}>Driver</option>
-        <option value="Passenger" {% ifequal pasig_incident_detail.Victim_Type 'Passenger' %} selected {% endifequal %}>Passenger</option>
-        <option value="Pedestrian" {% ifequal pasig_incident_detail.Victim_Type 'Pedestrian' %} selected {% endifequal %}>Pedestrian</option>
-      </select></div>
-      <div class="item">Expiration Date: <input type="date" class="form-field"></div>
-      <div class="item">Vehicle Brand & Model: <input type="text" name="vic_vehicle" class="form-field" value="{{pasig_incident_detail.Victim_Vehicle}}"></div>
-
-    
-      <div class="item">Body Type: <select class="form-field" name="vic_vehicle_body_type">
-      <option value="">Choose Case Status</option>
-        <option value="Armored Car" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Armored Car' %} selected {% endifequal %}>Armored Car</option>
-        <option value="Alto" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Alto' %} selected {% endifequal %}>Alto</option>
-        <option value="Bicycle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Bicycle' %} selected {% endifequal %}>Bicycle</option>
-        <option value="Private Bus" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Bus' %} selected {% endifequal %}>Bus</option>
-        <option value="PUB - Public Utility Bus" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUB - Public Utility Bus' %} selected {% endifequal %}>PUB - Public Utility Bus</option>    
-        <option value="Cab Chassis" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Cab Chassis' %} selected {% endifequal %}>Cab Chassis </option>
-        <option value="Coupe" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Coupe' %} selected {% endifequal %}>Coupe</option>
-        <option value="Electric Bike" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Electric Bike' %} selected {% endifequal %}>Electric Bike</option>
-        <option value="Jitney"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Jitney' %} selected {% endifequal %}>Jitney</option>
-        <option value="Hatchback"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Hatchback' %} selected {% endifequal %}>Hatchback</option>
-        <option value="Motorcycle"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Motorcycle' %} selected {% endifequal %}>Motorcycle</option>
-        <option value="MTC/MC"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'MTC/MC' %} selected {% endifequal %}>MTC/MC</option>
-        <option value="Object"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Object' %} selected {% endifequal %}>Object</option>
-        <option value="Pedicab"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Pedicab' %} selected {% endifequal %}>Pedicab</option>
-        <option value="PUJ - Public Utility Jeep" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUJ - Public Utility Jeep' %} selected {% endifequal %}>PUJ - Public Utility Jeep</option>
-        <option value="PUV- Public Utility Vehicle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUV- Public Utility Vehicle' %} selected {% endifequal %}>PUV- Public Utility Vehicle</option>
-        <option value="Sedan" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Sedan' %} selected {% endifequal %}>Sedan</option>
-        <option value="S-CUV" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'S-CUV' %} selected {% endifequal %}>S-CUV</option>
-        <option value="Shuttle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Shuttle' %} selected {% endifequal %}>Shuttle</option>
-        <option value="SUV" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'SUV' %} selected {% endifequal %}>SUV</option>
-        <option value="Tricycle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Tricycle' %} selected {% endifequal %}>Tricycle</option>
-        <option value="Train" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Train' %} selected {% endifequal %}>Train</option>
-        <option value="Truck" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Truck' %} selected {% endifequal %}>Truck</option>
-        <option value="Trailer" {% ifequal 'Trailer' pasig_incident_detail.Victim_Vehicle_Body_Type %} selected {% endifequal %}>Trailer</option>
-        <option value="Unidentified" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
-        <option value="Pick-Up" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Pick-Up' %} selected {% endifequal %}>Pick-Up</option>
-        <option value="Minivan" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Minivan' %} selected {% endifequal %}>Minivan</option>
-        <option value="Van" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Van' %} selected {% endifequal %}>Van</option>
-        <option value="Wagon" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Wagon' %} selected {% endifequal %}>Wagon</option>
-        <option value="Cart" {% ifequal 'Cart' pasig_incident_detail.Victim_Vehicle_Body_Type %} selected {% endifequal %}>Cart</option>
-        <option value="Shuttle" {% ifequal 'Shuttle' pasig_incident_detail.Victim_Vehicle_Body_Type %} selected {% endifequal %}>Shuttle</option>
-        <option value="Modern Jeepney" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Modern Jeepney' %} selected {% endifequal %}>Modern Jeepney</option>
-        <option value="Others" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Others' %} selected {% endifequal %}>Others</option>
-      </select></div>
-
-      <div class="item">Registered Owner: <input type="text" name="vic_reg_owner" class="form-field" value="{{pasig_incident_detail.Victim_Reg_Owner}}"></div>
-      <div class="item">Plate Number: <input type="text" name="vic_plate_no" class="form-field" value="{{pasig_incident_detail.Victim_Plate_No}}"></div>
-
-      <div class="item">Status: <select name="vic_severity" class="form-field">
-      <option value="">Choose Suspect's Status</option>
-        <option value="Unharmed" {% ifequal pasig_incident_detail.Victim_Severity 'Unharmed' %} selected {% endifequal %}>Unharmed</option>
-        <option value="Harmed"{% ifequal pasig_incident_detail.Victim_Severity 'Harmed' %} selected {% endifequal %}>Harmed</option>
-        <option value="Injured"{% ifequal pasig_incident_detail.Victim_Severity 'Injured' %} selected {% endifequal %}>Injured</option>
-        <option value="Self Accident"{% ifequal pasig_incident_detail.Victim_Severity 'Self Accident' %} selected {% endifequal %}>Self Accident</option>
-        <option value="Deceased"{% ifequal pasig_incident_detail.Victim_Severity 'Deceased' %} selected {% endifequal %}>Deceased</option>
-        <option value="Identified"{% ifequal pasig_incident_detail.Victim_Severity 'Identified' %} selected {% endifequal %}>Identified</option>
-        <option value="Not Interested to Report"{% ifequal pasig_incident_detail.Victim_Severity 'Not Interested to Report' %} selected {% endifequal %}>Not Interested to Report</option>
-        <option value="Arrested"{% ifequal pasig_incident_detail.Victim_Severity 'Arrested' %} selected {% endifequal %}>Arrested</option>
-        <option value="Escaped"{% ifequal pasig_incident_detail.Victim_Severity 'Escaped' %} selected {% endifequal %}>Escaped</option>
-        <option value="Unidentified"{% ifequal pasig_incident_detail.Victim_Severity 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
-      </select>
-     </div>
-    </div>
-    
-</div>
-  <center><input type="button" value="(+)&nbsp;&nbsp;Add another victim" id="add_victim"></center>
-    <div class="card">
-      <div class="separator">Narrative Description of the Incident</div>
-     <textarea class="narrative" name="narrative" style="resize: none">{{pasig_incident_detail.Narrative}}</textarea> 
-    <center><button id="submit_form" type="submit" value="">Submit </button></center>
-    </div>
-  </form>
- 
-
-
-</div>
-
- 
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('.nav_btn').click(function(){
-        $('.mobile_nav_items').toggleClass('active');
-      });
-
-      $('.chk_offense').click(function(){
-        var selected_offense = new Array();
-        var chk_tbl_offense = document.getElementById("tbl_offense");
-        var selchk = chk_tbl_offense.getElementsByTagName("input");
-
-        for (var i=0; i<selchk.length; i++) {
-          if(selchk[i].checked){
-            selected_offense.push(selchk[i].value);
-          }
+            var autocomplete = new google.maps.places.Autocomplete(input);
+            autocomplete.bindTo('bounds', map);
+        
+            var infowindow = new google.maps.InfoWindow();
+            var marker = new google.maps.Marker({
+                map: map,
+                anchorPoint: new google.maps.Point(0, -29)
+            });
+           
+        
+            autocomplete.addListener('place_changed', function() {
+                infowindow.close();
+                marker.setVisible(false);
+                
+                var place = autocomplete.getPlace();
+                if (!place.geometry) {
+                    window.alert("Autocomplete's returned place contains no geometry");
+                    return;
+                }
+          
+                // If the place has a geometry, then present it on a map.
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                } else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(17);
+                }
+                marker.setIcon(({
+                    url: place.icon,
+                    size: new google.maps.Size(71, 71),
+                    origin: new google.maps.Point(0, 0),
+                    anchor: new google.maps.Point(17, 34),
+                    scaledSize: new google.maps.Size(35, 35)
+                }));
+                marker.setPosition(place.geometry.location);
+                marker.setVisible(true);
+            
+                var address = '';
+                if (place.address_components) {
+                    address = [
+                      (place.address_components[0] && place.address_components[0].short_name || ''),
+                      (place.address_components[1] && place.address_components[1].short_name || ''),
+                      (place.address_components[2] && place.address_components[2].short_name || '')
+                    ].join(' ');
+                }
+            
+                infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+                infowindow.open(map, marker);
+              
+                // Location details
+               
+                //document.getElementById('place_committed').value = place.formatted_address;
+                document.getElementById('lat').value = place.geometry.location.lat();
+                document.getElementById('lon').value = place.geometry.location.lng();
+            });
         }
-
-        if(selected_offense.length>0){
-          document.getElementById('display_offense').value=selected_offense; 
-        }
-
-        else{
-          document.getElementById('display_offense').value=""; 
-        }
-
-      });
+        </script>
+   
+    <!-- Upper Section (Maayos spacing hehe) -->
+    <section style="height: 25px;"></section>
+    {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> </p>{% endif %}
+    {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
+    {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
    
+   <div class="row">
+       <div class="col-7">
+            <h3 class="page-title" style="text-shadow:1px 1px 3px #c6c6c6;">INCIDENT REPORT DETAILS <i class="bi bi-calendar2-check"></i>  </h3>
+       </div>
+       <!-- <div class="col-5">
+            <form action="" method="get">
+                {% csrf_token %}
 
-      $('#DateCommitted').change(function(){
+                <div class="row"  style="display: flex;">
+                    <div class="col-10" style="">
+                        <label class=" fw-bold csv-btn" style="float:right;">
+                            <input class="form-control form-control-sm" type="file" id="formFile" name="file" style="background-color: white;" required>     
+                        </label>
+                    </div>
+
+                    <div class="col-2" style="">
+                        <button type="submit" class="btn btn-sm btn-success rounded-pill" style="float: left;">Submit</button>
+                    </div>
+                </div>
+           </form>
+       </div> -->
+   
+   </div>  
+   <form action="{% url 'process_edit_incident' pasig_incident_detail.id %}" method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
+
+    <p class="page-subheading">
+       
+        <i>Assigned Investigator: </i>
+        <span class="badge bg-custom2 text-light rounded-pill">            
+            <select name="inv_name" id="inv_name" class="inv-txt" required>
+                <option value="">Choose Investigator</option>
+                {% for inv in investigators_list %}
+                    <option value="{{ inv.id }}" {% ifequal pasig_incident_detail.Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
+                {% endfor %}
+            </select>  
+        </span> 
+
+        <!-- <span class="badge bg-custom2 text-light rounded-pill">Karen Faith Abuan</span> -->
+    </p>
+
+    <section style="height: 15px;"></section>
+    
+    <div class="row form-con" style="" class="">
+    <!-- Main Content -->
+
+        <div class="row">
+            <div class="col-sm-4">   
+                    <div class="card mb-3 mt-3">
+                        <div class="card-header">
+                            <label class="label-blue"><i class="bi bi-info-circle-fill"></i> Incident Details</label>
+                            <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+                        </div>
+                        <div class="card-body">
+    
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="weather" id="weather" class="form-select form-select-sm">
+                                            <option value="">Choose Weather</option>
+                                            <option value="Sun" {% ifequal pasig_incident_detail.Weather 'Sun' %} selected {% endifequal %}>Sun</option>
+                                            <option value="Fair" {% ifequal pasig_incident_detail.Weather 'Fair' %} selected {% endifequal %}>Fair</option>
+                                            <option value="Light Rain" {% ifequal pasig_incident_detail.Weather 'Light Rain' %} selected {% endifequal %}>Light Rain</option>
+                                            <option value="Rainy" {% ifequal pasig_incident_detail.Weather 'Rainy' %} selected {% endifequal %}>Rainy</option>
+                                            <option value="Windy" {% ifequal pasig_incident_detail.Weather 'Windy' %} selected {% endifequal %}>Windy</option>
+                                        </select>  
+                                        <label for="" style="font-size: small;" class="text-muted">Weather</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="collision_type" id="collision_type" class="form-select form-select-sm">
+                                            <option value=""></option>
+                                            <option value="">Choose Collision Type</option>
+                                            <option value="Angle Collision" {% ifequal pasig_incident_detail.Incident_Type 'Angle Collision' %} selected {% endifequal %}>Angle Collision</option>
+                                            <option value="Bumped From Behind" {% ifequal pasig_incident_detail.Incident_Type 'Bumped From Behind' %} selected {% endifequal %}>Bumped From Behind</option>
+                                            <option value="Clash" {% ifequal pasig_incident_detail.Incident_Type 'Clash' %} selected {% endifequal %}>Clash</option>
+                                            <option value="Damage to Property" {% ifequal pasig_incident_detail.Incident_Type 'Damage to Property' %} selected {% endifequal %}>Damage to Property</option>
+                                            <option value="Head On" {% ifequal pasig_incident_detail.Incident_Type 'Head On' %} selected {% endifequal %}>Head On</option>
+                                            <option value="Hit and Run" {% ifequal pasig_incident_detail.Incident_Type 'Hit and Run' %} selected {% endifequal %}>Hit and Run</option>
+                                            <option value="Hit Animals" {% ifequal pasig_incident_detail.Incident_Type 'Hit Animals' %} selected {% endifequal %}>Hit Animals</option>
+                                            <option value="Hit Object On Road" {% ifequal pasig_incident_detail.Incident_Type 'Hit Object On Road' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Object On Road</option>
+                                            <option value="Hit Object Off Road" {% ifequal pasig_incident_detail.Incident_Type 'Hit Object Off Road' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Object Off Road</option>
+                                            <option value="Hit Parked Vehicle" {% ifequal pasig_incident_detail.Incident_Type 'Hit Parked Vehicle' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Parked Vehicle</option>
+                                            <option value="Hit Pedestrian" {% ifequal pasig_incident_detail.Incident_Type 'Hit Pedestrian' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit Pedestrian</option>
+                                            <option value="Hit While Parked" {% ifequal pasig_incident_detail.Incident_Type 'Hit While Parked' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Hit While Parked</option>
+                                            <option value="Multi Vehicle" {% ifequal pasig_incident_detail.Incident_Type 'Multi Vehicle' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Multi Vehicle</option>
+                                            <option value="Rear End" {% ifequal pasig_incident_detail.Incident_Type 'Rear End' %} selected {% endifequal %} {% ifequal pasig_incident_detail.Incident_Type 'Sun' %} selected {% endifequal %}>Rear End</option>
+                                            <option value="Self Accident" {% ifequal pasig_incident_detail.Incident_Type 'Self Accident' %} selected {% endifequal %}>Self Accident</option>
+                                            <option value="Impact" {% ifequal pasig_incident_detail.Incident_Type 'Impact' %} selected {% endifequal %}>Impact</option>
+                                            <option value="Sideswiped" {% ifequal pasig_incident_detail.Incident_Type 'Sideswiped' %} selected {% endifequal %}>Sideswiped</option>
+                                            <option value="Side Impact" {% ifequal pasig_incident_detail.Incident_Type 'Side Impact' %} selected {% endifequal %}>Side Impact</option>
+                                            <option value="Right Angle" {% ifequal pasig_incident_detail.Incident_Type 'Right Angle' %} selected {% endifequal %}>Right Angle</option>
+                                            <option value="Others" {% ifequal pasig_incident_detail.Incident_Type 'Others' %} selected {% endifequal %}>Others</option>
+                                        
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Collision Type</label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="surface_type" id="surface_type" class="form-select form-select-sm">
+                                            <option value=""></option>
+                                            <option value="Asphalt" {% ifequal pasig_incident_detail.Surface_Type 'Asphalt' %} selected {% endifequal %}>Asphalt</option>
+                                            <option value="Concrete" {% ifequal pasig_incident_detail.Surface_Type 'Concrete' %} selected {% endifequal %}>Concrete</option>
+                                            <option value="Soil" {% ifequal pasig_incident_detail.Surface_Type 'Soil' %} selected {% endifequal %}>Soil</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Surface Type</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="surface_condition" class="form-select form-select-sm">
+                                            <option value=""></option>
+                                            <option value="Dry" {% ifequal pasig_incident_detail.Surface_Condition 'Dry' %} selected {% endifequal %}>Dry</option>
+                                            <option value="Wet" {% ifequal pasig_incident_detail.Surface_Condition 'Wet' %} selected {% endifequal %}>Wet</option>
+                                            <option value="Sand" {% ifequal pasig_incident_detail.Surface_Condition 'Sand' %} selected {% endifequal %}>Sand</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Surface Condition</label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name="road_character" id="road_character" class="form-select form-select-sm">
+                                            <option value=""></option>
+                                            <option value="Straight Flat" {% ifequal pasig_incident_detail.Road_Character 'Straight Flat' %} selected {% endifequal %}>Straight/Flat</option>
+                                            <option value="Straight Incline" {% ifequal pasig_incident_detail.Road_Character 'Straight Incline' %} selected {% endifequal %}>Straight/Incline</option>
+                                            <option value="Curve" {% ifequal pasig_incident_detail.Road_Character 'Curve' %} selected {% endifequal %}>Curve</option>
+                                            <option value="Curve Incline" {% ifequal pasig_incident_detail.Road_Character 'Curve Incline' %} selected {% endifequal %}>Curve/Incline</option>
+                                            <option value="Upwards" {% ifequal pasig_incident_detail.Road_Character 'Upwards' %} selected {% endifequal %}>Upwards</option>
+                                            <option value="Downwards" {% ifequal pasig_incident_detail.Road_Character 'Downwards' %} selected {% endifequal %}>Downwards</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Road Character</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select name ="case_status" class="form-select form-select-sm">
+                                            <option value=""></option>
+                                            <option value="Solved" {% ifequal pasig_incident_detail.Case_Status 'Solved' %} selected {% endifequal %}>Solved</option>
+                                            <option value="Unsolved" {% ifequal pasig_incident_detail.Case_Status 'Unsolved' %} selected {% endifequal %}>Unsolved</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Case Status</label>
+                                    </div>
+                                </div>
+                            </div>
+    
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select class="form-select form-select-sm" id="hit-and-run" name="hit-and-run">
+                                            <option value=""></option>
+                                            <option value="Yes" {% ifequal pasig_incident_detail.Hit_and_Run 'Yes' %} selected {% endifequal %}>Yes</option>
+                                            <option value="No" {% ifequal pasig_incident_detail.Hit_and_Run 'No' %} selected {% endifequal %}>No</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Hit and Run</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select class="form-select form-select-sm" id="road-repair" name="road-repair">
+                                            <option value=""></option>
+                                            <option value="Yes" {% ifequal pasig_incident_detail.Road_Repair 'Yes' %} selected {% endifequal %}>Yes</option>
+                                            <option value="No" {% ifequal pasig_incident_detail.Road_Repair 'No' %} selected {% endifequal %}>No</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Road Repair</label>
+                                    </div>
+                                </div>
+                            </div>
+    
+    
+                                <div class="col-12" style="background-color: none; display: grid !important;">
+                                    <div class="btn-group" role="">
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck2" value="Physical Injury" autocomplete="off" {% if 'Physical Injury' in pasig_incident_detail.CrimeOffense %} checked {% endif %}>
+                                        <label class="btn btn-outline-primary chk_offense" for="btncheck2">Physical Injury</label>
+                                        
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck3" value="Self Accident" autocomplete="off" {% if 'Self Accident' in pasig_incident_detail.CrimeOffense %} checked {% endif %}>
+                                        <label class="btn btn-outline-primary chk_offense" for="btncheck3">Self Accident</label>
+                                    </div>
         
-        dt_committed =  document.getElementById('DateCommitted').value;
-        dt = new Date(dt_committed);
-        day = dt.getDay();
+                                </div> 
 
-        year = new Date(dt.getFullYear(),0,1);
-        numberOfDays = Math.floor((dt - year) / (24 * 60 * 60 * 1000));
-        week = Math.ceil(( dt.getDay() + 1 + numberOfDays) / 7);
-         
-
-        document.getElementById('week').value = week;
-
-        if(day==0){
-          document.getElementById('day_of_the_week').value = "Sunday";
-        }
-
-        if(day==1){
-          document.getElementById('day_of_the_week').value = "Monday";
-        }
-
-        if(day==2){
-          document.getElementById('day_of_the_week').value = "Tuesday";
-        }
-
-        if(day==3){
-          document.getElementById('day_of_the_week').value = "Wednesday";
-        }
-
-        if(day==4){
-          document.getElementById('day_of_the_week').value = "Thursday";
-        }
-
-        if(day==5){
-          document.getElementById('day_of_the_week').value = "Friday";
-        }
+                                <div class="col-12 " style="background-color: none; display: grid !important;">
+                                    <div class="btn-group" role="" class="group-offense">
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck4" value="Homicide" autocomplete="off" {% if 'Homicide' in pasig_incident_detail.CrimeOffense %} checked {% endif %}>
+                                        <label class="btn btn-outline-primary chk_offense" for="btncheck4">Homicide</label>
         
-        if(day==6){
-          document.getElementById('day_of_the_week').value = "Saturday";
-        }
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck1" value="Damage to Property" autocomplete="off" {% if 'Damage to Property' in pasig_incident_detail.CrimeOffense %} checked {% endif %}>
+                                        <label class="btn btn-outline-primary chk_offense" for="btncheck1">Damage to Property</label>
+                                    </div> 
+                                    <input type="text" id="display_offense" name ="display_offense" class="form-field" hidden>
+                                </div>
+                                
+                        
+                        </div>
+                    </div> <!-- inicdent's detail card closing-->
+                    <div class="card">
+                        <div class="card-header">
+                            <label class="label-blue"><i class="bi bi-geo-alt-fill"></i> Location Details</label>
+                            <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+                        </div>
+
+                        <div class="card-body">
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <input type="text" name="city" value="{{pasig_incident_detail.City}}" placeholder ="Pasig City"class="form-control form-control-sm" readonly>
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" id="district" name="district" value="{{pasig_incident_detail.District_id}}" placeholder="District"class="form-control form-control-sm" readonly required>
+                                </div>
+                            </div>
+                        
+                            <div class="form-floating mb-3">
+                                <select name="barangay" id="barangay" class="form-select form-select-sm" onchange="selectdistrict(event)" required>
+                                    <option value=""></option>
+                                    {% for brgy in brgy_list %}
+                                        <option value="{{brgy.id}}" {% ifequal pasig_incident_detail.Barangay_id_id brgy.id %} selected {% endifequal %}>{{brgy.Barangay}} </option>
+                                    {% endfor %}
+                                </select>                            
+                                <label for="" style="font-size: small;" class="text-muted">Barangay</label>
+                            </div>
+
+                            <script>
+                                 $(document).ready(function(){
+                                        brgy = document.getElementById('barangay').value;
+                            
+                                        if (brgy == "19"||brgy == "20"||brgy == "21"||brgy == "22"||brgy == "23"
+                                        ||brgy == "24"||brgy == "26"||brgy == "25"){
+                                            document.getElementById('district').value="2";
+                                        }
+
+                                        else{
+                                            document.getElementById('district').value="1";
+                                        }
+                                });
+
+                                function selectdistrict(e){
+                        
+                                    if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
+                                    ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
+                                    var barangay = document.getElementById('district').value="2";
+                                    }
+                                    else{
+                                    var barangay = document.getElementById('district').value="1";
+                                    }
+                                }
+                            </script>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" id="place_committed" name="place_committed" class="form-control form-select-sm" value="{{pasig_incident_detail.Address}}" required>                         
+                                <label for="" style="font-size: small;" class="text-muted">Place Committed</label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <input type="text" name="along" value="{{pasig_incident_detail.Along}}" placeholder="Along" class="form-control form-control-sm">
+                                </div>
+                                <div class="col-6">
+                                    <input type="text" id="corner" name="corner" value="{{pasig_incident_detail.Corner}}" placeholder="Corner" class="form-control form-control-sm">
+                                </div>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="date" id="DateCommitted" name="DateCommitted" class="form-control-sm form-control" value="{{pasig_incident_detail.Date|date:'Y-m-d'}}"required>                                        
+                                        <label for="" style="font-size: small;" class="text-muted">Date Committed</label>
+                                        <input type="text" name="day_of_the_week" id="day_of_the_week" class="form-field" hidden>
+                                        <input type="text" name="week" id="week" class="form-field"  hidden>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="time" id="incidentTime" name="incidentTime" class="form-control-sm form-control text-nowrap overflow-hidden"value="{{ pasig_incident_detail.Time|date:'H:i' }}" required>                                        
+                                        <label for="" style="font-size: small;" class="text-muted">Time Committed</label>
+                                    </div>
+                                </div>
+                                <input type="text" id="lat" name="lat" placeholder="Latitude" value="{{ pasig_incident_detail.Latitude }}" class="form-control form-control-sm" hidden>
+                                <input type="text" id="lon" name="lon" placeholder="Corner" value="{{ pasig_incident_detail.Longitude }}" class="form-control form-control-sm" hidden>
+
+                              
+
+                            </div>
+                            
+                        </div> <!--card body-->
+                    </div> <!--card  of loc details-->
+            </div> <!--left side cards-->
+
+                <!--middle side cards -->
+                <div class="col-sm-4 mt-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <label class="label-blue"><i class="bi bi-person-fill"></i> Suspect's Details</label>
+                            <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+                        </div>
+                        <div class="card-body">
+                            
+                            <div class="form-floating mb-3">
+                                <input type="text" name="sus_fname" id="sus_fname" class="form-control form-control-sm" placeholder="First Name" value="{{pasig_incident_detail.Suspect_Fname}}">
+                                <label for="" style="font-size: small;" class="text-muted">First Name</label>
+                            </div>
+                        
+                        
+                            <div class="form-floating mb-3">
+                                <input type="text" name="sus_lname" id="sus_lname" class="form-control form-control-sm" placeholder="Last Name" value="{{pasig_incident_detail.Suspect_Lname}}">
+                                <label for="" style="font-size: small;" class="text-muted">Last Name</label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select class="form-select form-select-sm" id="s_sex" name="s_sex">
+                                            <option value=""></option>
+                                            <option value="Male"{% ifequal pasig_incident_detail.Suspect_Sex 'Male' %} selected {% endifequal %}>Male</option>
+                                            <option value="Female"{% ifequal pasig_incident_detail.Suspect_Sex 'Female' %} selected {% endifequal %}>Female</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Sex</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="number" name="sus_age" class="form-control form-control-sm" placeholder="Age" value="{{pasig_incident_detail.Suspect_Age}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Age</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <input type="text" name="sus_add" class="form-control form-control-sm" placeholder="Address" value="{{pasig_incident_detail.Suspect_Address}}">
+                                <label for="" style="font-size:small;" class="text-muted">Address</label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select name="sus_civil_status" id="sus_civil_status" class="form-select form-select-sm" placeholder="Civil Status">
+                                            <option value=""></option>
+                                            <option value="Single" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Single' %} selected {% endifequal %}>Single</option>
+                                            <option value="Married" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Married' %} selected {% endifequal %}>Married</option>
+                                            <option value="Widowed" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Widowed' %} selected {% endifequal %}>Widowed</option>
+                                            <option value="Separated" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
+                                            <option value="Divorced" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select class="form-select form-select-sm" id="sus_type" name="sus_type">
+                                            <option value=""></option>
+                                            <option value="Driver" {% ifequal pasig_incident_detail.Suspect_Type 'Driver' %} selected {% endifequal %}>Driver</option>
+                                            <option value="Passenger" {% ifequal pasig_incident_detail.Suspect_Type 'Passenger' %} selected {% endifequal %}>Passenger</option>
+                                            <option value="Pedestrian" {% ifequal pasig_incident_detail.Suspect_Type 'Driver' %} selected {% endifequal %}>Pedestrian</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Suspect Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="sus_drl" class="form-control form-control-sm" value="{{pasig_incident_detail.Suspect_Drl_No}}">
+                                <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="text" name="sus_vehicle" class="form-control" value="{{pasig_incident_detail.Suspect_Vehicle}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select class="form-select-sm form-select" name="sus_vehicle_body_type">
+                                            <option value=""></option>
+                                            <option value="Armored Car" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Armored Car' %} selected {% endifequal %}>Armored Car</option>
+                                            <option value="Alto" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Alto' %} selected {% endifequal %}>Alto</option>
+                                            <option value="Bicycle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Bicycle' %} selected {% endifequal %}>Bicycle</option>
+                                            <option value="Private Bus" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Bus' %} selected {% endifequal %}>Bus</option>
+                                            <option value="PUB - Public Utility Bus" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUB - Public Utility Bus' %} selected {% endifequal %}>PUB - Public Utility Bus</option>    
+                                            <option value="Cab Chassis" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Cab Chassis' %} selected {% endifequal %}>Cab Chassis </option>
+                                            <option value="Coupe" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Coupe' %} selected {% endifequal %}>Coupe</option>
+                                            <option value="Electric Bike" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Electric Bike' %} selected {% endifequal %}>Electric Bike</option>
+                                            <option value="Jitney"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Jitney' %} selected {% endifequal %}>Jitney</option>
+                                            <option value="Hatchback"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Hatchback' %} selected {% endifequal %}>Hatchback</option>
+                                            <option value="Motorcycle"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Motorcycle' %} selected {% endifequal %}>Motorcycle</option>
+                                            <option value="MTC/MC"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'MTC/MC' %} selected {% endifequal %}>MTC/MC</option>
+                                            <option value="Object"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Object' %} selected {% endifequal %}>Object</option>
+                                            <option value="Pedicab"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Pedicab' %} selected {% endifequal %}>Pedicab</option>
+                                            <option value="PUJ - Public Utility Jeep" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUJ - Public Utility Jeep' %} selected {% endifequal %}>PUJ - Public Utility Jeep</option>
+                                            <option value="PUV- Public Utility Vehicle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUV- Public Utility Vehicle' %} selected {% endifequal %}>PUV- Public Utility Vehicle</option>
+                                            <option value="Sedan" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Sedan' %} selected {% endifequal %}>Sedan</option>
+                                            <option value="S-CUV" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'S-CUV' %} selected {% endifequal %}>S-CUV</option>
+                                            <option value="Shuttle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Shuttle' %} selected {% endifequal %}>Shuttle</option>
+                                            <option value="SUV" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'SUV' %} selected {% endifequal %}>SUV</option>
+                                            <option value="Tricycle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Tricycle' %} selected {% endifequal %}>Tricycle</option>
+                                            <option value="Train" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Train' %} selected {% endifequal %}>Train</option>
+                                            <option value="Truck" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Truck' %} selected {% endifequal %}>Truck</option>
+                                            <option value="Trailer" {% ifequal 'Trailer' pasig_incident_detail.Suspect_Vehicle_Body_Type %} selected {% endifequal %}>Trailer</option>
+                                            <option value="Unidentified" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
+                                            <option value="Pick-Up" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Pick-Up' %} selected {% endifequal %}>Pick-Up</option>
+                                            <option value="Minivan" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Minivan' %} selected {% endifequal %}>Minivan</option>
+                                            <option value="Van" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Van' %} selected {% endifequal %}>Van</option>
+                                            <option value="Wagon" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Wagon' %} selected {% endifequal %}>Wagon</option>
+                                            <option value="Cart" {% ifequal 'Cart' pasig_incident_detail.Suspect_Vehicle_Body_Type %} selected {% endifequal %}>Cart</option>
+                                            <option value="Shuttle" {% ifequal 'Shuttle' pasig_incident_detail.Suspect_Vehicle_Body_Type %} selected {% endifequal %}>Shuttle</option>
+                                            <option value="Modern Jeepney" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Modern Jeepney' %} selected {% endifequal %}>Modern Jeepney</option>
+                                            <option value="Others" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Others' %} selected {% endifequal %}>Others</option>
+                                        
+                                            </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Body Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating">
+                                <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-smd" value="{{pasig_incident_detail.Suspect_Reg_Owner}}">
+                                <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
+                            </div>
+
+                            <div class="form-check mb-3 ms-1 mt-1">
+                                <input class="form-check-input" type="checkbox" value="" id="same_as_sus_name">
+                                <label class="form-check-label text-muted" for="same_as_sus_name" for="" style="font-size: small;">
+                                  Same as suspect's name
+                                </label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="date" name="sus_drl_exp" class="form-control form-control-sm" value="{{pasig_incident_detail.Suspect_Drl_Exp|date:'Y-m-d'}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="text" name="sus_plate_no" class="form-control form-control-smd" value="{{pasig_incident_detail.Suspect_Plate_No}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Plate Number</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <select name="sus_severity" class="form-select form-select-sm">
+                                    <option value=""></option>
+                                    <option value="Unharmed" {% ifequal pasig_incident_detail.Suspect_Severity 'Unharmed' %} selected {% endifequal %}>Unharmed</option>
+                                    <option value="Harmed"{% ifequal pasig_incident_detail.Suspect_Severity 'Harmed' %} selected {% endifequal %}>Harmed</option>
+                                    <option value="Injured"{% ifequal pasig_incident_detail.Suspect_Severity 'Injured' %} selected {% endifequal %}>Injured</option>
+                                    <option value="Self Accident"{% ifequal pasig_incident_detail.Suspect_Severity 'Self Accident' %} selected {% endifequal %}>Self Accident</option>
+                                    <option value="Deceased"{% ifequal pasig_incident_detail.Suspect_Severity 'Deceased' %} selected {% endifequal %}>Deceased</option>
+                                    <option value="Identified"{% ifequal pasig_incident_detail.Suspect_Severity 'Identified' %} selected {% endifequal %}>Identified</option>
+                                    <option value="Not Interested to Report"{% ifequal pasig_incident_detail.Suspect_Severity 'Not Interested to Report' %} selected {% endifequal %}>Not Interested to Report</option>
+                                    <option value="Arrested"{% ifequal pasig_incident_detail.Suspect_Severity 'Arrested' %} selected {% endifequal %}>Arrested</option>
+                                    <option value="Escaped"{% ifequal pasig_incident_detail.Suspect_Severity 'Escaped' %} selected {% endifequal %}>Escaped</option>
+                                    <option value="Unidentified"{% ifequal pasig_incident_detail.Suspect_Severity 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
+                                    </select>
+                                <label for="" style="font-size: small;" class="text-muted">Severity Status</label>
+                            </div>
+
+                            
+
+                            <div class="form-floating mb-3">
+                                
+                                <label for="" style="font-size: small;" class="text-muted"></label>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--middle cards -->
+
+                <!--right side cards -->
+                <div class="col-sm-4 mt-3">
+                    <div class="card">
+                        <div class="card-header">
+                            <label class="label-blue"><i class="bi bi-person-fill"></i> Victim's Details</label>
+                            <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+                        </div>
+                        <div class="card-body">
+                                               
+                            <div class="form-floating mb-3">
+                                <input type="text" name="vic_fname" id="vic_fname" class="form-control form-control-sm" placeholder="First Name" value="{{pasig_incident_detail.Victim_Fname}}">
+                                <label for="" style="font-size: small;" class="text-muted">First Name</label>
+                            </div>
+                        
+                            <div class="form-floating mb-3">
+                                <input type="text" name="vic_lname" id="vic_lname" class="form-control form-control-sm" placeholder="Last Name" value="{{pasig_incident_detail.Victim_Lname}}">
+                                <label for="" style="font-size: small;" class="text-muted">Last Name</label>
+                            </div>
+                                
+                            <div class="row g-2 mb-3">
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <select class="form-select form-select-sm" id="v_sex" name="v_sex">
+                                            <option value=""></option>
+                                            <option value="Male" {% ifequal pasig_incident_detail.Victim_Sex 'Male' %} selected {% endifequal %}>Male</option>
+                                            <option value="Female" {% ifequal pasig_incident_detail.Victim_Sex 'Female' %} selected {% endifequal %}>Female</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Sex</label>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="form-floating">
+                                        <input type="number" name="vic_age" class="form-control form-control-sm" placeholder="Age" value="{{pasig_incident_detail.Victim_Age}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Age</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <input type="text" name="vic_add" class="form-control form-control-sm" placeholder="Address" value="{{pasig_incident_detail.Address}}">
+                                <label for="" style="font-size:small;" class="text-muted">Address</label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select name="vic_civil_status" id="vic_civil_status" class="form-select form-select-sm" placeholder="Civil Status">
+                                            <option value=""></option>
+                                            <option value="Single" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Single' %} selected {% endifequal %}>Single</option>
+                                            <option value="Married" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Married' %} selected {% endifequal %}>Married</option>
+                                            <option value="Widowed" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Widowed' %} selected {% endifequal %}>Widowed</option>
+                                            <option value="Separated" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
+                                            <option value="Divorced" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select class="form-select form-select-sm" id="vic_type" name="vic_type">
+                                            <option value=""></option>
+                                            <option value="Driver" {% ifequal pasig_incident_detail.Victim_Type 'Driver' %} selected {% endifequal %}>Driver</option>
+                                            <option value="Passenger" {% ifequal pasig_incident_detail.Victim_Type 'Passenger' %} selected {% endifequal %}>Passenger</option>
+                                            <option value="Pedestrian" {% ifequal pasig_incident_detail.Victim_Type 'Pedestrian' %} selected {% endifequal %}>Pedestrian</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Victim Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="vic_drl" class="form-control form-control-sm" value="{{pasig_incident_detail.Victim_Drl_No}}">
+                                <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="text" name="vic_vehicle" class="form-control" value="{{pasig_incident_detail.Victim_Vehicle}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <select class="form-select-sm form-select" name="vic_vehicle_body_type">
+                                            <option value=""></option>
+                                            <option value="Armored Car" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Armored Car' %} selected {% endifequal %}>Armored Car</option>
+                                            <option value="Alto" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Alto' %} selected {% endifequal %}>Alto</option>
+                                            <option value="Bicycle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Bicycle' %} selected {% endifequal %}>Bicycle</option>
+                                            <option value="Private Bus" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Bus' %} selected {% endifequal %}>Bus</option>
+                                            <option value="PUB - Public Utility Bus" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUB - Public Utility Bus' %} selected {% endifequal %}>PUB - Public Utility Bus</option>    
+                                            <option value="Cab Chassis" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Cab Chassis' %} selected {% endifequal %}>Cab Chassis </option>
+                                            <option value="Coupe" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Coupe' %} selected {% endifequal %}>Coupe</option>
+                                            <option value="Electric Bike" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Electric Bike' %} selected {% endifequal %}>Electric Bike</option>
+                                            <option value="Jitney"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Jitney' %} selected {% endifequal %}>Jitney</option>
+                                            <option value="Hatchback"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Hatchback' %} selected {% endifequal %}>Hatchback</option>
+                                            <option value="Motorcycle"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Motorcycle' %} selected {% endifequal %}>Motorcycle</option>
+                                            <option value="MTC/MC"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'MTC/MC' %} selected {% endifequal %}>MTC/MC</option>
+                                            <option value="Object"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Object' %} selected {% endifequal %}>Object</option>
+                                            <option value="Pedicab"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Pedicab' %} selected {% endifequal %}>Pedicab</option>
+                                            <option value="PUJ - Public Utility Jeep" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUJ - Public Utility Jeep' %} selected {% endifequal %}>PUJ - Public Utility Jeep</option>
+                                            <option value="PUV- Public Utility Vehicle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUV- Public Utility Vehicle' %} selected {% endifequal %}>PUV- Public Utility Vehicle</option>
+                                            <option value="Sedan" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Sedan' %} selected {% endifequal %}>Sedan</option>
+                                            <option value="S-CUV" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'S-CUV' %} selected {% endifequal %}>S-CUV</option>
+                                            <option value="Shuttle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Shuttle' %} selected {% endifequal %}>Shuttle</option>
+                                            <option value="SUV" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'SUV' %} selected {% endifequal %}>SUV</option>
+                                            <option value="Tricycle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Tricycle' %} selected {% endifequal %}>Tricycle</option>
+                                            <option value="Train" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Train' %} selected {% endifequal %}>Train</option>
+                                            <option value="Truck" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Truck' %} selected {% endifequal %}>Truck</option>
+                                            <option value="Trailer" {% ifequal 'Trailer' pasig_incident_detail.Victim_Vehicle_Body_Type %} selected {% endifequal %}>Trailer</option>
+                                            <option value="Unidentified" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
+                                            <option value="Pick-Up" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Pick-Up' %} selected {% endifequal %}>Pick-Up</option>
+                                            <option value="Minivan" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Minivan' %} selected {% endifequal %}>Minivan</option>
+                                            <option value="Van" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Van' %} selected {% endifequal %}>Van</option>
+                                            <option value="Wagon" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Wagon' %} selected {% endifequal %}>Wagon</option>
+                                            <option value="Cart" {% ifequal 'Cart' pasig_incident_detail.Victim_Vehicle_Body_Type %} selected {% endifequal %}>Cart</option>
+                                            <option value="Shuttle" {% ifequal 'Shuttle' pasig_incident_detail.Victim_Vehicle_Body_Type %} selected {% endifequal %}>Shuttle</option>
+                                            <option value="Modern Jeepney" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Modern Jeepney' %} selected {% endifequal %}>Modern Jeepney</option>
+                                            <option value="Others" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Others' %} selected {% endifequal %}>Others</option>
+                                        </select>
+                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Body Type</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-floating">
+                                <input type="text" name="vic_reg_owner"id="vic_reg_owner" class="form-control form-control-smd" value="{{pasig_incident_detail.Victim_Reg_Owner}}">
+                                <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
+                            </div>
+
+                            <div class="form-check mb-3 ms-1 mt-1">
+                                <input class="form-check-input" type="checkbox" value="" id="same_as_vic_name">
+                                <label class="form-check-label text-muted" for="same_as_vic_name" for="" style="font-size: small;">
+                                  Same as victim's name
+                                </label>
+                            </div>
+
+                            <div class="row g-2 mb-3">
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="date" name="vic_drl_exp" class="form-control form-control-sm" value="{{pasig_incident_detail.Victim_Drl_Exp|date:'Y-m-d'}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
+                                    </div>
+                                </div>
+                                <div class="col-md">
+                                    <div class="form-floating">
+                                        <input type="text" name="vic_plate_no" class="form-control form-control-smd" value="{{pasig_incident_detail.Victim_Plate_No}}">
+                                        <label for="" style="font-size: small;" class="text-muted">Plate Number</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-floating mb-3">
+                                <select name="vic_severity" class="form-select form-select-sm">
+                                    <option value=""></option>
+                                    <option value="Unharmed" {% ifequal pasig_incident_detail.Victim_Severity 'Unharmed' %} selected {% endifequal %}>Unharmed</option>
+                                    <option value="Harmed"{% ifequal pasig_incident_detail.Victim_Severity 'Harmed' %} selected {% endifequal %}>Harmed</option>
+                                    <option value="Injured"{% ifequal pasig_incident_detail.Victim_Severity 'Injured' %} selected {% endifequal %}>Injured</option>
+                                    <option value="Self Accident"{% ifequal pasig_incident_detail.Victim_Severity 'Self Accident' %} selected {% endifequal %}>Self Accident</option>
+                                    <option value="Deceased"{% ifequal pasig_incident_detail.Victim_Severity 'Deceased' %} selected {% endifequal %}>Deceased</option>
+                                    <option value="Identified"{% ifequal pasig_incident_detail.Victim_Severity 'Identified' %} selected {% endifequal %}>Identified</option>
+                                    <option value="Not Interested to Report"{% ifequal pasig_incident_detail.Victim_Severity 'Not Interested to Report' %} selected {% endifequal %}>Not Interested to Report</option>
+                                    <option value="Arrested"{% ifequal pasig_incident_detail.Victim_Severity 'Arrested' %} selected {% endifequal %}>Arrested</option>
+                                    <option value="Escaped"{% ifequal pasig_incident_detail.Victim_Severity 'Escaped' %} selected {% endifequal %}>Escaped</option>
+                                    <option value="Unidentified"{% ifequal pasig_incident_detail.Victim_Severity 'Unidentified' %} selected {% endifequal %}>Unidentified</option>
+                                    </select>
+                                <label for="" style="font-size: small;" class="text-muted">Severity Status</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> <!--right side cards -->
+
+        </div> <!-- row -->
+
+        <!--bottom-->
+        <div class="row mt-3">
+            <div class="col-sm-4">
+               <!-- Open Map -->
+               <div class="card mb-3" style="height: 350px;">
+                <div class="mapouter" style="height: 100%;">
+                    <div id="map" style="width:100%;height:100%;"></div>
+                </div>
+             </div>
+            <!-- Close Map-->
+            </div>
+
+            <div class="col-sm-8">
+                <div class="card mb-3" style="height:auto; min-height: 280px;">
+                    <div class="card-header">
+                        <label class="label-blue">  <i class="bi bi-pencil-square"></i> &nbsp;Narrative</label>
+                        <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+                    </div>
+                    <div class="card-body">
+                        <input type="text" class="form-control" value="{{pasig_incident_detail.Narrative}}" name="narrative" placeholder="" style="height: 200px; width: 100%;">
+                            
+                    
+                    </div>
+                </div>
+
       
-      });
+                <center>
+                <div class="card mb-3 mt-4" style="width: 60%;">
+                    <button type="submit" class="btn btn-success p-2" >
+                        Edit Incident Details 
+                    </button>
+                </div>
+            </center>
+            </div>
+        </div> <!--botton row closing-->
 
-    });
-    </script>
-  
+    </form>
+</div>
+
+  <!-- Script -->
     <script>
-      var today = new Date();
-      var time = today.getHours() + ":" + today.getMinutes();
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
         document.getElementById("currentTime").value = time;
     </script>
 
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+    </script>
+
+    <!--For Forms-->
+    <script type="text/javascript">
+        $(document).ready(function(){
+    
+          $('.nav_btn').click(function(){
+            $('.mobile_nav_items').toggleClass('active');
+          });
+    
+          $('#same_as_sus_name').click(function(){
+            sus_fname = document.getElementById('sus_fname').value;
+            sus_lname = document.getElementById('sus_lname').value; 
+            document.getElementById('sus_reg_owner').value=sus_fname + " " +sus_lname; 
+
+          });
+
+          $('#same_as_vic_name').click(function(){
+            vic_fname = document.getElementById('vic_fname').value;
+            vic_lname = document.getElementById('vic_lname').value; 
+            document.getElementById('vic_reg_owner').value=vic_fname + " " +vic_lname; 
+
+          });
+
+          $('.chk_offense_input').change(function(){
+            var selected_offense = new Array();
+            var selchk = document.getElementsByClassName("chk_offense_input")
+    
+            for (var i=0; i<selchk.length; i++) {
+              if(selchk[i].checked){
+                selected_offense.push(selchk[i].value);
+              }
+            }
+
+            if(selected_offense.length>0){
+              document.getElementById('display_offense').value=selected_offense; 
+            }
+
+            else {
+                document.getElementById('display_offense').value=null;
+            }
+
+          });
+    
+          $('#DateCommitted').change(function(){
+            
+            dt_committed =  document.getElementById('DateCommitted').value;
+            dt = new Date(dt_committed);
+            day = dt.getDay();
+    
+            year = new Date(dt.getFullYear(),0,1);
+            numberOfDays = Math.floor((dt - year) / (24 * 60 * 60 * 1000));
+            week = Math.ceil(( dt.getDay() + 1 + numberOfDays) / 7);
+             
+    
+            document.getElementById('week').value = week;
+    
+            if(day==0){
+              document.getElementById('day_of_the_week').value = "Sunday";
+            }
+    
+            if(day==1){
+              document.getElementById('day_of_the_week').value = "Monday";
+            }
+    
+            if(day==2){
+              document.getElementById('day_of_the_week').value = "Tuesday";
+            }
+    
+            if(day==3){
+              document.getElementById('day_of_the_week').value = "Wednesday";
+            }
+    
+            if(day==4){
+              document.getElementById('day_of_the_week').value = "Thursday";
+            }
+    
+            if(day==5){
+              document.getElementById('day_of_the_week').value = "Friday";
+            }
+            
+            if(day==6){
+              document.getElementById('day_of_the_week').value = "Saturday";
+            }
+          
+          });
+
+          
+    
+    
+        });
+    
+      </script>
+      
+    <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script>
+
+    
+{% endblock %}
+  {% block jquery %} 
   
- 
-{% endblock %}
-
-{% block jquery %} 
-
-{% endblock %}
-
-
-
-
+  {% endblock %}

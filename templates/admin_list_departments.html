@@ -1,0 +1,150 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} List of Departments {% endblock %}
+
+{% block content %}
+
+{% if searched %}
+      <p class="alert alert-primary">
+          <strong>Showing the results for "{{ searched }}"</strong>
+      </p>
+{% endif %}
+
+{% if messages %}
+     {% for message in messages %}
+     <p class="alert alert-primary">
+      <strong>{{message}}</strong>
+     </p>
+     {% endfor %}
+{% endif %}
+
+<div class="container">
+  <!-- Upper Section (Maayos spacing hehe) -->
+  <section style="height: 25px;"></section>
+
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="float: right;">
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="location.href = '/memberlist'">
+    <label class="btn btn-outline-primary" for="btnradio1">Members</label>
+    
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  onclick="location.href = '/departmentlist'" checked> 
+    <label class="btn btn-outline-primary" for="btnradio2">Departments</label>
+  </div>
+    
+  <div class="section">
+    <!-- Title section -->
+    <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Departments&nbsp;
+      <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_dept' %}'">
+        + Add departments
+      </button>
+    </h3>
+
+  <section style="height: 35px;"></section>
+
+    <!-- Search bar -->
+      <form class="d-flex" method="POST">
+        {% csrf_token %}
+        <input class="form-control me-2" name="searched" type="search" placeholder="Search a department" style="font-family: 'Roboto', sans-serif">
+        <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+      </form>
+
+  </div>
+
+  <section style="height: 20px;"></section>
+
+  <!-- Main Content -->
+
+<div class="table-responsive-sm ">
+  <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+    <thead>
+        <tr class="table-primary">
+          <th scope="col">No.</th>
+          <th scope="col">Department name</th>
+          <th scope="col" style="text-align:center;">Operations</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for department in departments %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ department.Dept_Dept }}</td>
+      <td style="text-align: center;">
+        <!-- Dropdown menu-->
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
+            More
+          </button>
+          <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
+            <li><a class="dropdown-item" href="{% url 'edit_dept' department.id %}">Edit department</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="{% url 'delete_dept' department.id %}" style="color: #d9534f" onclick="return confirm('Are you sure you want to delete this department?');">Delete department</a></li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+    <tr>
+      {% empty %} 
+      <td colspan="2" style="text-align: center;">Nothing to show! No records have been added yet.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <ul class="pagination">
+    {% if departments.has_previous %}
+
+        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+        <li class="page-item"><a class="page-link" href="?page= {{departments.previous_page_number}}">Previous</a></li>
+    {% endif %}
+
+    {% if departments.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{departments.next_page_number }}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{departments.paginator.num_pages}}">Last</a></li>
+    {% endif %}
+    </ul>
+  </div>
+
+  <section style="height: 50px;"></section>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav_btn').click(function(){
+        $('.mobile_nav_items').toggleClass('active');
+      });
+
+      $('#submit_form').click(function(){
+        var selected_offense = new Array();
+        var chk_tbl_offense = document.getElementById("tbl_offense");
+        var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+        for (var i=0; i<selchk.length; i++) {
+          if(selchk[i].checked){
+            selected_offense.push(selchk[i].value);
+          }
+        }
+        if(selected_offense.length>0){
+          console.log(selected_offense);
+         // document.getElementById('display_offense').innerHTML=selected_offense;
+         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+
+          alert(selected_offense);
+          alert(tryyyy)
+        }
+
+        var incident_date = document.getElementById("DateCommitted").value;
+        alert(incident_date);
+
+        });
+
+    });
+    </script>
+  
+    <script>
+      var today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+{% endblock %}
+
+{% block jquery %} 
+
+{% endblock %}

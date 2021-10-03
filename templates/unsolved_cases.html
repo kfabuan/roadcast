@@ -31,23 +31,24 @@
         </li>
 
         <li>
-        <form action="">
+        {% comment %} <form action="">
             <div class="input-group input-group-sm ">
                 <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
                 <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
             </div>
-        </form>
+        </form> {% endcomment %}
 </li>
       </ul>
       <div class="tab-content row" id="pills-tabContent">
           
         <!-- tab for level 1-->
+        
         <div class="tab-pane fade show active" id="pills-level-1" role="tabpanel" aria-labelledby="pills-level-1-tab">
             <table class="table table-hover " style="background-color: white;">
                 <thead>
                   <tr>
                     <th scope="col">#</th>
-                    <th scope="col">Blotter Number</th>
+                    <th scope="col">Incident Type</th>
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
@@ -58,35 +59,135 @@
 
                 <tbody>
                     
-                    {% for incident in pasig_incident_list %}
+                    {% for unsolveds in level1 %}
                     <tr>
                       <td> {{ forloop.counter }}</td>
-                      <td>137403-202003-T-2020-03-0590</td>
-                      <td>Jheus Brian Lavilla</td>
 
-                      <td>{{ incident.62 }}</td>
-                      <td>{{ incident.5 }} - {{ incident.6 }}</td>
-                      <td>{{ incident.12 }}</td>
-                      <td> <a class="btn btn-ou tline-primary btn-sm" href="" role="button">View &nbsp; <i class="bi bi-eye-fill"></i></a></td>
+                      <td>{{ unsolveds.Incident_Type }}</td>
+                      <td>{{ unsolveds.Investigator_id.Members_District}}</td>
+                      <td>{{ unsolveds.Barangay_id }}</td>
+                      <td>{{ unsolveds.Date }} - {{ unsolveds.Time }}</td>
+                      
+                      
+                      <td>{{ unsolveds.Case_Status }}</td>
+                      <td> <a class="btn btn-outline-primary btn-sm" href={% url 'incident_detail_view' unsolveds.id %} role="button">View &nbsp; <i class="bi bi-eye-fill"></i></a></td>
+                      {% endfor %}
+                      
                     </tr>
-                    {% endfor %}
+                    
                 </tbody>
               </table>
         </div>
 
         <!-- tab for level 2 -->
         <div class="tab-pane fade" id="pills-level-2" role="tabpanel" aria-labelledby="pills-level-2-tab">
-           2
+           <table class="table table-hover " style="background-color: white;">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Incident Type</th>
+                    <th scope="col">Statistician/Encoder</th>
+                    <th scope="col">Barangay Committed</th>
+                    <th scope="col">Date and Time Added</th>
+                    <th scope="col">Case Status</th>
+                    <th scope="col">Operation</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                    
+                    {% for unsolved in level2 %}
+                    <tr>
+                      <td> {{ forloop.counter }}</td>
+
+                      <td>{{ unsolved.Incident_Type }}</td>
+                      <td>{{ unsolved.Investigator_id}}</td>
+                      <td>{{ unsolved.Barangay_id }}</td>
+                      <td>{{ unsolved.Date }} - {{ unsolved.Time }}</td>
+                      
+                      
+                      <td>{{ unsolved.Case_Status }}</td>
+                      <td> <a class="btn btn-outline-primary btn-sm" href={% url 'incident_detail_view' unsolved.id %} role="button">View &nbsp; <i class="bi bi-eye-fill"></i></a></td>
+                      {% endfor %}
+                      
+                    </tr>
+                    
+                </tbody>
+              </table>
         </div>
 
         <!-- tab for level 3 -->
         <div class="tab-pane fade" id="pills-level-3" role="tabpanel" aria-labelledby="pills-level-3-tab">
-           3
+           <table class="table table-hover " style="background-color: white;">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Incident Type</th>
+                    <th scope="col">Statistician/Encoder</th>
+                    <th scope="col">Barangay Committed</th>
+                    <th scope="col">Date and Time Added</th>
+                    <th scope="col">Case Status</th>
+                    <th scope="col">Operation</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                    
+                    {% for unsolved_3 in level3 %}
+                    <tr>
+                      <td> {{ forloop.counter }}</td>
+
+                      <td>{{ unsolved_3.Incident_Type }}</td>
+                      <td>{{ unsolved_3.Investigator_id.Members_District}}</td>
+                      <td>{{ unsolved_3.Barangay_id }}</td>
+                      <td>{{ unsolved_3.Date }} - {{ unsolved_3.Time }}</td>
+                      
+                      
+                      <td>{{ unsolved_3.Case_Status }}</td>
+                      <td> <a class="btn btn-outline-primary btn-sm" href={% url 'incident_detail_view' unsolved_3.id %} role="button">View &nbsp; <i class="bi bi-eye-fill"></i></a></td>
+                      {% endfor %}
+                      
+                    </tr>
+                    
+                </tbody>
+              </table>
         </div>
 
         <!-- tab for level 4 -->
         <div class="tab-pane fade" id="pills-level-4" role="tabpanel" aria-labelledby="pills-level-4-tab">
-            4 hello
+            <table class="table table-hover " style="background-color: white;">
+                <thead>
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Incident Type</th>
+                    <th scope="col">Statistician/Encoder</th>
+                    <th scope="col">Barangay Committed</th>
+                    <th scope="col">Date and Time Added</th>
+                    <th scope="col">Case Status</th>
+                    <th scope="col">Operation</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                    
+                    {% for archive in archive %}
+                    <tr>
+                      <td> {{ forloop.counter }}</td>
+
+                      <td>{{ archive.Incident_Type }}</td>
+                      <td>{{ archive.Investigator_id.Members_District}}</td>
+                      <td>{{ archive.Barangay_id }}</td>
+                      <td>{{ archive.Date }} - {{ archive.Time }}</td>
+                      
+                      
+                      <td>{{ archive.Case_Status }}</td>
+                      <td> <a class="btn btn-outline-primary btn-sm" href={% url 'incident_detail_view' archive.id %} role="button">View &nbsp; <i class="bi bi-eye-fill"></i></a></td>
+                      {% endfor %}
+                      
+                    </tr>
+                    
+                </tbody>
+              </table>
         </div>
 
       </div>

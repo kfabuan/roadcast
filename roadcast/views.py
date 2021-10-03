@@ -1,5 +1,6 @@
+import json
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
-from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response
+from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response, Tbl_add_departments, Tbl_position
 from requests.api import request
 # from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
@@ -16,52 +17,33 @@ import csv, io
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required, permission_required
 from datetime import datetime, timedelta, date
-from django.utils import timezone
+# from django.utils import timezone, simplejson
 
 from django.db.models import Avg
 import datetime
 from urllib.parse import urlencode
 import requests
 from django.core.paginator import Paginator 
+from django.http.response import HttpResponse
+
+from django.template.loader import render_to_string
+
+from django.contrib.sites.shortcuts import get_current_site
+from django.template.loader import render_to_string
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnicodeDecodeError
+from .utils import generate_token , send_html_mail
+from django.core.mail import EmailMessage
+from django.conf import settings
 
 today = date.today()
 
 def index(request): #landing/home
     return render (request, 'landing.html')
 
-def login_f8(request):
-    try:
-        #landing ng login / wala pang process
-        if request.method =="GET":
-            return render(request, 'login.html') 
-
-        #start na if may process / nag login na si user
-
-        gen_pub_list = tbl_genpub_users.objects.all()
-        authorized_list = Tbl_add_members.objects.all()
-
-        username = request.POST.get('username')
-        password = request.POST.get('password')
-
-        count_gen = tbl_genpub_users.filter(gen_username=username, gen_pass= password)
-        count_authorized = Tbl_add_members.filter(Members_Email=username, Members_Password = password)
-
-        if count_gen and count_authorized is not None:
-            context = {
-                    'count_gen':count_gen,
-                    'count_authorized': count_authorized,
-                }
-
-            return render (request, 'login.html', context)
-
-    
-    #ito if may error sa process ni user :)
-    except:
-        messages.success(request, ("Oops! Please check your email or password"))
-        return render(request, 'login.html')
 
 
-
+#Jew
 def login(request):
     if request.method == 'POST':
         # try:
@@ -93,42 +75,48 @@ def login(request):
 
                 request.session['authorized_id'] = authorized_session.id
 
-                return HttpResponseRedirect('/dashboard')
+                return HttpResponseRedirect(reverse('dashboard')) 
             else: 
-                messages.success(request, ("Oops! Please check your email or password"))
+                messages.success(request, ("Oop! Please check your email or password."))
                 return render(request, 'login.html')
-            
         if b:
             if (public.gen_username == username) and (public.gen_pass == password):
-                submit = tbl_audit(username = username, password = password)
-                submit.save()
+                if public.is_email_verified:    
+                    if public.is_verified:
+                        submit = tbl_audit(username = username, password = password)
+                        submit.save()
 
-                public_session = tbl_genpub_users.objects.get(gen_username=username, gen_pass= password)
-
-                request.session['public_id'] = public_session.id
-
-                return HttpResponseRedirect('/dashboard')
+                        public_session = tbl_genpub_users.objects.get(gen_username=username, gen_pass= password)
+                        request.session['public_id'] = public_session.id
+                        return HttpResponseRedirect(reverse('dashboard'))
+                    
+                    elif not public.is_verified:
+                        messages.success(request, ("Oops! Please wait for the admin to approve your account."))
+                        return render(request, 'login.html')
+                elif not public.is_email_verified:
+                        messages.success(request, ("Oops! Please check your email to verify your account."))
+                        return render(request, 'login.html')
             else: 
-               messages.success(request, ("Oops! Please check your email or password"))
+               messages.success(request, ("Oops! Please check your email or password."))
                return render(request, 'login.html')
     return render (request, 'login.html') 
 
 def deletesession(request):
-
     try:
         if request.session['public_id']:
             del request.session['public_id']
-    
     except:
         pass
-
     try:
         if request.session['authorized_id']:
             del request.session['authorized_id']
     except:
         pass
-
     return HttpResponseRedirect('/login')
+
+
+
+
 
 def about_us(request):
     return render (request, 'about_us.html') 
@@ -139,35 +127,36 @@ def contact_us(request):
 def contact_no(request):
     return render (request, 'contact_no.html') 
 
+def success(request):
+    return render(request, 'submit_success.html')
+
 def sign_up (request):
     return render (request, 'sign_up.html')
     
 def duplicate_gen (request): #Jew
-    if request.method=="POST": #save data when button is clicked
-        gen_surname = request.POST["gen_surname"].title()
-        gen_fname = request.POST["gen_fname"].title()
-        gen_sex = request.POST["gen_sex"]
-        gen_bday = request.POST["gen_bday"]
-        gen_region = request.POST["gen_region"].title()
-        gen_province = request.POST["gen_province"].title()
-        gen_city = request.POST["gen_city"].title()
-        gen_barangay = request.POST["gen_barangay"].title()
-        gen_contact_no = request.POST["gen_contact_no"]
-        gen_username = request.POST["gen_username"]
-        gen_pass = request.POST["gen_pass"]
-        gen_valid_id = request.POST["gen_valid_id"]
-        gen_upload_id = request.POST["gen_valid_id"]
+    if request.method   =="POST": #save data when button is clicked
+        gen_surname     = request.POST["gen_surname"].title()
+        gen_fname       = request.POST["gen_fname"].title()
+        gen_sex         = request.POST["gen_sex"]
+        gen_bday        = request.POST["gen_bday"]
+        gen_region      = request.POST["gen_region"].title()
+        gen_province    = request.POST["gen_province"].title()
+        gen_city        = request.POST["gen_city"].title()
+        gen_barangay    = request.POST["gen_barangay"].title()
+        gen_contact_no  = request.POST["gen_contact_no"]
+        gen_username    = request.POST["gen_username"]
+        gen_pass        = request.POST["gen_pass"]
+        gen_valid_id    = request.POST["gen_valid_id"]
+        gen_upload_id   = request.POST["gen_valid_id"]
+        gen_profile     = 'Public/default.jpg'
 
         #save image to database 
         if request.FILES.get("gen_upload_id"):
-            gen_upload_id = request.FILES.get('gen_upload_id')
+            gen_upload_id   = request.FILES.get('gen_upload_id')
         else:
-            gen_upload_id = 'Public/default.png'
+            gen_upload_id   = 'Public/default.png'
 
-        # members = tbl_genpub_users.objects.get(gen_username = gen_username)
-        # print(members)
         if tbl_genpub_users.objects.filter(gen_username = gen_username):
-            # context = {'error': 'error yern, alreay reg'}
             messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
             return render(request, 'sign_up.html')  
 
@@ -176,41 +165,147 @@ def duplicate_gen (request): #Jew
             return HttpResponseRedirect('signup')
 
         submit = tbl_genpub_users.objects.create(gen_surname = gen_surname,gen_fname = gen_fname, gen_sex = gen_sex, gen_bday=gen_bday, gen_region = gen_region, gen_province = gen_province, gen_city = gen_city,
-        gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id )#,gen_upload_id=gen_upload_id
+        gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id, gen_profile = gen_profile )#,gen_upload_id=gen_upload_id
         submit.save()
-        # return redirect(request, 'login.html')  
+
+        send_action_email(submit,request)
+        messages.success(request, ("We've already sent you an email. Please check your email to verify your account."))
         return HttpResponseRedirect(reverse('login'))
-        # return HttpResponseRedirect('/incidents/view')
     return render(request, 'sign_up.html')
-            
-def success(request):
-    return render(request, 'submit_success.html')
+
+#Email verification - Jew
+def send_action_email(public, request):
+    current_site = get_current_site(request)
+    email_subject = ' Activate your Account'
+    email_body = render_to_string('email verification.html',{
+        'public': public,
+        'domain': current_site,
+        'uid': urlsafe_base64_encode(force_bytes(public.pk)),
+        'token': generate_token.make_token(public)
+    })
+
+    send_html_mail('Roadcast: Verify your Email Address', email_body,{public.gen_username},settings.EMAIL_HOST_USER)
+
+    email = EmailMessage(subject=email_subject, body=email_body,
+        from_email=settings.EMAIL_FROM_PUBLIC,
+        to={public.gen_username}
+    )
+    # email.send()
+
+def activate_user(request,uidb64,token): #Jew
+    try:
+        uid =force_text(urlsafe_base64_decode(uidb64))
+        public= tbl_genpub_users.objects.get(pk=uid)
+
+    except Exception as e:
+        public = None
+
+    if public and generate_token.check_token(public,token): #if this is true valid siya
+        public.is_email_verified = True
+        public.save()
+
+        messages.success(request, ("Your email is now verified. Please wait for the admin's approval of your registration."))
+        return HttpResponseRedirect(reverse('login'))
+    return render (request,'activation_twice.html', {'public':public})
+
 
 def sign_up_validation (request): #Jew
     list = tbl_genpub_users.objects.all()
     context={'list':list}
     return render (request, 'sign_up_validation.html',context)
 
-def admin_audit_trail(request):
-    return render (request, 'admin_audit_trail.html')  
+# def admin_audit_trail(request):
+#     return render (request, 'admin_audit_trail.html')  
 
-def admin_list_members(request):
-    return render (request, 'admin_list_members.html') 
+# def admin_list_members(request):
+#     return render (request, 'admin_list_members.html') 
 
-def admin_departments(request):
-    return render (request, 'admin_list_members.html')   
+# def admin_departments(request):
+#     return render (request, 'admin_list_members.html')   
 
-def admin_investigators(request):
-    return render (request, 'admin_investigators.html')  
+# def admin_investigators(request):
+#     return render (request, 'admin_investigators.html')  
 
-def admin_view_investigators(request):
-    return render (request, 'admin_view_investigators.html')  
+# def admin_view_investigators(request):
+#     return render (request, 'admin_view_investigators.html')  
 
 
 def is_valid(param):
     return param != "" and param is not None
 def is_not_valid(param):
     return param == "" and param is None
+
+#Jew - Sign up Validation / makikita na dito yung details
+def notif_sign_up_validation (request, signup_id):
+    unread_sign_up_validation = tbl_genpub_users.objects.get(id=signup_id) #kukunin id ng mga nag signup
+    unread_sign_up_validation.Read_Status = "Yes" 
+    unread_sign_up_validation.save()
+    
+    #for gen pub reports inbox
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    data = {
+        'detail': unread_sign_up_validation,
+        'unread_notif_count_signup': unread_notif_count_signup,
+        'sign_up_validation':sign_up_validation
+
+    }
+    return render (request, 'notif_sign_up_validation.html', data)
+
+#Jew
+def genpub_verified(request, pk=None):
+    if pk !=None:
+        genpub = tbl_genpub_users.objects.get(id=pk)
+        genpub.is_verified = True
+        genpub.save()
+    unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    data = {
+        'detail': unread_sign_up_validation,
+        'unread_notif_count_signup': unread_notif_count_signup,
+        'sign_up_validation':sign_up_validation
+
+    }
+    messages.success(request, " is verified")
+    return render (request, 'notif_sign_up_validation.html', data)
+
+#Jew
+def genpub_rejected(request,pk):
+    unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
+
+    if pk !=None:
+        genpub = tbl_genpub_users.objects.get(id=pk)
+        genpub.is_verified = False
+        genpub.save()
+        messages.success(request, " is rejected")
+
+        
+    unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    data = {
+        'detail': unread_sign_up_validation,
+        'unread_notif_count_signup': unread_notif_count_signup,
+        'sign_up_validation':sign_up_validation
+
+    }
+    return render (request, 'notif_sign_up_validation.html', data)
+
+
+
+
+
+
+
+
+
+
+
+
 
 def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
@@ -245,40 +340,49 @@ class DashboardView (View):
    
     def get(self, request, *args, **kwargs):
 
+        #FOR CHARTS FORECASTING
+        datelist= Tbl_forecast.objects.all().order_by("-Date")[:14]
+        datelist_values= Tbl_forecast.objects.all().order_by("-Date")[:14][6:]
+        datelist_values_forecast= Tbl_forecast.objects.all().order_by("-Date")[:7]
+        reversed_datelist=reversed(datelist)
+        reversed_datelist_values=reversed(datelist_values)
+        reversed_datelist_values_forecast=reversed(datelist_values_forecast)
+
+        #END OF FOR CHARTS FORECASTING
+
         # FOR FORECASTING
         # today = date.today() 
 
-        # earliest_day= Tbl_pasig_incidents.objects.all().order_by("Date")[0].Date
+        earliest_day= Tbl_pasig_incidents.objects.exclude(Q(Date__isnull=True)).order_by("Date")[0].Date
         
-        # a_week= date(2019,1,1)
-        # test=date.today() + timedelta(7)
+        a_week= date(2019,1,1)
+        test=date.today() + timedelta(7)
 
-        # end_date=date(2019,2,28)+ timedelta(7)
-        # forecast_query_set= Tbl_pasig_incidents.objects.filter(Date__gte=earliest_day, Date__lte=a_week).count()
-        # limit = Tbl_forecast.objects.all().count()
-        # start_i=0
-        # end_i=7
-        # i_day=6
-        # count=0
-        # for insert_date in daterange(earliest_day,test):
+        end_date=date(2019,2,28)+ timedelta(7)
+        limit = Tbl_forecast.objects.all().count()
+        start_i=0
+        end_i=7
+        i_day=6
+        count=0
+        for insert_date in daterange(earliest_day,test):
 
-        #     date_exist=Tbl_forecast.objects.filter(Date=insert_date,).exists()
+            date_exist=Tbl_forecast.objects.filter(Date=insert_date,).exists()
 
 
-        #     if not date_exist:
-        #         incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
-        #         create= Tbl_forecast.objects.create(Date=insert_date.strftime("%Y-%m-%d"), Incidents=incident_count, Averages=0)
-        #     else:
-        #         incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
-        #         create= Tbl_forecast.objects.filter(Date=insert_date.strftime("%Y-%m-%d")).update(Incidents=incident_count)
+            if not date_exist:
+                incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
+                create= Tbl_forecast.objects.create(Date=insert_date.strftime("%Y-%m-%d"), Incidents=incident_count, Averages=0)
+            else:
+                incident_count=Tbl_pasig_incidents.objects.filter(Date=insert_date).count()
+                create= Tbl_forecast.objects.filter(Date=insert_date.strftime("%Y-%m-%d")).update(Incidents=incident_count)
 
-        #         while i_day < limit:
-        #             count_avg=Tbl_forecast.objects.all().order_by('Date')[start_i:end_i].aggregate(Avg('Incidents'))
-        #             nth=Tbl_forecast.objects.all().order_by('Date')[i_day]
-        #             insert=Tbl_forecast.objects.filter(Date=nth.Date).update(Averages=count_avg['Incidents__avg'])
-        #             start_i += 1
-        #             end_i += 1
-        #             i_day += 1 #may mali dito di gumagana yung iteration
+                while i_day < limit:
+                    count_avg=Tbl_forecast.objects.all().order_by('Date')[start_i:end_i].aggregate(Avg('Incidents'))
+                    nth=Tbl_forecast.objects.all().order_by('Date')[i_day]
+                    insert=Tbl_forecast.objects.filter(Date=nth.Date).update(Averages=count_avg['Incidents__avg'])
+                    start_i += 1
+                    end_i += 1
+                    i_day += 1 #may mali dito di gumagana yung iteration
         # END OF FORECASTING
 
         all_total = Tbl_pasig_incidents.objects.count()
@@ -295,6 +399,10 @@ class DashboardView (View):
         all_authorized = Tbl_add_members.objects.all()  
         pub = tbl_genpub_users.objects.all()  
         
+
+        # FOR MULTIPLE MARKERS IN DASHBOARD
+        markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True))
+
         data = {
             "all_total": all_total,
             "this_week": this_week,
@@ -302,11 +410,13 @@ class DashboardView (View):
             "yesterday_total":yesterday_total,
             "this_day": this_day,
          
-
-          
-
             "all": all_authorized,
-            "pub": pub,  
+            "pub": pub,
+
+            'datelist':reversed_datelist,
+            'markers_json':markers,
+            "reversed_datelist_values":reversed_datelist_values,
+            "reversed_datelist_values_forecast":reversed_datelist_values_forecast  
             
         }
         
@@ -485,24 +595,38 @@ def view_incidents (request):
             incident_model = paginator.get_page(page_number) #ito ren, except sa var name
 
              
+            authorized = Tbl_add_members.objects.all()
+            pub        = tbl_genpub_users.objects.all()
+
+            context = {
+                "all": authorized,
+                "pub": pub,
+                "pasig_incident_list":incident_model,
+                "unread_count": unread_count
+            }
             # context = {'user_list': user_list}
             # return render (request, 'users/index.html', context)
-            return render (request, 'encoder_view_incidents.html',
-                                    {"pasig_incident_list":incident_model,"unread_count": unread_count
-                                    })
+            return render (request, 'encoder_view_incidents.html',context)
 
 
 
 def add_incident (request): #add using CSV
+    
     try:
         #Landing page ng add incident page / wala pang process
         if request.method == "GET":
             member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
             investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
             brgy_list = Tbl_barangay.objects.all()
+
+            authorized = Tbl_add_members.objects.all()
+            pub        = tbl_genpub_users.objects.all()
+
             context = {
                 'brgy_list': brgy_list, 
-                'investigators_list': investigators_list
+                'investigators_list': investigators_list,
+                "all": authorized,
+                "pub": pub,
             }
             return render(request, 'add_incident.html', context)
 
@@ -602,6 +726,7 @@ def add_incident (request): #add using CSV
         return render (request, 'add_incident.html', context)
 
 def processAddIncident(request): #Add using forms
+
 
     city = "Pasig"
     unit_station = "Pasig City Police Station"
@@ -785,6 +910,9 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
         pasig_incident_detail.read_status = "Yes"
         pasig_incident_detail.save()
 
+        authorized = Tbl_add_members.objects.all()
+        pub        = tbl_genpub_users.objects.all()
+
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
 
@@ -793,10 +921,12 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
          'all_incidents': all_incidents,
          'investigators_list': investigators_list,
          'substation_list': substation_list,
-         'brgy_list':brgy_list })
+         'brgy_list':brgy_list,
+         "all": authorized,
+         "pub": pub,})
 
 def processEditIncident(request, incident_id):
-    incident_detail = get_object_or_404(Tbl_pasig_incidents, id=incident_id)
+    incident_detail =  Tbl_pasig_incidents.objects.get(id=incident_id)
 
     try:
         crime_offense = request.POST.get('display_offense') 
@@ -813,6 +943,8 @@ def processEditIncident(request, incident_id):
         address = request.POST.get('place_committed')
         along = request.POST.get('along')
         corner = request.POST.get('corner')
+        latitude = request.POST.get('lat')
+        longitude = request.POST.get('lon')
    
         surface_cond = request.POST.get('surface_condition')
         surface_type = request.POST.get('surface_type')
@@ -834,6 +966,10 @@ def processEditIncident(request, incident_id):
         sus_reg_owner = request.POST.get('sus_reg_owner')
         sus_drl = request.POST.get('sus_drl')
         sus_drl_exp = request.POST.get('sus_drl_exp')
+        if sus_drl_exp:
+            sus_drl_exp = request.POST.get('sus_drl_exp')
+        else:
+            sus_drl_exp = None
 
         vic_type = request.POST.get('vic_type')
         vic_fname = request.POST.get('vic_fname')
@@ -849,7 +985,10 @@ def processEditIncident(request, incident_id):
         vic_reg_owner = request.POST.get('vic_reg_owner')
         vic_drl = request.POST.get('vic_drl')
         vic_drl_exp = request.POST.get('vic_drl_exp')
-
+        if vic_drl_exp:
+            vic_drl_exp = request.POST.get('sus_drl_exp')
+        else:
+            vic_drl_exp = None
     
         narrative = request.POST.get('narrative')
         # added_by = "Encoder"
@@ -875,7 +1014,9 @@ def processEditIncident(request, incident_id):
         incident.Barangay_id_id = barangay 
         incident.Address = address 
         incident.Along_Avenue = along 
-        incident.Corner_Avenue = corner 
+        incident.Corner_Avenue = corner
+        incident.Latitude       = latitude
+        incident.Longitude     = longitude
 
         incident.Surface_Condition=surface_cond 
         incident.Surface_Type=surface_type
@@ -919,64 +1060,174 @@ def processEditIncident(request, incident_id):
         # incident.added_by=added_by
 
         incident.save()  #may changes or wala sa profile pic, save parin
+        messages.success(request, "Your data has been saved!")
         return HttpResponseRedirect(reverse('incident_detail_view', args=(incident_id, ))) #name ng url yung gen_incident_detail_view NOT MISMONG URL
 
 
 def report_summary (request):
     return render (request, 'report_summary.html')
 
+class JSONResponseMixin:
+  """
+  A mixin that can be used to render a JSON response.
+  """
+  def render_to_json_response(self, context, **response_kwargs):
+
+    return JsonResponse(self.get_data(context), **response_kwargs)
+
+  def get_data(self, context):
+
+    return context
+
 # def report_monthly (request):
-class Report_monthly (View):
-    def get(self, request, *args, **kwargs):
+def monthly_report (request):
 
-        #1. BARANGAY STATS - monthly
-        d1_brgy_distinct = []
-        d1_brgy_distinct_count = []
+        months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
-        d2_brgy_distinct = []
-        d2_brgy_distinct_count = []
+        if request.method == 'POST':
+            select_year = request.POST.get('select_year') 
+            select_month = int(request.POST.get('select_month'))
+
+            month = select_month
+            year = select_year
+
+            month_label = months[select_month-1]
+            year_label = select_year
+           
+        else:
+            month = today.month
+            year = today.year
+            month_label = months[today.month-1]
+            year_label = today.year
+
+        #District 1
+        d1_brgys = []
+        d1_brgys_count = []
+        d1_brgys_total = 0
+        d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
+
+        for brgy in d1_brgys_list:
+            d1_brgys.append(brgy)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,
+                                        Date__year__lte=year,
+                                        Date__month__gte=month,
+                                        Date__month__lte=month,
+                                        Barangay_id__Barangay = brgy).count()        
+            d1_brgys_count.append(x)
+            d1_brgys_total += x
+
+        #District 2
+        d2_brgys = []
+        d2_brgys_count = []
+        d2_brgys_total = 0
+        d2_brgys_list = Tbl_barangay.objects.filter(District_id = '2').values_list('Barangay', flat=True)
         
-        d1_brgys = Tbl_barangay.objects.filter(Q(District_id='1')).values_list('Barangay', flat=True).distinct()
-        d2_brgys = Tbl_barangay.objects.filter(Q(District_id='2')).values_list('Barangay', flat=True).distinct()
+        for brgy in d2_brgys_list:
+            d2_brgys.append(brgy)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,
+                                        Date__year__lte=year,
+                                        Date__month__gte=month,
+                                        Date__month__lte=month,
+                                        Barangay_id__Barangay = brgy).count()                          
+            d2_brgys_count.append(x)
+            d2_brgys_total += x
 
-        d1_total = 0
-        d2_total = 0
-
-        for dis in d1_brgys:
-            d1_brgy_distinct.append(dis)
-            x = Tbl_barangay.objects.filter(Barangay=dis).count()
-            d1_brgy_distinct_count.append(x)
-            d1_total = d1_total + int(x)
-
-
-        for dis in d2_brgys:
-            d2_brgy_distinct.append(dis)
-            x = Tbl_barangay.objects.filter(Barangay=dis).count()
-            d2_brgy_distinct_count.append(x)
-            d2_total = d2_total + int(x)
-
-        #2. CRIME/OFFENSE STATS - monthly
+        #CRIME/OFFENSE
         offense = []
-        offenses = Tbl_pasig_incidents.objects.filter(~Q(CrimeOffense='')).values_list('CrimeOffense', flat=True)
+        offenses = Tbl_pasig_incidents.objects.exclude(Q(CrimeOffense__isnull=True) | Q(CrimeOffense__exact='')).values_list('CrimeOffense', flat=True)
 
         str = ",".join(offenses)
         offense = str.split(",")
 
-        distinct_offense= set(offense)
+        offenses_distict = set(offense)
+        offense_labels = []
         offense_count = []
         offense_total = 0
 
-        for dis in distinct_offense:
-            x = offense.count(dis)
+        for off in offenses_distict:
+            if off == '':
+                off = 'none'
+            offense_labels.append(off)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,
+                                        Date__year__lte=year,
+                                        Date__month__gte=month,
+                                        Date__month__lte=month,
+                                        CrimeOffense = off).exclude(CrimeOffense__isnull=True).count()   
             offense_count.append(x)
-            offense_total = offense_total + int(x)
-            
-        #3. VEHICLE STATS - monthly
+            offense_total += x
+
+        #Sex 
+        suspect_sex = []
+        victim_sex = []
+
+        suspect_sex = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,Date__year__lte=year,
+                                        Date__month__gte=month,Date__month__lte=month,).values_list('Suspect_Sex', flat=True)
+
+        victim_sex = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,Date__year__lte=year,
+                                        Date__month__gte=month,Date__month__lte=month,).values_list('Victim_Sex', flat=True)
+
+        sex_combined = list(chain(suspect_sex, victim_sex))
+        sex_distinct = set(sex_combined)
+        sex_labels = []
+        sex_count = []
+
+        for sex in sex_distinct:
+            if sex == '':
+                sex = 'blank'
+                sex_labels.append(sex)
+                x = sex_combined.count('')
+                sex_count.append(x)
+
+            else:
+                sex_labels.append(sex)
+                x = sex_combined.count(sex)
+                sex_count.append(x)
+        
+        #Time Plot
+        # time(hour = 0, minute = 0, second = 0)
+        am12 = datetime.time(0, 0, 0)
+        am2  = datetime.time(2, 0, 0)
+        am4  = datetime.time(4, 0, 0)
+        am6  = datetime.time(6, 0, 0)
+        am8  = datetime.time(8, 0, 0)
+        am10 = datetime.time(10, 0, 0)
+        pm12 = datetime.time(12, 0, 0)
+        pm2 = datetime.time(14, 0, 0)
+        pm4 = datetime.time(16, 0, 0)
+        pm6 = datetime.time(18, 0, 0)
+        pm8 = datetime.time(20, 0, 0)
+        pm10 = datetime.time(22, 0, 0)
+
+        
+        am12_am2 = Tbl_pasig_incidents.objects.filter(Time__gte = am12, Time__lt = am2, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        am2_am4 = Tbl_pasig_incidents.objects.filter(Time__gte = am2, Time__lt = am4, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        am4_am6 = Tbl_pasig_incidents.objects.filter(Time__gte = am4, Time__lt = am6, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        am8_am10 = Tbl_pasig_incidents.objects.filter(Time__gte = am8, Time__lt = am10, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        am10_pm12 = Tbl_pasig_incidents.objects.filter(Time__gte = am10, Time__lt = pm12, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        pm12_pm2 = Tbl_pasig_incidents.objects.filter(Time__gte = pm12, Time__lt = pm2, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        pm2_pm4 = Tbl_pasig_incidents.objects.filter(Time__gte = pm2, Time__lt = pm4, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        pm4_pm6 = Tbl_pasig_incidents.objects.filter(Time__gte = pm4, Time__lt = pm6, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        pm6_pm8 = Tbl_pasig_incidents.objects.filter(Time__gte = pm6, Time__lt = pm8, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        pm8_pm10 = Tbl_pasig_incidents.objects.filter(Time__gte = pm8, Time__lt = pm10, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+        pm10_am12 = Tbl_pasig_incidents.objects.filter(Time__gte = pm10, Time__lt = am12, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+
+        time_count = [am12_am2, am2_am4,am4_am6, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
+
+        # VEHICLE STATS - monthly
         suspect_vehicles = []
         victim_vehicles = []
 
-        suspect_vehicles = Tbl_pasig_incidents.objects.values_list('Suspect_Vehicle_Body_Type', flat=True)
-        victim_vehicles = Tbl_pasig_incidents.objects.values_list('Victim_Vehicle_Body_Type', flat=True)
+        suspect_vehicles = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,Date__year__lte=year,
+                                        Date__month__gte=month,Date__month__lte=month,).values_list('Suspect_Vehicle_Body_Type', flat=True)
+        victim_vehicles = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,Date__year__lte=year,
+                                        Date__month__gte=month,Date__month__lte=month,).values_list('Victim_Vehicle_Body_Type', flat=True)
 
         vehicles_combined = list(chain(suspect_vehicles, victim_vehicles))
         distinct_vehicles = set(vehicles_combined)
@@ -992,10 +1243,18 @@ class Report_monthly (View):
         suspect_age_m = []
         victim_age_m = []
 
-        suspect_age_m = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Male') & ~Q(Suspect_Age ='')).values_list('Suspect_Age', flat=True)
-        victim_age_m = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Male')& ~Q(Victim_Age ='')).values_list('Victim_Age', flat=True)
+        suspect_age_m = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Male') & Q(Suspect_Age__isnull=False), 
+                                    Date__year__gte=year,Date__year__lte=year,
+                                    Date__month__gte=month,Date__month__lte=month,).values_list('Suspect_Age', flat=True)
+
+        victim_age_m = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Male')& Q(Victim_Age__isnull=False),
+                                    Date__year__gte=year,Date__year__lte=year,
+                                    Date__month__gte=month,Date__month__lte=month,).values_list('Victim_Age', flat=True)
 
         age_combined_m = list(chain(suspect_age_m, victim_age_m))
+        if not age_combined_m:
+            age_combined_m.append(-1)
+
         age_total_m = child_m = adolescent_m = adult_m = geriatric_m = 0
 
 
@@ -1011,27 +1270,33 @@ class Report_monthly (View):
             x = age_combined_m.count(adult)
             adult_m = adult_m + x
         
-        for geriatric in range(60, 120):
+        for geriatric in range(60, max(age_combined_m)+1):
             x = age_combined_m.count(geriatric)
             geriatric_m = geriatric_m + x
 
         age_total_m = child_m + adolescent_m + adult_m + geriatric_m 
-        male_max = max(age_combined_m)
 
         #5. AGE STATS - FEMALE - monthly
         suspect_age_f = []
         victim_age_f = []
 
-        suspect_age_f = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Female')).values_list('Suspect_Age', flat=True)
-        victim_age_f = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Female')).values_list('Victim_Age', flat=True)
+        suspect_age_f = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Female') & Q(Suspect_Age__isnull=False), 
+                                    Date__year__gte=year,Date__year__lte=year,
+                                    Date__month__gte=month,Date__month__lte=month).values_list('Suspect_Age', flat=True)
+        victim_age_f = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Female') & Q(Victim_Age__isnull=False), 
+                                    Date__year__gte=year,Date__year__lte=year,
+                                    Date__month__gte=month,Date__month__lte=month).values_list('Victim_Age', flat=True)
 
         age_combined_f = list(chain(suspect_age_f, victim_age_f))
+        if not age_combined_f:
+            age_combined_f.append(-1)
+
         age_total_f = child_f = adolescent_f = adult_f = geriatric_f = 0
 
 
         for child in range(0, 13):
             x = age_combined_f.count(child)
-            child_f = child_f + x
+            child_f += x
 
         for adolescent in range(13, 20):
             x = age_combined_f.count(adolescent)
@@ -1041,130 +1306,135 @@ class Report_monthly (View):
             x = age_combined_f.count(adult)
             adult_f = adult_f + x
         
-        for geriatric in range(60, 120):
+        for geriatric in range(60, max(age_combined_f)+1):
             x = age_combined_f.count(geriatric)
             geriatric_f = geriatric_f + x
 
         age_total_f = child_f + adolescent_f + adult_f + geriatric_f 
-
-        data = {   
-            "district1_data": zip(d1_brgy_distinct, d1_brgy_distinct_count),
-            "district2_data": zip(d2_brgy_distinct, d2_brgy_distinct_count),
-            "d1_total": d1_total,
-            "d2_total": d2_total,
-
-            "offense_data": zip(distinct_offense, offense_count),
-            "offense_total": offense_total,
-
-            "vehicle_data": zip(distinct_vehicles, vehicle_count),
-            "vehicle_total": vehicle_total,
-
-            "age_combined_m": age_combined_m,
-            "age_total_m": age_total_m,
-            "child_m": child_m,
-            "adolescent_m": adolescent_m,
-            "adult_m": adult_m,
-            "geriatric_m": geriatric_m,
-
-            "age_combined_f": age_combined_f,
-            "age_total_f": age_total_f,
-            "child_f": child_f,
-            "adolescent_f": adolescent_f,
-            "adult_f": adult_f,
-            "geriatric_f": geriatric_f,
-        }
         
+        data = {
+                "child_f":suspect_age_f,
+                "month": month_label, "year":year_label,
+
+                "district1_data": zip(d1_brgys, d1_brgys_count),
+                "district1_labels": d1_brgys,
+                "district1_count": d1_brgys_count,
+                "d1_brgys_total":d1_brgys_total,
+
+                "district2_data": zip(d1_brgys, d2_brgys_count),
+                "district2_labels": d2_brgys,
+                "district2_count": d2_brgys_count,
+                "d2_brgys_total":d2_brgys_total,
+
+                "offense_data": zip(offense_labels, offense_count),
+                "offense_labels":offense_labels,
+                "offense_count": offense_count,
+                "offense_total": offense_total,
+
+                "sex_labels": sex_labels,
+                "sex_count": sex_count, 
+
+                "time_count":time_count,
+                
+                "vehicle_data": zip(distinct_vehicles, vehicle_count),
+                "vehicle_total": vehicle_total,
+
+                
+                "age_combined_m": age_combined_m,
+                "age_total_m": age_total_m,
+                "child_m": child_m,
+                "adolescent_m": adolescent_m,
+                "adult_m": adult_m,
+                "geriatric_m": geriatric_m,
+
+                "age_combined_f": age_combined_f,
+                "age_total_f": age_total_f,
+                "child_f": child_f,
+                "adolescent_f": adolescent_f,
+                "adult_f": adult_f,
+                "geriatric_f": geriatric_f,
+        }
         return render (request, 'monthly_summary/2018/january.html', data)
 
-def get_monthly_data(request, *args, **kwargs):
-    district_distinct = []
-    district_distinct_count = []
 
-    d1_brgy_distinct = []
-    d1_brgy_distinct_count = []
-
-    d2_brgy_distinct = []
-    d2_brgy_distinct_count = []
-
-    district = Tbl_pasig_incidents.objects.values_list('District', flat=True).distinct()
-    d1_brgys = Tbl_pasig_incidents.objects.filter(Q(District='1')).values_list('Barangay_id_id', flat=True).distinct()
-    d2_brgys = Tbl_pasig_incidents.objects.filter(Q(District='2')).values_list('Barangay_id_id', flat=True).distinct()
-
-    district_distinct = ['D1', 'D2']
-    # d1_brgy_distinct = ['']
-    # d2_brgy_distinct = []
-
-
-    for dis in district:
-        # district_distinct.append(dis)
-        x = Tbl_pasig_incidents.objects.filter(District=dis).count()
-        district_distinct_count.append(x)
-
-    for dis in d1_brgys:
-        d1_brgy_distinct.append(dis)
-        x = Tbl_pasig_incidents.objects.filter(Barangay_id_id=dis).count()
-        d1_brgy_distinct_count.append(x)
-
-    for dis in d2_brgys:
-        d2_brgy_distinct.append(dis)
-        x = Tbl_pasig_incidents.objects.filter(Barangay_id_id=dis).count()
-        d2_brgy_distinct_count.append(x)
-
-
-    #2. CRIME/OFFENSE STATS - monthly
-        offense = []
-        offenses = Tbl_pasig_incidents.objects.values_list('CrimeOffense', flat=True)
-
-        str = ",".join(offenses)
-        offense = str.split(",")
-
-        distinct_offense= list(set(offense))
-        offense_count = []
-        offense_total = 0
-
-        for dis in distinct_offense:
-            x = offense.count(dis)
-            offense_count.append(x)
-            offense_total = offense_total + int(x)
-            
-        #3. VEHICLE STATS - monthly
-        suspect_vehicles = []
-        victim_vehicles = []
-
-        suspect_vehicles = Tbl_pasig_incidents.objects.values_list('Suspect_Vehicle_Body_Type', flat=True)
-        victim_vehicles = Tbl_pasig_incidents.objects.values_list('Victim_Vehicle_Body_Type', flat=True)
-
-        vehicles_combined = list(chain(suspect_vehicles, victim_vehicles))
-        distinct_vehicles = list(set(vehicles_combined))
-        vehicle_count = []
-        vehicle_total = 0
-
-        for vehicle in distinct_vehicles:
-            x = vehicles_combined.count(vehicle)
-            vehicle_count.append(x)
-            vehicle_total = vehicle_total + int(x)
-
+def get_monthly_generate(request, *args, **kwargs):
     
-    monthly_data = {
-        "district_labels": district_distinct,
-        "district_count": district_distinct_count,
+        select_month = request.POST.get('select_month')
+        select_year = request.POST.get('select_year')
 
-        "district1_labels": d1_brgy_distinct,
-        "district1_count": d1_brgy_distinct_count,
+        #District 1
+        d1_brgys = []
+        d1_brgys_count = []
+        d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
+        
+        for brgy in d1_brgys_list:
+            d1_brgys.append(brgy)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=select_year,
+                                        Date__year__lte=select_year,
+                                        Date__month__gte=select_month,
+                                        Date__month__lte=select_month,
+                                        Barangay_id__Barangay = brgy).count()        
+            d1_brgys_count.append(x)
+        
+        report_data = {
+                "district1_labels": d1_brgys,
+                "district1_count": d1_brgys_count,
+            }
+        return JsonResponse(report_data) 
 
-        "district2_labels": d2_brgy_distinct,
-        "district2_count": d2_brgy_distinct_count,
 
-        "offense_labels": distinct_offense, 
-        "offense_count": offense_count,
-        # "offense_total": offense_total,
+def get_monthly_data(request, *args, **kwargs):
+    if request.method == "GET":
+        #District 1
+        d1_brgys = []
+        d1_brgys_count = []
+        d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
+        
+        for brgy in d1_brgys_list:
+            d1_brgys.append(brgy)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=today.year,
+                                        Date__year__lte=today.year,
+                                        Date__month__gte=today.month,
+                                        Date__month__lte=today.month,
+                                        Barangay_id__Barangay = brgy).count()        
+            d1_brgys_count.append(x)
 
-        "vehicle_labels": distinct_vehicles, 
-        "vehicle_count":vehicle_count,
-        # "vehicle_total": vehicle_total,
-      
-    }
-    return JsonResponse(monthly_data) #http response
+        monthly_data = {
+                "district1_labels": d1_brgys,
+                "district1_count": d1_brgys_count,
+            }
+        return JsonResponse(monthly_data) #http response
+
+    if request.method == 'POST':
+        select_month = request.POST.get('select_month')
+        select_year = request.POST.get('select_year')
+
+        #District 1
+        d1_brgys = []
+        d1_brgys_count = []
+        d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
+        
+        for brgy in d1_brgys_list:
+            d1_brgys.append(brgy)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=select_year,
+                                        Date__year__lte=select_year,
+                                        Date__month__gte=select_month,
+                                        Date__month__lte=select_month,
+                                        Barangay_id__Barangay = brgy).count()        
+            d1_brgys_count.append(x)
+        
+        report_data = {
+                "district1_labels": d1_brgys,
+                "district1_count": d1_brgys_count,
+            }
+
+        serialized_data = json.dumps(report_data)
+        # return HttpResponse(serialized_data)
+        return render (request, 'monthly_summary/2018/january.html', {"serialized_data": serialized_data})
+
 
 def notification (request):
     # pasig_barangay_list = Tbl_barangay.objects.all().order_by('-id')
@@ -1248,12 +1518,32 @@ def public_notification (request):
     return render (request, 'gen_notification.html')
 
 def unsolved_cases (request):
-    cursor=connection.cursor()
-    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
-    pasig_incident_list = cursor.fetchall()
+    level1_range=date.today()-timedelta(31)
+    level2_range_gte=date.today()-timedelta(186)
+    level2_range_lte=date.today()-timedelta(31)
+
+    level3_range_lte=date.today()-timedelta(186)
+    level3_range_gte=date.today()-timedelta(372)
+
+    archive_range=date.today()-timedelta(372)
+    unsolveds_cases_list=Tbl_pasig_incidents.objects.filter(Case_Status="Unsolved")
+    level1=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level1_range),Case_Status="Unsolved")
+    level2=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level2_range_gte)&Q(Date__lte=level2_range_lte),Case_Status="Unsolved")
+    level3=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level3_range_gte)&Q(Date__lte=level3_range_lte),Case_Status="Unsolved")
+    archive=Tbl_pasig_incidents.objects.filter(Q(Date__lt=archive_range),Case_Status="Unsolved")
+
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     data = {
-        'pasig_incident_list': pasig_incident_list,  
+
+        "unsolveds_cases_list":unsolveds_cases_list,
+        "level1":level1,
+        "level2":level2,
+        "level3":level3,
+        "archive":archive,
+        "all": all_authorized, 
+        "pub": pub
     }
     return render (request, 'unsolved_cases.html', data)
 
@@ -1318,25 +1608,484 @@ def pub_notif_inbox (request):
 def pub_notif_view (request):
     return render (request, 'gen_notification_view.html')
 
-def pub_incident_detail_view (request, incident_id):
+def pub_incident_detail_view (request, incident_id): #Incident view in detailed for gen pub
 
     pasig_incident_detail = Tbl_pasig_incidents.objects.get(pk=incident_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     context = {
         "incident_detail": pasig_incident_detail,
+        "all": all_authorized, 
+        "pub": pub
 
     }
     return render (request, 'gen_incident_detail_view.html', context)
 
-# Audit trail - Jew
 
-def admin_audit_trail(request, ):
 
-    audit = tbl_audit.objects.all()
-    context={'audit':audit}
- 
-    return render (request, 'admin_audit_trail_members.html',context)  
 
-def user_profile(request):
-    return render (request, 'user_profile.html')
+
+# Dane's Codes
+def pub_notif_inbox (request): #Account settings
+    authorized  = Tbl_add_members.objects.all()  
+    pub         = tbl_genpub_users.objects.all()
+    barangay    = Tbl_barangay.objects.all()
+
+    context     = {
+        "all": authorized,
+        "pub": pub,
+        "barangay": barangay,
+    }
+    return render(request, 'public_notif_setting.html', context)
+
+def change_account (request, prof_id): #Change email or password for gen pub
+    pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
+
+    if request.method       == "POST":
+        gen_username        = request.POST.get("gen_username")
+        gen_pass            = request.POST.get("gen_pass")
+
+    if (tbl_genpub_users.objects.filter(gen_username = gen_username) & tbl_genpub_users.objects.exclude(id = prof_id)):
+        messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+        return HttpResponseRedirect(reverse('pub_notif_inbox'))
+    elif (Tbl_add_members.objects.filter(Members_Email = gen_username)):
+        messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+        return HttpResponseRedirect(reverse('pub_notif_inbox'))
+    else:
+        pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
+        pub.gen_username        = gen_username
+        pub.gen_pass            = gen_pass
+
+        pub.save()
+        messages.success(request, ("Changes saved!"))
+        return HttpResponseRedirect(reverse('pub_notif_inbox'))
+
+def pub_notif_view (request): #To edit pa
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()
+
+    return render (request, 'gen_notification_view.html', {"all": all_authorized, "pub": pub})
+
+def add_members (request):
+    departments     = Tbl_add_departments.objects.all()
+    members         = Tbl_add_members.objects.all()
+    substations     = Tbl_substation.objects.all()
+    membertypes     = Tbl_member_type.objects.all()
+    positions       = Tbl_position.objects.all()
+    all_authorized  = Tbl_add_members.objects.all()  
+    pub             = tbl_genpub_users.objects.all() 
+
+    context         = {
+        'departments': departments,
+        'members': members,
+        'substations': substations,
+        'membertypes': membertypes,
+        'positions': positions,
+        'all': all_authorized,
+        'pub': pub
+    }
+    return render (request, 'add_members.html', context)
+
+def duplicate_members (request): #For checking of duplicates and saving members - add_members
+    if request.method       == "POST":
+        departments_id      = request.POST["Members_Dept"]
+        Members_Dept        = Tbl_add_departments.objects.get( id = departments_id)
+
+        substations_id      = request.POST["Members_Substation"]
+        Members_Substation  = Tbl_substation.objects.get( id = substations_id)
+
+        positions_id        = request.POST["Members_Position"]
+        Members_Position    = Tbl_position.objects.get( id = positions_id)
+
+        membertypes_id      = request.POST["Members_User"]
+        Members_User        = Tbl_member_type.objects.get( id = membertypes_id)
+
+        Members_District    = request.POST["Members_District"].title()
+        Members_Fname       = request.POST["Members_Fname"].title()
+        Members_Lname       = request.POST["Members_Lname"].title()
+        Members_Email       = request.POST["Members_Email"]
+        Members_Username    = request.POST["Members_Username"]
+        Members_Password    = request.POST["Members_Password"]
+        Added_By            = request.POST["Added_By"]
+
+        if request.FILES.get("Members_Pic"):
+            Members_Pic     = request.FILES.get('Members_Pic')
+        else:
+            Members_Pic     = 'Profile/default.png'
+
+    try:
+        if (Tbl_add_members.objects.filter(Members_Email = Members_Email) | Tbl_add_members.objects.filter(Members_Username = Members_Username)):
+            messages.success(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
+            return HttpResponseRedirect(reverse('add_members'))
+
+        elif (tbl_genpub_users.objects.filter(gen_username = Members_Email)):
+            messages.success(request, ("Oops! That account has already been registered by a general public user. Please make sure your email address is unique."))
+            return HttpResponseRedirect(reverse('add_members'))
+
+        else:
+            submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District, 
+            Members_Fname = Members_Fname, Members_Lname = Members_Lname, Members_Position = Members_Position, Members_Email = Members_Email, Members_Username = Members_Username,
+            Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By)
+            submit.save()
+            messages.success(request, ("You've added a new member!"))
+            return HttpResponseRedirect(reverse('admin_list_members'))
+
+    except (KeyError, Tbl_add_members.DoesNotExist):
+        submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District, 
+        Members_Fname = Members_Fname, Members_Lname = Members_Lname, Members_Position = Members_Position, Members_Email = Members_Email, Members_Username = Members_Username,
+        Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By)
+        submit.save()
+        messages.success(request, ("You've added a new member!"))
+        return HttpResponseRedirect(reverse('admin_list_members'))
+
+def add_dept (request):
+    departments     = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_Tbl_add_departments ORDER BY id DESC')
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()  
+
+    context = {
+    'departments': departments,
+    'all': all_authorized,
+    'pub': pub
+    }
+
+    paginator = Paginator(departments, 10) 
+    page_number = request.GET.get('page')
+    departments = paginator.get_page(page_number)
+
+    return render (request, 'add_dept.html', context)
+
+def duplicate(request): #For checking of duplicates and saving - add_dept
+    Dept_Dept       = request.POST["Dept_Dept"].title()
+
+    try:
+        n = Tbl_add_departments.objects.get(Dept_Dept = Dept_Dept)
+        messages.success(request, ("Oops! That department already exists. Please enter a different department."))
+        return HttpResponseRedirect(reverse('add_dept'))
+
+    except ObjectDoesNotExist:
+        submit = Tbl_add_departments.objects.create(Dept_Dept = Dept_Dept)
+        submit.save()
+        messages.success(request, ("You've added a new department!"))
+        return HttpResponseRedirect(reverse('admin_list_departments'))
+        
+def admin_list_departments(request): #Show list of depaartments
+    departments         = Tbl_add_departments.objects.all()
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()  
+    
+
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        departments     = Tbl_add_departments.objects.filter(Dept_Dept__icontains = searched).order_by('-id') 
+        return render (request, 'admin_list_departments.html', {'departments': departments, 'searched': searched, "all": all_authorized, "pub": pub})
+
+    else:
+        departments      = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_Tbl_add_departments ORDER BY id DESC')
+
+        paginator = Paginator(departments, 10) 
+        page_number = request.GET.get('page')
+        departments = paginator.get_page(page_number)
+
+        return render (request, 'admin_list_departments.html', {'departments': departments, "all": all_authorized, "pub": pub})
+
+def view_members(request, member_id): #Show specific profile of members 
+    members     = Tbl_add_members.objects.get(id = member_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()  
+
+    return render (request, 'view_members.html', {'members':members, "all": all_authorized, "pub": pub})
+
+def edit_members(request, member_id): 
+    members     = Tbl_add_members.objects.get(id = member_id)
+    departments = Tbl_add_departments.objects.exclude(Dept_Dept = members.Members_Dept)
+    substations = Tbl_substation.objects.exclude(Substation = members.Members_Substation)
+    membertypes = Tbl_member_type.objects.exclude(Member_Type = members.Members_User)
+    positions   = Tbl_position.objects.exclude(Position = members.Members_Position)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    context = {
+        'departments': departments,
+        'members': members,
+        'substations': substations,
+        'membertypes': membertypes,
+        'positions': positions,
+        "all": all_authorized, 
+        "pub": pub
+    }
+    return render (request, 'edit_members.html', context)
+
+
+def update_members(request, member_id): #For updating the data and checking for duplicates - edit_members
+    members                 = get_object_or_404(Tbl_add_members, id = member_id)
+    Members_Pic             = request.FILES.get('Members_Pic')
+
+    if request.method       == 'POST':
+        departments_id      = request.POST["Members_Dept"]
+        Members_Dept        = Tbl_add_departments.objects.get( id = departments_id)
+
+        substations_id      = request.POST["Members_Substation"]
+        Members_Substation  = Tbl_substation.objects.get( id = substations_id)
+
+        positions_id        = request.POST["Members_Position"]
+        Members_Position    = Tbl_position.objects.get( id = positions_id)
+
+        membertypes_id      = request.POST["Members_User"]
+        Members_User        = Tbl_member_type.objects.get( id = membertypes_id)
+
+        Members_District    = request.POST['Members_District'].title()
+        Members_Fname       = request.POST['Members_Fname'].title()
+        Members_Lname       = request.POST['Members_Lname'].title()
+        Members_Email       = request.POST['Members_Email']
+        Members_Username    = request.POST['Members_Username']
+        Members_Password    = request.POST['Members_Password']
+        Edit_By             = request.POST['Edit_By']
+        Date_Edit           = datetime.now()
+
+        if request.FILES.get("Members_Pic"):
+            Members_Pic     = request.FILES.get('Members_Pic')
+
+    try:
+        if (Tbl_add_members.objects.filter(Members_Email = Members_Email) & Tbl_add_members.objects.exclude(id = member_id)) | (Tbl_add_members.objects.filter(Members_Username = Members_Username) & Tbl_add_members.objects.exclude(id = member_id)):
+            messages.success(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
+            return HttpResponseRedirect(reverse('admin_list_members'))
+
+        elif (tbl_genpub_users.objects.filter(gen_username = members.Members_Email)):
+            messages.success(request, ("Oops! That account has already been registered by a general public user. Please make sure your email address is unique."))
+            return HttpResponseRedirect(reverse('admin_list_members'))
+
+        else:
+            members                     = Tbl_add_members.objects.get(id = member_id)
+            members.Members_Dept        = Members_Dept
+            members.Members_Substation  = Members_Substation
+            members.Members_District    = Members_District
+            members.Members_Fname       = Members_Fname
+            members.Members_Lname       = Members_Lname
+            members.Members_User        = Members_User
+            members.Members_Position    = Members_Position
+            members.Members_Email       = Members_Email
+            members.Members_Password    = Members_Password
+            members.Edit_By             = Edit_By
+            members.Date_Edit           = Date_Edit
+
+            if Members_Pic:
+                members.Members_Pic     = Members_Pic
+
+            members.save()
+            messages.success(request, ("Changes saved."))
+            return HttpResponseRedirect(reverse('admin_list_members'))
+            
+    except (KeyError, Tbl_add_members.DoesNotExist):
+            messages.success(request, ("Oops! There was a problem updating the details. Please try again."))
+            return HttpResponseRedirect(reverse('admin_list_members'))  
+
+def edit_dept(request, dept_id):
+    departments         = Tbl_add_departments.objects.get(id = dept_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    return render (request, 'edit_dept.html', {'departments': departments, "all": all_authorized, "pub": pub})
+
+
+def update_dept(request, dept_id): #For saving the data - edit_dept
+    departments         = Tbl_add_departments.objects.get(id = dept_id)
+
+    if request.method   == 'POST':
+        Dept_Dept       = request.POST['Dept_Dept'].title()
+
+    try:
+        if (Tbl_add_departments.objects.filter(Dept_Dept = Dept_Dept) & Tbl_add_departments.objects.exclude(id = dept_id)):
+            messages.error(request, ("Oops! That department already exists. Please enter a different department."))
+            return HttpResponseRedirect(reverse('admin_list_departments')) 
+        else:  
+            departments.Dept_Dept = Dept_Dept
+            departments.save()
+            messages.success(request, ("Changes saved."))
+            return HttpResponseRedirect(reverse('admin_list_departments')) 
+    except (KeyError, Tbl_add_departments.DoesNotExist):
+            departments.Dept_Dept = Dept_Dept
+            departments.save()
+            messages.success(request, ("Changes saved."))
+            return HttpResponseRedirect(reverse('admin_list_departments'))    
+
+def delete_member(request, member_id):
+    Tbl_add_members.objects.filter(id = member_id).delete()
+    messages.success(request, ("Member successfully deleted."))
+    return HttpResponseRedirect(reverse('admin_list_members')) 
+
+def delete_dept(request, dept_id):
+    Tbl_add_departments.objects.filter(id = dept_id).delete()
+    messages.success(request, ("Department successfully deleted."))
+    return HttpResponseRedirect(reverse('admin_list_departments'))  
+
+def user_profile(request): #Profile of users
+    authorized = Tbl_add_members.objects.all()  
+    pub        = tbl_genpub_users.objects.all()  
+
+    context    = {
+        "all": authorized,
+        "pub": pub,
+    }
+    return render(request, 'user_profile.html', context)
+
+
+def edit_profile(request, prof_id): #Edit user profile details #*
+    gen                 = tbl_genpub_users.objects.get(id = prof_id)
+    authorized = Tbl_add_members.objects.all()  
+    pub        = tbl_genpub_users.objects.all() 
+
+    #Functions for profile ek ek
+    username            = gen.gen_username.split('@')[0] 
+    fname               = gen.gen_fname.split(' ')[0]
+    today               = date.today()
+    age                 = today.year - gen.gen_bday.year - ((today.month, today.day) < (gen.gen_bday.month, gen.gen_bday.day))
+
+    context = {
+        'gen': gen, 
+        'username': username, 
+        'fname': fname,
+        'age': age,
+        "all": authorized,
+        "pub": pub,
+    }
+    return render(request, 'edit_profile.html', context)
+    
+
+def update_profile(request, prof_id): #For saving and validating public emails - edit_profile (gen pub)
+    pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
+
+    if request.method       == "POST":
+        gen_fname           = request.POST["gen_fname"].title()
+        gen_surname         = request.POST["gen_surname"].title()
+        gen_bday            = request.POST["gen_bday"]
+        gen_sex             = request.POST["gen_sex"].title()
+        gen_contact_no      = request.POST["gen_contact_no"]
+        gen_region          = request.POST["gen_region"].title()
+        gen_province        = request.POST["gen_province"].title()
+        gen_city            = request.POST["gen_city"].title()
+        gen_barangay        = request.POST["gen_barangay"].title()
+        gen_profile         = request.FILES.get('gen_profile')
+        date_edit           = datetime.now()
+
+        pub.gen_fname           = gen_fname
+        pub.gen_surname         = gen_surname
+        pub.gen_bday            = gen_bday
+        pub.gen_sex             = gen_sex
+        pub.gen_contact_no      = gen_contact_no
+        pub.gen_region          = gen_region
+        pub.gen_province        = gen_province
+        pub.gen_city            = gen_city
+        pub.gen_barangay        = gen_barangay
+        pub.date_edit           = date_edit
+
+        if request.FILES.get("gen_profile"):
+            pub.gen_profile     = gen_profile
+
+        pub.save()
+        messages.success(request, ("Changes saved."))
+        return HttpResponseRedirect(reverse('user_profile'))
+
+def admin_list_members(request): #Show list of ALL the members (excluding gen pub)
+    members = Tbl_add_members.objects.all()
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    if request.method == "POST":
+        searched      = request.POST['searched']
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched).order_by('-id') 
+
+        paginator = Paginator(members, 10) 
+        page_number = request.GET.get('page')
+        members = paginator.get_page(page_number)
+
+        return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": all_authorized, "pub": pub})
+    else:
+        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_Tbl_add_members ORDER BY id DESC')
+
+        paginator = Paginator(members, 10) 
+        page_number = request.GET.get('page')
+        members = paginator.get_page(page_number)
+
+        return render (request, 'admin_list_members.html', {'members': members, "all": all_authorized, "pub": pub}) 
+
+def admin_investigators(request): #Show list of investigators
+    members           = Tbl_add_members.objects.all().order_by('-id') 
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    if request.method == "POST":
+        searched      = request.POST['searched']
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id')  | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') 
+        
+        return render (request, 'admin_investigators.html', {'members': members, 'searched': searched, 'all':all_authorized, "pub": pub})
+    else:
+        return render (request, 'admin_investigators.html', {'members': members, 'all':all_authorized, "pub": pub})
+  
+def admin_view_investigators(request, member_id): #Viewing specific investigator profile
+    members           = Tbl_add_members.objects.get(id = member_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    return render (request, 'admin_view_investigators.html', {'members': members, 'all':all_authorized, "pub": pub}) 
+
+
+# Audit trail 
+def admin_audit_members(request): #List of audit for members
+    members           = Tbl_add_members.objects.all()
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    if request.method == "POST":
+        searched      = request.POST['searched']
+        audits        = tbl_audit.objects.filter(username__icontains = searched).order_by('-id') | tbl_audit.objects.filter(date_logged_in__icontains = searched).order_by('-id')
+        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'searched': searched, 'all':all_authorized, "pub": pub})
+    else:
+        audits        = tbl_audit.objects.all().order_by('-id')
+        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'all':all_authorized, "pub": pub})
+
+def audit_members(request, audit_id): #Specific view for members
+    audits  = tbl_audit.objects.get(id = audit_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    info    = Tbl_add_members.objects.get(Members_Email = audits.username)
+    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':all_authorized, "pub": pub}) 
+
+def admin_audit_genpub(request): #List of audit for gen pub
+    public  = tbl_genpub_users.objects.all().order_by('-id')
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    if request.method == "POST":
+        searched      = request.POST['searched']
+        audits        = tbl_audit.objects.filter(username__icontains = searched).order_by('-id') | tbl_audit.objects.filter(date_logged_in__icontains = searched).order_by('-id')
+
+        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'searched': searched, 'all':all_authorized, "pub": pub})
+    else:
+        audits = tbl_audit.objects.all().order_by('-id')
+
+        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'all':all_authorized, "pub": pub})
+
+def audit_genpub(request, audit_id): #Specific view for gen pub
+    audits  = tbl_audit.objects.get(id = audit_id)
+    info    = tbl_genpub_users.objects.get(gen_username = audits.username)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':all_authorized, "pub": pub}) 
+
+#Navbar for all
+def navbar (request):
+    authorized = Tbl_add_members.objects.all()  
+    pub        = tbl_genpub_users.objects.all()  
+    audit      = tbl_audit.objects.all()
+
+    context    = {
+        "all": authorized,
+        "pub": pub,
+        "audit": audit
+    }
+    return render(request, 'nav_admin.html', context)
 

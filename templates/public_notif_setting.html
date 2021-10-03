@@ -1,79 +1,293 @@
-{% extends 'nav_genpub.html' %}
-{% block title %} Home {% endblock %}
-
-{% block design %}
-<style>
-    th, .level-title {
-        color: #050087;
-    }
-</style>
-
-{% endblock %}
-
+<!-- Settings for General Public -->
+{% extends 'nav_admin.html' %}
+{% block title %} Account Settings {% endblock %}
+{% load static %}
 {% block content %}
-<div class="content">
+
+{% if messages %}
+     {% for message in messages %}
+     <div class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </div>
+     {% endfor %}
+{% endif %}
+
+{% for b in pub %}
+{% ifequal b.id request.session.public_id %}
+
+<!-- Main content here - gen pub -->
+<div class="container">
+<div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
+<i class="fas fa-user-cog" style="font-size: 23px; margin-right: 10px;"></i>Account Settings &nbsp;</h3>
+
+<section style="height: 20px;"></section>
+
+<div class="row">
+    <div class="col-12 col-xl-8">
+
+        <form method="POST" id="myform" enctype="multipart/form-data" action="{% url 'change_account' b.id %}" class="row g-3">
+
+        {% csrf_token %} 
+
+        <div class="card card-body border-1 mb-4" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+
+            <h2 class="h5 mb-4">Account details
+            <button type="button" class="btn btn-primary" id="edit" style="border-radius: 50px; font-size: 11px; padding: 1px; width: 75px; margin-left: 5px; margin-top: -5px;">Edit details</button>
+            </h2>
+            
+            <!-- Edittable buttom for forms -->
+            
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div>
+                            <label class="labels">Email address</label>
+                            <input type="email" name="gen_username" placeholder="Email address" value="{{ b.gen_username }}" class="form-control custom-form" disabled required> 
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label class="labels">Password</label>
+                            <input type="password" name="gen_pass" id="password" placeholder="Password" value="{{ b.gen_pass }}" class="form-control custom-form" disabled required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label class="labels">Confirm Password</label>
+                            <input type="password" name="#" placeholder="Confirm password" class="form-control custom-form" oninput="check(this)" disabled required>
+                        </div>
+                    </div>
+                </div>
+                
+                <section style="height: 20px"></section>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" disabled>Save changes</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card card-body border-1 mb-4 mb-xl-0" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+            <h2 class="h5 mb-4">Alert & notifications</h2>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                    <div>
+                        <h3 class="h6 mb-1">Account Activity</h3>
+                        <p class="small pe-4">Get important account notifications such as the date and time you've logged in to Roadcast.</p>
+                    </div>
+                    <div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="user-notification-1" checked>
+                            <label class="form-check-label" for="user-notification-1"></label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                    <div>
+                        <h3 class="h6 mb-1">New Incident Notifications</h3>
+                        <p class="small pe-4">Receive incident notifications that have occured in Pasig city.</p>
+                    </div>
+                    <div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="user-notification-2">
+                            <label class="form-check-label" for="user-notification-2"></label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center justify-content-between px-0">
+                    <div>
+                        <h3 class="h6 mb-1">Custom Incident Notifications</h3>
+                        <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city.</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
+                    </div>
+                    <div>
+                        <div class="form-check form-switch">
+                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
+                                <option selected="true" disabled="disabled">Choose Barangay</option>
+                                {% for bg in barangay %}
+                                <option value="{{ bg.Barangay }}">{{ bg.Barangay }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>                                            
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- End of notifications -->
+    </div>
+
+    <!-- Mini profile -->
+    <div class="col-12 col-xl-4">
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card border-1 text-center p-0" style="border-color:#e6e6e762 ;padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                    <div class="profile-cover rounded-top" data-background="{% static 'image/city.gif' %}" alt="Profile cover"></div>
+                    <div class="card-body pb-5">
+                        <img src="/media/{{ b.gen_profile }}" class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" style="width: 160px; height: 160px; object-fit: cover;" alt="Profile picture">
+                        <h4 class="h3">{{ b.gen_fname }} {{ b.gen_surname }}</h4>
+                        <h5 class="fw-normal">{{ b.gen_username }}</h5>
+                        <p class="text-muted font-weight-light mb-4">General Public</p>
+                        
+                        <button type="button" class="btn btn-primary" onclick="location.href = '{% url 'user_profile' %}'" style="border-radius: 50px;">Go to Profile</button>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endifequal %}
+{% endfor %}
+
+
+{% for a in all %}
+{% ifequal a.id request.session.authorized_id %}
+
+<!-- Main content here - members -->
+<div class="container">
+    <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
+    <i class="fas fa-user-cog" style="font-size: 23px; margin-right: 10px;"></i>Account Settings &nbsp;</h3>
     
-    <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
-        <span class="me-2 fs-4 fw-bold level-title"> Settings </span>
-        <li class="nav-item" role="presentation">
-            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-account" type="button" role="tab" aria-controls="pills-account" aria-selected="true"><i class="bi bi-person-fill"></i>&nbsp;Account</button>
-        </li>
-        
-        <li class="nav-item" role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-2-tab" data-bs-toggle="pill" data-bs-target="#pills-password" type="button" role="tab" aria-controls="pills-password" aria-selected="false"><i class="bi bi-lock-fill"></i>&nbsp;Password</button>
-        </li>
+    <section style="height: 20px;"></section>
+    
+    <div class="row">
+        <div class="col-12 col-xl-8">
+            <div class="card card-body border-1 mb-4" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                <h2 class="h5 mb-4">Account details</h2>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label class="labels">Email address</label>
+                                <input type="email" name="Members_Email" placeholder="Email address" value="{{ a.Members_Email }}" class="form-control custom-form" disabled required> 
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label class="labels">Username</label>
+                                <input type="text" name="Members_Username" placeholder="@Username" value="{{ a.Members_Username }}" class="form-control custom-form" readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="labels">Password</label>
+                                <input type="password" name="Members_Password" placeholder="Password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="labels">Confirm Password</label>
+                                <input type="password" placeholder="Confirm password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                    </div>
+                    <section style="height: 23px"></section>
 
-        <li class="nav-item" role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-3-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-notifications" role="tab" aria-controls="pills-notifications" aria-selected="false"><i class="bi bi-bell-fill"></i>&nbsp;Notification</button>
-        </li>
-
-        <li class="nav-item" role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-4-tab" data-bs-toggle="pill" data-bs-target="#pills-help" type="button" role="tab" aria-controls="pills-help" aria-selected="false"><i class="bi bi-question-circle-fill"></i>&nbsp;Help</button>
-        </li>
-
-        <li>
-        <form action="">
-            <div class="input-group input-group-sm ">
-                <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
-                <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
+                    <div class="mt-3">
+                        <label class="text-muted" style="font-size: 14px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i>
+                        Cannot change account details. You will have to contact the admin of your department.</label>
+                    </div>
+                    <section style="height: 40px"></section>
+                </div>
+    
+            <!-- Notifications -->
+            <div class="card card-body border-1 mb-4 mb-xl-0" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                <h2 class="h5 mb-4">Alert & notifications</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                        <div>
+                            <h3 class="h6 mb-1">Account Activity</h3>
+                            <p class="small pe-4">Get important account notifications such as the date and time you've logged in to Roadcast.</p>
+                        </div>
+                        <div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="user-notification-1" checked>
+                                <label class="form-check-label" for="user-notification-1"></label>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                        <div>
+                            <h3 class="h6 mb-1">New Incident Notifications</h3>
+                            <p class="small pe-4">Receive incident notifications that have occured in Pasig city.</p>
+                        </div>
+                        <div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="user-notification-2">
+                                <label class="form-check-label" for="user-notification-2"></label>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between px-0">
+                        <div>
+                            <h3 class="h6 mb-1">Custom Incident Notifications</h3>
+                            <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city.</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
+                        </div>
+                        <div>
+                            <div class="form-check form-switch">
+                                <select class="form-select form-select-sm" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
+                                    <option selected="true" disabled="disabled">Choose Barangay</option>
+                                    {% for bg in barangay %}
+                                    <option value="{{ bg.Barangay }}">{{ bg.Barangay }}</option>
+                                    {% endfor %}
+                                  </select>
+                            </div>                                            
+                        </div>
+                    </li>
+                </ul>
             </div>
-        </form>
-</li>
-      </ul>
-      <div class="tab-content row" id="pills-tabContent">
-          
-        <!-- tab for level 1-->
-        <div class="tab-pane fade show active row" id="pills-account" role="tabpanel" aria-labelledby="pills-account-tab">
-           1
+            <!-- End of notifications -->
         </div>
-
-        <!-- tab for level 2 -->
-        <div class="tab-pane fade" id="pills-password" role="tabpanel" aria-labelledby="pills-password-tab">
-           2
-        </div>
-
-        <!-- tab for level 3 -->
-        <div class="tab-pane fade" id="pills-notifications" role="tabpanel" aria-labelledby="pills-notifications-tab">
-
-            <div class="container" style="background-color: white; ">
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" >
-                <label class="form-check-label" for="flexSwitchCheckDefault">Receive notification about newly added report in Whole Pasig City</label>
-            </div>
-
-            <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked" checked>
-                <label class="form-check-label" for="flexSwitchCheckChecked">Receive notification about newly added report in specific barangays only</label>
-            </div>
+    
+        <!-- Mini profile -->
+        <div class="col-12 col-xl-4">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card border-1 text-center p-0" style="border-color:#e6e6e762 ;padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                        <div class="profile-cover rounded-top" data-background="{% static 'image/city.gif' %}" alt="Profile cover"></div>
+                        <div class="card-body pb-5">
+                            <img src="/media/{{ a.Members_Pic }}" class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" style="width: 160px; height: 160px; object-fit: cover;" alt="Profile picture">
+                            <h4 class="h3">{{ a.Members_Fname }} {{ a.Members_Lname }}</h4>
+                            <h5 class="fw-normal">{{ a.Members_Email }}</h5>
+                            <p class="text-muted font-weight-light mb-4">{{ a.Members_User }}</p>
+                            
+                            <button type="button" class="btn btn-primary" onclick="location.href = '{% url 'user_profile' %}'" style="border-radius: 50px;">Go to Profile</button>
+                        </div>
+                     </div>
+                </div>
             </div>
         </div>
+    </div>
+{% endifequal %}
+{% endfor %}
 
-        <!-- tab for level 4 -->
-        <div class="tab-pane fade" id="pills-help" role="tabpanel" aria-labelledby="pills-help-tab">
-4
-        </div>
+<section style="height: 80px"></section>
 
-      </div>
+<!-- Edittable buttons -->
+<script>
+var el  = document.getElementById('edit');
+var frm = document.getElementById('myform');
+el.addEventListener('click', function(){
+    for(var i=0; i < frm.length; i++) {
+        frm.elements[i].disabled = false;
+    } 
+    frm.elements[1].focus();
+});
+</script>
 
-  </div> <!--closing content div-->
+<!-- Password match -->
+<script>
+       function check(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Please make sure your passwords match.');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
+    }
+</script>
+
+
 {% endblock %}

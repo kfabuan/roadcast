@@ -1,6 +1,8 @@
 {% extends 'nav_admin.html' %}
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI"></script>
 
 {% block title %} View Detail {% endblock %}
 
@@ -142,12 +144,84 @@
 
 
 <div class="container">
+<script>
+function initMap() {
+    var myLatLng = { lat: {{pasig_incident_detail.Latitude}}, lng: {{pasig_incident_detail.Longitude}} };
+    var map = new google.maps.Map(document.getElementById('map'), {
+      center: {lat: {{pasig_incident_detail.Latitude}} , lng: {{pasig_incident_detail.Longitude}}},
+      zoom: 17
+    });
+      new google.maps.Marker({
+    position: myLatLng,
+    map,
+    title: "{{pasig_incident_detail.Address}}",
+  });
+    var input = document.getElementById('searchInput');
+    //map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+    var autocomplete = new google.maps.places.Autocomplete(input);
+    autocomplete.bindTo('bounds', map);
+
+    var infowindow = new google.maps.InfoWindow();
+    var marker = new google.maps.Marker({
+        map: map,
+        anchorPoint: new google.maps.Point(0, -29)
+    });
+   
+
+    autocomplete.addListener('place_changed', function() {
+        infowindow.close();
+        marker.setVisible(false);
+        
+        var place = autocomplete.getPlace();
+        if (!place.geometry) {
+            window.alert("Autocomplete's returned place contains no geometry");
+            return;
+        }
+  
+        // If the place has a geometry, then present it on a map.
+        if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+        } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);
+        }
+        marker.setIcon(({
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(35, 35)
+        }));
+        marker.setPosition(place.geometry.location);
+        marker.setVisible(true);
     
+        var address = '';
+        if (place.address_components) {
+            address = [
+              (place.address_components[0] && place.address_components[0].short_name || ''),
+              (place.address_components[1] && place.address_components[1].short_name || ''),
+              (place.address_components[2] && place.address_components[2].short_name || '')
+            ].join(' ');
+        }
+    
+        infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+        infowindow.open(map, marker);
+      
+        // Location details
+       
+        //document.getElementById('place_committed').value = place.formatted_address;
+        document.getElementById('lat').value = place.geometry.location.lat();
+        document.getElementById('lon').value = place.geometry.location.lng();
+    });
+}
+</script>
     <!-- Upper Section (Maayos spacing hehe) -->
+    
     <section style="height: 25px;"></section>
     {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> </p>{% endif %}
     {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
-    {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
+    {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
    
    <div class="row">
@@ -197,7 +271,9 @@
     <!-- Main Content -->
 
         <div class="row">
-            <div class="col-sm-4">   
+            <div class="col-sm-4">
+
+                <div class="">    
                     <div class="card mb-3 mt-3">
                         <div class="card-header">
                             <label class="label-blue"><i class="bi bi-info-circle-fill"></i> Incident Details</label>
@@ -392,7 +468,8 @@
                             </script>
 
                             <div class="form-floating mb-3">
-                                <input type="text" id="place_committed" name="place_committed" class="form-control form-select-sm" value="{{pasig_incident_detail.Address}}">                         
+                                
+                                <input type="text" id="searchInput" name="place_committed" class="form-control form-select-sm" value="{{pasig_incident_detail.Address}}">                         
                                 <label for="" style="font-size: small;" class="text-muted">Place Committed</label>
                             </div>
 
@@ -420,10 +497,17 @@
                                         <label for="" style="font-size: small;" class="text-muted">Time Committed</label>
                                     </div>
                                 </div>
+                                <input type="text" id="lat" name="lat" placeholder="Latitude" value="{{ pasig_incident_detail.Latitude }}" class="form-control form-control-sm" hidden>
+                                <input type="text" id="lon" name="lon" placeholder="Corner" value="{{ pasig_incident_detail.Longitude }}" class="form-control form-control-sm" hidden>
+
+
+
                             </div>
                             
                         </div> <!--card body-->
                     </div> <!--card  of loc details-->
+
+                </div>
             </div> <!--left side cards-->
 
                 <!--middle side cards -->
@@ -568,7 +652,7 @@
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="date" name="sus_drl_exp" class="form-control form-control-sm" required value="{{pasig_incident_detail.Suspect_Drl_Exp|date:'Y-m-d'}}">
+                                        <input type="date" name="sus_drl_exp" class="form-control form-control-sm" value="{{pasig_incident_detail.Suspect_Drl_Exp|date:'Y-m-d'}}">
                                         <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                     </div>
                                 </div>
@@ -747,7 +831,7 @@
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="date" name="vic_drl_exp" class="form-control form-control-sm" required value="{{pasig_incident_detail.Victim_Drl_Exp|date:'Y-m-d'}}">
+                                        <input type="date" name="vic_drl_exp" class="form-control form-control-sm" value="{{pasig_incident_detail.Victim_Drl_Exp|date:'Y-m-d'}}">
                                         <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                     </div>
                                 </div>
@@ -788,12 +872,17 @@
                <!-- Open Map -->
                <div class="card mb-3" style="height: 350px;">
                 <div class="mapouter" style="height: 100%;">
-                    <div class="gmap_canvas"style="height: 100%;">
-                        <iframe class="gmap_iframe" style="height: 100%;" width="100%" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.com/maps?width=620&amp;height=400&amp;hl=en&amp;q=pasig city police headquarters&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
+                    
+                    <div id="map" style="width:100%;height:100%;">
+                    
                     </div>
+                  
                 </div>
+                
             </div>
+            
             <!-- Close Map-->
+           
             </div>
 
             <div class="col-sm-8">
@@ -803,9 +892,9 @@
                         <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
                     </div>
                     <div class="card-body">
-                        <input type="text" class="form-control" value="{{pasig_incident_detail.Narrative}}" name="narrative" placeholder="" style="height: 200px; width: 100%;">
-                            
-                    
+                        <textarea class="form-control" name="narrative" placeholder="" style="resize: vertical; height: 200px; width: 100%;">
+                            {{pasig_incident_detail.Narrative}}
+                        </textarea> 
                     </div>
                 </div>
 
@@ -929,11 +1018,12 @@
         });
     
       </script>
-      
+   
     
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script>
 
-
-    
+   
+  
 {% endblock %}
   {% block jquery %} 
   

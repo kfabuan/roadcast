@@ -1,0 +1,189 @@
+{% extends 'nav_admin.html' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+
+{% block title %} Edit Member Detail {% endblock %}
+
+{% block content %}
+
+{% if messages %}
+     {% for message in messages %}
+     <p class="alert danger-success">
+      <strong>{{message}}</strong>
+     </p>
+     {% endfor %}
+{% endif %}
+
+<div class="container">
+
+  <!-- Upper Section -->
+  <section style="height: 25px;"></section>
+
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Edit Details &nbsp;</h3>
+  
+    <section style="height: 35px;"></section>
+
+  <!-- Main Content -->
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'update_members' members.id %}" class="row g-3">
+
+    {% csrf_token %}
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">Department</label>
+        <select name="Members_Dept" class="form-select" required style="background-color: #e8f0fe;">
+          <option disabled="disabled">Select a department</option>
+          <option selected selected="true" value="{{ members.Members_Dept.id }}">{{ members.Members_Dept }}</option>
+          {% for department in departments %}
+    
+          <option value="{{ department.id }}">{{ department.Dept_Dept }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6" style="margin-top: 9px;">
+        <label for="" class="col-sm-2 col-form-label">Substation</label>
+        <select class="form-select" name="Members_Substation" required style="background-color: #e8f0fe;">
+            <option disabled="disabled">Select a substation</option>
+            <option selected selected="true" value="{{ members.Members_Substation.id }}">{{ members.Members_Substation }}</option>
+            {% for substation in substations %}
+    
+          <option value="{{ substation.id }}">{{ substation.Substation }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+        <div class="col-md-6">
+        <label for="" class="col-sm-2 col-form-label">District</label>
+        <input class="form-control" name="Members_District" type="text" value="Pasig" readonly>
+      </div>
+
+
+      <section style="height: 15px;"></section>
+      <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PERSONAL DETAILS</label>
+
+      <div class="col-md-6">
+        <label for="" class="col-sm-2 col-form-label">Member Type</label>
+        <select class="form-select" name="Members_User" required style="background-color: #e8f0fe;">
+            <option disabled="disabled">Select a type</option>
+            <option selected selected="true" value="{{ members.Members_User.id}}">{{ members.Members_User}}</option>
+            {% for membertype in membertypes %}
+    
+          <option value="{{ membertype.id }}">{{ membertype.Member_Type }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="" class="col-sm-2 col-form-label">Position</label>
+        <select class="form-select" name="Members_Position" required style="background-color: #e8f0fe;">
+          <option disabled="disabled">Select a position</option>
+          <option selected selected="true"  value="{{ members.Members_Position.id }}">{{ members.Members_Position }}</option>  
+            {% for position in positions %}
+    
+          <option value="{{ position.id }}">{{ position.Position }}</option>
+
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">First name</label>
+        <input type="text" name="Members_Fname" class="form-control text-capitalize" value="{{ members.Members_Fname }}" required style="background-color: #e8f0fe;">
+      </div>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">Last name</label>
+        <input type="text" name="Members_Lname" class="form-control text-capitalize " value="{{ members.Members_Lname }}" required style="background-color: #e8f0fe;">
+      </div>
+
+      <section style="height: 15px;"></section>
+      <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">ACCOUNT DETAILS</label>
+      
+      <div class="col-md-6">
+        <label for="" class="form-label">Username</label>
+        <div class="input-group mb-3">
+        <span class="input-group-text" id="basic-addon1">@</span>
+        <input type="text" name="Members_Username" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{ members.Members_Username }}" required style="background-color: #e8f0fe;" required>
+        </div>
+      </div>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Email</label>
+      <input type="email" name="Members_Email" class="form-control" value="{{ members.Members_Email }}" required style="background-color: #e8f0fe;">
+    </div>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Password</label>
+      <input type="password" minlength="8" name="Members_Password" class="form-control" id="password" value="{{ members.Members_Password }}" required style="background-color: #e8f0fe;">
+    </div>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Confirm Password</label>
+      <input type="password" minlength="8" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required>
+    </div>
+
+    <section style="height: 10px;"></section>
+
+    <div class="card" style="width: 20rem;">
+      <a href="/media/{{ members.Members_Pic }}" target="_blank"><img src="/media/{{ members.Members_Pic }}" alt="Profile Picture" class="card-img-top img-fluid" style="width: 20rem; height: 5rem; object-fit: cover;" ></a>
+      <div class="card-body">
+        <label for="formFile" class="form-label">Upload a profile picture</label>
+        <input class="form-control" name="Members_Pic" type="file" id="formFile" accept="image/*">
+      </div>
+    </div>
+
+    
+    <section style="height: 15px;"></section>
+
+    {% for a in all %}
+      {% ifequal a.id request.session.authorized_id %}
+        <input type="hidden" name="Edit_By" value="{{ a.Members_Position }}, {{ a.Members_Fname }} {{a.Members_Lname}}">
+        <input type="hidden" name="Date_Edit">
+      {% endifequal %}
+    {% endfor %}
+
+    <center>
+    <div class="col-12">
+      <button type="submit" name="button" class="btn btn-primary">Update details</button>
+    </div>
+    </center>
+  </form>
+
+  <section style="height: 35px;"></section>
+
+  <!-- Script -->
+    <script>
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+      </script>
+
+      <script>
+        function check(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Please make sure your passwords match.');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
+      }
+      </script>
+
+  {% endblock %}
+  
+  {% block jquery %} 
+  
+  {% endblock %}
