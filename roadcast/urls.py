@@ -62,7 +62,11 @@ urlpatterns = [
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
     path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
 
-    path('public/notification', views.public_notification, name='public_notification'),
+    path('public/inbox', views.public_inbox, name='public_inbox'),
+    path('public/inbox/<int:report_id>', views.public_inbox_detail, name='public_inbox_detail'),
+    path('public/inbox/<int:report_id>/reply', views.processPublic_Reply , name='process_public_reply'),
+
+
     path('substation/notification', views.sub_notification, name='sub_notification'),
 
       #jew
@@ -72,7 +76,9 @@ urlpatterns = [
     path('success', views.success, name='success'),
     path('activate-user/<uidb64>/<token>', views.activate_user, name='activate'),
     
-    path('unsolvedcases', views.unsolved_cases, name='unsolved_cases'),
+    path('unsolvedcases/', views.unsolved_cases, name='unsolved_cases'),
+    path('unsolvedcases/<int:incident_id>', views.archiving, name='archiving'),
+    path('unsolvedcases/<int:incident_id>/unarchiving', views.unarchiving, name='unarchiving'),
 
     # path('audit', views.admin_audit_trail, name='admin_audit_trail'),
     path('memberlist', views.admin_list_members, name='admin_list_members'),
@@ -112,7 +118,7 @@ urlpatterns = [
     path('profile/update/<prof_id>', views.update_profile, name='update_profile'), #save profile for public
 
 
-    path('public/notification', views.pub_notif_view, name='pub_notif_view'), #notification for public
+    # path('public/notification', views.pub_notif_view, name='pub_notif_view'), #notification for public
     path('public/settings', views.pub_notif_inbox, name='pub_notif_inbox'), #settings
     path('public/settings/update/<prof_id>', views.change_account, name='change_account'), #save settings
 

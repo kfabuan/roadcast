@@ -12,7 +12,8 @@
     <link rel="stylesheet" href="{% static 'css/member_prof.css' %}">
     <!-- <link rel="stylesheet" href="{% static 'css/profile.css' %}">
     <link rel="stylesheet" href="{% static 'css/edit_profile.css' %}"> -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
     
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
@@ -70,7 +71,7 @@
         {% ifequal a.id request.session.authorized_id %}
         <!-- Profile picture -->
         <div class="header_img"> 
-            <a href="{% url 'user_profile' %}">
+            <a href="{% url 'user_profile'%}">
                 <img src="/media/{{ a.Members_Pic }}" alt="Profile">
             </a>
         </div>
@@ -93,12 +94,20 @@
                 <div class="nav_list"> 
                     {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
 
-                    {% if request.get_full_path == '/dashboard' %}
+                    {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% else %}
                     <a href="{% url 'dashboard' %}" class="nav_link"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
+                    {% endif %}
+
+                    {% if request.get_full_path == '/report/monthly' %}
+                    <a href="{% url 'monthly_report' %}" class="nav_link active"><i class='fas fa-table nav_icon'></i> 
+                        <span class="nav_name">Monthly Reports</span></a>
+                    {% else %}
+                    <a href="{% url 'monthly_report' %}" class="nav_link"><i class='fas fa-table nav_icon'></i> 
+                        <span class="nav_name">Monthly Reports</span></a>
                     {% endif %}
                     
                     {% if request.get_full_path == '/incidents/view' %}
@@ -107,14 +116,6 @@
                     {% else %}   
                     <a href="{% url 'view_incidents' %}" class="nav_link"><i class='bx bxs-report nav_icon'></i> 
                     <span class="nav_name">Incident Reports</span></a> 
-                    {% endif %}
-
-                    {% if request.get_full_path == '/report/monthly' %}
-                    <a href="{% url 'monthly_report' %}" class="nav_link active"><i class='fas fa-table nav_icon'></i> 
-                        <span class="nav_name">Summary of Reports</span></a>
-                    {% else %}
-                    <a href="{% url 'monthly_report' %}" class="nav_link"><i class='fas fa-table nav_icon'></i> 
-                        <span class="nav_name">Summary of Reports</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/unsolvedcases' %}
@@ -169,12 +170,20 @@
 
 
                     {% else %}
-                    {% if request.get_full_path == '/dashboard' %}
+                    {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% else %}
                     <a href="{% url 'dashboard' %}" class="nav_link"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
+                    {% endif %}
+
+                    {% if request.get_full_path == '/report/monthly' %}
+                    <a href="{% url 'monthly_report' %}" class="nav_link active"><i class='fas fa-table nav_icon'></i> 
+                        <span class="nav_name">Monthly Reports</span></a>
+                    {% else %}
+                    <a href="{% url 'monthly_report' %}" class="nav_link"><i class='fas fa-table nav_icon'></i> 
+                        <span class="nav_name">Monthly Reports</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/incidents/view' %}
@@ -185,12 +194,12 @@
                         <span class="nav_name">Incident Reports</span></a> 
                     {% endif %}
 
-                    {% if request.get_full_path == '/public/notification' %}
-                    <a href="{% url 'pub_notif_view' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
+                    {% if request.get_full_path == '/public/inbox' %}
+                    <a href="{% url 'public_inbox' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% else %}
-                    <a href="{% url 'pub_notif_view' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'public_inbox' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% endif %}
@@ -233,12 +242,20 @@
             </a>
             <!-- <div> <a href="{% url 'index' %}" class="nav_logo"> <img src="static/image/logo1.png" class="img-fluid" style="width: 35px; margin-left:-5px;"></i> <span class="nav_logo-name"><label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> </a> -->
                 <div class="nav_list"> 
-                    {% if request.get_full_path == '/dashboard' %}
+                    {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% else %}
                     <a href="{% url 'dashboard' %}" class="nav_link"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
+                    {% endif %}
+
+                    {% if request.get_full_path == '/report/monthly' %}
+                    <a href="{% url 'monthly_report' %}" class="nav_link active"><i class='fas fa-table nav_icon'></i> 
+                        <span class="nav_name">Monthly Reports</span></a>
+                    {% else %}
+                    <a href="{% url 'monthly_report' %}" class="nav_link"><i class='fas fa-table nav_icon'></i> 
+                        <span class="nav_name">Monthly Reports</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/incidents/view' %}
@@ -257,12 +274,12 @@
                         <span class="nav_name">Send a Report</span></a>
                     {% endif %}
 
-                    {% if request.get_full_path == '/public/notification' %}
-                    <a href="{% url 'pub_notif_view' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
+                    {% if request.get_full_path == '/public/inbox' %}
+                    <a href="{% url 'public_inbox' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% else %}
-                    <a href="{% url 'pub_notif_view' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'public_inbox' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% endif %}

@@ -1,5 +1,4 @@
 import json
-from django.core.checks.messages import INFO
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response, Tbl_add_departments, Tbl_position
 from requests.api import request
@@ -36,17 +35,17 @@ from django.utils.encoding import force_bytes, force_str, force_text, DjangoUnic
 from .utils import generate_token , send_html_mail
 from django.core.mail import EmailMessage
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
 
-# Get date today
 today = date.today()
 
-#Sessions
-authorized = Tbl_add_members.objects.all()
-pub            = tbl_genpub_users.objects.all()
+
+all_authorized = Tbl_add_members.objects.all()  
+pub = tbl_genpub_users.objects.all() 
 
 def index(request): #landing/home
     return render (request, 'landing.html')
+
+
 
 #Jew
 def login(request):
@@ -82,7 +81,7 @@ def login(request):
 
                 return HttpResponseRedirect(reverse('dashboard')) 
             else: 
-                messages.success(request, ("Oops! Please check your email or password."))
+                messages.success(request, ("Oop! Please check your email or password."))
                 return render(request, 'login.html')
         if b:
             if (public.gen_username == username) and (public.gen_pass == password):
@@ -118,6 +117,10 @@ def deletesession(request):
     except:
         pass
     return HttpResponseRedirect('/login')
+
+
+
+
 
 def about_us(request):
     return render (request, 'about_us.html') 
@@ -230,6 +233,7 @@ def sign_up_validation (request): #Jew
 # def admin_view_investigators(request):
 #     return render (request, 'admin_view_investigators.html')  
 
+
 def is_valid(param):
     return param != "" and param is not None
 def is_not_valid(param):
@@ -248,9 +252,7 @@ def notif_sign_up_validation (request, signup_id):
     data = {
         'detail': unread_sign_up_validation,
         'unread_notif_count_signup': unread_notif_count_signup,
-        'sign_up_validation':sign_up_validation,
-        "all": authorized,
-        "pub": pub,
+        'sign_up_validation':sign_up_validation
 
     }
     return render (request, 'notif_sign_up_validation.html', data)
@@ -268,9 +270,8 @@ def genpub_verified(request, pk=None):
     data = {
         'detail': unread_sign_up_validation,
         'unread_notif_count_signup': unread_notif_count_signup,
-        'sign_up_validation':sign_up_validation,
-        "all": authorized, 
-        "pub": pub,
+        'sign_up_validation':sign_up_validation
+
     }
     messages.success(request, " is verified")
     return render (request, 'notif_sign_up_validation.html', data)
@@ -293,11 +294,21 @@ def genpub_rejected(request,pk):
     data = {
         'detail': unread_sign_up_validation,
         'unread_notif_count_signup': unread_notif_count_signup,
-        'sign_up_validation':sign_up_validation,
-        "all": authorized, 
-        "pub": pub,
+        'sign_up_validation':sign_up_validation
+
     }
     return render (request, 'notif_sign_up_validation.html', data)
+
+
+
+
+
+
+
+
+
+
+
 
 
 def daterange(start_date, end_date):
@@ -330,6 +341,7 @@ def extract_lat_lng(address_postal):
 
 
 class DashboardView (View):
+   
     def get(self, request, *args, **kwargs):
 
         #FOR CHARTS FORECASTING
@@ -387,6 +399,11 @@ class DashboardView (View):
         yesterday_total = Tbl_pasig_incidents.objects.filter(Date__gte = yesterday, Date__lt = today).count()
         this_day = Tbl_pasig_incidents.objects.filter(Date__gte = today, Date__lte = today, Date__year__gte=today.year, Date__year__lte=today.year).count()
 
+
+        all_authorized = Tbl_add_members.objects.all()  
+        pub = tbl_genpub_users.objects.all()  
+        
+
         # FOR MULTIPLE MARKERS IN DASHBOARD
         markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True))
 
@@ -397,17 +414,20 @@ class DashboardView (View):
             "yesterday_total":yesterday_total,
             "this_day": this_day,
          
-            "all": authorized,
+            "all": all_authorized,
             "pub": pub,
 
             'datelist':reversed_datelist,
             'markers_json':markers,
             "reversed_datelist_values":reversed_datelist_values,
-            "reversed_datelist_values_forecast":reversed_datelist_values_forecast     
+            "reversed_datelist_values_forecast":reversed_datelist_values_forecast  
+            
         }
+        
         return render (request, 'dashboard.html', data)
 
 def get_data(request, *args, **kwargs):
+   
     #District 1
     d1_brgys = []
     d1_brgys_count = []
@@ -532,6 +552,7 @@ def get_data(request, *args, **kwargs):
 
             "time_count":time_count
     }
+
     return JsonResponse(data) #http response
 
 
@@ -552,23 +573,23 @@ def view_incidents (request):
     
         if is_valid(from_date) & is_valid(to_date):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
                 
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
    
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
             elif barang=="0":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
             
             else:
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search})
         else:
             unread_count = Tbl_pasig_incidents.objects.filter(read_status = "No").count()
             incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents order by id DESC')
@@ -576,6 +597,10 @@ def view_incidents (request):
             paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
             page_number = request.GET.get('page') #ganto talaga
             incident_model = paginator.get_page(page_number) #ito ren, except sa var name
+
+             
+            authorized = Tbl_add_members.objects.all()
+            pub        = tbl_genpub_users.objects.all()
 
             context = {
                 "all": authorized,
@@ -588,13 +613,18 @@ def view_incidents (request):
             return render (request, 'encoder_view_incidents.html',context)
 
 
+
 def add_incident (request): #add using CSV
+    
     try:
         #Landing page ng add incident page / wala pang process
         if request.method == "GET":
             member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
             investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
             brgy_list = Tbl_barangay.objects.all()
+
+            authorized = Tbl_add_members.objects.all()
+            pub        = tbl_genpub_users.objects.all()
 
             context = {
                 'brgy_list': brgy_list, 
@@ -681,10 +711,10 @@ def add_incident (request): #add using CSV
             context = {
                 'brgy_list': brgy_list, 
                 'success_message':"Successfully Added!",
-                'url':'url',
-                "all": authorized,
-                "pub": pub,
+                'url':'url'
+                
             }
+
             return render (request, 'add_incident.html', context)
     except:
         csv_file = request.FILES['file']
@@ -694,12 +724,14 @@ def add_incident (request): #add using CSV
 
         context = {
             'error_message': "Error uploading file. Please check file format.",
-            "all": authorized,
-            "pub": pub,
+            
         }
+
         return render (request, 'add_incident.html', context)
 
 def processAddIncident(request): #Add using forms
+
+
     city = "Pasig"
     unit_station = "Pasig City Police Station"
     crime_offense = request.POST.get('display_offense')
@@ -882,6 +914,9 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
         pasig_incident_detail.read_status = "Yes"
         pasig_incident_detail.save()
 
+        authorized = Tbl_add_members.objects.all()
+        pub        = tbl_genpub_users.objects.all()
+
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
 
@@ -1034,11 +1069,7 @@ def processEditIncident(request, incident_id):
 
 
 def report_summary (request):
-    context    = {
-        "all": authorized,
-        "pub": pub,
-    }
-    return render (request, 'report_summary.html', context)
+    return render (request, 'report_summary.html')
 
 class JSONResponseMixin:
   """
@@ -1284,7 +1315,7 @@ def monthly_report (request):
             geriatric_f = geriatric_f + x
 
         age_total_f = child_f + adolescent_f + adult_f + geriatric_f 
-        
+    
         data = {
                 "child_f":suspect_age_f,
                 "month": month_label, "year":year_label,
@@ -1326,13 +1357,15 @@ def monthly_report (request):
                 "adolescent_f": adolescent_f,
                 "adult_f": adult_f,
                 "geriatric_f": geriatric_f,
-                "all": authorized, 
-                "pub": pub,
+
+                "all": all_authorized, 
+                "pub": pub
         }
         return render (request, 'monthly_summary/2018/january.html', data)
 
 
 def get_monthly_generate(request, *args, **kwargs):
+    
         select_month = request.POST.get('select_month')
         select_year = request.POST.get('select_year')
 
@@ -1359,9 +1392,7 @@ def get_monthly_generate(request, *args, **kwargs):
 
 
 def get_monthly_data(request, *args, **kwargs):
-
     if request.method == "GET":
-
         #District 1
         d1_brgys = []
         d1_brgys_count = []
@@ -1409,17 +1440,14 @@ def get_monthly_data(request, *args, **kwargs):
 
         serialized_data = json.dumps(report_data)
         # return HttpResponse(serialized_data)
-        return render (request, 'monthly_summary/2018/january.html', {"serialized_data": serialized_data, "all": authorized, "pub": pub,})
+        return render (request, 'monthly_summary/2018/january.html', {"serialized_data": serialized_data})
 
 
-def notification (request): 
+def notification (request):
     # pasig_barangay_list = Tbl_barangay.objects.all().order_by('-id')
     # pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
 
     #for new incident accident
-    authorized = Tbl_add_members.objects.all()
-    pub        = tbl_genpub_users.objects.all()
-
     cursor=connection.cursor()
     cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
     pasig_incident_list = cursor.fetchall()
@@ -1428,25 +1456,16 @@ def notification (request):
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
-    #for signup validation
-    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
-    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
-
     data = {
         'pasig_incident_list': pasig_incident_list, 
         'public_reports_list': pasig_public_reports,
-        'unread_notif_count': unread_notif_count,
-        "all": authorized, 
-        "pub": pub,
-        'sign_up_validation': sign_up_validation,
-        'unread_notif_count_signup':unread_notif_count_signup
-
+        'unread_notif_count': unread_notif_count
     }
     return render (request, 'notification.html', data)
 
 
 def notif_public_report_detail (request, gen_pub_report_id):
-    
+
     member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
     investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     substation_list = Tbl_substation.objects.all()
@@ -1470,9 +1489,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
         'unread_notif_count': unread_notif_count,
         'investigators_list': investigators_list,
         'substation_list': substation_list,
-        'admin_responses': admin_responses,
-        "all": authorized, 
-        "pub": pub,
+        'admin_responses': admin_responses
     }
     return render (request, 'notif_public_report_detail.html', data)
 
@@ -1484,188 +1501,75 @@ def processAssigning (request, report_id):
     public_report.Assigned_Investigator_id = investigator
     public_report.Substation_id = substation
     public_report.save()
+
     messages.success(request, "Your data has been saved!")
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
+
 def processAdmin_Reply (request, report_id):
     admin_reply = request.POST.get('admin_reply')
-    sender = request.POST.get('sender_id')
-    receiver = request.POST.get('receiver_id')
-
 
     admin_responses = Tbl_public_report_response.objects.create(
-                    Sender_Type = 'Admin',
-                    Sender    = sender,
-                    Receiver = receiver,
-                    Response  = admin_reply,
+                    Sender        = "Admin",
+                    Response = admin_reply,
                     Report_id = report_id, )
 
     admin_responses.save()
+
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
 def sub_notification (request):
-     
+    return render (request, 'sub_notification.html')
 
-    context    = {
-        "all": authorized,
-        "pub": pub,
-    }
-    return render (request, 'sub_notification.html', context)
-
-#inbox
-def public_inbox (request):
-    try:
-        if request.session['public_id']:
-            pub_id = request.session['public_id']
-            pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id) #list ng reports nya
-            pub_info = tbl_genpub_users.objects.get(id=pub_id)
-
-            admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id') 
-            admin_info = Tbl_add_members.objects.all()
-
-    except:
-        pass
-
-    try:
-        if request.session['authorized_id']:
-            auth_id = request.session['authorized_id']
-            admin_row = Tbl_add_members.objects.filter(id=auth_id)
-    except:
-        pass
-
-    context    = {
-        "all": authorized,
-        "pub": pub,
-
-        "pub_inbox":pub_inbox,
-        "pub_info":pub_info,
-        "admin_replies":admin_replies,
-        "admin_info":admin_info,
-
-    }
-    return render (request, 'gen_inbox.html', context)
-#inbox
-def public_inbox_detail (request, report_id):
-    try:
-        if request.session['public_id']:
-            pub_id = request.session['public_id']
-            pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id) #list ng reports nya
-            pub_info = tbl_genpub_users.objects.get(id=pub_id)
-
-            prev_report = Tbl_public_report.objects.get(id=report_id)
-            admin_replies = Tbl_public_report_response.objects.filter(Q(Sender_Type='Admin')&Q(Receiver=pub_id)&Q(Report_id=report_id)).order_by('-Response_id') 
-            admin_info = Tbl_add_members.objects.all()
-
-    except:
-        pass
-
-    context    = {
-        "all": authorized,
-        "pub": pub,
-
-        "pub_inbox":pub_inbox,
-        "pub_info":pub_info,
-        "prev_report": prev_report,
-        "admin_replies":admin_replies,
-        "admin_info":admin_info,
-
-    }
-    return render (request, 'gen_inbox_detail.html', context)
-
-#public to admin messages    
-def processPublic_Reply (request, report_id):
-    public_reply = request.POST.get('public_reply')
-    sender = request.POST.get('sender_id')
-    receiver = request.POST.get('receiver_id')
-
-
-    public_responses = Tbl_public_report_response.objects.create(
-                    Sender_Type = 'Public',
-                    Sender    = sender,
-                    Receiver = receiver,
-                    Response  = public_reply,
-                    Report_id = report_id, )
-
-    public_responses.save()
-    messages.success(request, ("Message Successfully Sent!"))
-    return HttpResponseRedirect(reverse('public_inbox_detail', args=(report_id,)))
-
-
-def archiving (request, incident_id):
-    try:
-        incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
-        incident_detail.archive="Yes"
-        incident_detail.save()
-        return HttpResponseRedirect('/unsolvedcases')
-    except Tbl_pasig_incidents.DoesNotExist:
-        raise Http404("Incident does not exist")
-        
-def unarchiving (request, incident_id):
-    try:
-        incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
-        incident_detail.archive="No"
-        incident_detail.save()
-        return HttpResponseRedirect('/unsolvedcases')
-    except Tbl_pasig_incidents.DoesNotExist:
-        raise Http404("Incident does not exist")   
-
+def public_notification (request):
+    return render (request, 'gen_notification.html')
 
 def unsolved_cases (request):
-    member_type=Tbl_member_type.objects.get(Member_Type="Investigator")
-    investigator_list=Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     level1_range=date.today()-timedelta(31)
     level2_range_gte=date.today()-timedelta(186)
     level2_range_lte=date.today()-timedelta(31)
-    
+
     level3_range_lte=date.today()-timedelta(186)
     level3_range_gte=date.today()-timedelta(372)
 
     archive_range=date.today()-timedelta(372)
     unsolveds_cases_list=Tbl_pasig_incidents.objects.filter(Case_Status="Unsolved")
-    level1=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level1_range),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved")
-    level2=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level2_range_gte)&Q(Date__lte=level2_range_lte),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved")
-    level3=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level3_range_gte)&Q(Date__lte=level3_range_lte),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved")
-    level4=Tbl_pasig_incidents.objects.filter(Q(Date__lt=archive_range),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved",)
-    archive=Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved") & Q(archive="Yes"))
+    level1=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level1_range),Case_Status="Unsolved")
+    level2=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level2_range_gte)&Q(Date__lte=level2_range_lte),Case_Status="Unsolved")
+    level3=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level3_range_gte)&Q(Date__lte=level3_range_lte),Case_Status="Unsolved")
+    archive=Tbl_pasig_incidents.objects.filter(Q(Date__lt=archive_range),Case_Status="Unsolved")
+
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
     data = {
-        "investigator_list":investigator_list,
+
         "unsolveds_cases_list":unsolveds_cases_list,
         "level1":level1,
         "level2":level2,
         "level3":level3,
-        "level4":level4,
         "archive":archive,
+        "all": all_authorized, 
+        "pub": pub
     }
     return render (request, 'unsolved_cases.html', data)
-
-def processDeleteUnsolved (request, incident_id):
-    Tbl_pasig_incidents.objects.filter(id=incident_id)
-    messages.success(request, ("Successfully Deleted!"))
-    return HttpResponseRedirect('/incidents/view')
 
 def logout (request):
     return render (request, 'logout.html')
 
 #PUBLIC
 def submit_report (request):
-     
     try:
         if request.method == "GET":
-            context    = {
-                "all": authorized,
-                "pub": pub,
-            }
-            return render (request, 'submit_report.html', context) #Load view
+            return render (request, 'submit_report.html')#Load view
 
-        user_id = request.POST.get('user_id')
+        user_id ="Faith Abuan"
         city = request.POST.get('city')
         barangay = request.POST.get('Barangay')
         district = request.POST.get('district')
         address = request.POST.get('address')
         along = request.POST.get('along')
         corner = request.POST.get('corner')
-        latitude = request.POST.get('lat')
-        longitude = request.POST.get('lon')
         narrative = request.POST.get('narrative')
         recipient = "Admin"
 
@@ -1673,28 +1577,23 @@ def submit_report (request):
             image_proof = request.FILES.get('image')
 
         incident_report = Tbl_public_report.objects.create(
-                        User_ID_id = user_id,
+                        User_ID = user_id,
                         Reported_City=city, 
                         Reported_Brgy_id=barangay,               
-                        Reported_District=district,   
+                        Reported_District=district,           
                         Reported_Location=address,               
                         Reported_Along=along,
                         Reported_Corner=corner, 
-                        Reported_Latitude = latitude,
-                        Reported_Longitude = longitude,
                         Reported_Narrative = narrative,
                         Reported_Image_Proof = image_proof,
                         Report_Status = 'Unsolved',
                         Read_Status='No',
-                        Recipient = recipient,
-                        )
+                        Recipient = recipient)
         
         incident_report.save()
 
         context = {
             'success_message':"Your report has been submitted!",
-            "all": authorized, 
-            "pub": pub,
         }
         return render (request, 'submit_report.html', context)
 
@@ -1706,24 +1605,33 @@ def submit_report (request):
 
         context = {
             'error_message': "Error sending report!",
-            "all": authorized, 
-            "pub": pub,
         }
 
         return render (request, 'submit_report.html', context)
 
+def pub_notif_inbox (request):
+    return render (request, 'public_notif_setting.html')
+
+def pub_notif_view (request):
+    return render (request, 'gen_notification_view.html')
+
 def pub_incident_detail_view (request, incident_id): #Incident view in detailed for gen pub
+
     pasig_incident_detail = Tbl_pasig_incidents.objects.get(pk=incident_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     context = {
         "incident_detail": pasig_incident_detail,
-        "all": authorized, 
+        "all": all_authorized, 
         "pub": pub
+
     }
     return render (request, 'gen_incident_detail_view.html', context)
 
-# def pub_notif_view (request): #General public notifications
-#     return render (request, 'gen_notification_view.html', {"all": authorized, "pub": pub})
+
+
+
 
 # Dane's Codes
 def pub_notif_inbox (request): #Account settings
@@ -1738,55 +1646,33 @@ def pub_notif_inbox (request): #Account settings
     }
     return render(request, 'public_notif_setting.html', context)
 
-def change_account (request, prof_id): #Change email or password for gen pub and members - settings
+def change_account (request, prof_id): #Change email or password for gen pub
+    pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
 
     if request.method       == "POST":
-        try:
-            if get_object_or_404(tbl_genpub_users, id = prof_id):
-                pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
-            
-                gen_username        = request.POST.get("gen_username")
-                gen_pass            = request.POST.get("gen_pass")
+        gen_username        = request.POST.get("gen_username")
+        gen_pass            = request.POST.get("gen_pass")
 
-                if (tbl_genpub_users.objects.filter(gen_username = gen_username) & tbl_genpub_users.objects.exclude(id = prof_id)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
-                    return HttpResponseRedirect(reverse('pub_notif_inbox'))
-                elif (Tbl_add_members.objects.filter(Members_Email = gen_username)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
-                    return HttpResponseRedirect(reverse('pub_notif_inbox'))
-                else:
-                    pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
-                    pub.gen_username        = gen_username
-                    pub.gen_pass            = gen_pass
+    if (tbl_genpub_users.objects.filter(gen_username = gen_username) & tbl_genpub_users.objects.exclude(id = prof_id)):
+        messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+        return HttpResponseRedirect(reverse('pub_notif_inbox'))
+    elif (Tbl_add_members.objects.filter(Members_Email = gen_username)):
+        messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+        return HttpResponseRedirect(reverse('pub_notif_inbox'))
+    else:
+        pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
+        pub.gen_username        = gen_username
+        pub.gen_pass            = gen_pass
 
-                    pub.save()
-                    messages.success(request, ("Changes saved!"))
-                    return HttpResponseRedirect(reverse('pub_notif_inbox'))
+        pub.save()
+        messages.success(request, ("Changes saved!"))
+        return HttpResponseRedirect(reverse('pub_notif_inbox'))
 
-        except:
-            if get_object_or_404(Tbl_add_members, id = prof_id):
-                gen                     = get_object_or_404(Tbl_add_members, id = prof_id)
+def pub_notif_view (request): #To edit pa
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()
 
-                Members_Email       = request.POST.get("Members_Email")
-                Members_Username    = request.POST.get("Members_Username")
-                Members_Password    = request.POST.get("Members_Password")
-
-                if (Tbl_add_members.objects.filter(Members_Email = Members_Email) & Tbl_add_members.objects.exclude(id = prof_id)) | (Tbl_add_members.objects.filter(Members_Username = Members_Username) & Tbl_add_members.objects.exclude(id = prof_id)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
-                    return HttpResponseRedirect(reverse('pub_notif_inbox'))
-                elif (tbl_genpub_users.objects.filter(gen_username = Members_Email)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
-                    return HttpResponseRedirect(reverse('pub_notif_inbox'))
-                else:
-                    gen                     = get_object_or_404(Tbl_add_members, id = prof_id)
-                    gen.Members_Email       = Members_Email
-                    gen.Members_Username    = Members_Username
-                    gen.Members_Password    = Members_Password
-
-                    gen.save()
-                    messages.success(request, ("Changes saved!"))
-                    return HttpResponseRedirect(reverse('pub_notif_inbox'))
-
+    return render (request, 'gen_notification_view.html', {"all": all_authorized, "pub": pub})
 
 def add_members (request):
     departments     = Tbl_add_departments.objects.all()
@@ -1862,10 +1748,12 @@ def duplicate_members (request): #For checking of duplicates and saving members 
 
 def add_dept (request):
     departments     = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_Tbl_add_departments ORDER BY id DESC')
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()  
 
     context = {
     'departments': departments,
-    'all': authorized,
+    'all': all_authorized,
     'pub': pub
     }
 
@@ -1891,11 +1779,14 @@ def duplicate(request): #For checking of duplicates and saving - add_dept
         
 def admin_list_departments(request): #Show list of depaartments
     departments         = Tbl_add_departments.objects.all()
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()  
+    
 
     if request.method   == "POST":
         searched        = request.POST['searched']
         departments     = Tbl_add_departments.objects.filter(Dept_Dept__icontains = searched).order_by('-id') 
-        return render (request, 'admin_list_departments.html', {'departments': departments, 'searched': searched, "all": authorized, "pub": pub})
+        return render (request, 'admin_list_departments.html', {'departments': departments, 'searched': searched, "all": all_authorized, "pub": pub})
 
     else:
         departments      = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_Tbl_add_departments ORDER BY id DESC')
@@ -1904,11 +1795,14 @@ def admin_list_departments(request): #Show list of depaartments
         page_number = request.GET.get('page')
         departments = paginator.get_page(page_number)
 
-        return render (request, 'admin_list_departments.html', {'departments': departments, "all": authorized, "pub": pub})
+        return render (request, 'admin_list_departments.html', {'departments': departments, "all": all_authorized, "pub": pub})
 
 def view_members(request, member_id): #Show specific profile of members 
     members     = Tbl_add_members.objects.get(id = member_id)
-    return render (request, 'view_members.html', {'members':members, "all": authorized, "pub": pub})
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all()  
+
+    return render (request, 'view_members.html', {'members':members, "all": all_authorized, "pub": pub})
 
 def edit_members(request, member_id): 
     members     = Tbl_add_members.objects.get(id = member_id)
@@ -1916,6 +1810,8 @@ def edit_members(request, member_id):
     substations = Tbl_substation.objects.exclude(Substation = members.Members_Substation)
     membertypes = Tbl_member_type.objects.exclude(Member_Type = members.Members_User)
     positions   = Tbl_position.objects.exclude(Position = members.Members_Position)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     context = {
         'departments': departments,
@@ -1923,7 +1819,7 @@ def edit_members(request, member_id):
         'substations': substations,
         'membertypes': membertypes,
         'positions': positions,
-        "all": authorized, 
+        "all": all_authorized, 
         "pub": pub
     }
     return render (request, 'edit_members.html', context)
@@ -1953,7 +1849,7 @@ def update_members(request, member_id): #For updating the data and checking for 
         Members_Username    = request.POST['Members_Username']
         Members_Password    = request.POST['Members_Password']
         Edit_By             = request.POST['Edit_By']
-        Date_Edit           = datetime.datetime.now()
+        Date_Edit           = datetime.now()
 
         if request.FILES.get("Members_Pic"):
             Members_Pic     = request.FILES.get('Members_Pic')
@@ -1994,7 +1890,10 @@ def update_members(request, member_id): #For updating the data and checking for 
 
 def edit_dept(request, dept_id):
     departments         = Tbl_add_departments.objects.get(id = dept_id)
-    return render (request, 'edit_dept.html', {'departments': departments, "all": authorized, "pub": pub})
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
+
+    return render (request, 'edit_dept.html', {'departments': departments, "all": all_authorized, "pub": pub})
 
 
 def update_dept(request, dept_id): #For saving the data - edit_dept
@@ -2029,6 +1928,9 @@ def delete_dept(request, dept_id):
     return HttpResponseRedirect(reverse('admin_list_departments'))  
 
 def user_profile(request): #Profile of users
+    authorized = Tbl_add_members.objects.all()  
+    pub        = tbl_genpub_users.objects.all()  
+
     context    = {
         "all": authorized,
         "pub": pub,
@@ -2038,6 +1940,8 @@ def user_profile(request): #Profile of users
 
 def edit_profile(request, prof_id): #Edit user profile details #*
     gen                 = tbl_genpub_users.objects.get(id = prof_id)
+    authorized = Tbl_add_members.objects.all()  
+    pub        = tbl_genpub_users.objects.all() 
 
     #Functions for profile ek ek
     username            = gen.gen_username.split('@')[0] 
@@ -2070,7 +1974,7 @@ def update_profile(request, prof_id): #For saving and validating public emails -
         gen_city            = request.POST["gen_city"].title()
         gen_barangay        = request.POST["gen_barangay"].title()
         gen_profile         = request.FILES.get('gen_profile')
-        date_edit           = datetime.datetime.now()
+        date_edit           = datetime.now()
 
         pub.gen_fname           = gen_fname
         pub.gen_surname         = gen_surname
@@ -2092,6 +1996,8 @@ def update_profile(request, prof_id): #For saving and validating public emails -
 
 def admin_list_members(request): #Show list of ALL the members (excluding gen pub)
     members = Tbl_add_members.objects.all()
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     if request.method == "POST":
         searched      = request.POST['searched']
@@ -2101,7 +2007,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
         page_number = request.GET.get('page')
         members = paginator.get_page(page_number)
 
-        return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub})
+        return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": all_authorized, "pub": pub})
     else:
         members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_Tbl_add_members ORDER BY id DESC')
 
@@ -2109,65 +2015,78 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
         page_number = request.GET.get('page')
         members = paginator.get_page(page_number)
 
-        return render (request, 'admin_list_members.html', {'members': members, "all": authorized, "pub": pub}) 
+        return render (request, 'admin_list_members.html', {'members': members, "all": all_authorized, "pub": pub}) 
 
 def admin_investigators(request): #Show list of investigators
     members           = Tbl_add_members.objects.all().order_by('-id') 
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     if request.method == "POST":
         searched      = request.POST['searched']
         members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id')  | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') 
         
-        return render (request, 'admin_investigators.html', {'members': members, 'searched': searched, 'all':authorized, "pub": pub})
+        return render (request, 'admin_investigators.html', {'members': members, 'searched': searched, 'all':all_authorized, "pub": pub})
     else:
-        return render (request, 'admin_investigators.html', {'members': members, 'all':authorized, "pub": pub})
+        return render (request, 'admin_investigators.html', {'members': members, 'all':all_authorized, "pub": pub})
   
 def admin_view_investigators(request, member_id): #Viewing specific investigator profile
     members           = Tbl_add_members.objects.get(id = member_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
-    return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub}) 
+    return render (request, 'admin_view_investigators.html', {'members': members, 'all':all_authorized, "pub": pub}) 
 
 
 # Audit trail 
 def admin_audit_members(request): #List of audit for members
     members           = Tbl_add_members.objects.all()
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     if request.method == "POST":
         searched      = request.POST['searched']
         audits        = tbl_audit.objects.filter(username__icontains = searched).order_by('-id') | tbl_audit.objects.filter(date_logged_in__icontains = searched).order_by('-id')
-        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'searched': searched, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'searched': searched, 'all':all_authorized, "pub": pub})
     else:
         audits        = tbl_audit.objects.all().order_by('-id')
-        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'all':all_authorized, "pub": pub})
 
 def audit_members(request, audit_id): #Specific view for members
     audits  = tbl_audit.objects.get(id = audit_id)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     info    = Tbl_add_members.objects.get(Members_Email = audits.username)
-    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub}) 
+    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':all_authorized, "pub": pub}) 
 
 def admin_audit_genpub(request): #List of audit for gen pub
     public  = tbl_genpub_users.objects.all().order_by('-id')
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
     if request.method == "POST":
         searched      = request.POST['searched']
         audits        = tbl_audit.objects.filter(username__icontains = searched).order_by('-id') | tbl_audit.objects.filter(date_logged_in__icontains = searched).order_by('-id')
 
-        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'searched': searched, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'searched': searched, 'all':all_authorized, "pub": pub})
     else:
         audits = tbl_audit.objects.all().order_by('-id')
 
-        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'all':all_authorized, "pub": pub})
 
 def audit_genpub(request, audit_id): #Specific view for gen pub
     audits  = tbl_audit.objects.get(id = audit_id)
     info    = tbl_genpub_users.objects.get(gen_username = audits.username)
+    all_authorized = Tbl_add_members.objects.all()  
+    pub = tbl_genpub_users.objects.all() 
 
-    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub}) 
-
+    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':all_authorized, "pub": pub}) 
 
 #Navbar for all
 def navbar (request):
+    authorized = Tbl_add_members.objects.all()  
+    pub        = tbl_genpub_users.objects.all()  
     audit      = tbl_audit.objects.all()
 
     context    = {
@@ -2176,3 +2095,4 @@ def navbar (request):
         "audit": audit
     }
     return render(request, 'nav_admin.html', context)
+

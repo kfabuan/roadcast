@@ -169,17 +169,17 @@
             <!--mail list-->
             <div class="card col-3 p-0 " style="border-radius: 20px 0 0 20px">
                     <div class="card-header fw-bold" style="border-radius: 20px 0 0 0">
-                        <i class="bi bi-envelope-fill"></i>  Public Reports Inbox
+                        <i class="bi bi-envelope-fill"></i>&nbsp; My Previous Reports
                     </div>
                     <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 0 20px">
-                        {% for report in public_reports_list %}
-                        <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
-                            <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
+                        {% for prev in pub_inbox %}
+                        <a href="{% url 'public_inbox_detail' prev.id %}" style="text-decoration: none;">
+                            <li class="list-group-item message-item {% ifequal prev.id prev_report.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
                                 <div class="row">
-                                    <div class="col-2"><img src="/media/{{ report.User_ID.gen_profile}}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                    <div class="col-2"><img src="/media/{{ prev.User_ID.gen_profile}}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
                                     <div class="col-5">
                                         <span style="font-size: 13px;" class=" text-muted">
-                                            {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
+                                            {{ prev.User_ID.gen_fname}}  {{ prev.User_ID.gen_surname}}
 
                                             {% ifequal report.Read_Status 'No' %}
                                             <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
@@ -187,7 +187,7 @@
                                         </span>
                                     </div>
                                     <div class="col-5">
-                                        <span style="font-size: small; float:right;" class="">{{ report.Reported_Date }}</span>
+                                        <span style="font-size: small; float:right;" class="">{{ prev.Reported_Date }}</span>
                                     </div>
                                 </div>
 
@@ -199,16 +199,16 @@
                                         </div>
                                     </div>
                                     <div class="col-8 ">
-                                        <span style="" class="fw-bold">{{ report.Reported_Brgy.Barangay }}</span>
+                                        <span style="" class="fw-bold">{{ prev.Reported_Brgy.Barangay }}</span>
                                        
                                     </div>
                                     <div class="col-2">
-                                            {% if report.Assigned_Investigator_id %}
-                                                {% ifequal report.Report_Status 'Solved' %}
+                                            {% if prev_report.Assigned_Investigator_id %}
+                                                {% ifequal prev.Report_Status 'Solved' %}
                                                 <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
                                                 {% endifequal %}
 
-                                                {% ifequal report.Report_Status 'Unsolved' %}
+                                                {% ifequal prev_report.Report_Status 'Unsolved' %}
                                                 <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
                                                 {% endifequal %}
 
@@ -217,7 +217,7 @@
 
                                             {% endif %}         
 
-                                            {% ifequal report.Report_Status 'Invalid' %}
+                                            {% ifequal prev_report.Report_Status 'Invalid' %}
                                             <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
                                             {% endifequal %}
                                     </div>
@@ -225,61 +225,33 @@
 
                                 <div class="row">
                                     <div class="col-2">
-                                        {% ifnotequal report.Reported_Image_Proof '' %}
+                                        {% ifnotequal prev.Reported_Image_Proof '' %}
                                             <i class="fa fa-paperclip text-muted float-end"></i>
                                         {% endifnotequal %}
                                     </div>
-                                    <div class="col-8"><p class=" text-truncate" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
+                                    <div class="col-8"><p class=" text-truncate" style="font-size: small;">{{ prev.Reported_Narrative }}</p></div>
                                     <div class="col-2"></div>
                                 </div>
-
-
                             </li></a>
                            
                         {% endfor %}
-
                     </ul>
             </div>
 
             <!--message-->
-            <div class="card col-7">
+            <div class="card col-9">
                     <div class="card-header" style="background-color: white; ">
                         <div class="row">
                             <div class="col-1 pe-3" style="background-color: white;">
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
-                                    <div><img src="/media/{{detail.User_ID.gen_profile}}" alt=""class="rounded-circle" style="width: 70px; height: 70px;"></div>
+                                    <div><img src="/media/{{pub_info.gen_profile}}" alt=""class="rounded-circle" style="width: 70px; height: 70px;"></div>
                                     <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span>
                                 </div>
                             </div>
 
                             <div class="col-8 ms-4"  style="background-color: white;">
-                                <span class="fw-bold fs-4">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</span>
-                                <p class="text-muted" style="font:small;"> Active Now</p>
-                            </div>
-
-                            <div class="col-2 ms-4"  style="background-color: white;">
-                              <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
-                                <div id="myDIV" class="showw">
-                                    <form action="{% url 'process_assigning' detail.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <p class="label-blue">Assign Investigator </p> 
-                                        <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
-                                            <option value="">Choose Investigator</option>
-                                            {% for inv in investigators_list %}
-                                                <option value="{{ inv.id }}" {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
-                                            {% endfor %}
-                                        </select>
-
-                                        <p class="label-blue mt-3">Assign Substation </p> 
-                                        <select  name="select-substation" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
-                                            <option value="" {% ifequal detail.Substation.Substation null %} selected {% endifequal %}>Forward to:</option>
-                                            {% for sub in substation_list %}
-                                                <option value="{{ sub.id }}" {% ifequal detail.Substation.Substation sub.Substation %} selected {% endifequal %}>{{ sub.Substation }}</option>      
-                                            {% endfor %}
-                                        </select>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-3">Investigate Case</button>
-                                    </form>
-                                </div>               
+                                <span class="fw-bold fs-4">{{ pub_info.gen_fname }} {{ pub_info.gen_surname }}</span>
+                                <!-- <p class="text-muted" style="font:small;"> Active Now</p> -->
                             </div>
                         </div>
                     </div> <!--name header-->
@@ -290,7 +262,7 @@
                         <div class="row" style="width: 100%; background-color: white;">
                             <div class="col-10"  style="background-color: none;">
                                 <div class="row">
-                                    <h3 class="col"> Incident from Barangay {{detail.Reported_Brgy.Barangay}} </h3>
+                                    <h3 class="col"> Incident from Barangay {{prev_report.Reported_Brgy.Barangay}} </h3>
                                     <!-- <span class="badge rounded-pill bg-danger">Unsolved </span> -->
 
                                 </div>
@@ -298,33 +270,33 @@
 
                             <div class="col-2"  style="background-color: none;">
                                 <span class="" style=" font-size: smaller; float:right;"><i class="bi bi-clock"></i>&nbsp;{{ detail.Reported_Date }}</span>
-                                <p class="text-muted" style="font-size: small; float:right;"> {{ detail.Reported_Time }}</p>
+                                <p class="text-muted" style="font-size: small; float:right;"> {{ prev_report.Reported_Time }}</p>
                             </div>
                         </div>
 
-                            <label class="labels {% ifequal detail.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %} ">[ Report Status: </label>
-                            <label class="labels {% ifequal detail.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %}">{{ detail.Report_Status }} ] </label>
+                            <label class="labels {% ifequal prev_report.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %} ">[ Report Status: </label>
+                            <label class="labels {% ifequal prev_report.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %}">{{ prev_report.Report_Status }} ] </label>
 
                             <br><br>
 
                             <label class="label-blue">Recipient: </label>
-                            {{ detail.Recipient }}    <br><br>
+                            {{ prev_report.Recipient }}    <br><br>
                         
                             <p class="label-blue">Message Description: </p>
-                            <p class="card-text"> {{ detail.Reported_Narrative }} </p>
+                            <p class="card-text"> {{ prev_report.Reported_Narrative }} </p>
                             
                             <p class="label-blue">Incident Location: </p>
-                            {{ detail.Reported_Location }} <br> <br>
+                            {{ prev_report.Reported_Location }} <br> <br>
         
 
                             <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Proof: </p> 
                             <div>
                             </div>
 
-                            {% ifnotequal detail.Reported_Image_Proof '' %}
+                            {% ifnotequal prev_report.Reported_Image_Proof '' %}
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
-                                <img src="/media/{{detail.Reported_Image_Proof}}" alt="" style="width: 250px;" class="img-fluid img-thumbnail">
+                                <img src="/media/{{prev_report.Reported_Image_Proof}}" alt="" style="width: 250px;" class="img-fluid img-thumbnail">
                             </button>
 
                             <!-- Modal -->
@@ -332,7 +304,7 @@
                                 <div class="modal-dialog" style="width: 900px !important; ">
                                     <div class="modal-content" >
                                         <div class="modal-body">
-                                            <img src="/media/{{detail.Reported_Image_Proof}}" alt=""  class="img-fluid img-thumbnail">
+                                            <img src="/media/{{prev_report.Reported_Image_Proof}}" alt=""  class="img-fluid img-thumbnail">
                                         </div>
                                     </div>
                                 </div>
@@ -343,48 +315,52 @@
                             {% endifnotequal %}
                         <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                        
-                            {% if admin_responses %}
-                                {% for responses in admin_responses %}
+                            {% if admin_replies %}
+                                {% for reply in admin_replies %}
                                     <center><hr style="width: 97%"></center>
 
-                                <div class="row" style="min-height: 40px; width: 100%;">
-
-                                    {% for a in all %}
-                                    {% ifequal a.id request.session.authorized_id %}
-                                       
-                                    <div class="col-1"><img src="/media/{{ a.Members_Pic }}" alt="" style="width: 35px;" class="rounded-circle"></div>
-                                    <div class="col-10">
-                                        <b>{{ a.Members_Fname }} {{ a.Members_Lname }}</b> <br>
+                                    <div class="row" style="min-height: 40px; width: 100%;">
+                                    {% ifequal prev_report.id reply.Report_id %}
+                                        {% for info in admin_info %}
+                                            {% ifequal reply.Sender info.id %}
+        
+                                            <div class="col-1"><img src="/media/{{ info.Members_Pic }}" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                            <div class="col-10">
+                                            <b>{{ info.Members_Fname }} {{ info.Members_Lname }}</b> <br>
+                                            
+                                            <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
+                                            {{ reply.Response }}  
+                                            {% endifequal %}
+                                        {% endfor %}
+                                        </div>
+                                    </div>
                                         
                                     {% endifequal %}
-                                    {% endfor %}
-                                        <span style="font-size: small;" class="text-muted">{{ responses.Response_Date }} {{ responses.Response_Time }}</span> <br>
-                                        {{ responses.Response }}  
-
-                                    </div>
-                                </div>
                                 {% endfor %}
-                            {% else %}
-                            <p class="text-muted"> <i>No replies available. </i></p>
+                                {% else %}
+                                <p class="text-muted"> <i>No replies available. </i></p>
                             {% endif %}
                     </div>
 
                 <center>
-                    <form action="{% url 'process_admin_reply' detail.id %}" method="POST">
+                    <form action="{% url 'process_public_reply' prev_report.id %}" method="POST">
                         {% csrf_token %}
 
-                        {% if request.session.authorized_id %}
-                            <input type="text" name="sender_id" id="sender_id" value="{{request.session.authorized_id}}" hidden>
-                            <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
-                        {% endif %}
-
                         {% if request.session.public_id %}
-                            <input type="text" name="sender_id" id="sender_id" value="{{detail.User_ID}}">
-                            <input type="text" name="receiver_id" id="receiver_id" value="Admin">
+                            <input type="text" name="sender_id" id="sender_id" value="{{pub_info.id}}" hidden>
+                            {% if admin_replies %}
+                                {% for reply in admin_replies %}
+                                        {% for info in admin_info %}
+                                            {% ifequal reply.Sender info.id %}
+                                                <input type="text" name="receiver_id" id="receiver_id" value="{{ info.id }}" hidden>
+                                            {% endifequal %}
+                                        {% endfor %}
+                                {% endfor %}
+                            {% endif %}
                         {% endif %}
 
                     <div class="input-group div-reply">
-                        <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">
+                        <input type="text" name="public_reply" class="form-control p-3 txt-reply" placeholder="Send a message" style="">
                         <button class="btn btn-reply" type="submit">
                             <i class="fas fa-paper-plane pe-2" style="color: #1b5082; font-size: large;" ></i>
                         </button>
@@ -398,38 +374,7 @@
             
 
             <!--profile preview-->
-            <div class="card col-2 p-0" style="border-radius: 0px 20px 20px 0px;"> <!--tr tl br bl-->
-                <div class="">
-                    <img src="/media/{{detail.User_ID.gen_profile}}" class="card-img-top p-0" alt="..." style="border-radius: 0px 20px 0px 0px; !important">
-                    <!-- <img src="/media/incident_images/police.jpg" class="" alt="..." style="width:60%; z-index:3; position:relative; top:-20%;left:20%;"> -->
-                    <center>
-                    <div class="card-body">
-                      <span class="mx-auto fw-bold text-uppercase">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</span>
-                      <!-- <span class="badge rounded-pill bg-success ms-2" style="padding: 5px;"> </span> -->
-
-                      <p class="card-text " style="color: #1b5082; font:small;">{{ detail.User_ID.gen_username }}</p>
-                    </div>
-                    </center>           
-                </div>
-                <ul class="list-group user-details" >
-                    <li class="list-group-item" style="border-style: none;">
-                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
-                        <span class="ms-2 p-0"> {{ detail.User_ID.gen_contact_no }}</span>
-                    </li>
-
-                    <li class="list-group-item" style="border-style: none;">
-                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
-                        <p class="ms-2 p-0 text-wrap">{{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}</p>
-                    </li>
-
-                    <li class="list-group-item" style="border-style: none;">
-                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
-                        <span class="ms-2 p-0"> {{ detail.User_ID.gen_username }}</span>
-                    </li>
-
-                  </ul>
-
-            </div>
+           
 
         </div> <!--row-->
     </div><!--card group-->

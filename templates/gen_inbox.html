@@ -1,0 +1,193 @@
+{% extends 'nav_admin.html' %}
+{% block title %} My Reports {% endblock %}
+
+{% block design %}
+<style>
+    th {
+        color: #050087;
+    }
+
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0 solid transparent;
+        border-radius: 0;
+    }
+    .mailbox-widget .custom-tab .nav-item .nav-link {
+        border: 0;
+        color: #fff;
+        border-bottom: 3px solid transparent;
+    }
+    .mailbox-widget .custom-tab .nav-item .nav-link.active {
+        background: 0 0;
+        color: #fff;
+        border-bottom: 3px solid #2cd07e;
+    }
+    .no-wrap td, .no-wrap th {
+        white-space: nowrap;
+    }
+    .table td, .table th {
+        padding: .9375rem .4rem;
+        vertical-align: top;
+        border-top: 1px solid rgba(120,130,140,.13);
+    }
+    .font-light {
+        font-weight: 300;
+    
+    }
+
+    .link {
+        text-decoration: none;
+    }
+
+    .table {
+        /* width: 100%; */
+        table-layout: fixed;
+    }
+    .controls-btn {
+        width: 100px;
+        background-color: violet;
+    }
+
+    
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+    <div class="top-content">
+
+        <p id='date'>
+        <i class="fas fa-calendar-day" id="date-today-icon"></i>
+        <b id="date-today">Today: </b><span id="ct6"></span>
+        </p>
+      </div>
+
+<div class="container"> 
+    <div class="row">
+        <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
+            <li class="nav-item " role="presentation">
+                <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-admin-replies" id="pills-admin-replies-tab" data-bs-toggle="pill" data-bs-target="#pills-admin-replies" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-envelope-fill"></i>&nbsp; Main Inbox</button>
+            </li>
+            
+            <li class="nav-item " role="presentation">
+                <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-past-reports" id="pills-past-reports-tab" data-bs-toggle="pill" data-bs-target="#pills-past-reports" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-clock-history"></i>&nbsp; Sent Reports</button>
+            </li>
+    
+        </ul>
+    </div>
+        
+    <div class="tab-content row" id="pills-tabContent">
+        <!-- tab for admin replies -->
+        <div class="tab-pane fade show active " id="pills-admin-replies" role="tabpanel" aria-labelledby="pills-admin-replies">
+            <!-- Main inbox-->
+            <div class="table-responsive mt-3">
+                <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
+                    <tbody>
+                        {% for reply in admin_replies %}
+                        <!-- row -->
+                        <tr class =" {% ifequal reply.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                            <!-- label -->
+                            <td class="pl-3"  style="width: 3%;">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="cst1" />
+                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                </div>
+                            </td>
+                            <!-- star -->
+                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <td style="width: 15%;">
+                                {% for info in admin_info %}
+                                    {% ifequal reply.Sender info.id %}
+                                        <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">From: {{ info.Members_Fname }} {{ info.Members_Lname }}</span>
+                                    {% endifequal %}
+                                {% endfor %}
+                            </td>
+                            <!-- Message -->
+                            <td class="text-truncate" style="width: 58%;">
+                                <a class="link text-decoration-none" href="{% url 'public_inbox_detail' reply.Report_id %}">
+                                {% for prev in pub_inbox %}
+                                    {% ifequal reply.Report_id prev.id %}
+                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ prev.Reported_City }}</span>
+                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ prev.Reported_District }}</span>
+                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                    <span class=" text-dark">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
+                                    {% endifequal %}
+                                {% endfor %}
+                                </a>
+                            </td>
+                            <!-- Attachment -->
+                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                            <!-- Time -->
+                            <td  style="width: 16%;"class="{% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ reply.Response_Date }} {{ reply.Response_Time }}</p></td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!--Close Main Inbox-->
+        </div>
+
+        <!-- tab for report history  -->
+        <div class="tab-pane fade" id="pills-past-reports" role="tabpanel" aria-labelledby="pills-past-reports">
+            <!-- History mail list-->
+            <div class="table-responsive mt-3">
+                <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
+                    <tbody>
+                        {% for report in pub_inbox %}
+                        <!-- row -->
+                        <tr class =" {% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                            <!-- label -->
+                            <td class="pl-3"  style="width: 3%;">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="cst1" />
+                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                </div>
+                            </td>
+                            <!-- star -->
+                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <td style="width: 15%;">
+                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}">Sent by: {{ pub_info.gen_fname }} {{ pub_info.gen_surname }}</span>
+                            </td>
+                            <!-- Message -->
+                            <td class="text-truncate" style="width: 58%;">
+                                <a class="link text-decoration-none" href="{% url 'public_inbox_detail' report.id %}">
+                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
+                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
+                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                </a>
+                            </td>
+                            <!-- Attachment -->
+                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                            <!-- Time -->
+                            <td  style="width: 16%;"class="{% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ report.Reported_Date }} {{ report.Reported_Time }}</p></td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!--Close Mail-->
+        </div>
+    </div>
+</div>
+
+
+
+
+    <input type="text" name="unread_notif_count" id="unread_notif_count" value="{{ unread_notif_count }}" hidden>
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            unread_notif_count = document.getElementById('unread_notif_count').value;
+            document.getElementById('notif-count').innerHTML = unread_notif_count;
+        });
+    </script>
+
+{% endblock %}

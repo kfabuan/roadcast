@@ -4,6 +4,27 @@
   font-family: "Roboto", sans-serif;
 }
 
+.prof_icons {
+  font-size: 19px;
+  margin-right: 15px;
+  color: #0D6EFD;
+}
+
+.custom_ic1 {
+  background-color: #292b2c;
+  border-radius: 50px;
+}
+
+.custom_ic2 {
+  background-color: #65677c;
+  border-radius: 50px;
+}
+
+.custom_ic3 {
+  background-color: #5bc0de;
+  border-radius: 50px;
+}
+
 .fa-bookmark, .fa-rocket, .fa-rainbow {
   font-size: 24px;
   margin-left: 5px;
@@ -25,14 +46,19 @@
 .cover-bg {
   height: 350px !important;
   background-size: 100% auto;
-  background-position: top !important;
+  background-position: center center !important;
   object-fit: cover;
   border-radius:50px 50px 0px 0px;
 }
 
 .fa-star {
-  font-size: 20px;
+  font-size: 14px;
   color: #FFC107;
+}
+
+.fa-check-circle {
+  font-size: 14px;
+  color: #5cb85c;
 }
 
 .verified {
@@ -181,27 +207,12 @@ h5,
 .h2,
 .h3,
 .h5 {
-  font-family: inherit;
   font-weight: 600;
   line-height: 1.5;
   margin-bottom: .5rem;
   color: #000;
 }
 
-h2,
-.h2 {
-  font-size: 1.25rem;
-}
-
-h3,
-.h3 {
-  font-size: 1.0625rem;
-}
-
-h5,
-.h5 {
-  font-size: .8125rem;
-}
 
 hr {
   margin-top: 2rem;
@@ -360,6 +371,21 @@ hr {
 
   .pb-md-4 {
     padding-bottom: 1.5rem !important;
+  }
+}
+
+@media (max-width: 500px) {
+  .submit_me {
+    padding-left: 5px;
+    padding-right: 5px !important;
+    font-size: 18px !important;
+    padding: 15px;
+    border-radius: 100% !important;
+    text-align: center;
+  }
+
+  #submit_me_text {
+    display: none;
   }
 }
 

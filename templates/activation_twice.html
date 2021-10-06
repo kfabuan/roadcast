@@ -13,7 +13,7 @@
 
   <div class= "row px-3">
     <div class ="col-lg-10 col-xl-9 card flex-row mx-auto px-0">
-      <div class="img-right d-none d-md-flex"><img src="{%static 'image/mail.png'%}"style="width: 120%; background-repeat: no-repeat;"></img></div>
+      <div class="img-right d-none d-md-flex"><img src="{%static 'image/checkmail.png'%}"style="width: 120%; background-repeat: no-repeat;"></img></div>
 
         <div class="card-body" style="width: 55%;">
 
@@ -26,13 +26,13 @@
         <div >
         <center>
           <h6 style="margin-top: 70px; margin-bottom: 15px; ">You've succesfully verified your email address.</h6>
-          <h6>Please try to login to your account</h6>
+          <h6>Please wait for the admin's approval.</h6>
         </center>
         </div>
               {% csrf_token %}
                   <div class="mb-3" style="margin-top: 90px; width:70%; border-radius: 50px;">
-                    <a href = {%url 'login' %} class="btn btn-primary btn-block" style="border-radius: 50px;">
-                      Login
+                    <a href = {%url 'index' %} class="btn btn-primary btn-block" style="border-radius: 50px;">
+                      Go to Roadcast
                     </a>
                 </div>
           </div>

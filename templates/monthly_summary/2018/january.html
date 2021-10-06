@@ -1,14 +1,14 @@
 {% extends 'nav_admin.html' %}
-{% block title %} Home {% endblock %}
+{% block title %} Monthly Report {% endblock %}
 
 {% block design %}
   <style>
     .card {
         box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
-        border-radius: 15px;
+        border-radius: 15px !important;
     }
     .card-body {
-        border-radius: 15px;
+        border-radius: 15px !important;
     }
 
     .table-sm {
@@ -517,7 +517,7 @@ $(document).ready(function(){
           data: {
               labels: [{% for x in offense_labels %} '{{x}}', {% endfor %}],
               datasets: [{
-                  label: 'Yearly Crime/Offense',
+                  label: 'Crime/Offense',
                   data: [{% for x in offense_count %} {{x}}, {% endfor %}],
                   backgroundColor: [
                       'rgba(255, 99, 132, 0.2)',

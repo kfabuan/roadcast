@@ -368,7 +368,7 @@ class Tbl_pasig_incidents(models.Model):
     Suspect_Fname        = models.CharField(max_length=200, verbose_name='Suspect First Name', blank=True, null=True)
     Suspect_Lname        = models.CharField(max_length=200, verbose_name='Suspect Last Name', blank=True, null=True)
     Suspect_Severity    = models.CharField(max_length=200, verbose_name='Suspect Severity', blank=True, null=True, choices=SEVERITY)
-    Suspect_Age         = models.IntegerField(max_length=100, verbose_name='Suspect Age', blank=True, null=True)
+    Suspect_Age         = models.IntegerField(verbose_name='Suspect Age', blank=True, null=True)
     Suspect_Sex         = models.CharField(max_length=200, verbose_name='Suspect Sex', blank=True, null=True, choices=SEX)
     Suspect_Civil_Status = models.CharField(max_length=200, verbose_name='Suspect Civil_Status', blank=True, null=True, choices=CIVIL_STATUS)
     Suspect_Address      = models.CharField(max_length=200, verbose_name='Suspect Address', blank=True, null=True)
@@ -383,7 +383,7 @@ class Tbl_pasig_incidents(models.Model):
     Victim_Fname        = models.CharField(max_length=200, verbose_name='Victim First Name', blank=True, null=True)
     Victim_Lname        = models.CharField(max_length=200, verbose_name='Victim Last Name', blank=True, null=True)    
     Victim_Severity     = models.CharField(max_length=200, verbose_name='Victim Severity', blank=True, null=True, choices=SEVERITY)
-    Victim_Age          = models.IntegerField(max_length=100, verbose_name='Victim Age', blank=True, null=True)
+    Victim_Age          = models.IntegerField(verbose_name='Victim Age', blank=True, null=True)
     Victim_Sex          = models.CharField(max_length=200, verbose_name='Victim Sex', blank=True, null=True, choices=SEX)
     Victim_Civil_Status = models.CharField(max_length=200, verbose_name='Victim Civil_Status', blank=True, null=True, choices=CIVIL_STATUS)
     Victim_Address      = models.CharField(max_length=200, verbose_name='Victim Address', blank=True, null=True)
@@ -406,11 +406,14 @@ class Tbl_pasig_incidents(models.Model):
         return '{}-{}-{}'.format(self.City, model.Barangay, self.Date)
 
 class Tbl_public_report(models.Model):
-    User_ID = models.CharField(max_length=200, verbose_name='User ID', blank=True)
+    User_ID              = models.ForeignKey(tbl_genpub_users, null=True, on_delete=models.SET_NULL) #foreign
     Reported_City        = models.CharField(max_length=200, verbose_name='City:', blank=True)
     Reported_Brgy        = models.ForeignKey(Tbl_barangay, null=True, on_delete=models.SET_NULL) #foreign
     Reported_District    = models.CharField(max_length=200, verbose_name='District', blank=True)
     Reported_Location    = models.CharField(max_length=200, verbose_name='Location', blank=True)
+    Reported_Latitude    = models.CharField(max_length=200, verbose_name='Latitude', blank=True)
+    Reported_Longitude   = models.CharField(max_length=200, verbose_name='Longitude', blank=True)
+
     Reported_Along       = models.CharField(max_length=200, verbose_name='Along', blank=True)
     Reported_Corner      = models.CharField(max_length=200, verbose_name='Corner', blank=True)
     Reported_Narrative   = models.CharField(max_length=800, verbose_name='Narrative', blank=True)
@@ -434,15 +437,15 @@ class Tbl_public_report(models.Model):
 class Tbl_public_report_response (models.Model):
     Response_id     = models.AutoField(primary_key=True)
     Report          = models.ForeignKey(Tbl_public_report,null=True, on_delete=models.SET_NULL, related_name='Report_id') #foreign
-    Sender          = models.CharField(max_length=200, verbose_name ='Sender', blank=True)
-    Receiver        = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL, related_name='Receiver_id') #foreign
+    Sender_Type     = models.CharField(max_length=200, verbose_name='Sender Type', blank=True, null=True)
+    Sender          = models.IntegerField( null=True, verbose_name ='Sender', blank=True)
+    Receiver        = models.IntegerField(null=True, verbose_name='Receiver', blank = True) 
     Response        = models.CharField(max_length=200, verbose_name='Response', blank=True, null=True)
     Response_Date   = models.DateField(default=now, verbose_name='Response Date', blank=True, null=True)
     Response_Time   = models.TimeField(default=now, verbose_name='Response Time', blank=True, null=True)
-
-
+    Read_Status     = models.CharField(max_length=200, default="No", verbose_name='Read', blank=True, null=True) 
     def __str__(self):
-        return '{}-{}-{}'.format(self.Receiver,self.Response_id,self.Reported_City)
+        return '{}-to-{}-{}'.format(self.Sender,self.Receiver,self.Reported_City)
 
 class Tbl_forecast(models.Model):
     Date = models.DateField(max_length=200, verbose_name='Dates', blank=True, primary_key=True)

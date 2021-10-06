@@ -109,7 +109,7 @@
     {% endfor %}
     </tbody>
   </table>
-
+</div>
   <ul class="pagination">
     {% if members.has_previous %}
 
@@ -131,38 +131,9 @@
         $('.mobile_nav_items').toggleClass('active');
       });
 
-      $('#submit_form').click(function(){
-        var selected_offense = new Array();
-        var chk_tbl_offense = document.getElementById("tbl_offense");
-        var selchk = chk_tbl_offense.getElementsByTagName("input");
-
-        for (var i=0; i<selchk.length; i++) {
-          if(selchk[i].checked){
-            selected_offense.push(selchk[i].value);
-          }
-        }
-        if(selected_offense.length>0){
-          console.log(selected_offense);
-         // document.getElementById('display_offense').innerHTML=selected_offense;
-         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
-
-          alert(selected_offense);
-          alert(tryyyy)
-        }
-
-        var incident_date = document.getElementById("DateCommitted").value;
-        alert(incident_date);
-
-        });
-
     });
     </script>
-  
-    <script>
-      var today = new Date();
-      var time = today.getHours() + ":" + today.getMinutes();
-        document.getElementById("currentTime").value = time;
-    </script>
+
 {% endblock %}
 
 {% block jquery %} 

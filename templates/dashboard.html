@@ -15,10 +15,10 @@
 
     .card {
             box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
-            border-radius: 15px;
+            border-radius: 15px !important;
         }
     .card-body {
-        border-radius: 15px;
+        border-radius: 15px !important;
     }
 </style>
 
@@ -129,7 +129,7 @@
                 data: {
                     labels: ["0:00:00", "2:00:00", "4:00:00", "6:00:00","8:00:00", "10:00:00", "12:00:00","14:00:00","16:00:00","18:00:00","20:00:00","22:00:00",],
                     datasets: [{
-                        label: 'Hazardous Time',
+                        label: 'Yearly Hazardous Time',
                         data: time_count,
                         fill: false,
                         borderColor: 'rgb(75, 192, 192)',
@@ -288,7 +288,7 @@
                         },
                         title: {
                             display: true,
-                            text: 'Sex Distribution'
+                            text: 'Yearly Sex Distribution'
                         }
                     }
                 }
@@ -371,7 +371,7 @@
                     <div class="col-sm-4">
                       <div class="card">
                         <div class="card-body text-center">
-                          <h6 style="color: #a6a6a6;">This Week: {{week_num }}</h6>
+                          <h6 style="color: #a6a6a6;"> Week: {{week_num }}</h6>
                           <h3>{{ this_week }}</h3>
                         </div>
                       </div>
@@ -398,14 +398,14 @@
             </div>
 
                 <!-- <div class="card" style="height: 540px;">
-                    <div id="map"></div>
+                <div id="map"></div>
                 </div>
           </div>
         </div> -->
 
         <div class="card mb-4">
-            <div class="ratio ratio-4x3 ">
-                <div id="map"></div>
+            <div class="ratio ratio-4x3">
+                <div id="map"  style="border-radius: 15px;"></div>
             </div>
         </div>
       </div>
