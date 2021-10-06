@@ -203,12 +203,12 @@
                                        
                                     </div>
                                     <div class="col-2">
-                                            {% if prev_report.Assigned_Investigator_id %}
+                                            {% if prev.Assigned_Investigator_id %}
                                                 {% ifequal prev.Report_Status 'Solved' %}
                                                 <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
                                                 {% endifequal %}
 
-                                                {% ifequal prev_report.Report_Status 'Unsolved' %}
+                                                {% ifequal prev.Report_Status 'Unsolved' %}
                                                 <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
                                                 {% endifequal %}
 
@@ -217,7 +217,7 @@
 
                                             {% endif %}         
 
-                                            {% ifequal prev_report.Report_Status 'Invalid' %}
+                                            {% ifequal prev.Report_Status 'Invalid' %}
                                             <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
                                             {% endifequal %}
                                     </div>
@@ -315,26 +315,36 @@
                             {% endifnotequal %}
                         <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                        
-                            {% if admin_replies %}
-                                {% for reply in admin_replies %}
+                            {% if replies %}
+                                {% for reply in replies %}
                                     <center><hr style="width: 97%"></center>
 
                                     <div class="row" style="min-height: 40px; width: 100%;">
-                                    {% ifequal prev_report.id reply.Report_id %}
+                                    {% ifequal reply.Sender_Type 'Admin' %}
                                         {% for info in admin_info %}
                                             {% ifequal reply.Sender info.id %}
-        
-                                            <div class="col-1"><img src="/media/{{ info.Members_Pic }}" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                                <div class="col-1"><img src="/media/{{ info.Members_Pic }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                                <div class="col-10">
+                                                <b>{{ info.Members_Fname }} {{ info.Members_Lname }}</b> <br>
+                                                
+                                                <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
+                                                {{ reply.Response }} 
+                                            </div>
+                                        </div> 
+                                            {% endifequal %}
+                                        {% endfor %}
+
+                                    {% else %}  
+                                            <div class="col-1"><img src="/media/{{ pub_info.gen_profile }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
                                             <div class="col-10">
-                                            <b>{{ info.Members_Fname }} {{ info.Members_Lname }}</b> <br>
+                                            <b>{{ pub_info.gen_fname }} {{ pub_info.gen_surname }}</b> <br>
                                             
                                             <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
                                             {{ reply.Response }}  
-                                            {% endifequal %}
-                                        {% endfor %}
                                         </div>
                                     </div>
-                                        
+                                    
+
                                     {% endifequal %}
                                 {% endfor %}
                                 {% else %}
@@ -348,8 +358,8 @@
 
                         {% if request.session.public_id %}
                             <input type="text" name="sender_id" id="sender_id" value="{{pub_info.id}}" hidden>
-                            {% if admin_replies %}
-                                {% for reply in admin_replies %}
+                            {% if replies %}
+                                {% for reply in replies %}
                                         {% for info in admin_info %}
                                             {% ifequal reply.Sender info.id %}
                                                 <input type="text" name="receiver_id" id="receiver_id" value="{{ info.id }}" hidden>

@@ -344,26 +344,40 @@
                         <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                        
                             {% if admin_responses %}
-                                {% for responses in admin_responses %}
+                                {% for reply in admin_responses %}
                                     <center><hr style="width: 97%"></center>
 
                                 <div class="row" style="min-height: 40px; width: 100%;">
-
-                                    {% for a in all %}
-                                    {% ifequal a.id request.session.authorized_id %}
-                                       
-                                    <div class="col-1"><img src="/media/{{ a.Members_Pic }}" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                    {% ifequal reply.Sender_Type 'Admin' %}
+                                                                         
+                                    <div class="col-1"><img src="/media/{{ auth_info.Members_Pic }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
                                     <div class="col-10">
-                                        <b>{{ a.Members_Fname }} {{ a.Members_Lname }}</b> <br>
-                                        
-                                    {% endifequal %}
-                                    {% endfor %}
-                                        <span style="font-size: small;" class="text-muted">{{ responses.Response_Date }} {{ responses.Response_Time }}</span> <br>
-                                        {{ responses.Response }}  
+                                        <b>{{ auth_info.Members_Fname }} {{ auth_info.Members_Lname }}</b> <br>
+                                                                         
+                                   
+                                        <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
+                                        {{ reply.Response }}  
 
                                     </div>
                                 </div>
+                                
+                                {% else %}
+                                    {% for pub in pub_info %}
+                                    {% ifequal reply.Sender pub.id %}
+                                    <div class="col-1"><img src="/media/{{ pub.gen_profile }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                    <div class="col-10">
+                                        <b>{{ pub.gen_fname }} {{ pub.gen_surname }}</b> <br>
+                                    
+                                        {% endifequal %}
+                                    {% endfor %}
+                                        <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
+                                        {{ reply.Response }}  
+
+                                    </div>
+                                </div>
+                                {% endifequal %}
                                 {% endfor %}
+
                             {% else %}
                             <p class="text-muted"> <i>No replies available. </i></p>
                             {% endif %}
@@ -378,10 +392,7 @@
                             <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
                         {% endif %}
 
-                        {% if request.session.public_id %}
-                            <input type="text" name="sender_id" id="sender_id" value="{{detail.User_ID}}">
-                            <input type="text" name="receiver_id" id="receiver_id" value="Admin">
-                        {% endif %}
+                      
 
                     <div class="input-group div-reply">
                         <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">

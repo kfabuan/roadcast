@@ -1453,24 +1453,36 @@ def notif_public_report_detail (request, gen_pub_report_id):
 
     unread_public_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
     unread_public_report.Read_Status = "Yes"
-    #unread_public_report.Report_Status = "Unsolved"
-    # unread_public_report.Substation_id = ""
-
     unread_public_report.save()
     
     #for gen pub reports inbox
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
-    #to see admin replies <3
-    admin_responses = Tbl_public_report_response.objects.filter(Report_id = gen_pub_report_id)
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_info = Tbl_add_members.objects.get(id=auth_id)
+            replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Sender=auth_id)|Q(Receiver=auth_id)).order_by('Response_id') 
+            pub_info = tbl_genpub_users.objects.all()
+    except:
+        pass
+
+    
+
     data = {
         'public_reports_list': pasig_public_reports,
         'detail': unread_public_report,
         'unread_notif_count': unread_notif_count,
         'investigators_list': investigators_list,
         'substation_list': substation_list,
-        'admin_responses': admin_responses,
+
+        'auth_info':auth_info,
+        'pub_info':pub_info,
+        'replies':replies,
+        'admin_responses': replies,
+
+
         "all": authorized, 
         "pub": pub,
     }
@@ -1504,8 +1516,7 @@ def processAdmin_Reply (request, report_id):
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
 def sub_notification (request):
-     
-
+    
     context    = {
         "all": authorized,
         "pub": pub,
@@ -1544,6 +1555,7 @@ def public_inbox (request):
 
     }
     return render (request, 'gen_inbox.html', context)
+
 #inbox
 def public_inbox_detail (request, report_id):
     try:
@@ -1553,7 +1565,8 @@ def public_inbox_detail (request, report_id):
             pub_info = tbl_genpub_users.objects.get(id=pub_id)
 
             prev_report = Tbl_public_report.objects.get(id=report_id)
-            admin_replies = Tbl_public_report_response.objects.filter(Q(Sender_Type='Admin')&Q(Receiver=pub_id)&Q(Report_id=report_id)).order_by('-Response_id') 
+            replies = Tbl_public_report_response.objects.filter(Q(Report_id=report_id)).filter(Q(Sender=pub_id)|Q(Receiver=pub_id)).order_by('Response_id') 
+
             admin_info = Tbl_add_members.objects.all()
 
     except:
@@ -1566,7 +1579,7 @@ def public_inbox_detail (request, report_id):
         "pub_inbox":pub_inbox,
         "pub_info":pub_info,
         "prev_report": prev_report,
-        "admin_replies":admin_replies,
+        "replies":replies,
         "admin_info":admin_info,
 
     }
@@ -1577,7 +1590,6 @@ def processPublic_Reply (request, report_id):
     public_reply = request.POST.get('public_reply')
     sender = request.POST.get('sender_id')
     receiver = request.POST.get('receiver_id')
-
 
     public_responses = Tbl_public_report_response.objects.create(
                     Sender_Type = 'Public',
@@ -1599,7 +1611,7 @@ def archiving (request, incident_id):
         return HttpResponseRedirect('/unsolvedcases')
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
-        
+
 def unarchiving (request, incident_id):
     try:
         incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
