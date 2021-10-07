@@ -1,5 +1,5 @@
-{% extends 'nav_subrep.html' %}
-{% block title %} Home {% endblock %}
+{% extends 'nav_admin.html' %}
+{% block title %} Forwarded Reports {% endblock %}
 
 {% block design %}
 <style>
@@ -13,60 +13,44 @@
 {% block content %}
 <div class="content">
     <b id="date-today">Today: </b><span id="ct6"></span>
-
-        <!-- notifications for substation representative -->
-            <form action="">
-                <div class="input-group input-group-sm mb-3 mt-3">
-                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
-                  </div>
-            </form>
-        
-            <table class="table" style="background-color: white;">
+        <!-- Mail list-->
+        <div class="table-responsive mt-3">
+            <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
                 <tbody>
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Chief of Police </td>
-                        <td> Appreciation Message</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
+
+                    {% for fwd in fwd_reports %}
+                    <!-- row -->
+                    <tr class =" {% ifequal fwd.Read_by_subrep 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                        <!-- label -->
+                        <td class="pl-3"  style="width: 3%;">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="cst1" />
+                                <label class="custom-control-label" for="cst1">&nbsp;</label>
+                            </div>
+                        </td>
+                        <!-- star -->
+                        <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                        <td style="width: 15%;">
+                            <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
+                        </td>
+                        <!-- Message -->
+                        <td class="text-truncate" style="width: 58%;">
+                            <a class="link text-decoration-none" href="{% url 'sub_notification_detail' fwd.id %}">
+                                <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
+                                <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
+                                <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
+                            </a>
+                        </td>
+                        <!-- Attachment -->
+                        <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                        <!-- Time -->
+                        <td  style="width: 16%;"class="{% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
                     </tr>
-                   
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Alert </td>
-                        <td> New Incident Report</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                    </tr>
-        
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Alert </td>
-                        <td> New Incident Report</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                    </tr>
-        
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Chief of Police </td>
-                        <td> Appreciation Message</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                    </tr>
-        
-                    <tr>
-                        <td> <input type="checkbox" name="" id=""></td>
-                        <td> 09/26/2020 15:25:00</td>
-                        <td> Alert </td>
-                        <td> New Incident Report</td>
-                        <td> <a href=""><i class="bi bi-inbox-fill" style="color: black"></i></a></td>
-                    </tr>
+
+                    {% endfor %}
                 </tbody>
             </table>
-        
-      </div>
-
+        </div> <!--Close Mail-->
   </div> <!--closing content div-->
 {% endblock %}

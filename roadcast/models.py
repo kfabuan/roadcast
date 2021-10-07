@@ -422,7 +422,8 @@ class Tbl_public_report(models.Model):
     Reported_Time        = models.TimeField(default=now, verbose_name='Time Reported', blank=True)
 
     Recipient               = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
-    Read_Status             = models.CharField(max_length=200, verbose_name='Read', blank=True)
+    Read_Status             = models.CharField(max_length=200, verbose_name='Read by Admin', blank=True)
+    Read_by_subrep          = models.CharField(default='No', max_length=200, verbose_name='Read by Subrep', blank=True)
     Report_Status           = models.CharField(max_length=200, verbose_name='Report Status', default="Unsolved", blank=True)
     Assigned_Investigator   = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
     Substation              = models.ForeignKey(Tbl_substation, null=True, on_delete=models.SET_NULL, related_name='Substation_id') #foreign

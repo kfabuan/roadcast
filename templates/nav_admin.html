@@ -194,12 +194,12 @@
                         <span class="nav_name">Incident Reports</span></a> 
                     {% endif %}
 
-                    {% if request.get_full_path == '/public/inbox' %}
-                    <a href="{% url 'public_inbox' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
+                    {% if request.get_full_path == '/substation/notification' %}
+                    <a href="{% url 'sub_notification' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% else %}
-                    <a href="{% url 'public_inbox' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'sub_notification' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% endif %}

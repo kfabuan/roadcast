@@ -1515,13 +1515,41 @@ def processAdmin_Reply (request, report_id):
     admin_responses.save()
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
+
 def sub_notification (request):
-    
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            subrep_row = Tbl_add_members.objects.get(id=auth_id)
+
+            fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)
+    except:
+        pass
+
     context    = {
+        "fwd_reports": fwd_reports,
         "all": authorized,
         "pub": pub,
     }
     return render (request, 'sub_notification.html', context)
+
+def sub_notification_detail (request, report_id):
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            subrep_row = Tbl_add_members.objects.get(id=auth_id)
+            fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)
+            detail = Tbl_public_report.objects.get(id=report_id)
+    except:
+        pass
+
+    context    = {
+        "fwd_reports": fwd_reports,
+        "detail": detail,
+        "all": authorized,
+        "pub": pub,
+    }
+    return render (request, 'sub_notification_detail.html', context)
 
 #inbox
 def public_inbox (request):
@@ -1534,13 +1562,6 @@ def public_inbox (request):
             admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id') 
             admin_info = Tbl_add_members.objects.all()
 
-    except:
-        pass
-
-    try:
-        if request.session['authorized_id']:
-            auth_id = request.session['authorized_id']
-            admin_row = Tbl_add_members.objects.filter(id=auth_id)
     except:
         pass
 
@@ -2188,3 +2209,21 @@ def navbar (request):
         "audit": audit
     }
     return render(request, 'nav_admin.html', context)
+
+#Bagong dagdag 
+def error_page (request): #403
+    context    = {
+        "all": authorized,
+        "pub": pub,
+    }
+    return render(request, '403.html', context)
+
+def no_page (request, exception): #404
+    context    = {
+        "all": authorized,
+        "pub": pub,
+    }
+    return render(request, '404.html', context)
+
+def server_error (request): #500
+    return render(request, '500.html', status=500)

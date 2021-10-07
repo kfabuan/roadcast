@@ -122,7 +122,7 @@
                             <!-- star -->
                             <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
                             <td style="width: 15%;">
-                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID }}</span>
+                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surnname }}</span>
                             </td>
                             <!-- Message -->
                             <td class="text-truncate" style="width: 58%;">

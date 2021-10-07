@@ -1,0 +1,233 @@
+{% extends 'base_sign_up.html' %}
+{% block design %}
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-uWxY/CJNBR+1zjPWmfnSnVxwRheevXITnMqoEIeG1LJrdI0GlVs/9cVSyPYXdcSF" crossorigin="anonymous">
+
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kQtW33rZJAHjgefvhyyzcGF3C5TFyBQBA13V1RKPf4uH+bwyzQxZ6CmMZHmNBEfJ" crossorigin="anonymous"></script>
+
+<style>
+
+.card {
+    max-width: 100%;
+    width: 900px;
+
+    margin-top: 50px;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 30px;
+
+    padding-top: 80px;
+    padding-left: 100px;
+    padding-right: 100px; 
+    padding-bottom: 80px;
+
+    border-radius: 20px; 
+    border-color:#e6e6e762; 
+    box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);
+
+    text-align: center;
+    align-items: center;
+}
+.img-1 {
+    width: 500px;
+    height: auto;
+}
+.text-1 {
+    margin-top: 20px;
+}
+.row {
+    margin-top: 20px;
+}
+.button {
+    border-radius: 50px;
+}
+
+.text-span {
+    width: 500px;
+}
+
+@media only screen and (max-width: 1025px){
+    .card {
+    width: 700px;
+    margin-left: 30px;
+    margin-top:30px;
+    margin-bottom: 30px;
+    margin-right: 30px !important;
+}
+    .img-1 {
+        width: 500px;
+        height: auto;
+}
+    .text-span {
+        width: 400px;
+    }
+
+}
+
+@media only screen and (max-width: 1000px){
+    .card {
+    width: 700px;
+    margin-left: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-right: 30px !important;
+}
+    .img-1 {
+        width: 500px;
+        height: auto;
+}
+    .text-span {
+            width: 400px;
+        }
+}
+
+@media only screen and (max-width: 750px){
+    .card {
+    width: 500px;
+    margin: 30px;
+    margin-right: 30px !important;
+
+    padding-top: 100px;
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-bottom: 100px;
+
+}
+    .img-1 {
+        width: 500px;
+        height: auto;
+}
+    .text-span {
+        width: 360px;
+    }
+}
+
+
+@media only screen and (max-width: 550px){
+    .card {
+    width: 400px;
+    margin: 30px;
+    margin-top: 70px;
+    margin-right: 30px !important;
+    padding: 40px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    .text-span {
+        width: 300px;
+    }
+}
+
+@media only screen and (max-width: 455px){
+    .card {
+    width: 315px;
+    margin: 30px;
+    margin-top: 90px;
+    margin-right: 30px !important;
+    
+    padding-top: 60px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 60px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    h1 {
+        font-size: 24px;
+    }
+
+    .text-span {
+        width: 240px;
+    }
+
+    p {
+        font-size: 15px;
+    }
+}
+
+@media only screen and (max-width: 360px){
+    .card {
+    width: 250px;
+    margin: 30px;
+    margin-top: 50px;
+    margin-right: 30px !important;
+    
+    padding-top: 60px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 60px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    h1 {
+        font-size: 19px;
+    }
+    .text-span {
+        width: 160px;
+    }
+    p {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 285px){
+    .card {
+    width: 215px;
+    margin-top: 100px;
+    margin-right: 30px;
+    
+    padding-top: 60px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 60px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    h1 {
+        font-size: 18px;
+    }
+    .text-span {
+        width: 140px;
+    }
+    p {
+        font-size: 12px;
+    }
+}
+</style>
+{% endblock %}
+{% load static %}
+{% block title %} Page not Found {% endblock %}
+{% block content %}
+<center>
+    
+    <div class="card">
+        <div class="img-1">
+            <img src="{% static 'image/error3.png'%}"  class="img-fluid">
+        </div>
+
+        <div class="text-1">
+            <h1>Sorry! Page not Found.</h1>
+        </div>
+        <div class="text-span">
+            <p class="font-weight-light">
+                We can't seem to find the page you are looking for.
+                The page may have been deleted or it never existed.
+            </p>
+        </div>
+        <div class="row">
+            <button type="button" class="btn btn-primary button" onclick="location.href = '{% url 'index' %}'">Go to Homepage</button>
+        </div>
+    </div>
+
+</center>
+
+{% endblock %}

@@ -56,20 +56,23 @@ urlpatterns = [
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
     path('report/monthly/generate', views.get_monthly_generate, name='monthly_generate'),
 
-
+    #admin inbox
     path('notification', views.notification, name='notification'),
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
     path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
 
+    #public inbox
     path('public/inbox', views.public_inbox, name='public_inbox'),
     path('public/inbox/<int:report_id>', views.public_inbox_detail, name='public_inbox_detail'),
     path('public/inbox/<int:report_id>/reply', views.processPublic_Reply , name='process_public_reply'),
 
-
+    #sub-rep inbox
     path('substation/notification', views.sub_notification, name='sub_notification'),
+    path('substation/notification/<int:report_id>', views.sub_notification_detail, name='sub_notification_detail'),
 
-      #jew
+
+    #jew
     path('notification/verification/<int:signup_id>', views.notif_sign_up_validation, name='notif_sign_up_validation'),
     path('notification/verifed/<int:pk>', views.genpub_verified, name='genpub_verified'),
     path('notification/rejected/<int:pk>', views.genpub_rejected, name='genpub_rejected'),
@@ -122,5 +125,11 @@ urlpatterns = [
     path('public/settings', views.pub_notif_inbox, name='pub_notif_inbox'), #settings
     path('public/settings/update/<prof_id>', views.change_account, name='change_account'), #save settings
 
+    #Bagong dagdag
+    path('error', views.error_page, name='error_page'), #error page for login required & permissions
+
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+handler404 = "roadcast.views.no_page" #page not found
+handler500 = 'roadcast.views.server_error' #server error

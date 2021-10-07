@@ -18,11 +18,94 @@
 {% endfor %}
 {% endif %}
 
-<div class="page-content">
 
+<!-- Form validation -->
+<script type="text/javascript">
+  function validate_form () {
+    var x = document.myform.gen_username.value;  
+    var atposition = x.indexOf("@");  
+    var dotposition = x.lastIndexOf(".");  
+    var mobile = /^\d{11}$/;
+  
+      if ( document.myform.gen_fname.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your first name." );
+          return false;
+      }
+      else if ( document.myform.gen_surname.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your last name." );
+          return false;
+      }
+      else if ( document.myform.gen_bday.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your birthday." );
+          return false;
+      }
+      else if ( document.myform.gen_sex.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your gender." );
+          return false;
+      }
+      else if ( document.myform.gen_contact_no.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your contact number." );
+          return false;
+      }
+      else if ( mobile.test(document.myform.gen_contact_no.value) == false ) {
+          alert ( "Oops! Can't submit form. Please enter a valid 11 digit contact number (e.g. 09XXXXXXXX)." );
+          return false;
+      }
+      else if ( document.myform.gen_region.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your region." );
+          return false;
+      }
+      else if ( document.myform.gen_province.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your province." );
+          return false;
+      }
+      else if ( document.myform.gen_city.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your city." );
+          return false;
+      }
+      else if ( document.myform.gen_barangay.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your barangay." );
+          return false;
+      }
+      else if ( document.myform.gen_username.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your email address." );
+          return false;
+      }
+      else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=x.length){  
+        alert("Oops! Can't submit form. Please enter a valid email address (e.g. user@domain.com).");  
+        return false;  
+      }
+      else if ( document.myform.gen_pass.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your password." );
+          return false;
+      }
+      else if ( document.myform.gen_pass.value.length < 8) {
+          alert ( "Oops! Can't submit form. Password length must be atleast 8 characters." );
+          return false;
+      }
+      else if ( document.myform.gen_cpass.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please re-enter your password." );
+          return false;
+      }
+      else if ( document.myform.gen_pass.value != document.myform.gen_cpass.value ) {
+          alert ( "Oops! Can't submit form. Please make sure your passwords match." );
+          return false;
+      }
+      else if ( document.myform.gen_valid_id.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a valid ID and submit a photo of it." );
+          return false;
+      }
+      else if ( document.myform.gen_upload_id.value == "" || document.myform.gen_upload_id.value == null ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please upload a photo of yourself holding any of the given valid IDs." );
+          return false;
+      }
+  }
+  </script>
+
+<div class="page-content">
   <div class="form-v1-content">
     <div class="wizard-form">
-          <form class="form-register" action="{% url 'duplicate_gen' %}" method="POST" enctype="multipart/form-data">
+          <form class="form-register" action="{% url 'duplicate_gen' %}" name="myform" onsubmit="return validate_form();" method="POST" enctype="multipart/form-data">
 
             {% csrf_token %}
 
@@ -47,22 +130,22 @@
               
               <div class="row">
                 <div class="col">
-                  <input type="text" name="gen_fname" placeholder="First name" class="form-control custom-form text-capitalize" required> 
+                  <input type="text" name="gen_fname" placeholder="First name" class="form-control custom-form text-capitalize"  > 
                 </div>
                 <div class="col">
-                  <input type="text" name="gen_surname" placeholder="Last name" class="form-control custom-form text-capitalize" required> 
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col">
-                  <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control custom-form" required> 
+                  <input type="text" name="gen_surname" placeholder="Last name" class="form-control custom-form text-capitalize"  > 
                 </div>
               </div>
 
               <div class="row">
                 <div class="col">
-                  <select id="sex" name="gen_sex" class="form-select" required>
+                  <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control custom-form"  > 
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <select id="sex" name="gen_sex" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">Sex</option>
                     <option value="Female"> Female </option>
                     <option value="Male"> Male </option>
@@ -70,13 +153,13 @@
                     </select>
                 </div>
                 <div class="col">
-                  <input type="tel" name="gen_contact_no" minlength="11" maxlength="11" placeholder="Contact number" class="form-control custom-form" minlength="10" maxlength="10" required> 
+                  <input type="text" name="gen_contact_no" placeholder="Contact number" class="form-control custom-form" > 
                 </div>
               </div> 
 
               <div class="row">
                 <div class="col">
-                  <select id="region" name="gen_region" class="form-select" required>
+                  <select id="region" name="gen_region" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">Region</option>
                     <option value="1"> 1 </option>
                     <option value="2"> 2 </option>
@@ -87,7 +170,7 @@
 
               <div class="row">
                   <div class="col">
-                    <select id="province" name="gen_province" class="form-select" required>
+                    <select id="province" name="gen_province" class="form-select"  >
                      <option value="" selected="true" disabled="disabled">Province</option>
                       <option value="1"> 1 </option>
                       <option value="2"> 2 </option>
@@ -95,7 +178,7 @@
                       </select>
                   </div>
                   <div class="col">
-                  <select id="city" name="gen_city" class="form-select" required>
+                  <select id="city" name="gen_city" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">City</option>
                     <option value="1"> 1 </option>
                     <option value="2"> 2 </option>
@@ -106,7 +189,7 @@
 
               <div class="row">
                 <div class="col">
-                  <input type="text" name="gen_barangay" placeholder="Barangay" class="form-control custom-form text-capitalize" required>
+                  <input type="text" name="gen_barangay" placeholder="Barangay" class="form-control custom-form text-capitalize"  >
                 </div>
               </div>
             </div>
@@ -128,7 +211,7 @@
 
               <div class="row">
                 <div class="col">
-                  <input type="email" name="gen_username" id="username" placeholder="Email address" class="form-control custom-form" required> 
+                  <input type="text" name="gen_username" id="username" placeholder="Email address" class="form-control custom-form"  > 
                 </div>
               </div>
 
@@ -140,13 +223,13 @@
 
               <div class="row">
                 <div class="col">
-                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form" minlength="8" required> 
+                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form"  > 
                 </div>
               </div>
 
               <div class="row">
                 <div class="col">
-                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" minlength="8" oninput="check(this)" required> 
+                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" > 
                 </div>
               </div>
 
@@ -198,7 +281,7 @@
 
             <div class="row">
               <div class="col">
-                <select id="Valid ID" name="gen_valid_id" class="form-select" required>
+                <select id="Valid ID" name="gen_valid_id" class="form-select"  >
                   <option value="" selected="true" disabled="disabled">Valid ID</option>
                   <option value="UMID">UMID</option>
                   <option value="Driver's License">Driver's License</option>
@@ -220,7 +303,7 @@
                   <div class="imagePreview">
                   <label class="btn btn-primary upload-img">
                       Upload a photo
-                      <input type="file" name="gen_upload_id" class="uploadFile" accept="image/*" style="width: 0px; height: 0px; overflow: hidden;" required>
+                      <input type="file" name="gen_upload_id" class="uploadFile" accept="image/*" style="width: 0px; height: 0px; overflow: hidden;"  >
                       </label>
                   </div>
                 </div>
@@ -278,7 +361,7 @@
 
                 <section style="height: 3.5px;"></section>
 
-                <p class="password" style="margin-top: 0px;">Note: An email will be sent to your email address for you to further verify. Please check your email in a bit.</p>
+                <p class="password" style="margin-top: 0px;">Note: An email will be sent to your email address for you to verify it. Please check your inbox in a bit.</p>
 
                 <section style="height: 40px;"></section>
 
@@ -304,8 +387,9 @@
       }
     </script>
 
-<!-- Password match -->
-    <script>
+<!-- Password match --> 
+<!-- oninput="check(this)"  -->
+    <!-- <script>
        function check(input) {
         if (input.value != document.getElementById('password').value) {
             input.setCustomValidity('Please make sure your passwords match.');
@@ -314,7 +398,7 @@
             input.setCustomValidity('');
         }
     }
-    </script>
+    </script> -->
 
 <!-- Maximum date is today -->
     <script>
