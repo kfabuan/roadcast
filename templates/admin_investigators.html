@@ -2,6 +2,20 @@
 
 {% block title %} List of investigators {% endblock %}
 
+{% block design %}
+<style>
+     .table {
+        background-color: white;
+        border-radius: 15px !important;
+        box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);  
+    }
+
+    .rad_tl { border-top-left-radius: 15px !important; }
+    .rad_tr { border-top-right-radius: 15px !important; }
+
+</style>
+{% endblock %}
+
 {% block content %}
 
 {% if searched %}
@@ -43,12 +57,12 @@
       <thead>
           <tr class="table-primary">
             <!-- <th scope="col">No.</th> -->
-            <th>Photo</th>
+            <th class ="rad_tl">Photo</th>
             <th>Name</th>
             <th>Member Type</th>
             <th>Department</th>
             <th>Substation</th>
-            <th>Operation</th>
+            <th class ="rad_tr">Operation</th>
           </tr>
       </thead>
       <tbody>

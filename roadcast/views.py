@@ -390,6 +390,10 @@ class DashboardView (View):
         # FOR MULTIPLE MARKERS IN DASHBOARD
         markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True))
 
+        #Sessions
+        authorized = Tbl_add_members.objects.all()
+        pub            = tbl_genpub_users.objects.all()
+
         data = {
             "all_total": all_total,
             "this_week": this_week,
@@ -516,6 +520,31 @@ def get_data(request, *args, **kwargs):
 
     time_count = [am12_am2, am2_am4,am4_am6, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
 
+    #SEVERITY 
+    suspect_severity = []
+    victim_severity = []
+
+    suspect_severity = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year,Date__year__lte=today.year,).values_list('Suspect_Severity', flat=True)
+    victim_severity = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year,Date__year__lte=today.year, ).values_list('Victim_Severity', flat=True)
+
+    severity_combined = list(chain(suspect_severity, victim_severity))
+    distinct_severity = list(set(severity_combined))
+    severity_count = []
+    severity_total = 0
+
+    for severity in distinct_severity:
+        x = severity_combined.count(severity)
+        severity_count.append(x)
+        severity_total += x
+
+    #Day of the week 
+    day_labels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+    day_count = []
+    
+    for day in day_labels:
+        x = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year, Day = day).count()                          
+        day_count.append(x)
+
 
     data = {
             "district2_labels": d2_brgys,
@@ -530,7 +559,13 @@ def get_data(request, *args, **kwargs):
             "sex_labels": sex_labels,
             "sex_count": sex_count,
 
-            "time_count":time_count
+            "time_count":time_count,
+
+            "severity_labels":distinct_severity,
+            "severity_count":severity_count,
+            
+            "day_labels": day_labels,
+            "day_count": day_count,
     }
     return JsonResponse(data) #http response
 
@@ -689,7 +724,7 @@ def add_incident (request): #add using CSV
     except:
         csv_file = request.FILES['file']
         # let's check if it is a csv file
-        if not csv_file.name.endswith('.csv'):
+        if not csv_file.name.endswith('.png'):
             messages.error(request, 'Error: This is not a CSV file.')
 
         context = {
@@ -871,6 +906,7 @@ def processDeleteIncident (request, incident_id):
     messages.success(request, ("Successfully Deleted!"))
     return HttpResponseRedirect('/incidents/view')
 
+#encoder and admin view incidents
 def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
     try:
         member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
@@ -1032,6 +1068,29 @@ def processEditIncident(request, incident_id):
         messages.success(request, "Your data has been saved!")
         return HttpResponseRedirect(reverse('incident_detail_view', args=(incident_id, ))) #name ng url yung gen_incident_detail_view NOT MISMONG URL
 
+#public and subrep view incidents
+def public_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
+    try:
+        member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+        investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+        substation_list = Tbl_substation.objects.all()
+        brgy_list = Tbl_barangay.objects.all()
+        all_incidents = Tbl_pasig_incidents.objects.all()
+        pasig_incident_detail = Tbl_pasig_incidents.objects.get(id=incident_id)
+        pasig_incident_detail.read_status = "Yes"
+        pasig_incident_detail.save()
+
+    except Tbl_pasig_incidents.DoesNotExist:
+        raise Http404("Incident does not exist")
+
+    return render(request, 'public_view_incident_detail.html', 
+        {'pasig_incident_detail': pasig_incident_detail,
+         'all_incidents': all_incidents,
+         'investigators_list': investigators_list,
+         'substation_list': substation_list,
+         'brgy_list':brgy_list,
+         "all": authorized,
+         "pub": pub,})
 
 def report_summary (request):
     context    = {
@@ -1212,7 +1271,7 @@ def monthly_report (request):
             vehicle_count.append(x)
             vehicle_total = vehicle_total + int(x)
 
-        #4. AGE STATS - MALE - monthly
+        # AGE STATS - MALE - monthly
         suspect_age_m = []
         victim_age_m = []
 
@@ -1249,7 +1308,7 @@ def monthly_report (request):
 
         age_total_m = child_m + adolescent_m + adult_m + geriatric_m 
 
-        #5. AGE STATS - FEMALE - monthly
+        #AGE STATS - FEMALE - monthly
         suspect_age_f = []
         victim_age_f = []
 
@@ -1285,8 +1344,46 @@ def monthly_report (request):
 
         age_total_f = child_f + adolescent_f + adult_f + geriatric_f 
         
+        #SEVERITY 
+        suspect_severity = []
+        victim_severity = []
+
+        suspect_severity = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,Date__year__lte=year,
+                                        Date__month__gte=month,Date__month__lte=month,).values_list('Suspect_Severity', flat=True)
+        victim_severity = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,Date__year__lte=year,
+                                        Date__month__gte=month,Date__month__lte=month,).values_list('Victim_Severity', flat=True)
+
+        severity_combined = list(chain(suspect_severity, victim_severity))
+        distinct_severity = set(severity_combined)
+        severity_count = []
+        severity_total = 0
+
+        for severity in distinct_severity:
+            x = severity_combined.count(severity)
+            severity_count.append(x)
+            severity_total += x
+
+        #Day of the week 
+        day_labels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        day_count = []
+        day_total = 0
+        # day_list = Tbl_pasig_incidents.objects.all().values_list('Day', flat=True)
+        
+        
+        for day in day_labels:
+            # day_labels.append(day)
+            x = Tbl_pasig_incidents.objects.filter(
+                                        Date__year__gte=year,
+                                        Date__year__lte=year,
+                                        Date__month__gte=month,
+                                        Date__month__lte=month,
+                                        Day = day).count()                          
+            day_count.append(x)
+            day_total += x
+
         data = {
-                "child_f":suspect_age_f,
                 "month": month_label, "year":year_label,
 
                 "district1_data": zip(d1_brgys, d1_brgys_count),
@@ -1312,7 +1409,6 @@ def monthly_report (request):
                 "vehicle_data": zip(distinct_vehicles, vehicle_count),
                 "vehicle_total": vehicle_total,
 
-                
                 "age_combined_m": age_combined_m,
                 "age_total_m": age_total_m,
                 "child_m": child_m,
@@ -1328,6 +1424,16 @@ def monthly_report (request):
                 "geriatric_f": geriatric_f,
                 "all": authorized, 
                 "pub": pub,
+
+                "severity_labels":distinct_severity,
+                "severity_count":severity_count,
+                "severity_data": zip(distinct_severity, severity_count),
+                "severity_total": severity_total,
+
+                "day_data": zip(day_labels, day_count),
+                "day_labels": day_labels,
+                "day_count": day_count,
+                "day_total":day_total,
         }
         return render (request, 'monthly_summary/2018/january.html', data)
 
@@ -1536,10 +1642,13 @@ def sub_notification (request):
 def sub_notification_detail (request, report_id):
     try:
         if request.session['authorized_id']:
+            detail = Tbl_public_report.objects.get(id=report_id)
+            detail.Read_by_subrep = 'Yes'
+            detail.save()
+
             auth_id = request.session['authorized_id']
             subrep_row = Tbl_add_members.objects.get(id=auth_id)
             fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)
-            detail = Tbl_public_report.objects.get(id=report_id)
     except:
         pass
 
@@ -1550,6 +1659,23 @@ def sub_notification_detail (request, report_id):
         "pub": pub,
     }
     return render (request, 'sub_notification_detail.html', context)
+
+#subrep to admin messages    
+def processSubrep_Reply (request, report_id):
+    public_reply = request.POST.get('public_reply')
+    sender = request.POST.get('sender_id')
+    receiver = request.POST.get('receiver_id')
+
+    public_responses = Tbl_public_report_response.objects.create(
+                    Sender_Type = 'Public',
+                    Sender    = sender,
+                    Receiver = receiver,
+                    Response  = public_reply,
+                    Report_id = report_id, )
+
+    public_responses.save()
+    messages.success(request, ("Message Successfully Sent!"))
+    return HttpResponseRedirect(reverse('public_inbox_detail', args=(report_id,)))
 
 #inbox
 def public_inbox (request):
@@ -1668,6 +1794,8 @@ def unsolved_cases (request):
         "level3":level3,
         "level4":level4,
         "archive":archive,
+        "all": authorized,
+        "pub": pub,
     }
     return render (request, 'unsolved_cases.html', data)
 

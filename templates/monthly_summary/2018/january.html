@@ -157,7 +157,23 @@
             </div>
         </div>
 
+        <div class="row" style="border:0; margin:0; padding:0;">
+          <div class="col-sm-6 mb-4">
+              <div class="card">
+                  <div class="card-body" style="background-color: white;">
+                      <canvas id="bar_severity" height="150"></canvas>
+                  </div>
+              </div>
+          </div>
 
+          <div class="col-sm-6 mb-4">
+              <div class="card">
+                  <div class="card-body" style="background-color: white;">
+                      <canvas id="line_day" height="150"></canvas>
+                  </div>
+              </div>
+          </div>
+      </div>
         
           
         </div>
@@ -191,37 +207,62 @@
                             <td class="rad_br b-no-border"><b>{{ d1_brgys_total }}</b></td>
                           </tr>
                         </tbody>
-                  </table>
-                </div>
-              </div>
+                      </table>
+                    </div>
+                  </div>
 
-              <div class="card mb-3">
-                <div class="card-body tabular">
-                  <table class="table table-sm table-hover">
-                    <thead class="table-primary ">
-                      <tr>
-                        <th scope="col" class="rad_tl b-no-border">District 2</th>
-                        <th scope="col" class="rad_tr b-no-border">Count</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {% for d2, d2_count in district2_data %}
-                        <tr>
-                          <td scope="row">{{ forloop.counter}}. {{ d2 }}</td>
-                          <td>{{ d2_count }}</td>
-                        </tr>
-                      {% endfor %}
+                  <div class="card mb-3">
+                    <div class="card-body tabular">
+                      <table class="table table-sm table-hover">
+                        <thead class="table-primary ">
+                          <tr>
+                            <th scope="col" class="rad_tl b-no-border">District 2</th>
+                            <th scope="col" class="rad_tr b-no-border">Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for d2, d2_count in district2_data %}
+                            <tr>
+                              <td scope="row">{{ forloop.counter}}. {{ d2 }}</td>
+                              <td>{{ d2_count }}</td>
+                            </tr>
+                          {% endfor %}
 
-                      <tr class="table-active">
-                        <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
-                        <td class="rad_br b-no-border"><b>{{ d2_brgys_total }}</b></td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                          <tr class="table-active">
+                            <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                            <td class="rad_br b-no-border"><b>{{ d2_brgys_total }}</b></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div> 
 
-                    
+                  <div class="card mb-3">
+                    <div class="card-body tabular">
+                      <table class="table table-sm table-hover">
+                        <thead class="table-primary ">
+                          <tr>
+                            <th scope="col" class="rad_tl b-no-border">Day of the week</th>
+                            <th scope="col" class="rad_tr b-no-border">Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for day, day_count in day_data %}
+                            <tr>
+                              <td scope="row">{{ forloop.counter}}. {{ day }}</td>
+                              <td>{{ day_count }}</td>
+                            </tr>
+                          {% endfor %}
+
+                          <tr class="table-active">
+                            <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                            <td class="rad_br b-no-border"><b>{{ day_total }}</b></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div> 
+
                 </div>
 
                 <div class="col-sm-6">
@@ -344,7 +385,7 @@
                         <tbody>
                           {% for vehicle, vehicle_count in vehicle_data %}
                             <tr>
-                              <th scope="row"> {{ vehicle }}</th>
+                              <td scope="row"> {{ forloop.counter}}. {% ifequal vehicle '' %} Blank {% else %}{{ vehicle }} {% endifequal %}</th>
                               <td> {{vehicle_count }}</td>
                             </tr>
                           {% endfor %}
@@ -353,12 +394,37 @@
                             <td class="rad_br b-no-border"><b>{{ vehicle_total }}  </b></td>
                           </tr>
                         </tbody>
-                      </table>
-                    </div>
+                    </table>
                   </div>
                 </div>
-                
-                 
+
+                <div class="card mb-3">
+                  <div class="card-body tabular">
+                    <table class="table table-sm table-hover">
+                      <thead class="table-primary ">
+                          <tr>
+                            <th scope="col" class="rad_tl b-no-border">Severity</th>
+                            <th scope="col" class="rad_tr b-no-border">Count</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% for severity, severity_count in severity_data %}
+                            <tr>
+                              <td scope="row"> {{ forloop.counter}}. {% ifequal severity '' %} Blank {% else %}{{ severity }} {% endifequal %}</th>
+                              <td> {{severity_count }}</td>
+                            </tr>
+                          {% endfor %}
+                          <tr class="table-active">
+                            <td scope="row" class="rad_bl b-no-border"> <b>Total: </b></td>
+                            <td class="rad_br b-no-border"><b>{{ severity_total }}  </b></td>
+                          </tr>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+
+
+                </div>
                 
             </div>
         </div>
@@ -374,6 +440,8 @@ $(document).ready(function(){
   var ctx3 = document.getElementById('myChart3'); //district1
   var pie_sex = document.getElementById('pie_sex'); //sex
   var bar_offense = document.getElementById('bar_offense'); //offenses
+  var bar_severity = document.getElementById('bar_severity'); //severity
+  var line_day = document.getElementById('line_day'); //day
 
 
         var myChart = new Chart(ctx2, {
@@ -465,10 +533,16 @@ $(document).ready(function(){
                   label: 'Sex',
                   data:  [{% for x in sex_count %} {{x}}, {% endfor %}],
                   backgroundColor: [
+                  // 'rgb(54, 162, 235)',
+                  // 'rgb(255, 99, 132)',
+                  // 'rgba(75, 192, 192, 1)',
+                  // 'rgba(153, 102, 255, 1)',
+                  '#7BD5F5',
+                  '#4adede',
+                  '#1f2f98',
+                  '#787ff6',
+                  '#1ca7ec',
                   'rgb(54, 162, 235)',
-                  'rgb(255, 99, 132)',
-                  'rgba(75, 192, 192, 1)',
-                  'rgba(153, 102, 255, 1)',
                   ],
                   hoverOffset: 4
               }]
@@ -542,6 +616,65 @@ $(document).ready(function(){
           options: {
               scales: {
                   y: {beginAtZero: true}
+              }
+          }
+      });
+
+      var bar_severity = new Chart(bar_severity, {
+          type: 'bar',
+          data: {
+              labels: [{% for x in severity_labels %} {% ifequal x '' %} 'Blank', {% else %} '{{x}}', {% endifequal %} {% endfor %}],
+              datasets: [{
+                  label: 'Severity',
+                  data: [{% for x in severity_count %} {{x}}, {% endfor %}],
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                      'rgba(255, 159, 64, 0.2)'
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                      'rgba(255, 159, 64, 1)'
+                  ],
+                  borderWidth: 1,
+                  //fill: true, if line ang type
+              }]
+          },
+          options: {
+              scales: {
+                  y: {beginAtZero: true}
+              }
+          }
+      });
+
+      var line_day = new Chart(line_day, {
+          type: 'line',
+          data: {
+              labels: [{% for x in day_labels %} {% ifequal x '' %} 'Blank', {% else %} '{{x}}', {% endifequal %} {% endfor %}],
+              datasets: [{
+                  label: 'Day',
+                  data:  [{% for x in day_count %} {{x}}, {% endfor %}],
+                  fill: false,
+                  borderColor: '#1CA7EC',
+                  tension: 0.1
+              }]
+          },
+          options: {
+              plugins: {
+                  legend:{
+                      
+                  },
+                  title: {
+                      display: true,
+                      text: 'Day of the week'
+                  }
               }
           }
       });

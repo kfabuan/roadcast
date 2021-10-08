@@ -43,10 +43,11 @@ urlpatterns = [
     path('dashboard/data', views.get_data, name='data'),
 
     path('incidents/view', views.view_incidents, name='view_incidents'),
+    path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
+    path('incident/public/<int:incident_id>/', views.public_view_incident_detail, name='pub_incident_detail_view'),
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
     path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
-    path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
     path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
 
 

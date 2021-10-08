@@ -4,13 +4,10 @@
 {% block design %}
 
 <style>
+    
     .vl {
       border-left: 6px solid green;
       height: 500px;
-    }
-
-    .count-title{
-        color:red;
     }
 
     .card {
@@ -20,6 +17,37 @@
     .card-body {
         border-radius: 15px !important;
     }
+
+    .tally1 {
+        /* background: rgb(0,67,154); */
+        background: linear-gradient(0deg, rgba(31,75,117,1) 0%, rgba(8,45,73,1) 90%);
+        color: white;
+    }
+
+    .tally2 {
+        /* background-color: #01819b; */
+        background: rgb(1,145,180);
+        background: linear-gradient(0deg, rgba(1,145,180,1) 0%, rgb(53, 187, 202) 90%);
+        color: white;
+    }
+
+    .tally3 {
+        background: rgb(31,36,152);
+        background: linear-gradient(0deg, rgba(31,36,152,1) 0%, rgba(1,145,180,1) 100%);
+        color: white;
+    }
+
+    .bi-info-circle-fill {
+        color: #1b5082; 
+        float: right;
+    }
+
+    .bi-info-circle-fill:hover {
+       color: rgb(53, 187, 202) ;
+       cursor: pointer;
+    
+    }
+
 </style>
 
 {% endblock %}
@@ -43,6 +71,12 @@
 
         var time_count = []
 
+        var severity_labels = []
+        var severity_count = []
+
+        var day_labels = []
+        var day_count = []
+
         $.ajax({
              method: "GET",
              url: endpoint,
@@ -61,7 +95,13 @@
                 sex_count = data.sex_count
 
                 time_count = data.time_count
-             
+
+                severity_labels = data.severity_labels
+                severity_count = data.severity_count
+
+                day_labels = data.day_labels
+                day_count = data.day_count
+
                 setChart()
     
             },
@@ -80,6 +120,8 @@
             var ctx3 = document.getElementById('myChart3'); //district2
             var pie_sex = document.getElementById('pie_sex'); //sex
             var bar_offense = document.getElementById('bar_offense'); //offenses
+            var bar_severity = document.getElementById('bar_severity'); //severity
+            var line_day = document.getElementById('line_day'); //day
 
             var line_date_forecast = new Chart(line_date_forecast, {
                 type: 'line',
@@ -109,7 +151,7 @@
                                     {{k.Averages}},
                                     {%endfor%}],
                             fill: false,
-                            borderColor: 'rgb(255,140,0)',
+                            borderColor: '#4adede',
                             tension: 0.1
                         }
                     ]
@@ -120,10 +162,20 @@
                             display: true,
                             text: 'Weekly Forecasting'
                         }
+                    },
+
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear',
+                            from: 1,
+                            to: 0,
+                            loop: false
+                        }
                     }
                 }
             });
-
+            
             var line_time = new Chart(line_time, {
                 type: 'line',
                 data: {
@@ -132,7 +184,7 @@
                         label: 'Yearly Hazardous Time',
                         data: time_count,
                         fill: false,
-                        borderColor: 'rgb(75, 192, 192)',
+                        borderColor: '#1CA7EC',
                         tension: 0.1
                     }]
                 },
@@ -144,6 +196,16 @@
                         title: {
                             display: true,
                             text: 'Accident Prone Time'
+                        }
+                    },
+
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear',
+                            from: 1,
+                            to: 0,
+                            loop: false
                         }
                     }
                 }
@@ -216,14 +278,30 @@
                     scaleShowValues: true,
                     indexAxis: 'x',
                     scales: {
-                        xAxes: [{ stacked: true }],
-                        yAxes: [{ stacked: true }]
+                        // x: {
+                        //     ticks: {
+                        //     color: "white"
+                        //     }
+                        // },
+                        // y: {
+                        //     ticks: {
+                        //     color: "white"
+                        //     }
+                        // }
                     },
                     animation: {
                         duration: 1000,
                         easing: 'linear'
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                               // color: 'white'
+                            }
+                        }
                     }
-                }
+                },
+                
             });
 
             var myChart = new Chart(ctx3, {
@@ -255,14 +333,16 @@
                 },
                 options: {
                     scales: {
-                        y: {beginAtZero: true}
+                        y: {beginAtZero: true},
                     },
 
                     animation: {
                         duration: 1000,
                         easing: 'linear'
-                    }
-                }
+                    },
+
+                    
+                },
             });
 
             var pie_sex = new Chart(pie_sex, {
@@ -273,10 +353,16 @@
                         label: 'Sex',
                         data: sex_count,
                         backgroundColor: [
+                        // 'rgb(54, 162, 235)',
+                        // 'rgb(255, 99, 132)',
+                        // 'rgba(75, 192, 192, 1)',
+                        // 'rgba(153, 102, 255, 1)',
+                        '#4adede',
+                        '#1f2f98',
+                        '#7BD5F5',
+                        '#787ff6',
+                        '#1ca7ec',
                         'rgb(54, 162, 235)',
-                        'rgb(255, 99, 132)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
                         ],
                         hoverOffset: 4
                     }]
@@ -329,6 +415,66 @@
                 }
             });
 
+            var bar_severity = new Chart(bar_severity, {
+                type: 'bar',
+                data: {
+                    labels: severity_labels,
+                    datasets: [{
+                        label: 'Yearly Severity',
+                        data: severity_count,
+                        backgroundColor: [
+                            
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    }
+                }
+            });
+
+            var line_day = new Chart(line_day, {
+                type: 'line',
+                data: {
+                    labels: day_labels,
+                    datasets: [{
+                        label: 'Day',
+                        data: day_count,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend:{
+                            
+                        },
+                        title: {
+                            display: true,
+                            text: 'Day of the week'
+                        }
+                    }
+                }
+            });
+
 
         } //close function
 
@@ -336,25 +482,6 @@
 </script>
 
 {% block content %}
-
-    <!-- {% for a in all %}
-        {% ifequal a.id request.session.authorized_id %}
-        <p>{{a.Members_Fname}}</p>
-        <p>{{a.Members_Lname}}</p>
-
-        {% endifequal %}
-
-    {% endfor %}
-
-    {% for b in pub %}
-        {% ifequal b.id request.session.public_id %}
-        <p>{{b.gen_surname}}</p>
-        <p>{{b.gen_fname}}</p>
-
-        {% endifequal %}
-
-    {% endfor %} -->
-
 
 
     <b id="date-today">Today: </b><span id="ct6"></span> 
@@ -364,32 +491,32 @@
         <!-- first half -->
         <div class="col-sm-6">
           <div class="">
-            <div class="card-body mb-4" style="background-color: white;">
+            <div class="card-body mb-4">
                 <h5 class="card-title">Road Accident Cases</h5>
 
                 <div class="row">
                     <div class="col-sm-4">
-                      <div class="card">
+                      <div class="card tally1">
                         <div class="card-body text-center">
-                          <h6 style="color: #a6a6a6;"> Week: {{week_num }}</h6>
+                          <h6 style="color: white;"><i class="bi bi-calendar2-week me-2"></i> Week: {{week_num }}</h6>
                           <h3>{{ this_week }}</h3>
                         </div>
                       </div>
                     </div>
 
                     <div class="col-sm-4">
-                      <div class="card">
+                      <div class="card tally2">
                         <div class="card-body text-center">
-                          <h6 style="color: #a6a6a6;">Yesterday</h6>
+                          <h6 style="color: white;"><i class="bi bi-calendar-minus me-2"></i>Yesterday</h6>
                           <h3>{{ yesterday_total }}</h3>
                         </div>
                       </div>
                     </div>
 
                     <div class="col-sm-4">
-                        <div class="card">
+                        <div class="card tally3">
                           <div class="card-body text-center">
-                            <h6 style="color: #a6a6a6;">Today</h6>
+                            <h6 style="color: white;"> <i class="bi bi-calendar-check me-2"></i>Today</h6>
                             <h3>{{ this_day }}</h3>
                         </div>
                         </div>
@@ -456,9 +583,11 @@
         <div class="col-sm-6">
                 <div class="card mb-4">
                     <div class="card-body" style="background-color: white;">
-                        <div class="">
-                            <canvas id="line_date_forecast" height=""></canvas>
-                        </div>
+                        <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
+                            Tooltip on top
+                          </button>
+                        <i class="bi bi-info-circle-fill"></i>
+                        <canvas id="line_date_forecast" height=""></canvas>
                     </div>
                 </div>
 
@@ -475,7 +604,7 @@
       <div class="row" style="border:0; margin:0; padding:0;">
         <div class="col-sm-6 mb-4">
             <div class="card">
-                <div class="card-body" style="background-color: white;">
+                <div class="card-body " style="background-color:white;">
                     <div class="">
                         <canvas id="myChart2" height="135"></canvas>
                     </div>
@@ -512,6 +641,24 @@
                     <div class="">
                         <canvas id="bar_offense" height="135"></canvas>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="border:0; margin:0; padding:0;">
+        <div class="col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body" style="background-color: white;">
+                    <canvas id="bar_severity" height="135"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 mb-4">
+            <div class="card">
+                <div class="card-body" style="background-color: white;">
+                    <canvas id="line_day" height="135"></canvas>
                 </div>
             </div>
         </div>

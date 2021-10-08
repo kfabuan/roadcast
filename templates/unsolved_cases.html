@@ -3,11 +3,16 @@
 
 {% block design %}
 <style>
-     .level-title {
-        color: #050087;
+     .table {
+        background-color: white;
+        border-radius: 15px !important;
+        box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);  
     }
-</style>
 
+    .rad_tl { border-top-left-radius: 15px !important; }
+    .rad_tr { border-top-right-radius: 15px !important; }
+
+</style>
 {% endblock %}
 
 {% block content %}
@@ -49,13 +54,13 @@
             <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
                 <thead class="table-primary">
                     <tr>
-                        <th scope="col">#</th>
+                        <th scope="col" class="rad_tl">#</th>
                         <th scope="col">Incident Type</th>
                         <th scope="col">Statistician/Encoder</th>
                         <th scope="col">Barangay Committed</th>
                         <th scope="col">Date and Time Added</th>
                         <th scope="col">Case Status</th>
-                        <th scope="col">Operation</th>
+                        <th scope="col" class="rad_tr">Operation</th>
                     </tr>
                 </thead>
 
@@ -107,13 +112,13 @@
           <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col" class="rad_tl">#</th>
                     <th scope="col">Incident Type</th>
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
                     <th scope="col">Case Status</th>
-                    <th scope="col">Operation</th>
+                    <th scope="col" class="rad_tr">Operation</th>
                 </tr>
             </thead>
 
@@ -134,7 +139,6 @@
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
                             <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
-                            <li><a class="dropdown-item" href="#">Edit case &nbsp; <i class="bi bi-pencil-square"></i></a></a></li>
                             <li><hr class="dropdown-divider"></li>
                             
                          <form action="{% url 'archiving' unsolved.id%}" method="post" enctype="multipart/form-data">
@@ -163,13 +167,13 @@
           <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col" class="rad_tl">#</th>
                     <th scope="col">Incident Type</th>
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
                     <th scope="col">Case Status</th>
-                    <th scope="col">Operation</th>
+                    <th scope="col" class="rad_tr">Operation</th>
                 </tr>
             </thead>
 
@@ -190,7 +194,6 @@
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
                             <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved_3.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
-                            <li><a class="dropdown-item" href="#">Edit case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <form action="{% url 'archiving' unsolved_3.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}
@@ -216,13 +219,13 @@
           <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col" class="rad_tl">#</th>
                     <th scope="col">Incident Type</th>
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
                     <th scope="col">Case Status</th>
-                    <th scope="col">Operation</th>
+                    <th scope="col" class="rad_tr">Operation</th>
                 </tr>
             </thead>
 
@@ -243,7 +246,6 @@
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
                             <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved_4.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
-                            <li><a class="dropdown-item" href="#">Edit case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <form action="{% url 'archiving' unsolved_4.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}
@@ -269,13 +271,13 @@
           <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col">#</th>
+                    <th scope="col" class="rad_tl">#</th>
                     <th scope="col">Incident Type</th>
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
                     <th scope="col">Case Status</th>
-                    <th scope="col">Operation</th>
+                    <th scope="col" class="rad_tr">Operation</th>
                 </tr>
             </thead>
 
@@ -296,7 +298,6 @@
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
                             <li><a class="dropdown-item" href="{% url 'incident_detail_view' archive.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
-                            <li><a class="dropdown-item" href="#">Edit case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <form action="{% url 'unarchiving' archive.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}

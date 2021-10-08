@@ -1,7 +1,19 @@
 {% extends 'nav_admin.html' %}
 
 {% block title %} List of Members {% endblock %}
+{% block design %}
+<style>
+     .table {
+        background-color: white;
+        border-radius: 15px !important;
+        box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);  
+    }
 
+    .rad_tl { border-top-left-radius: 15px !important; }
+    .rad_tr { border-top-right-radius: 15px !important; }
+
+</style>
+{% endblock %}
 {% block content %}
 
 {% if searched %}
@@ -60,13 +72,13 @@
   <div class="table-responsive"> 
     <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
     <thead class="table-primary">
-      <th scope="col">No.</th>
+      <th scope="col" class="rad_tl">No.</th>
       <th>Photo</th>
       <th>Name</th>
       <th>Member Type</th>
       <th>Department</th>
       <th>Substation</th>
-      <th>Operation</th>
+      <th class="rad_tr">Operation</th>
     </thead>
     <tbody>
     {% for member in members %}

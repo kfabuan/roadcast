@@ -1,5 +1,5 @@
 {% extends 'nav_admin.html' %}
-{% block title %} Message {% endblock %}
+{% block title %} Forwarded Reports {% endblock %}
 
 {% block design %}
 <style>
@@ -173,15 +173,15 @@
                     </div>
                     <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 0 20px">
                         {% for report in fwd_reports %}
-                        <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
-                            <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
+                        <a href="{% url 'sub_notification_detail' report.id %}" style="text-decoration: none;">
+                            <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_by_subrep 'No' %} background-color:azure; {% else %}{% endifequal %}">
                                 <div class="row">
                                     <div class="col-2"><img src="/media/{{ report.User_ID.gen_profile}}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
                                     <div class="col-5">
                                         <span style="font-size: 13px;" class=" text-muted">
                                             {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
 
-                                            {% ifequal report.Read_Status 'No' %}
+                                            {% ifequal report.Read_by_subrep 'No' %}
                                             <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
                                             {% endifequal %}
                                         </span>
@@ -289,7 +289,7 @@
 
                             <br><br>
 
-                            <label class="label-blue">Recipient: </label>
+                            <label class="label-blue">Forwarded by: </label>
                             {{ detail.Recipient }}    <br><br>
                         
                             <p class="label-blue">Message Description: </p>
@@ -365,7 +365,7 @@
                             {% endif %}
                     </div>
 
-                <center>
+                <!-- <center>
                     <form action="#" method="POST">
                         {% csrf_token %}
 
@@ -383,7 +383,7 @@
                         </button>
                     </div>
                     </form>
-                </center>
+                </center> -->
                     
                 
             </div><!--body--> 
