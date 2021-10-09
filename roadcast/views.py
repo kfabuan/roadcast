@@ -1,4 +1,5 @@
 import json
+import urllib
 from django.core.checks.messages import INFO
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response, Tbl_add_departments, Tbl_position
@@ -149,13 +150,13 @@ def duplicate_gen (request): #Jew
         gen_pass        = request.POST["gen_pass"]
         gen_valid_id    = request.POST["gen_valid_id"]
         gen_upload_id   = request.POST["gen_valid_id"]
-        gen_profile     = 'Public/default.jpg'
+        gen_profile     = 'media/Public/default.jpg'
 
         #save image to database 
         if request.FILES.get("gen_upload_id"):
             gen_upload_id   = request.FILES.get('gen_upload_id')
         else:
-            gen_upload_id   = 'Public/default.png'
+            gen_upload_id   = 'media/Public/default.jpg'
 
         if tbl_genpub_users.objects.filter(gen_username = gen_username):
             messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
@@ -165,6 +166,22 @@ def duplicate_gen (request): #Jew
             messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
             return HttpResponseRedirect('signup')
 
+        #Recaptcha validation
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': "6LezEbYcAAAAAPs9xoE2PnJsb18ljq1oi1aWZ0Gp",
+            'response': recaptcha_response
+        }
+        data = urllib.parse.urlencode(values).encode()
+        req =  urllib.request.Request(url, data=data)
+        response = urllib.request.urlopen(req)
+        result = json.loads(response.read().decode())
+
+        if result['success'] == False:
+            messages.error(request, ('Oops! Invalid reCAPTCHA. Please try again.'))
+            return HttpResponseRedirect('signup')
+            
         submit = tbl_genpub_users.objects.create(gen_surname = gen_surname,gen_fname = gen_fname, gen_sex = gen_sex, gen_bday=gen_bday, gen_region = gen_region, gen_province = gen_province, gen_city = gen_city,
         gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id, gen_profile = gen_profile )#,gen_upload_id=gen_upload_id
         submit.save()
@@ -400,6 +417,7 @@ class DashboardView (View):
             "week_num": week_num,
             "yesterday_total":yesterday_total,
             "this_day": this_day,
+            "this_year": today.year,
          
             "all": authorized,
             "pub": pub,
@@ -569,6 +587,70 @@ def get_data(request, *args, **kwargs):
     }
     return JsonResponse(data) #http response
 
+def archiving_solved_cases (request, incident_id):
+    try:
+        incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
+        incident_detail.archive="Yes"
+        incident_detail.save()
+        messages.success(request, ("Incident Successfully Archived!"))
+        return HttpResponseRedirect('/incidents/view')
+    except Tbl_pasig_incidents.DoesNotExist:
+        raise Http404("Incident does not exist")
+
+def unarchiving_solved_cases (request, incident_id):
+    try:
+        incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
+        incident_detail.archive="No"
+        incident_detail.save()
+        messages.success(request, ("Incident Successfully Unarchived!"))
+        return HttpResponseRedirect('/incidents/view')
+    except Tbl_pasig_incidents.DoesNotExist:
+        raise Http404("Incident does not exist")  
+
+def view_archive_incidents (request):
+
+   if request.method=="GET":
+        incident_type = request.GET.get('coltype') 
+        barang= request.GET.get('barangay')
+        from_date =  request.GET.get('from_date')
+        to_date =   request.GET.get('to_date')
+        unread_count = Tbl_pasig_incidents.objects.filter(Q(read_status = "No") & Q(Case_Status = "Solved") &~Q(archive= "No")).exclude(Q(archive__isnull=True) | Q(archive__exact='')).count()
+
+    
+        if is_valid(from_date) & is_valid(to_date):
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
+            return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                
+        elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
+            return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count})
+   
+        if bool(incident_type) & bool(barang) :
+            if incident_type=="Collision":
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Barangay_id_id = "'+barang+'" order by id DESC')
+                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+            elif barang=="0":
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" order by id DESC')
+                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+            
+            else:
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
+                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+        else:
+            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" order by id DESC')
+            
+            paginator = Paginator(incident_model, 10)
+            page_number = request.GET.get('page')
+            incident_model = paginator.get_page(page_number) 
+
+            context = {
+                "all": authorized,
+                "pub": pub,
+                "pasig_incident_list":incident_model,
+                "unread_count": unread_count
+            }
+        
+            return render (request, 'archive_incidents.html',context)
 
 def view_incidents (request):
     #term = 'Marcos Highway' since di parati nag ssearch si user, mag-eerror so mag lalagay ng blank para i-allow nya
@@ -584,29 +666,30 @@ def view_incidents (request):
         barang= request.GET.get('barangay')
         from_date =  request.GET.get('from_date')
         to_date =   request.GET.get('to_date')
+        unread_count = Tbl_pasig_incidents.objects.filter(Q(read_status = "No") & Q(Case_Status = "Solved") &~Q(archive= "Yes")).count()
+
     
         if is_valid(from_date) & is_valid(to_date):
-            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
                 
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
-            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+            incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count})
    
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
-                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Barangay_id_id = "'+barang+'" order by id DESC')
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
             elif barang=="0":
-                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" order by id DESC')
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
             
             else:
-                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,})
+                incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
         else:
-            unread_count = Tbl_pasig_incidents.objects.filter(read_status = "No").count()
-            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents order by id DESC')
+            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" order by id DESC')
             
             paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
             page_number = request.GET.get('page') #ganto talaga
@@ -621,7 +704,6 @@ def view_incidents (request):
             # context = {'user_list': user_list}
             # return render (request, 'users/index.html', context)
             return render (request, 'encoder_view_incidents.html',context)
-
 
 def add_incident (request): #add using CSV
     try:
@@ -902,9 +984,9 @@ def processCSV (request):
     return render(request, 'add_incident.html', context)
 
 def processDeleteIncident (request, incident_id):
-    Tbl_pasig_incidents.objects.filter(id=incident_id)
+    Tbl_pasig_incidents.objects.filter(id=incident_id).delete()
     messages.success(request, ("Successfully Deleted!"))
-    return HttpResponseRedirect('/incidents/view')
+    return HttpResponseRedirect('/incidents/view/archives')
 
 #encoder and admin view incidents
 def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
@@ -1519,35 +1601,47 @@ def get_monthly_data(request, *args, **kwargs):
 
 
 def notification (request): 
-    # pasig_barangay_list = Tbl_barangay.objects.all().order_by('-id')
-    # pasig_incident_list = Tbl_pasig_incidents.objects.all().order_by('-id')
-
-    #for new incident accident
+   
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
 
+    unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
     cursor=connection.cursor()
     cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
     pasig_incident_list = cursor.fetchall()
-
-    #for gen pub reports inbox
-    pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
-    unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     #for signup validation
     sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
-    data = {
-        'pasig_incident_list': pasig_incident_list, 
-        'public_reports_list': pasig_public_reports,
-        'unread_notif_count': unread_notif_count,
-        "all": authorized, 
-        "pub": pub,
-        'sign_up_validation': sign_up_validation,
-        'unread_notif_count_signup':unread_notif_count_signup
+    
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id') 
 
-    }
+        data = {
+            'searched': searched,
+            'pasig_incident_list': pasig_incident_list, 
+            'public_reports_list': pasig_public_reports,
+            'unread_notif_count': unread_notif_count,
+            "all": authorized, 
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+            'unread_notif_count_signup':unread_notif_count_signup
+        }
+
+    else:
+        pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
+       
+        data = {
+            'pasig_incident_list': pasig_incident_list, 
+            'public_reports_list': pasig_public_reports,
+            'unread_notif_count': unread_notif_count,
+            "all": authorized, 
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+            'unread_notif_count_signup':unread_notif_count_signup
+        }
     return render (request, 'notification.html', data)
 
 
@@ -1755,6 +1849,8 @@ def archiving (request, incident_id):
         incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
         incident_detail.archive="Yes"
         incident_detail.save()
+        messages.success(request, ("Incident Successfully Archived!"))
+
         return HttpResponseRedirect('/unsolvedcases')
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
@@ -1764,6 +1860,8 @@ def unarchiving (request, incident_id):
         incident_detail=Tbl_pasig_incidents.objects.get(id=incident_id)
         incident_detail.archive="No"
         incident_detail.save()
+        messages.success(request, ("Incident Successfully Unarchived!"))
+
         return HttpResponseRedirect('/unsolvedcases')
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")   

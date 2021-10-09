@@ -1,9 +1,8 @@
 {% extends 'nav_admin.html' %}
-{% block title %} Message {% endblock %}
-
+{% block title %} Account Validation {% endblock %}
 {% block design %}
+{% load static %}
 <style>
-    
     .table {
         border-color: white;
     }
@@ -87,7 +86,7 @@
     @media (min-width: 2000px){
             .modal-dialog {
             max-width: 500px;
-            margin: 1.75rem auto;
+            margin: 1.75rem au  ;
         }
     }
 
@@ -131,21 +130,17 @@
         position: absolute;
         float:right;
     }
-
-  
 </style>
 {% endblock %}
-
 {% block content %}
 <section style="height: 10px;"></section>
 
     {% if messages %}
         {% for message in messages %}
-        <p class="alert alert-success">
-            <strong>"{{detail.gen_username}}"{{ message}}</strong>
+        <p class="alert alert-primary">
+            <strong>The account "{{ detail.gen_username }}"{{ message }}</strong>
         </p>  
         {% endfor %}
-
     {% endif %}
     
 <!-- <div class="container"> -->
@@ -154,18 +149,22 @@
             
             <!--mail list-->
             <div class="card col-3 p-0 " style="border-radius: 20px 0 0 20px">
-                    <div class="card-header fw-bold" style="border-radius: 20px 0 0 0">
-                        <i class="bi bi-envelope-fill"></i>  Sign Up Validation
+
+                    <div class="card-header fw-bold" style="border-radius: 20px 20px 0 0">
+                        <i class="far fa-user-circle" style="color: #1b5082;"></i>&nbsp; Account validation
                     </div>
-                    <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 0 20px">
+
+                    <ul class="list-group list-group-flush mail-list" style="border-radius: 0 0 0 0px; padding: 0;">
                         {% for validation in sign_up_validation %}
                         <a href="{% url 'notif_sign_up_validation' validation.id %}" style="text-decoration: none;">
-                            <li class="list-group-item message-item {% ifequal validation.id detail.id %} active-msg {% endifequal %}" style="{% ifequal validation.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
+                            <li class="list-group-item message-item {% ifequal validation.id detail.id %} active-msg {% endifequal %}" style="{% ifequal validation.Read_Status 'No' %} background-color:azure; {% else %} {% endifequal %}">
                                 <div class="row">
-                                    <div class="col-2"><img src="/media/police.jpg" alt="" style="width: 35px;" class="rounded-circle"></div>
+                                    <section style="height: 5px;"></section>
+                                    <div class="col-2"><img src="/media/{{ validation.gen_profile }}" alt="" style="width: 35px; height:35px; margin-top: 5px;" class="rounded-circle"></div>
                                     <div class="col-5">
                                         <span style="font-size: 13px;" class=" text-muted">
-                                            {{ validation.gen_fname }}
+                                            
+                                            General Public
  
                                             {% ifequal validation.Read_Status 'No' %}
                                             <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
@@ -173,60 +172,51 @@
                                         </span>
                                     </div>
                                     <div class="col-5">
-                                        <span style="font-size: small; float:right;" class="">{{ validation.date_signed_up }}</span>
+                                        <span style="font-size: 11px; margin-top: 4px; float:right;" class="text-muted">{{ validation.date_signed_up }}</span>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-2">
                                         <div class="custom-control custom-checkbox ps-2">
-                                            <!-- <input type="checkbox" class="custom-control-input" id="cst1" />
-                                            <label class="custom-control-label" for="cst1">&nbsp;</label> -->
                                         </div>
                                     </div>
                                     <div class="col-8 ">
-                                        <span style="" class="fw-bold">{{ validation.gen_fname }} {{ validation.gen_surname }}</span>
-                                       
+                                        <span class="fw-bold">{{ validation.gen_fname }} {{ validation.gen_surname }}</span>
                                     </div>
-
                                 </div>
 
                                 <div class="row">
-                                    <div class="col-2">
                                         {% ifnotequal validation.gen_upload_id '' %}
-                                            <i class="fa fa-paperclip text-muted float-end"></i>
+                                        <i class="fas fa-paperclip text-muted" style="font-size: 17px; float: right;"></i>
+                                        <section style="height: 5px;"></section>
                                         {% endifnotequal %}
-                                    </div>
-                                    <!-- <div class="col-8"><p class=" text-truncate" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div> -->
-                                    <div class="col-2"></div>
                                 </div>
-
-
                             </li></a>
-                           
                         {% endfor %}
-
                     </ul>
-            </div>
+                </div>
 
             <!--message-->
             <div class="card col-7">
                     <div class="card-header" style="background-color: white; ">
+                        <section style="height: 8px;"></section>
                         <div class="row">
                             <div class="col-1 pe-3" style="background-color: white;">
+                                <section style="height: 4px;"></section>
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
-                                    <div><img src="/media/incident_images/police.jpg" alt=""class="rounded-circle" style="width: 70px;"></div>
-                                    <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span>
+                                    <div><img src="/media/{{ detail.gen_profile }}" alt="" class="rounded-circle" style="width: 70px; height: 70px;"></div>
                                 </div>
                             </div>
 
                             <div class="col-8 ms-4"  style="background-color: white;">
+                                <section style="height: 5px;"></section>
                                 <h3 class="col">{{detail.gen_fname}} {{detail.gen_surname}} </h3>
-                                <p class="text-muted" style="font:small;"> Active Now</p>
+                                <p class="text-muted"><i class="far fa-clock"></i> &nbsp;{{ detail.date_signed_up }}</p>
                             </div>
 
                         </div>
-                    </div> <!--name header-->
+                    </div>
 
                     <!--body-->
                     <div class="m-3 msg-body"> 
@@ -234,45 +224,23 @@
                         <div class="row" style="width: 100%; background-color: white;">
                             <div class="col-10"  style="background-color: none;">
                                 <div class="row">
-                                   
-                                    <!-- <span class="badge rounded-pill bg-danger">Unsolved </span> -->
-
                                 </div>
                             </div>
 
                             <div class="col-2"  style="background-color: none;">
-                                <span class="" style=" font-size: smaller; float:right;"><i class="bi bi-clock"></i>&nbsp;{{ detail.date_signed_up }}</span>
-                               <!-- <p class="text-muted" style="font-size: small; float:right;"> {{ detail.Reported_Time }}</p>-->
+                                <!-- Content here -->
                             </div>
                         </div>
+                            <section style="height: 10px;"></section>
 
-                            <!--<label class="labels {% ifequal detail.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %} ">[ Report Status: </label>
-                            <label class="labels {% ifequal detail.Report_Status 'Unsolved' %} text-danger {% else %} text-success {% endifequal %}">{{ detail.Report_Status }} ] </label>
-
-                            <br><br> -->
-
-                            <label class="label-blue">Address: </label>
-                            {{ detail.gen_region }} , {{ detail.gen_province}},{{ detail.gen_city  }}, {{ detail.gen_barangay}}   <br><br>
-                        
-                            <p class="label-blue">Birthday: </p>
-                            <p class="card-text"> {{ detail.gen_bday }} </p>
-                            
-                            <p class="label-blue">Sex: </p>
-                            {{ detail.gen_sex }} <br> <br>
-
-                            <p class="label-blue">Contact No: </p>
-                            {{ detail.gen_contact_no }} <br> <br>
-
-                            <p class="label-blue">Valid Id: </p>
-                            {{ detail.gen_valid_id }} <br> <br>
-
-                            <p style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Uploaded Valid Id: </p> 
-                            <div>
-                            </div>
+                            <p class="ps-2 label-blue">Proof of Valid ID: 
+                                <span class="text-muted">&nbsp; ({{ detail.gen_valid_id }})</span>
+                            </p>
+                            <p class="ps-2 text-muted" style="font-size: 12px; margin-top: -5px; margin-bottom: -15px;"><i>(Note: Click the image to view it full screen.)</i></p><br>
 
                             {% ifnotequal detail.gen_upload_id '' %}
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" class="btn btn-white ps-2 " data-bs-toggle="modal" data-bs-target="#exampleModal">
                                 <img src="/media/{{detail.gen_upload_id}}" alt="" style="width: 250px;" class="img-fluid img-thumbnail">
                             </button>
 
@@ -293,82 +261,82 @@
                         <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                     </div>
 
-        <center>
-            <div class="d-grid d-md-block">
-                <a class="btn btn-outline-danger m-3 mb-5" href="{% url 'genpub_rejected' detail.id %}" role="button">Reject &nbsp;<i class="bi bi-x-circle-fill" ></i></a>
-                <a class="btn btn-outline-success m-3 mb-5" href="{% url 'genpub_verified' detail.id %}" role="button">Verify &nbsp; <i class="bi bi-check-circle-fill"></i></a>
-            </div>
-        </center>
-                    
-                
-            </div><!--body--> 
-
-            
-
-            <!--profile preview-->
-            <div class="card col-2 p-0" style="border-radius: 0px 20px 20px 0px;"> <!--tr tl br bl-->
-                <div class="">
-                    <img src="/media/incident_images/police.jpg" class="card-img-top p-0" alt="..." style="border-radius: 0px 20px 0px 0px; !important">
-                    <!-- <img src="/media/incident_images/police.jpg" class="" alt="..." style="width:60%; z-index:3; position:relative; top:-20%;left:20%;"> -->
                     <center>
-                    <div class="card-body">
-                      <span class="mx-auto fw-bold text-uppercase">{{ detail.id }}</span>
-                      <!-- <span class="badge rounded-pill bg-success ms-2" style="padding: 5px;"> </span> -->
+                        <div class="d-grid d-md-block">
+                            <a class="btn btn-outline-danger m-3 mb-5" href="{% url 'genpub_rejected' detail.id %}" role="button">Reject &nbsp;<i class="bi bi-x-circle-fill" ></i></a>
+                            <a class="btn btn-outline-success m-3 mb-5" href="{% url 'genpub_verified' detail.id %}" role="button">Verify &nbsp; <i class="bi bi-check-circle-fill"></i></a>
+                        </div>
+                    </center>
+                    </div><!--body--> 
 
-                      <p class="card-text " style="color: #1b5082; font:small;">@username</p>
+                    <!--profile preview-->
+                    <div class="card col-2 p-0" style="border-radius: 20px 20px 0 0px;"> <!--tr tl br bl-->
+                        <div>
+                            <div class="card-body">
+                            <b>
+                            <p class="card-text " style="color: #1b5082; font:small;">&nbsp;<i class="fas fa-info-circle"></i>&nbsp;Personal Details</p>
+                            </b>
+                        </div>         
+                        </div>
+                        <ul class="list-group user-details" >
+                            <section style="height: 25px;"></section>
+
+                            <li class="list-group-item" style="border-style: none;">
+                                <p class="ps-2 label-blue">Email address:</p>
+                                <p class="ms-2 p-0" style="margin-top: -7px;">{{ detail.gen_username }}</p>
+                            </li>
+
+                            <li class="list-group-item" style="border-style: none;">
+                                <p class="ps-2 label-blue">Name:</p>
+                                <p class="ms-2 p-0" style="margin-top: -7px;">{{ detail.gen_fname }} {{ detail.gen_surname }}</p>
+                            </li>
+
+                            <li class="list-group-item" style="border-style: none;">
+                                <p class="ps-2 label-blue">Birthday:</p>
+                                <p class="ms-2 p-0" style="margin-top: -7px;">{{ detail.gen_bday }}</p>
+                            </li>
+
+                            <li class="list-group-item" style="border-style: none;">
+                                <p class="ps-2 label-blue">Gender:</p>
+                                <p class="ms-2 p-0" style="margin-top: -7px;">{{ detail.gen_sex }}</p>
+                            </li>
+
+                            <li class="list-group-item" style="border-style: none;">
+                                <p class="ps-2 label-blue">Contact number:</p>
+                                <p class="ms-2 p-0" style="margin-top: -7px;">{{ detail.gen_contact_no }}</p>
+                            </li>
+
+                            <li class="list-group-item" style="border-style: none;">
+                                <p class="ps-2 label-blue">Location:</p>
+                                <p class="ms-2 p-0" style="margin-top: -7px;">{{ detail.gen_barangay }}, {{ detail.gen_city}}, {{ detail.gen_province }} ({{ detail.gen_region }})</p>
+                            </li>
+                            
+                        </ul>
                     </div>
-                    </center>           
-                </div>
-                <ul class="list-group user-details" >
-                    <li class="list-group-item" style="border-style: none;">
-                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
-                        <span class="ms-2 p-0">{{ detail.gen_contact_no }}</span>
-                    </li>
-
-                    <li class="list-group-item" style="border-style: none;">
-                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
-                        <p class="ms-2 p-0 text-wrap"> {{ detail.gen_region }} , {{ detail.gen_province}},{{ detail.gen_city  }}, {{ detail.gen_barangay}} </p>
-                    </li>
-
-                    <li class="list-group-item" style="border-style: none;">
-                        <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
-                        <span class="ms-2 p-0"> {{ detail.gen_username}}</span>
-                    </li>
-
-                  </ul>
-
-            </div>
-
-        </div> <!--row-->
-    </div><!--card group-->
+                </div> <!--row-->
+            </div><!--card group-->
  
-<!-- </div> -->
-  <input type="text" name="unread_notif_count_signup " id="unread_notif_count" value="{{ unread_notif_count_signup }}" hidden>
+            <input type="text" name="unread_notif_count_signup " id="unread_notif_count" value="{{ unread_notif_count_signup }}" hidden>
 
-  <script type="text/javascript">
-    $(document).ready(function(){
-        unread_notif_count_signup = document.getElementById('unread_notif_count_signup').value;
-        document.getElementById('notif-count').innerHTML = unread_notif_count_signup;
+<!-- Scripts -->
+<script type="text/javascript">
+$(document).ready(function(){
+    unread_notif_count_signup = document.getElementById('unread_notif_count_signup').value;
+    document.getElementById('notif-count').innerHTML = unread_notif_count_signup;
 
-        $('.settings-btn').click(function(){
-            var a = document.getElementById('settings-icon');
-            a.classList.toggle('settings-btn-clicked');
+    $('.settings-btn').click(function(){
+        var a = document.getElementById('settings-icon');
+        a.classList.toggle('settings-btn-clicked');
 
-            // var element = document.getElementById("myDIV");
-            var x = document.getElementById("myDIV");
-            if (x.style.display === "block") {
-                x.style.display = "none";
-            } else {
-                x.style.display = "block";
-            }
-
-          
-
-           // alert("f")
-            // b.removeClass('settings-btn');
-
-        });
+        // var element = document.getElementById("myDIV");
+        var x = document.getElementById("myDIV");
+        if (x.style.display === "block") {
+            x.style.display = "none";
+        } else {
+            x.style.display = "block";
+        }
     });
+});
 </script>
 
 {% endblock %}

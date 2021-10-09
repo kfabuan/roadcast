@@ -48,6 +48,95 @@
     
     }
 
+    .popper,
+    .tooltip {
+        position: absolute;
+        background: rgb(75, 75, 75);
+        color: white;
+        min-width: 80px;
+        border-radius: 3px;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        padding: 12px;
+        text-align: center;
+    }
+    .popper .popper__arrow,
+    .tooltip .tooltip-arrow {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        position: absolute;
+        margin: 5px;
+    }
+
+    .tooltip .tooltip-arrow,
+    .popper .popper__arrow {
+        border-color: rgb(75, 75, 75);
+    }
+    .popper[x-placement^="top"],
+    .tooltip[x-placement^="top"] {
+        margin-bottom: 6px;
+    }
+    .popper[x-placement^="top"] .popper__arrow,
+    .tooltip[x-placement^="top"] .tooltip-arrow {
+        border-width: 5px 5px 0 5px;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        bottom: -5px;
+        left: calc(50% - 5px);
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .popper[x-placement^="bottom"],
+    .tooltip[x-placement^="bottom"] {
+        margin-top: 6px;
+    }
+    .tooltip[x-placement^="bottom"] .tooltip-arrow,
+    .popper[x-placement^="bottom"] .popper__arrow {
+        border-width: 0 5px 5px 5px;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        top: -5px;
+        left: calc(50% - 5px);
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .tooltip[x-placement^="right"],
+    .popper[x-placement^="right"] {
+        margin-left: 6px;
+    }
+    .popper[x-placement^="right"] .popper__arrow,
+    .tooltip[x-placement^="right"] .tooltip-arrow {
+        border-width: 5px 5px 5px 0;
+        border-left-color: transparent;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        left: -5px;
+        top: calc(50% - 5px);
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .popper[x-placement^="left"],
+    .tooltip[x-placement^="left"] {
+        margin-right: 6px;
+    }
+    .popper[x-placement^="left"] .popper__arrow,
+    .tooltip[x-placement^="left"] .tooltip-arrow {
+        border-width: 5px 0 5px 5px;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        right: -6px;
+        top: calc(50% - 5px);
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .tooltip[aria-hidden="false"]{
+        opacity:1;
+    }
+
 </style>
 
 {% endblock %}
@@ -483,22 +572,86 @@
 
 {% block content %}
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("forecast-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
 
-    <b id="date-today">Today: </b><span id="ct6"></span> 
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("time-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
 
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("d1-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("d2-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("sex-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("offense-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("severity-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("day-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+
+</script>
 
     <div class="row" style="border:0; margin:0; padding:0;">
         <!-- first half -->
         <div class="col-sm-6">
           <div class="">
             <div class="card-body mb-4">
-                <h5 class="card-title">Road Accident Cases</h5>
+                <h5 class="card-title">{{ this_year}} Road Incident Cases</h5>
 
                 <div class="row">
                     <div class="col-sm-4">
                       <div class="card tally1">
                         <div class="card-body text-center">
-                          <h6 style="color: white;"><i class="bi bi-calendar2-week me-2"></i> Week: {{week_num }}</h6>
+                          <h6 style="color: white;"><i class="bi bi-calendar2-week me-2"></i> Week {{week_num }}:</h6>
                           <h3>{{ this_week }}</h3>
                         </div>
                       </div>
@@ -507,7 +660,7 @@
                     <div class="col-sm-4">
                       <div class="card tally2">
                         <div class="card-body text-center">
-                          <h6 style="color: white;"><i class="bi bi-calendar-minus me-2"></i>Yesterday</h6>
+                          <h6 style="color: white;"><i class="bi bi-calendar-minus me-2"></i>Yesterday:</h6>
                           <h3>{{ yesterday_total }}</h3>
                         </div>
                       </div>
@@ -516,7 +669,7 @@
                     <div class="col-sm-4">
                         <div class="card tally3">
                           <div class="card-body text-center">
-                            <h6 style="color: white;"> <i class="bi bi-calendar-check me-2"></i>Today</h6>
+                            <h6 style="color: white;"> <i class="bi bi-calendar-check me-2"></i>Today:</h6>
                             <h3>{{ this_day }}</h3>
                         </div>
                         </div>
@@ -583,19 +736,15 @@
         <div class="col-sm-6">
                 <div class="card mb-4">
                     <div class="card-body" style="background-color: white;">
-                        <button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="top" title="Tooltip on top">
-                            Tooltip on top
-                          </button>
-                        <i class="bi bi-info-circle-fill"></i>
+                        <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
                         <canvas id="line_date_forecast" height=""></canvas>
                     </div>
                 </div>
 
                 <div class="card mb-4">
                     <div class="card-body" style="background-color: white;">
-                        <div class="">
-                            <canvas id="line_time" height=""></canvas>
-                        </div>
+                        <i class="bi bi-info-circle-fill"  id="time-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                        <canvas id="line_time" height=""></canvas>
                     </div>
                 </div>
           </div>
@@ -605,9 +754,8 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body " style="background-color:white;">
-                    <div class="">
-                        <canvas id="myChart2" height="135"></canvas>
-                    </div>
+                    <i class="bi bi-info-circle-fill"  id="d1-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="myChart2" height="135"></canvas>
                 </div>
             </div>
         </div>
@@ -615,9 +763,8 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body" style="background-color: white;">
-                    <div class="">
-                        <canvas id="myChart3" height="135"></canvas>
-                    </div>
+                    <i class="bi bi-info-circle-fill"  id="d2-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="myChart3" height="135"></canvas>
                 </div>
             </div>
         </div>
@@ -628,9 +775,8 @@
         <div class="col-sm-4 mb-4">
             <div class="card">
                 <div class="card-body" style="background-color: white;">
-                    <div class="">
-                        <canvas id="pie_sex" height="135"></canvas>
-                    </div>
+                    <i class="bi bi-info-circle-fill"  id="sex-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="pie_sex" height="135"></canvas>
                 </div>
             </div>
         </div>
@@ -638,9 +784,8 @@
         <div class="col-sm-8 mb-4">
             <div class="card">
                 <div class="card-body" style="background-color: white;">
-                    <div class="">
-                        <canvas id="bar_offense" height="135"></canvas>
-                    </div>
+                    <i class="bi bi-info-circle-fill"  id="offense-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="bar_offense" height="135"></canvas>
                 </div>
             </div>
         </div>
@@ -650,6 +795,7 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="severity-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
                     <canvas id="bar_severity" height="135"></canvas>
                 </div>
             </div>
@@ -658,11 +804,13 @@
         <div class="col-sm-6 mb-4">
             <div class="card">
                 <div class="card-body" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="day-tooltip" title="Tooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on topTooltip on top Tooltip on top Tooltip on top Tooltip on top Tooltip on top" data-bs-toggle="tooltip" data-bs-placement="left" ></i>
                     <canvas id="line_day" height="135"></canvas>
                 </div>
             </div>
         </div>
     </div>
+
     
 {% endblock content %}
 

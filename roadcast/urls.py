@@ -49,6 +49,10 @@ urlpatterns = [
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
     path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
     path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
+    path('incident/<int:incident_id>/archiving', views.archiving_solved_cases, name='archiving_solved_cases'),
+    path('incident/<int:incident_id>/unarchiving', views.unarchiving_solved_cases, name='unarchiving_solved_cases'),
+    path('incidents/view/archives', views.view_archive_incidents, name='view_archive_incidents'),
+    path('incident/<int:incident_id>/delete', views.processDeleteIncident, name='processDeleteIncident'),
 
 
     path('report/submit', views.submit_report, name='submit_report'),

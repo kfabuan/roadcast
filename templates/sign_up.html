@@ -1,14 +1,17 @@
 {% extends 'base_sign_up.html' %}
-
 {% block title %} Create an Account {% endblock %}
+{% block design %} 
+<style>
+input[type=text]::placeholder, 
+select:invalid, 
+input[type=date]:invalid,
+input[type=password]::placeholder{
+    color: black;
+}
 
-{% block design %} {% endblock %}
-
+</style>
+{% endblock %}
 {% block content %}
-
-<!-- TO FIX PA YUNG RECAPTCHA & TERMS AND CONDITIONS HEHE <3 -->
-
-<!-- CSS LANG NITO AY 'signup.css', WALA NG IBA HEHE  -->
 
 {% if messages %}
 {% for message in messages %}
@@ -17,7 +20,6 @@
 </div>
 {% endfor %}
 {% endif %}
-
 
 <!-- Form validation -->
 <script type="text/javascript">
@@ -321,13 +323,6 @@
 
           <!-- SECTION 5 -->
 
-          <!-- AAYUSIN PA YUNG RECAPTCHA PAG NA UP NA YUNG WEBSITE HEHE -->
-          <!--
-            Links for recaptcha:
-            https://www.google.com/recaptcha/admin/create
-            https://www.bronco.co.uk/our-ideas/how-to-add-google-recaptcha-to-a-form-phphtml/
-          -->
-
                 <h2>
                   <p class="step-icon"><span>05</span></p>
                   <span class="step-text">Security Test</span>
@@ -343,9 +338,10 @@
 
               <div class="row">
                 <center>
-                <div class="g-recaptcha" data-sitekey="your_site_key"></div>
+                  <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>
                 </center>
               </div>
+              
 
               <section style="height: 40px;"></section>
 

@@ -18,8 +18,9 @@
 {% block content %}
   
 <div class="container">
-  
+
   <section style="height: 25px;"></section>
+  {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
   <span class="fs-3 me-3" style="font-family: Roboto, sans-serif; color: #1b5082;">Urgency Level&nbsp; </span>
   <section style="height: 35px;"></section>
@@ -82,7 +83,7 @@
                           
                           <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
                           
-                              <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolveds.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
+                              <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolveds.id %}">View case</a></li>
                               
                               <li><hr class="dropdown-divider"></li>
                              
@@ -138,7 +139,7 @@
                           More
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
+                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved.id %}">View case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             
                          <form action="{% url 'archiving' unsolved.id%}" method="post" enctype="multipart/form-data">
@@ -193,7 +194,7 @@
                           More
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved_3.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
+                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved_3.id %}">View case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <form action="{% url 'archiving' unsolved_3.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}
@@ -245,7 +246,7 @@
                           More
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved_4.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
+                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' unsolved_4.id %}">View case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <form action="{% url 'archiving' unsolved_4.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}
@@ -297,15 +298,13 @@
                           More
                         </button>
                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' archive.id %}">View case&nbsp; <i class="bi bi-eye-fill"></i></a></li>
+                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' archive.id %}">View case</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <form action="{% url 'unarchiving' archive.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}
                               <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to unarchive this case?');">Unarchive case</button></li>
                             </form>
-                            
-                            
-                            </ul>
+                        </ul>
                     </div>
                   </td>
               </tr>
@@ -320,5 +319,7 @@
         </div>
 
       </div>
+      <section style="height: 25px;"></section>
+
 </div>
 {% endblock %}
