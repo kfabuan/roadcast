@@ -235,13 +235,5 @@
       </div>
 </div>
 
-    <input type="text" name="unread_notif_count" id="unread_notif_count" value="{{ unread_notif_count }}" hidden>
-
-    <script type="text/javascript">
-        $(document).ready(function(){
-            unread_notif_count = document.getElementById('unread_notif_count').value;
-            document.getElementById('notif-count').innerHTML = unread_notif_count;
-        });
-    </script>
-
+    
 {% endblock %}

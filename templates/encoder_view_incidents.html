@@ -33,87 +33,100 @@
 
 {% block content %}
 {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
-    <div class="row mb-4 mt-2">
-        <div class="col-4">
-            <span class="fs-3 me-3" style="font-family: Roboto, sans-serif; color: #1b5082;"> Incident Reports List</span>
-            <span class="badge bg-primary"> {{unread_count}} unread </span>
-        </div>
-
-        <div class="col-8">
-            <form action="">
-                <div class="input-group input-group-sm ">
-                    <form action = "" method="GET">
-                    {% comment %} {% csrf_token %} {% endcomment %}
-                    <div class="input-group mb-3">
-                   
-                    <select class="form-select form-select-sm" id="inc_type" name="coltype" > 
-                    
-                        <option value="Collision" selected>Collision type</option>
-                        <option value="Bumped From Behind">Bumped From Behind</option>
-                        <option value="Angle Collision">Angle Collision</option>
-                        <option value="Clash">Clash</option>
-                        <option value="Damage to Property">Damage to Property</option>
-                        <option value="Head On">Head On</option>
-                        <option value="Hit and Run">Hit and Run</option>
-                        <option value="Hit Animals">Hit Animals</option>
-                        <option value="Hit Object On Road">Hit Object On Road</option>
-                        <option value="Hit Object Off Road">Hit Object Off Road</option>
-                        <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
-                        <option value="Hit Pedestrian">Hit Pedestrian</option>
-                        <option value="Hit While Parked">Hit While Parked</option>
-                        <option value="Multi Vehicle">Multi Vehicle</option>
-                        <option value="Rear End">Rear End</option>
-                        <option value="Self Accident">Self Accident</option>
-                        <option value="Impact">Impact</option>
-                        <option value="Sideswiped">Sideswiped</option>
-                        <option value="Side Impact">Side Impact</option>
-                        <option value="Right Angle">Right Angle</option>
-                        <option value="Others">Others</option>
-                    </select>
-                    
-                    
-                    <select class="form-select form-select-sm" id="barang" name="barangay">
-                        <option value="0" selected>Barangay</option>
-                        <option value="2">Bagong Ilog</option>
-                        <option value="5">Bagong Katipunan</option>
-                        <option value="3">Bambang</option>
-                        <option value="27">Buting</option>
-                        <option value="4">Caniogan</option>
-                        <option value="6">Kalawaan</option>
-                        <option value="7">Kapasigan</option>
-                        <option value="8">Kapitolyo</option>
-                        <option value="9">Malinao</option>
-                        <option value="10">Oranbo</option>
-                        <option value="11">Palatiw</option>
-                        <option value="27">Pineda</option>
-                        <option value="12">Sagad</option>
-                        <option value="13">San Antonio</option>
-                        <option value="14">San Joaquin</option>
-                        <option value="15">San Jose</option>
-                        <option value="16">San Nicolas</option>
-                        <option value="29">Santa Cruz</option>
-                        <option value="30">Santa Rosa</option>
-                        <option value="17">Santo Tomas</option>
-                        <option value="18">Sumilang</option>
-                        <option value="1">Ugong</option>
-                        <option value="19">Dela Paz</option>
-                        <option value="20">Manggahan</option>
-                        <option value="21">Maybunga</option>
-                        <option value="22">Pinagbuhatan</option>
-                        <option value="23">Rosario</option>
-                        <option value="24">San Miguel</option>
-                        <option value="26">Santolan</option>
-                        <option value="25">Santa Lucia</option>
-                    </select>
-                    <input type="date" class="form-select form-select-sm" id="from_date" name="from_date">
-                    <input type="date" class="form-select form-select-sm" id="to_date" value="" name="to_date"> 
-                   <button type="submit" class="btn btn-sm btn-primary">Filter</button>
-                    </div>
-                   
+    <div class=""style="float: right;">
+        <form action = "" method="GET" class="row row-cols-lg-auto g-3 align-items-center mb-4 me-3" style="float: right;">
+            {% comment %} {% csrf_token %} {% endcomment %}
+            <div class="col-12">
+                <select class="form-select form-select-sm" id="inc_type" name="coltype" > 
+                    <option value="Collision" selected>Collision type</option>
+                    <option value="Bumped From Behind">Bumped From Behind</option>
+                    <option value="Angle Collision">Angle Collision</option>
+                    <option value="Clash">Clash</option>
+                    <option value="Damage to Property">Damage to Property</option>
+                    <option value="Head On">Head On</option>
+                    <option value="Hit and Run">Hit and Run</option>
+                    <option value="Hit Animals">Hit Animals</option>
+                    <option value="Hit Object On Road">Hit Object On Road</option>
+                    <option value="Hit Object Off Road">Hit Object Off Road</option>
+                    <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
+                    <option value="Hit Pedestrian">Hit Pedestrian</option>
+                    <option value="Hit While Parked">Hit While Parked</option>
+                    <option value="Multi Vehicle">Multi Vehicle</option>
+                    <option value="Rear End">Rear End</option>
+                    <option value="Self Accident">Self Accident</option>
+                    <option value="Impact">Impact</option>
+                    <option value="Sideswiped">Sideswiped</option>
+                    <option value="Side Impact">Side Impact</option>
+                    <option value="Right Angle">Right Angle</option>
+                    <option value="Others">Others</option>
+                </select>
                 </div>
                 
-            </form>
-        </div>
+                
+                <div class="col-12">
+
+                <select class="form-select form-select-sm" id="barang" name="barangay">
+                    <option value="0" selected>Barangay</option>
+                    <option value="2">Bagong Ilog</option>
+                    <option value="5">Bagong Katipunan</option>
+                    <option value="3">Bambang</option>
+                    <option value="27">Buting</option>
+                    <option value="4">Caniogan</option>
+                    <option value="6">Kalawaan</option>
+                    <option value="7">Kapasigan</option>
+                    <option value="8">Kapitolyo</option>
+                    <option value="9">Malinao</option>
+                    <option value="10">Oranbo</option>
+                    <option value="11">Palatiw</option>
+                    <option value="27">Pineda</option>
+                    <option value="12">Sagad</option>
+                    <option value="13">San Antonio</option>
+                    <option value="14">San Joaquin</option>
+                    <option value="15">San Jose</option>
+                    <option value="16">San Nicolas</option>
+                    <option value="29">Santa Cruz</option>
+                    <option value="30">Santa Rosa</option>
+                    <option value="17">Santo Tomas</option>
+                    <option value="18">Sumilang</option>
+                    <option value="1">Ugong</option>
+                    <option value="19">Dela Paz</option>
+                    <option value="20">Manggahan</option>
+                    <option value="21">Maybunga</option>
+                    <option value="22">Pinagbuhatan</option>
+                    <option value="23">Rosario</option>
+                    <option value="24">San Miguel</option>
+                    <option value="26">Santolan</option>
+                    <option value="25">Santa Lucia</option>
+                </select>
+                </div>
+
+                <div class="col-12">
+                    <input type="date" class="form-select form-select-sm" id="from_date" name="from_date">
+                </div>
+
+                <div class="col-12">
+                    <input type="date" class="form-select form-select-sm" id="to_date" value="" name="to_date"> 
+                </div>
+
+                <div class="col-12">
+                    <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+                </div>
+        </form>
+    </div>    
+
+    <div class=" mb-4 mt-2">
+      
+        <!-- <span class="fs-3 me-3" style="font-family: Roboto, sans-serif; color: #1b5082;"> Incident Reports List</span>
+        <span class="badge bg-primary"> {{unread_count}} unread </span> -->
+
+        <!-- Title section -->
+        <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
+            <a href="{% url 'view_incidents' %}" style="text-decoration: none; color: #1b5082">Incident Records</a> 
+        <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
+        + Add record
+        </button>
+        </h3>
+ 
     </div>
   
    

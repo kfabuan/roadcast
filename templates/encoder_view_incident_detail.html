@@ -930,6 +930,19 @@ function initMap() {
     <!--For Forms-->
     <script type="text/javascript">
         $(document).ready(function(){
+
+           brgy = document.getElementById("barangay").value;
+          
+    
+            if (brgy == "19"||brgy == "20"||brgy == "21"||brgy == "22"||brgy == "23"
+            ||brgy== "24"||brgy== "26"||brgy == "25"){
+            var barangay = document.getElementById('district').value="2";
+            }
+            else{
+            var barangay = document.getElementById('district').value="1";
+            }
+            
+                           
     
           $('.nav_btn').click(function(){
             $('.mobile_nav_items').toggleClass('active');

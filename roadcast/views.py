@@ -46,6 +46,11 @@ today = date.today()
 authorized = Tbl_add_members.objects.all()
 pub            = tbl_genpub_users.objects.all()
 
+#notifications count
+
+
+unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
 def index(request): #landing/home
     return render (request, 'landing.html')
 
@@ -421,6 +426,7 @@ class DashboardView (View):
          
             "all": authorized,
             "pub": pub,
+            'unread_notif_count': unread_notif_count,
 
             'datelist':reversed_datelist,
             'markers_json':markers,
@@ -696,6 +702,7 @@ def view_incidents (request):
             incident_model = paginator.get_page(page_number) #ito ren, except sa var name
 
             context = {
+                'unread_notif_count': unread_notif_count,
                 "all": authorized,
                 "pub": pub,
                 "pasig_incident_list":incident_model,
@@ -718,6 +725,7 @@ def add_incident (request): #add using CSV
                 'investigators_list': investigators_list,
                 "all": authorized,
                 "pub": pub,
+                'unread_notif_count': unread_notif_count,
             }
             return render(request, 'add_incident.html', context)
 
@@ -848,6 +856,11 @@ def processAddIncident(request): #Add using forms
     sus_lname = request.POST.get('sus_lname')
     sus_severity = request.POST.get('sus_severity')
     sus_age = request.POST.get('sus_age')
+    if sus_age:
+        sus_age = request.POST.get('sus_age')
+    else:
+        sus_age = None
+
     sus_sex = request.POST.get('s_sex')
     sus_civil_status = request.POST.get('sus_civil_status')
     sus_add = request.POST.get('sus_add')
@@ -862,12 +875,16 @@ def processAddIncident(request): #Add using forms
     else:
         sus_drl_exp = None
 
-
     vic_type = request.POST.get('vic_type')
     vic_fname = request.POST.get('vic_fname')
     vic_lname = request.POST.get('vic_lname')
     vic_severity = request.POST.get('vic_severity')
     vic_age = request.POST.get('vic_age')
+    if vic_age:
+        vic_age = request.POST.get('vic_age')
+    else:
+        vic_age = None
+        
     vic_sex = request.POST.get('v_sex')
     vic_civil_status = request.POST.get('vic_civil_status')
     vic_add = request.POST.get('vic_add')
@@ -1010,7 +1027,8 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
          'substation_list': substation_list,
          'brgy_list':brgy_list,
          "all": authorized,
-         "pub": pub,})
+         "pub": pub,
+         'unread_notif_count': unread_notif_count,})
 
 def processEditIncident(request, incident_id):
     incident_detail =  Tbl_pasig_incidents.objects.get(id=incident_id)
@@ -1085,6 +1103,7 @@ def processEditIncident(request, incident_id):
         return render(request, 'encoder_view_incident_detail.html', {
             'detail':incident_detail,
             'error_message': "Problem Updating Record.",
+            'unread_notif_count': unread_notif_count,
         })
     else:
         incident = Tbl_pasig_incidents.objects.get(id=incident_id) #kukunin yung row sa database na kapareha ng incident_id
@@ -1172,7 +1191,8 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
          'substation_list': substation_list,
          'brgy_list':brgy_list,
          "all": authorized,
-         "pub": pub,})
+         "pub": pub,
+         'unread_notif_count': unread_notif_count,})
 
 def report_summary (request):
     context    = {
@@ -1466,6 +1486,7 @@ def monthly_report (request):
             day_total += x
 
         data = {
+                'unread_notif_count': unread_notif_count,
                 "month": month_label, "year":year_label,
 
                 "district1_data": zip(d1_brgys, d1_brgys_count),
@@ -1605,7 +1626,6 @@ def notification (request):
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
 
-    unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
     cursor=connection.cursor()
     cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
     pasig_incident_list = cursor.fetchall()
@@ -1894,6 +1914,7 @@ def unsolved_cases (request):
         "archive":archive,
         "all": authorized,
         "pub": pub,
+        'unread_notif_count': unread_notif_count,
     }
     return render (request, 'unsolved_cases.html', data)
 
@@ -1994,6 +2015,7 @@ def pub_notif_inbox (request): #Account settings
         "all": authorized,
         "pub": pub,
         "barangay": barangay,
+        "unread_notif_count":unread_notif_count,
     }
     return render(request, 'public_notif_setting.html', context)
 
@@ -2063,7 +2085,8 @@ def add_members (request):
         'membertypes': membertypes,
         'positions': positions,
         'all': all_authorized,
-        'pub': pub
+        'pub': pub,
+         "unread_notif_count":unread_notif_count,
     }
     return render (request, 'add_members.html', context)
 
@@ -2125,7 +2148,8 @@ def add_dept (request):
     context = {
     'departments': departments,
     'all': authorized,
-    'pub': pub
+    'pub': pub,
+     "unread_notif_count":unread_notif_count,
     }
 
     paginator = Paginator(departments, 10) 
@@ -2167,7 +2191,7 @@ def admin_list_departments(request): #Show list of depaartments
 
 def view_members(request, member_id): #Show specific profile of members 
     members     = Tbl_add_members.objects.get(id = member_id)
-    return render (request, 'view_members.html', {'members':members, "all": authorized, "pub": pub})
+    return render (request, 'view_members.html', {'members':members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def edit_members(request, member_id): 
     members     = Tbl_add_members.objects.get(id = member_id)
@@ -2183,7 +2207,8 @@ def edit_members(request, member_id):
         'membertypes': membertypes,
         'positions': positions,
         "all": authorized, 
-        "pub": pub
+        "pub": pub,
+        'unread_notif_count': unread_notif_count,
     }
     return render (request, 'edit_members.html', context)
 
@@ -2253,7 +2278,7 @@ def update_members(request, member_id): #For updating the data and checking for 
 
 def edit_dept(request, dept_id):
     departments         = Tbl_add_departments.objects.get(id = dept_id)
-    return render (request, 'edit_dept.html', {'departments': departments, "all": authorized, "pub": pub})
+    return render (request, 'edit_dept.html', {'departments': departments, "all": authorized, "pub": pub,'unread_notif_count': unread_notif_count,})
 
 
 def update_dept(request, dept_id): #For saving the data - edit_dept
@@ -2291,6 +2316,7 @@ def user_profile(request): #Profile of users
     context    = {
         "all": authorized,
         "pub": pub,
+        'unread_notif_count': unread_notif_count,
     }
     return render(request, 'user_profile.html', context)
 
@@ -2311,6 +2337,7 @@ def edit_profile(request, prof_id): #Edit user profile details #*
         'age': age,
         "all": authorized,
         "pub": pub,
+
     }
     return render(request, 'edit_profile.html', context)
     
@@ -2360,7 +2387,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
         page_number = request.GET.get('page')
         members = paginator.get_page(page_number)
 
-        return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub})
+        return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
         members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_Tbl_add_members ORDER BY id DESC')
 
@@ -2368,7 +2395,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
         page_number = request.GET.get('page')
         members = paginator.get_page(page_number)
 
-        return render (request, 'admin_list_members.html', {'members': members, "all": authorized, "pub": pub}) 
+        return render (request, 'admin_list_members.html', {'members': members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
 
 def admin_investigators(request): #Show list of investigators
     members           = Tbl_add_members.objects.all().order_by('-id') 
@@ -2377,14 +2404,14 @@ def admin_investigators(request): #Show list of investigators
         searched      = request.POST['searched']
         members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id')  | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') 
         
-        return render (request, 'admin_investigators.html', {'members': members, 'searched': searched, 'all':authorized, "pub": pub})
+        return render (request, 'admin_investigators.html', {'members': members, 'searched': searched, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
-        return render (request, 'admin_investigators.html', {'members': members, 'all':authorized, "pub": pub})
+        return render (request, 'admin_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
   
 def admin_view_investigators(request, member_id): #Viewing specific investigator profile
     members           = Tbl_add_members.objects.get(id = member_id)
 
-    return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub}) 
+    return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
 
 
 # Audit trail 
@@ -2394,16 +2421,16 @@ def admin_audit_members(request): #List of audit for members
     if request.method == "POST":
         searched      = request.POST['searched']
         audits        = tbl_audit.objects.filter(username__icontains = searched).order_by('-id') | tbl_audit.objects.filter(date_logged_in__icontains = searched).order_by('-id')
-        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'searched': searched, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'searched': searched, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
         audits        = tbl_audit.objects.all().order_by('-id')
-        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def audit_members(request, audit_id): #Specific view for members
     audits  = tbl_audit.objects.get(id = audit_id)
 
     info    = Tbl_add_members.objects.get(Members_Email = audits.username)
-    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub}) 
+    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
 
 def admin_audit_genpub(request): #List of audit for gen pub
     public  = tbl_genpub_users.objects.all().order_by('-id')
@@ -2412,17 +2439,17 @@ def admin_audit_genpub(request): #List of audit for gen pub
         searched      = request.POST['searched']
         audits        = tbl_audit.objects.filter(username__icontains = searched).order_by('-id') | tbl_audit.objects.filter(date_logged_in__icontains = searched).order_by('-id')
 
-        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'searched': searched, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'searched': searched, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
         audits = tbl_audit.objects.all().order_by('-id')
 
-        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'all':authorized, "pub": pub})
+        return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def audit_genpub(request, audit_id): #Specific view for gen pub
     audits  = tbl_audit.objects.get(id = audit_id)
     info    = tbl_genpub_users.objects.get(gen_username = audits.username)
 
-    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub}) 
+    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
 
 
 #Navbar for all
@@ -2432,7 +2459,7 @@ def navbar (request):
     context    = {
         "all": authorized,
         "pub": pub,
-        "audit": audit
+        "audit": audit,
     }
     return render(request, 'nav_admin.html', context)
 
