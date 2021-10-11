@@ -39,7 +39,7 @@ urlpatterns = [
     path('update', views.duplicate_gen, name='duplicate_gen'), #sign up validation
     path('landing', views.logout, name='logout'),
 
-    path('dashboard/', DashboardView.as_view(), name='dashboard'),
+    path('dashboard/', views.DashboardView, name='dashboard'),
     path('dashboard/data', views.get_data, name='data'),
 
     path('incidents/view', views.view_incidents, name='view_incidents'),
@@ -93,7 +93,7 @@ urlpatterns = [
     # path('departments', views.admin_departments, name='admin_departments'),
     # path('investigators', views.admin_investigators, name='admin_investigators'), DELETE VIEW
     # path('investigator/view', views.admin_view_investigators, name='admin_view_investigators'), DELETE VIEW
-    path('public/incident/detail/<str:incident_id>/', views.pub_incident_detail_view, name='gen_incident_detail_view'),
+    path('public/incident/detail/<str:incident_id>/', views.public_view_incident_detail, name='gen_incident_detail_view'),
 
      #Dane's
     path('members/add', views.add_members, name='add_members'),

@@ -122,9 +122,17 @@
         <!-- Title section -->
         <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
             <a href="{% url 'view_incidents' %}" style="text-decoration: none; color: #1b5082">Incident Records</a> 
-        <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
-        + Add record
-        </button>
+
+            
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                    <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
+                    + Add record
+                    </button>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
         </h3>
  
     </div>
@@ -167,13 +175,26 @@
                                         </button>
                                         
                                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
-                                            <li><hr class="dropdown-divider"></li>
+
+                                        {% for b in pub %}
+                                            {% ifequal b.id request.session.public_id %}
+                                                <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                            {% endifequal %}
+                                        {% endfor %}
+
+                                        {% for a in all %}
+                                            {% ifequal a.id request.session.authorized_id %}
+                                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                                    <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                                    <li><hr class="dropdown-divider"></li>
                                         
-                                            <form action="{% url 'archiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
-                                            {%csrf_token%}
-                                            <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this case?');">Archive case</button></li>
-                                            </form>
+                                                    <form action="{% url 'archiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
+                                                    {%csrf_token%}
+                                                    <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this case?');">Archive case</button></li>
+                                                    </form>
+                                                {% endif %}
+                                            {% endifequal %}
+                                        {% endfor %}   
                                         </ul>
                                     </div>
                                 </td> 
@@ -196,13 +217,32 @@
                                         </button>
                                         
                                         <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
-                                            <li><hr class="dropdown-divider"></li>
                                         
-                                            <form action="{% url 'archiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
-                                            {%csrf_token%}
-                                            <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this case?');">Archive case</button></li>
-                                            </form>
+                                        {% for b in pub %}
+                                            {% ifequal b.id request.session.public_id %}
+                                                <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                            {% endifequal %}
+                                        {% endfor %}
+
+
+                                        {% for a in all %}
+                                            {% ifequal a.id request.session.authorized_id %}
+                                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                                    <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+
+                                                    <li><hr class="dropdown-divider"></li>
+                                        
+                                                    <form action="{% url 'archiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
+                                                    {%csrf_token%}
+                                                    <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this case?');">Archive case</button></li>
+                                                    </form>
+                                                {% endif %}
+                                            {% endifequal %}
+                                        {% endfor %}
+                                        
+                                        
+                                            
+                                            
                                         </ul>
                                     </div>
                                 </td> 
@@ -230,9 +270,15 @@
                     </ul>
             </div>
 
-            <div class="col-4">
-               <a href="{% url 'view_archive_incidents' %}" style="float:right;" class="pe-3"> View archived cases</a>
-            </div>
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <div class="col-4">
+                            <a href="{% url 'view_archive_incidents' %}" style="float:right;" class="pe-3"> View archived cases</a>
+                        </div>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
         </div>
         
         
