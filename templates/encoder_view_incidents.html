@@ -33,6 +33,11 @@
 
 {% block content %}
 {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
+{% if searched %}
+<p class="alert alert-primary">
+    <strong>Showing the results for "{{ searched }}"</strong>
+</p>
+{% endif %}
     <div class=""style="float: right;">
         <form action = "" method="GET" class="row row-cols-lg-auto g-3 align-items-center mb-4 me-3" style="float: right;">
             {% comment %} {% csrf_token %} {% endcomment %}
@@ -137,7 +142,13 @@
  
     </div>
   
-   
+    <!-- Search bar -->
+    <form class="d-flex mb-3" method="POST">
+        {% csrf_token %}
+        <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
+        <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+    </form>
+
     {% if pasig_incident_list %}
         <div class="table-responsive">
             <!-- <table class="table table-bordered table-striped table-hover text-center"> -->
@@ -149,6 +160,14 @@
                         <th class="table-header">Incident Type</th>
                         <th class="table-header">Barangay Committed</th>
                         <th class="table-header">Date and Time Committed</th>
+                        {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
+                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                <th class="table-header">Suspect</th>
+                                <th class="table-header">Victim</th>
+                                {% endif %}
+                            {% endifequal %}
+                        {% endfor %}   
                         <th class="table-header">Case Status</th>
                         <th class="table-header rad_tr">Operation</th>
                     </tr>
@@ -165,6 +184,14 @@
                                 <td>{{incident.Incident_Type}}</td>
                                 <td>{{ incident.Barangay_id.Barangay }}</td>
                                 <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                {% for a in all %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                                        {% endif %}
+                                    {% endifequal %}
+                                {% endfor %}  
                                 <td>{{ incident.Case_Status }}</td>
                                 
                                 <td> 
@@ -208,6 +235,14 @@
                                 <td>{{incident.Incident_Type}}</td>
                                 <td>{{ incident.Barangay_id.Barangay }}</td>
                                 <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                {% for a in all %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                                        {% endif %}
+                                    {% endifequal %}
+                                {% endfor %}  
                                 <td>{{ incident.Case_Status }}</td>
                                 <td>
                                      <!-- Dropdown menu-->

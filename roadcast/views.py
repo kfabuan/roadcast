@@ -414,7 +414,7 @@ def DashboardView (request):
     this_day = Tbl_pasig_incidents.objects.filter(Date__gte = today, Date__lte = today, Date__year__gte=today.year, Date__year__lte=today.year).count()
 
     # FOR MULTIPLE MARKERS IN DASHBOARD
-    markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True))
+    markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True) | Q(Longitude ="None") | Q(Latitude ="None"))
 
     #Sessions
     authorized = Tbl_add_members.objects.all()
@@ -673,15 +673,20 @@ def view_incidents (request):
     except:
         pass
 
-  
+    incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" order by id DESC')
+            
+    paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
+    page_number = request.GET.get('page') #ganto talaga
+    incident_model = paginator.get_page(page_number) #ito ren, except sa var name
+
+    unread_count = Tbl_pasig_incidents.objects.filter(Q(read_status = "No") & Q(Case_Status = "Solved") &~Q(archive= "Yes")).count()
+    
     if request.method=="GET":
         incident_type = request.GET.get('coltype') 
         barang= request.GET.get('barangay')
         from_date =  request.GET.get('from_date')
         to_date =   request.GET.get('to_date')
-        unread_count = Tbl_pasig_incidents.objects.filter(Q(read_status = "No") & Q(Case_Status = "Solved") &~Q(archive= "Yes")).count()
-
-    
+        
         if is_valid(from_date) & is_valid(to_date):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
@@ -702,11 +707,7 @@ def view_incidents (request):
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
                 return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
         else:
-            incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" order by id DESC')
             
-            paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
-            page_number = request.GET.get('page') #ganto talaga
-            incident_model = paginator.get_page(page_number) #ito ren, except sa var name
 
             context = {
                 'unread_notif_count': unread_notif_count,
@@ -715,9 +716,42 @@ def view_incidents (request):
                 "pasig_incident_list":incident_model,
                 "unread_count": unread_count
             }
-            # context = {'user_list': user_list}
-            # return render (request, 'users/index.html', context)
+           
             return render (request, 'encoder_view_incidents.html',context)
+
+    else:
+        try:
+            if request.session['public_id']:
+                searched = request.POST['searched']
+
+                incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Case_Status__icontains = searched)).order_by('-id')
+
+                context = {
+                    'searched': searched,
+                    'unread_notif_count': unread_notif_count,
+                    "all": authorized,
+                    "pub": pub,
+                    "pasig_incident_list":incident_model,
+                    "unread_count": unread_count
+                }
+            return render (request, 'encoder_view_incidents.html',context)
+
+        except:
+            searched = request.POST['searched']
+            incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Case_Status__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).order_by('-id')
+
+            context = {
+                'searched': searched,
+                'unread_notif_count': unread_notif_count,
+                "all": authorized,
+                "pub": pub,
+                "pasig_incident_list":incident_model,
+                "unread_count": unread_count
+            }
+        
+            return render (request, 'encoder_view_incidents.html',context)
+
+
 
 def add_incident (request): #add using CSV
     try:
