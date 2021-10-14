@@ -898,14 +898,19 @@ function initMap() {
                     </div>
                 </div>
 
-      
-                <center>
-                <div class="card mb-3 mt-4" style="width: 60%;">
-                    <button type="submit" class="btn btn-success p-2" >
-                        Edit Incident Details 
-                    </button>
-                </div>
-            </center>
+                {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <center>
+                        <div class="card mb-3 mt-4" style="width: 60%;">
+                            <button type="submit" class="btn btn-success p-2" >
+                                Edit Incident Details 
+                            </button>
+                        </div>
+                        </center>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
             </div>
         </div> <!--botton row closing-->
 

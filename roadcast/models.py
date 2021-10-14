@@ -44,7 +44,7 @@ class Tbl_add_departments(models.Model):
 
 class Tbl_substation(models.Model):
     SUBSTATION = (
-        ('Pasig City Police Station', 'Pasig City Police Station'),
+        ('PNP-Pasig', 'PNP-Pasig'),
         ('Substation 1', 'Substation 1'),
         ('Substation 2', 'Substation 2'),
         ('Substation 3', 'Substation 3'),
@@ -394,7 +394,7 @@ class Tbl_pasig_incidents(models.Model):
     Victim_Drl_No              = models.CharField(max_length=200, verbose_name='Victim Drl_No', blank=True, null=True)
     Victim_Drl_Exp             =  models.DateField(max_length=200, verbose_name='Victim Drl Exp Date',blank=True, null=True)
 
-    Narrative       = models.CharField(max_length=900, verbose_name='Narrative', blank=True, null=True)
+    Narrative       = models.CharField(max_length=3000, verbose_name='Narrative', blank=True, null=True)
     Investigator    = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
     date_added      = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True)
     added_by        = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)

@@ -139,7 +139,6 @@ padding: 30px 40px 50px 40px;
     margin-bottom: 50px;
     margin-top: 20px;
     height: auto;
-    max-width: 75%;
 
     border: 2px transparent dashed;
     border-radius: 1px 5px 1px 5px;
@@ -469,8 +468,8 @@ p {
 
   .service {
       display: inline-block;
-      margin-left: 110px;
-      margin-right: 110px;
+      /* margin-left: 110px; */
+      /* margin-right: 110px; */
   }
   
   .parag {
@@ -485,3 +484,4 @@ p {
       padding-top: 5px;
       padding-bottom: 50px;
   }
+

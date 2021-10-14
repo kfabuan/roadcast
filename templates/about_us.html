@@ -1,74 +1,289 @@
 {% extends 'nav_main.html' %}
 {% load static %}
-
+{% block design %}
+<link rel="stylesheet" href="{% static 'css/contact_us.css' %}">
+{% endblock %}
 {% block title %} About Us {% endblock %}
 {% block content %}
 
-    <center>
+  <div id="main" style="margin-left: 20px;">
 
-    <!-- content -->
-   <div class="container">
-    <div class="img-bg">
-        <img src="{% static 'image/about.png' %}" alt="Contact Us" style="max-width: 100%; height: auto; display: block;">
+    <!-- ======= Why Us Section ======= -->
+    <div id="aboutus">
+    <section id="why-us" class="why-us">
+      <div class="container">
 
-        <div class="contact-title">
-        <label class="contact-1">About</label>
-        <label class="contact-2"> Us</label><br>
+        <div class="row">
+          <div class="col-lg-4 d-flex align-items-stretch">
+            <div class="content">
+              <h3>About Us</h3>
+              <p>
+                Roadcast is an incident management web application for the PNP police in Pasig city Police Station. The web application provides 
+                data visualizations (e.g. graphs, and charts), tabular reports, and forecasting based on the city's road incident data. 
+
+                Our data management and analytics tools put information on the safety of your transportation network at your fingertips, 
+                allowing you to be more informed and cautious of the road.
+              </p>
+            </div>
+          </div>
+          <div class="col-lg-8 d-flex align-items-stretch">
+            <div class="icon-boxes d-flex flex-column justify-content-center">
+              <div class="row">
+                <div class="col-xl-4 d-flex align-items-stretch">
+                  <div class="icon-box mt-4 mt-xl-0">
+                    <i class="fas fa-chart-pie"></i>
+                    <h4>Corporis voluptates sit</h4>
+                    <p>Consequuntur sunt aut quasi enim aliquam quae harum pariatur laboris nisi ut aliquip</p>
+                  </div>
+                </div>
+                <div class="col-xl-4 d-flex align-items-stretch">
+                  <div class="icon-box mt-4 mt-xl-0">
+                    <i class="fas fa-car-crash"></i>
+                    <h4>Ullamco laboris ladore pan</h4>
+                    <p>Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere</p>
+                  </div>
+                </div>
+                <div class="col-xl-4 d-flex align-items-stretch">
+                  <div class="icon-box mt-4 mt-xl-0">
+                    <i class="fas fa-road"></i>
+                    <h4>Labore consequatur</h4>
+                    <p>Aut suscipit aut cum nemo deleniti aut omnis. Doloribus ut maiores omnis facere</p>
+                  </div>
+                </div>
+              </div>
+            </div><!-- End .content-->
+          </div>
         </div>
-        <label class="contact-minor">Get to know more of why Roadcast was developed!</label>
+
+      </div>
+    </section><!-- End Why Us Section -->
+
+  
+    <!-- ======= Services Section ======= -->
+    <section id="services" class="services">
+      <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+                <label class="send-1">The</label>
+                <label class="send-2">Services</label>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="fas fa-chart-bar"></i></div>
+              <h4>Graphs and Charts</h4>
+              <p>View data visualization diagrams of road incident reports to gain insights in crash patterns and trends.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="fas fa-table"></i></div>
+              <h4>Monthly Reports</h4>
+              <p>Know the total number of road incidents in a month, statistics of people involved, vehicles, and more.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="fas fa-chart-line"></i></div>
+              <h4>Real-time Forecasting</h4>
+              <p>Determine the estimated number of road incidents that may happen in the city for the following days.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="fas fa-map-marker-alt"></i></div>
+              <h4>Incident Hotspot Map</h4>
+              <p>Determine which areas in Pasig have the highest number of recorded road incidents.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="fas fa-file-alt"></i></div>
+              <h4>View Incident Reports</h4>
+              <p>Browse past and recently added road incident reports filed by people and the police in Pasig city.</p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="fas fa-paper-plane"></i></div>
+              <h4>Report to the Police</h4>
+              <p>Help in reporting road incidents happening in Pasig city by sending a report to the PNP police.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    <!-- ======= Frequently Asked Questions Section ======= -->
+    <section id="faq" class="faq section-bg">
+      <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+            <label class="send-1">Frequently Asked</label>
+            <label class="send-2">Questions</label>
+        </div>
+
+        <div class="faq-content" data-aos="fade-up">
+        <div class="faq-question">
+            <input id="q1" type="checkbox" class="panel">
+            <div class="plus">+</div>
+            <label for="q1" class="panel-title">How do I report road incidents using Roadcast?</label>
+            <div class="panel-content text-muted">To submit an incident report, you must have an account verified by the admin. 
+              If you still haven’t signed up, please click this <a href="{% url 'sign_up' %}" style="text-decoration: none;">
+              given link</a>. Once logged in, in your navigation menu, navigate the “Submit a Report” and fill in all the required fields 
+              such as the location of the incident and a selfie of you and the incident for proof.</div>
+        </div>
+        
+        <div class="faq-question">
+            <input id="q2" type="checkbox" class="panel">
+            <div class="plus">+</div>
+            <label for="q2" class="panel-title">Can I report road incidents that have occurred outside Pasig city?</label>
+            <div class="panel-content text-muted">The reports that will be reviewed for investigation are road incidents that have 
+              occurred in Pasig city. The personnel that will be handling those investigations are from Pasig city as well. 
+              If you have to report a road incident outside Pasig city, please try to contact the <a href="tel:136" 
+              style="text-decoration: none;">MMDA hotline</a></div>
+        </div>
+        
+        <div class="faq-question">
+            <input id="q3" type="checkbox" class="panel">
+            <div class="plus">+</div>
+            <label for="q3" class="panel-title">Will my submitted report be automatically added to the road incident reports in Roadcast?</label>
+            <div class="panel-content text-muted">No, your report will be reviewed first by the admin. If the admin has sensed that your
+               report is  ‘fake’ or is done for entertainment purposes, you may be faced with serious consequences and your 
+               account will be suspended. Let us avoid making fake or misleading reports.</div>
+        </div>
+
+        <div class="faq-question">
+          <input id="q4" type="checkbox" class="panel">
+          <div class="plus">+</div>
+          <label for="q4" class="panel-title">Can I use Roadcast through my phone? </label>
+          <div class="panel-content text-muted">Yes, you may. Roadcast is designed to be web responsive for people who are always on the road or is 
+            just curious of the happenings on the road. Don’t believe it? Access Roadcast on your phone! </div>
+      </div>
+
+      <div class="faq-question">
+        <input id="q5" type="checkbox" class="panel">
+        <div class="plus">+</div>
+        <label for="q5" class="panel-title">Do I need to have internet connection to use Roadcast? </label>
+        <div class="panel-content text-muted">Yes, you do. Roadcast will not load properly if you don’t have an internet connection. Please make sure that 
+          your mobile device or computers are connected to a stable internet connection (or mobile data).</div>
+    </div>
+        </div>
+        </div>
+
+      </div>
+    </section><!-- End Frequently Asked Questions Section -->
     </div>
 
-    <div class="about">
-        <div class="about-title">
-            <label class="send-1">About</label>
-            <label class="send-2">Roadcast</label>
-        </div>
 
-        <div class="about-desc">
-            <p class="desc text-break fw-normal lh-base">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at condimentum risus, nec sodales libero. Nam vel fermentum tellus. Pellentesque tincidunt nisi non vestibulum volutpat. Aenean et urna sed lorem molestie maximus nec vitae eros. Suspendisse vel erat erat. Donec pellentesque, dui quis semper dignissim, massa urna ultricies elit, et finibus justo lacus eget nunc. Cras congue pretium lorem at interdum. Fusce eget augue ut tellus dictum fringilla. Suspendisse potenti. Phasellus venenatis, nisl non porttitor sollicitudin, dolor dolor facilisis diam, vitae pellentesque magna libero nec dui. Aliquam iaculis, risus id suscipit venenatis, massa urna venenatis purus, et dapibus eros lectus non massa. Suspendisse vehicula vitae libero eget finibus. Mauris nunc est, auctor in nulla eget, tristique varius metus. Quisque scelerisque vehicula urna, nec ultrices eros maximus ut. Maecenas dolor metus, varius et arcu eu, fermentum ullamcorper sapien.
-            </p>
-            </div>
+    <!-- ======= Contact Section ======= -->
+    <div id="contactus">
+    <section id="contact" class="contact">
+      <div class="container">
+
+        <div class="section-title" data-aos="fade-up">
+            <br><br>
+            <label class="send-1">Contact</label>
+            <label class="send-2">Us</label>
     </div>
 
-    <div class="services">
-        <div class="services-title">
-            <label class="send-1">The</label>
-            <label class="send-2">Services</label>
-        </div>
+      <div>
+        <div class="mapouter" data-aos="fade-up">
+          <div class="gmap_canvas"><iframe width="100%" height="500" id="gmap_canvas" src="https://maps.google.com/maps?q=pasig%20police%20headquarters&t=&z=15&ie=UTF8&iwloc=&output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+            <a href="https://soap2day-to.com"></a><br><style>.mapouter{position:relative;text-align:right;height:500px;width: 100%;}</style><a href="https://www.embedgooglemap.net">embed google map iframe</a>
+            <style>.gmap_canvas {overflow:hidden;background:none!important;height:500px;width:100%;box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);}</style>
+          </div>
+        </div>  
+      </div>
+     
+      <div class="container">
+        <div class="row mt-5">
+          <div class="col-lg-4">
+            <div class="info" data-aos="fade-up">
+              <div class="address">
+                <i class="bi bi-geo-alt"></i>
+                <h4>Location:</h4>
+                <p style=" color: gray;">C. Raymundo Ave, Pasig, 1606 Metro Manila</p>
+              </div>
 
-        <div class="services-list">
-            <div class="service">
-                <img src="{% static 'image/ic1.png' %}" alt="..." class="png">
-                <p class="parag">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at condimentum risus, nec sodales libero.</p>
+              <div class="email">
+                <i class="bi bi-envelope"></i>
+                <h4>Email:</h4>
+                <p>
+                    <a href="mailto:pnp.pasigcity@gmail.com?subject=Get%20in%20touch" style="text-decoration: none; color: gray;">
+                    pnp.pasigcity@gmail.com
+                    </a>
+                </p>
+              </div>
+
+              <div class="phone">
+                <i class="bi bi-phone"></i>
+                <h4>Call:</h4>
+                <p>
+                    <a href="tel:85347699" style="text-decoration: none;  color: gray;">
+                    (8)534-7699
+                    </a>
+                </p>
+              </div>
+
+              <div class="phone">
+                <i class="bx bx-phone"></i>
+                <h4>Call:</h4>
+                <p>
+                    <a href="tel:09218922950" style="text-decoration: none;  color: gray;">
+                        (+63)921-892-2950
+                    </a>
+                </p>
+              </div>
+
             </div>
 
-            <div class="service">
-                <img src="{% static 'image/ic2.png' %}" alt="..." class="png">
-                <p class="parag">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at condimentum risus, nec sodales libero.</p>
-            </div>
+          </div>
 
-            <div class="service">
-                <img src="{% static 'image/ic3.png' %}" alt="..." class="png">
-                <p class="parag">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at condimentum risus, nec sodales libero.</p>
-            </div>
+          <div class="col-lg-8 mt-5 mt-lg-0" data-aos="fade-up">
+
+            <form action="#" method="post" role="form" class="php-email-form">
+              <div class="row">
+
+                {% csrf_token %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                    <div class="alert alert-success">
+                      <strong>Thank you for sending your inquiry/concern!</strong>
+                      <span>{{ message }}</span>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+                
+                <div class="col-md-6 form-group">
+                  <input type="text" name="myname" class="form-control text-capitalize" id="name" placeholder="Your Name" required>
+                </div>
+                <div class="col-md-6 form-group mt-3 mt-md-0">
+                  <input type="email" class="form-control" name="myemail" id="email" placeholder="Your Email" required>
+                </div>
+              </div>
+              <div class="form-group mt-3">
+                <input type="text" class="form-control text-capitalize" name="mysubject" id="subject" placeholder="Subject" required>
+              </div>
+              <div class="form-group mt-3">
+                <textarea class="form-control" name="mymessage" rows="5" placeholder="Your inquiry or concern here. . ." required></textarea>
+              </div>
+              
+              <div class="text-center"><button type="submit">Send Message</button></div>
+            </form>
+          </div>
         </div>
-        </div>
-    
-
-    <div class="history">
-        <div class="history-title">
-            <label class="send-1">Our</label>
-            <label class="send-2">History</label>
-        </div>
-
-        <div class="history-desc">
-            <p class="desc text-break fw-normal lh-base">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce at condimentum risus, nec sodales libero. Nam vel fermentum tellus. Pellentesque tincidunt nisi non vestibulum volutpat. Aenean et urna sed lorem molestie maximus nec vitae eros. Suspendisse vel erat erat. Donec pellentesque, dui quis semper dignissim, massa urna ultricies elit, et finibus justo lacus eget nunc. Cras congue pretium lorem at interdum. Fusce eget augue ut tellus dictum fringilla. Suspendisse potenti. Phasellus venenatis, nisl non porttitor sollicitudin, dolor dolor facilisis diam, vitae pellentesque magna libero nec dui. Aliquam iaculis, risus id suscipit venenatis, massa urna venenatis purus, et dapibus eros lectus non massa. Suspendisse vehicula vitae libero eget finibus. Mauris nunc est, auctor in nulla eget, tristique varius metus. Quisque scelerisque vehicula urna, nec ultrices eros maximus ut. Maecenas dolor metus, varius et arcu eu, fermentum ullamcorper sapien.    
-            </p>
-            </div>
-    </div>
-</div>
-
-    </center>
-   {% endblock %}
+      </div>
+    </section><!-- End Contact Section -->
+    </div>  
+</div><!-- End #main -->
+{% endblock %}   

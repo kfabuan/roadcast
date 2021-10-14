@@ -131,7 +131,7 @@
             
             {% for a in all %}
                 {% ifequal a.id request.session.authorized_id %}
-                    {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                    {% if a.Members_User.Member_Type == 'Crime Statistician' %}
                     <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
                     + Add record
                     </button>
@@ -211,6 +211,14 @@
 
                                         {% for a in all %}
                                             {% ifequal a.id request.session.authorized_id %}
+                                                {% if a.Members_User.Member_Type == 'Sub-representative' %}
+                                                    <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                                {% endif %}
+                                            {% endifequal %}
+                                        {% endfor %}  
+
+                                        {% for a in all %}
+                                            {% ifequal a.id request.session.authorized_id %}
                                                 {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
                                                     <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
                                                     <li><hr class="dropdown-divider"></li>
@@ -258,7 +266,14 @@
                                                 <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' incident.id %}">View case&nbsp;</a></li>
                                             {% endifequal %}
                                         {% endfor %}
-
+                                        
+                                        {% for a in all %}
+                                            {% ifequal a.id request.session.authorized_id %}
+                                                {% if a.Members_User.Member_Type == 'Sub-representative' %}
+                                                    <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                                {% endif %}
+                                            {% endifequal %}
+                                        {% endfor %}  
 
                                         {% for a in all %}
                                             {% ifequal a.id request.session.authorized_id %}

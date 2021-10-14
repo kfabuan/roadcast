@@ -5,11 +5,12 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 
     <!-- CSS only -->
     <link rel="stylesheet" href="{% static 'css/nav.css' %}">
     <link rel="stylesheet" href="{% static 'css/contact_us.css' %}">
+    <link rel="stylesheet" href="{% static 'css/roadcast_about_us.css' %}">
 
     <!-- bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We" crossorigin="anonymous">    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js"></script>
@@ -25,6 +26,11 @@
     <!-- favicon & icons -->
     <link rel="shortcut icon" href="{% static 'image/logo1.png' %}" type="image/x-icon">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
+
+    <!-- Animations-->
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet"  href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
     {% block design %}
 
@@ -59,9 +65,24 @@
                             <label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> 
                         </a>
                     <div class="nav_list"> 
-                        <a href="{% url 'index' %}" class="nav_link active"> <i class='bx bxs-home nav_icon'></i> <span class="nav_name">Home</span> </a> 
-                        <a href="{% url 'about_us' %}" class="nav_link"> <i class='bx bx-info-circle nav_icon'></i> <span class="nav_name">About Us</span> </a> 
-                        <a href="{% url 'contact_us'%}" class="nav_link"> <i class='bx bx-conversation nav_icon'></i> <span class="nav_name">Contact Us</span> </a>
+                        {% if request.get_full_path == '' %}
+                        <a href="{% url 'index' %}" class="nav_link checked"> <i class='bx bxs-home nav_icon'></i> <span class="nav_name">Home</span></a> 
+                        {% else %}
+                        <a href="{% url 'index' %}" class="nav_link"> <i class='bx bxs-home nav_icon'></i> <span class="nav_name">Home</span> </a> 
+                        {% endif %}
+
+                        {% if request.get_full_path == '/aboutus' or request.get_full_path == '/aboutus#aboutus' %}
+                        <a href="#aboutus" class="nav_link active"> <i class='bx bx-info-circle nav_icon'></i> <span class="nav_name">About Us</span></a> 
+                        {% else %}
+                        <a href="#aboutus" class="nav_link"> <i class='bx bx-info-circle nav_icon'></i> <span class="nav_name">About Us</span> </a> 
+                        {% endif %}
+
+                        {% if request.get_full_path == '/aboutus#contactus' %}
+                        <a href="#contactus" class="nav_link active"> <i class='bx bx-conversation nav_icon'></i> <span class="nav_name">Contact Us</span></a>
+                        {% else %}
+                        <a href="#contactus" class="nav_link"> <i class='bx bx-conversation nav_icon'></i> <span class="nav_name">Contact Us</span></a>
+                        {% endif %}
+
                     </div>
                 </div> 
                 <a href="{% url 'login' %}" class="nav_link"> <i class='bx bx-log-in nav_icon'></i><span class="nav_name">Login / Register</span> </a>
@@ -69,13 +90,23 @@
         </div>
         
         <!--insert content-->
-        <div class=""style="padding-top: 60px;">
+        <div class=""style="padding-top: 40px; padding-left: 0px; padding-right: 0;">
+           
             {% block content %} {% endblock %}
+
         </div>
         <!--content end-->
 
 
         <!-- Scripts -->
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        
+        <script>
+            AOS.init();
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
         <script>
             document.addEventListener("DOMContentLoaded", function(event) {
 
