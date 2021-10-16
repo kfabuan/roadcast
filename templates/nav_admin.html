@@ -108,12 +108,6 @@
     <!-- Navbar -->
     <div class="l-navbar" id="nav-bar">
         <nav class="nav main-nav">
-            <!-- <div> 
-            <a href="{% url 'dashboard' %}" class="nav_logo">
-                <i class='bx bx-car nav_logo-icon'></i> 
-                <span class="nav_logo-name"><label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label>
-                </span>
-            </a> -->
             <div> 
                 <a href="{% url 'dashboard' %}" class="nav_logo">
                     <img src="{% static 'image/logo1.png' %}" class="img-fluid" style="width: 35px; margin-left:-5px;"></i> 
@@ -122,7 +116,7 @@
                     </a>
                 <div class="nav_list"> 
                     <!-- For admins -->
-                    {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                    {% if a.Members_User.Member_Type == 'Admin' %}
 
                     {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
@@ -203,10 +197,6 @@
                     {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
-
-                    <a href="{% url 'notification' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
-                        <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
-                        <span class="nav_name position-relative">Notifications</span></a>
                     {% else %}
                     <a href="{% url 'dashboard' %}" class="nav_link"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
@@ -334,8 +324,7 @@
                 <span class="nav_logo-name">
                 <label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> 
             </a>
-            <!-- <div> <a href="{% url 'index' %}" class="nav_logo"> <img src="static/image/logo1.png" class="img-fluid" style="width: 35px; margin-left:-5px;"></i> <span class="nav_logo-name"><label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> </a> -->
-                <div class="nav_list"> 
+            <div class="nav_list"> 
                     {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 

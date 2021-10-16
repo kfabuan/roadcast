@@ -223,7 +223,7 @@ function initMap() {
             <h3 class="page-title" style="text-shadow:1px 1px 3px #c6c6c6;">CREATE AN INCIDENT REPORT <i class="bi bi-plus-circle"></i>  </h3>
        </div>
        <div class="col-5">
-            <form action="" method="get">
+            <!-- <form action="" method="get">
                 {% csrf_token %}
 
                 <div class="row"  style="display: flex;">
@@ -237,7 +237,10 @@ function initMap() {
                         <button type="submit" class="btn btn-sm btn-success rounded-pill" style="float: left;">Submit</button>
                     </div>
                 </div>
-           </form>
+           </form> -->
+
+           <a href="{% url 'upload_csv' %}" class="btn btn-primary">+ Import CSV</a>
+
        </div>
    
    </div>

@@ -17,6 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.conf.urls import url
 
 from . import views
 
@@ -26,9 +27,7 @@ from.views import DashboardView, deletesession, notif_public_report_detail, user
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-
     path('', views.index, name='index'),
-    
     path('login', views.login, name='login'),
     path('aboutus', views.about_us, name='about_us'),
     path('contactus', views.contact_us, name='contact_us'),
@@ -47,7 +46,9 @@ urlpatterns = [
     path('incident/public/<int:incident_id>/', views.public_view_incident_detail, name='pub_incident_detail_view'),
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
-    path('incidents/uploadcsv', views.processCSV, name="process_upload_csv"),
+    path('incidents/uploadcsv/import', views.processCSV, name="process_upload_csv"),
+    path('incidents/uploadcsv', views.upload_csv, name="upload_csv"),
+
     path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
     path('incident/<int:incident_id>/archiving', views.archiving_solved_cases, name='archiving_solved_cases'),
     path('incident/<int:incident_id>/unarchiving', views.unarchiving_solved_cases, name='unarchiving_solved_cases'),
@@ -130,10 +131,10 @@ urlpatterns = [
     path('public/settings', views.pub_notif_inbox, name='pub_notif_inbox'), #settings
     path('public/settings/update/<prof_id>', views.change_account, name='change_account'), #save settings
 
-    #Bagong dagdag
     path('error', views.error_page, name='error_page'), #error page for login required & permissions
 
-
+    #csv download template
+    # url(r'^download/(?P<path>.*'),serve,{'document_root':settings.MEDIA_ROOT}),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = "roadcast.views.no_page" #page not found

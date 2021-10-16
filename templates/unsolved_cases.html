@@ -27,19 +27,19 @@
 
     <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-level-1" type="button" role="tab" aria-controls="pills-level-1" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;Level 1</button>
+            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-1-tab" data-bs-toggle="pill" data-bs-target="#pills-level-1" type="button" role="tab" aria-controls="pills-level-1" aria-selected="true">Level 1</button>
         </li>
         
         <li class="nav-item" role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-2-tab" data-bs-toggle="pill" data-bs-target="#pills-level-2" type="button" role="tab" aria-controls="pills-level-2" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;Level 2</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-2-tab" data-bs-toggle="pill" data-bs-target="#pills-level-2" type="button" role="tab" aria-controls="pills-level-2" aria-selected="false">Level 2</button>
         </li>
 
         <li class="nav-item" role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-3-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-level-3" role="tab" aria-controls="pills-level-3" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;Level 3</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-3-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-level-3" role="tab" aria-controls="pills-level-3" aria-selected="false">Level 3</button>
         </li>
         
         <li class="nav-item" role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-4-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-level-4" role="tab" aria-controls="pills-level-3" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;Level 4</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-public-level-4-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-level-4" role="tab" aria-controls="pills-level-3" aria-selected="false">Level 4</button>
         </li>
 
         <li class="nav-item" role="presentation">
@@ -60,6 +60,14 @@
                         <th scope="col">Statistician/Encoder</th>
                         <th scope="col">Barangay Committed</th>
                         <th scope="col">Date and Time Added</th>
+                        {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
+                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                <th class="table-header">Suspect</th>
+                                <th class="table-header">Victim</th>
+                                {% endif %}
+                            {% endifequal %}
+                        {% endfor %}   
                         <th scope="col">Case Status</th>
                         <th scope="col" class="rad_tr">Operation</th>
                     </tr>
@@ -73,6 +81,14 @@
                   <td>{{ unsolveds.Investigator_id.Members_District}}</td>
                   <td>{{ unsolveds.Barangay_id }}</td>
                   <td>{{ unsolveds.Date }} - {{ unsolveds.Time }}</td>
+                  {% for a in all %}
+                      {% ifequal a.id request.session.authorized_id %}
+                          {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                          <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                          <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                          {% endif %}
+                      {% endifequal %}
+                  {% endfor %}  
                   <td>{{ unsolveds.Case_Status }}</td>
                   <td>
                       <!-- Dropdown menu-->
@@ -118,6 +134,14 @@
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
+                    {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
+                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                <th class="table-header">Suspect</th>
+                                <th class="table-header">Victim</th>
+                                {% endif %}
+                            {% endifequal %}
+                        {% endfor %}   
                     <th scope="col">Case Status</th>
                     <th scope="col" class="rad_tr">Operation</th>
                 </tr>
@@ -131,6 +155,14 @@
                 <td>{{ unsolved.Investigator_id}}</td>
                 <td>{{ unsolved.Barangay_id }}</td>
                 <td>{{ unsolved.Date }} - {{ unsolved.Time }}</td>
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}  
                 <td>{{ unsolved.Case_Status }}</td>
                 <td>
                     <!-- Dropdown menu-->
@@ -146,8 +178,6 @@
                                {%csrf_token%}
                               <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this case?');">Archive case</button></li>
                             </form>
-                        
-                        
                         </ul>
                     </div>
                   </td>
@@ -173,6 +203,14 @@
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
+                    {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
+                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                <th class="table-header">Suspect</th>
+                                <th class="table-header">Victim</th>
+                                {% endif %}
+                            {% endifequal %}
+                        {% endfor %}   
                     <th scope="col">Case Status</th>
                     <th scope="col" class="rad_tr">Operation</th>
                 </tr>
@@ -186,6 +224,14 @@
                 <td>{{ unsolved_3.Investigator_id.Members_District}}</td>
                 <td>{{ unsolved_3.Barangay_id }}</td>
                 <td>{{ unsolved_3.Date }} - {{ unsolved_3.Time }}</td>
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}  
                 <td>{{ unsolved_3.Case_Status }}</td>
                 <td>
                     <!-- Dropdown menu-->
@@ -225,6 +271,14 @@
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
+                    {% for a in all %}
+                        {% ifequal a.id request.session.authorized_id %}
+                            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                            <th class="table-header">Suspect</th>
+                            <th class="table-header">Victim</th>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}   
                     <th scope="col">Case Status</th>
                     <th scope="col" class="rad_tr">Operation</th>
                 </tr>
@@ -238,6 +292,14 @@
                 <td>{{ unsolved_4.Investigator_id.Members_District}}</td>
                 <td>{{ unsolved_4.Barangay_id }}</td>
                 <td>{{ unsolved_4.Date }} - {{ unsolved_4.Time }}</td>
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}  
                 <td>{{ unsolved_4.Case_Status }}</td>
                 <td>
                     <!-- Dropdown menu-->
@@ -261,7 +323,7 @@
 
               <tr>
                   {% empty %} 
-                  <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No level 3 unsolved cases for now.</i></td>
+                  <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No level 4 unsolved cases for now.</i></td>
               </tr>
               {% endfor %}
               </tbody>
@@ -277,6 +339,14 @@
                     <th scope="col">Statistician/Encoder</th>
                     <th scope="col">Barangay Committed</th>
                     <th scope="col">Date and Time Added</th>
+                    {% for a in all %}
+                        {% ifequal a.id request.session.authorized_id %}
+                            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                            <th class="table-header">Suspect</th>
+                            <th class="table-header">Victim</th>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
                     <th scope="col">Case Status</th>
                     <th scope="col" class="rad_tr">Operation</th>
                 </tr>
@@ -290,6 +360,14 @@
                 <td>{{ archive.Investigator_id.Members_District}}</td>
                 <td>{{ archive.Barangay_id }}</td>
                 <td>{{ archive.Date }} - {{ archive.Time }}</td>
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}  
                 <td>{{ archive.Case_Status }}</td>
                 <td>
                     <!-- Dropdown menu-->

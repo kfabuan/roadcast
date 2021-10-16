@@ -4,11 +4,18 @@
 {% load static %}
 {% block content %}
 
+<!-- Alert messages -->
 {% if messages %}
      {% for message in messages %}
-     <div class="alert alert-success" role="alert">
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
       <strong>{{message}}</strong>
-     </div>
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% endif %}
      {% endfor %}
 {% endif %}
 

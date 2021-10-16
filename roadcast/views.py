@@ -46,7 +46,7 @@ today = date.today()
 
 #Sessions
 authorized = Tbl_add_members.objects.all()
-pub            = tbl_genpub_users.objects.all()
+pub        = tbl_genpub_users.objects.all()
 
 #notifications count
 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
@@ -54,7 +54,7 @@ unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 def index(request): #landing/home
     return render (request, 'landing.html')
 
-#Jew
+#Jew 
 def login(request):
     if request.method == 'POST':
         # try:
@@ -75,8 +75,9 @@ def login(request):
         except:
             b = False
             print('none')
-        
-        if a:
+
+    
+        if a == True:
             if (members.Members_Email == username) and (members.Members_Password == password):
 
                 submit = tbl_audit( username = username, password = password)
@@ -88,9 +89,10 @@ def login(request):
 
                 return HttpResponseRedirect(reverse('dashboard')) 
             else: 
-                messages.success(request, ("Oops! Please check your email or password."))
-                return render(request, 'login.html')
-        if b:
+                messages.error(request, ("Oops! Please check your email or password."))
+                return HttpResponseRedirect(reverse('login'))
+
+        elif b == True:
             if (public.gen_username == username) and (public.gen_pass == password):
                 if public.is_email_verified:    
                     if public.is_verified:
@@ -102,14 +104,18 @@ def login(request):
                         return HttpResponseRedirect(reverse('dashboard'))
                     
                     elif not public.is_verified:
-                        messages.success(request, ("Oops! Please wait for the admin to approve your account."))
-                        return render(request, 'login.html')
+                        messages.error(request, ("Oops! Please wait for the admin to approve your account."))
+                        return HttpResponseRedirect(reverse('login')) 
                 elif not public.is_email_verified:
-                        messages.success(request, ("Oops! Please check your email to verify your account."))
-                        return render(request, 'login.html')
+                        messages.error(request, ("Oops! Please check your email to verify your account."))
+                        return HttpResponseRedirect(reverse('login')) 
             else: 
-               messages.success(request, ("Oops! Please check your email or password."))
-               return render(request, 'login.html')
+               messages.error(request, ("Oops! Please check your email or password."))
+               return HttpResponseRedirect(reverse('login')) 
+
+        else:
+            messages.error(request, ("Oops! Please check your email or password."))
+            return HttpResponseRedirect(reverse('login')) 
     return render (request, 'login.html') 
 
 def deletesession(request):
@@ -160,7 +166,7 @@ def success(request):
 def sign_up (request):
     return render (request, 'sign_up.html')
     
-def duplicate_gen (request): #Jew
+def duplicate_gen (request): #Jew 
     if request.method   =="POST": #save data when button is clicked
         gen_surname     = request.POST["gen_surname"].title()
         gen_fname       = request.POST["gen_fname"].title()
@@ -175,20 +181,20 @@ def duplicate_gen (request): #Jew
         gen_pass        = request.POST["gen_pass"]
         gen_valid_id    = request.POST["gen_valid_id"]
         gen_upload_id   = request.POST["gen_valid_id"]
-        gen_profile     = 'media/Public/default.jpg'
+        gen_profile     = 'Public/default.jpg'
 
         #save image to database 
         if request.FILES.get("gen_upload_id"):
             gen_upload_id   = request.FILES.get('gen_upload_id')
         else:
-            gen_upload_id   = 'media/Public/default.jpg'
+            gen_upload_id   = 'Public/default.jpg'
 
         if tbl_genpub_users.objects.filter(gen_username = gen_username):
-            messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
+            messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
             return render(request, 'sign_up.html')  
 
         if Tbl_add_members.objects.filter(Members_Email=gen_username):
-            messages.success(request, ("Oops! That email address is already taken. Please use a different one."))
+            messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
             return HttpResponseRedirect('signup')
 
         #Recaptcha validation
@@ -317,7 +323,7 @@ def genpub_verified(request, pk=None):
     messages.success(request, " is verified")
     return render (request, 'notif_sign_up_validation.html', data)
 
-#Jew
+#Jew 
 def genpub_rejected(request,pk):
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
 
@@ -325,7 +331,7 @@ def genpub_rejected(request,pk):
         genpub = tbl_genpub_users.objects.get(id=pk)
         genpub.is_verified = False
         genpub.save()
-        messages.success(request, " is rejected")
+        messages.error(request, " is rejected")
 
         
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
@@ -340,7 +346,6 @@ def genpub_rejected(request,pk):
         "pub": pub,
     }
     return render (request, 'notif_sign_up_validation.html', data)
-
 
 def daterange(start_date, end_date):
     for n in range(int((end_date - start_date).days)):
@@ -700,6 +705,9 @@ def view_archive_incidents (request):
             return render (request, 'archive_incidents.html',context)
 
 def view_incidents (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub            = tbl_genpub_users.objects.all()
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     try:
@@ -802,120 +810,27 @@ def view_incidents (request):
 
 
 def add_incident (request): #add using CSV
-    try:
-        #Landing page ng add incident page / wala pang process
-        if request.method == "GET":
-            member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
-            investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
-            brgy_list = Tbl_barangay.objects.all()
-
-            context = {
-                'brgy_list': brgy_list, 
-                'investigators_list': investigators_list,
-                "all": authorized,
-                "pub": pub,
-                'unread_notif_count': unread_notif_count,
-            }
-            return render(request, 'add_incident.html', context)
-
-        csv_file = request.FILES['file']
-        data_set = csv_file.read().decode('ISO-8859-1')
-      
-        # setup a stream which is when we loop through each line we are able to handle a data in a stream
-        io_string = io.StringIO(data_set)
-        next(io_string)
-
-        for column in csv.reader(io_string, delimiter='|'):
-            _, created = Tbl_pasig_incidents.objects.get_or_create(
-                
-                City=column[0],
-                UnitStation=column[1],
-                CrimeOffense=column[2],
-                Week=column[3],
-                Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
-                Time=column[5],
-                Day=column[6],
-                Incident_Type=column[7],
-                Number_of_Persons_Involved=column[8],
-                Light=column[9],
-                Weather=column[10],
-                Case_Status=column[11],
-                
-                Address=column[12],
-                Along_Avenue=column[13],
-                Corner_Avenue=column[14],
-                Along_Road=column[15],
-                Corner_Road=column[16],
-                Along_Street=column[17],
-                Corner_Street=column[18],
-                Bound=column[19],
-                Along_Highway=column[20],
-                Corner_Highway=column[21],
-                Along_Boulevard=column[22],
-                Corner_Boulevard=column[23],
-                Others=column[24],
-
-                Surface_Condition=column[25],
-                Surface_Type=column[26], 
-                Road_Class=column[27], 
-                Road_Repair = column[28], 
-                Hit_and_Run = column[29], 
-                Road_Character=column[30], 
-        
-                Suspect_Name=column[31], 
-                Suspect_Severity=column[32],
-                Suspect_Age=column[33], 
-                Suspect_Sex=column[34], 
-                Suspect_Civil_Status = column[35], 
-                Suspect_Address=column[36],  
-                Suspect_Vehicle=column[37], 
-                Suspect_Vehicle_Body_Type=column[38], 
-                Suspect_Plate_No=column[39],
-                Suspect_Reg_Owner=column[40], 
-                Suspect_Drl_No=column[41], Suspect_Vehicle_Year_Model=column[42], 
-                
-                Victim_Type=column[43],
-                Victim_Name=column[44], Victim_Severity=column[45],Victim_Age=column[46], 
-                Victim_Sex=column[47], Victim_Civil_Status = column[48], Victim_Address=column[49], 
-                Victim_Vehicle=column[50], Victim_Vehicle_Body_Type=column[51], 
-                Victim_Plate_No=column[52],Victim_Reg_Owner=column[53], 
-                Victim_Drl_No=column[54], Victim_Vehicle_Year_Model=column[55],
-
-                Narrative=column[56], 
-                # date_added=column[57][6:] + "-" + column[57][3:5] + "-" + column[57][:2],
-                # added_by=column[58],
-
-                District_id=column[59],
-                Barangay_id_id=column[60]
-               
-            )
-
-            brgy_list = Tbl_barangay.objects.all()
-            
-            context = {
-                'brgy_list': brgy_list, 
-                'success_message':"Successfully Added!",
-                'url':'url',
-                "all": authorized,
-                "pub": pub,
-            }
-            return render (request, 'add_incident.html', context)
-    except:
-        csv_file = request.FILES['file']
-        # let's check if it is a csv file
-        if not csv_file.name.endswith('.png'):
-            messages.error(request, 'Error: This is not a CSV file.')
+    
+    #Landing page ng add incident page / wala pang process
+    if request.method == "GET":
+        member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+        investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+        brgy_list = Tbl_barangay.objects.all()
 
         context = {
-            'error_message': "Error uploading file. Please check file format.",
+            'brgy_list': brgy_list, 
+            'investigators_list': investigators_list,
             "all": authorized,
             "pub": pub,
+            'unread_notif_count': unread_notif_count,
         }
-        return render (request, 'add_incident.html', context)
+        return render(request, 'add_incident.html', context)
+
+        
 
 def processAddIncident(request): #Add using forms
     city = "Pasig"
-    unit_station = "Pasig City Police Station"
+    unit_station = "PNP-Pasig"
     crime_offense = request.POST.get('display_offense')
     week = request.POST.get('week') 
     date_committed = request.POST.get('DateCommitted') #name attribute of textbox
@@ -990,7 +905,7 @@ def processAddIncident(request): #Add using forms
 
    
     narrative = request.POST.get('narrative')
-    added_by = "For now encoder"
+    added_by = "Servidad"
     inv_name = request.POST.get('inv_name')
     
     incident_record = Tbl_pasig_incidents.objects.create(
@@ -1059,35 +974,290 @@ def processAddIncident(request): #Add using forms
     messages.success(request, ("Incident details successfully added!"))
     return HttpResponseRedirect('/incidents/view')
 
-def processCSV (request):
-    data = Tbl_pasig_incidents.objects.all()
-
-    # prompt is a context variable that can have different values depending on their context
-    prompt = {'order': 'Order of the CSV should be name, email, address, phone, profile',
-             'incident_csv': data }
-
-    # GET request returns the value of the data with the specified key.
+def upload_csv (request):
     if request.method == "GET":
-        return render(request, 'add_incident.html', prompt)
+        context ={
+            "all": authorized,
+            "pub": pub,
+            "success_message": "Di talaga success"
+        }
+        return render(request, 'upload_csv.html', context)
+    
+    #process
     csv_file = request.FILES['file']
 
     # let's check if it is a csv file
     if not csv_file.name.endswith('.csv'):
-        messages.error(request, 'THIS IS NOT A CSV FILE')
-
+        messages.error(request, 'Error: This is not a CSV file.')
+        
+    brgy_list = Tbl_barangay.objects.all()
     data_set = csv_file.read().decode('UTF-8')
 
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
     io_string = io.StringIO(data_set)
     next(io_string)
 
-    for column in csv.reader(io_string, delimiter=',', quotechar="|"):
-        _, created = Tbl_barangay.objects.get_or_create(
-            Barangay=column[0],
-            District_id_id=column[1]
+    for column in csv.reader(io_string, delimiter='|'):
+        if column[13]:
+            for brgy in brgy_list:
+                if brgy.Barangay == column[13]:
+                    Barangay = brgy.id
+        else:
+            Barangay = None
+
+        if column[28]:
+            Suspect_Age = column[28]
+        else:
+            Suspect_Age = None
+
+        if column[37]:
+            Suspect_Drl_Exp = column[37][6:] + "-" + column[37][3:5] + "-" + column[37][:2]
+        else: 
+            Suspect_Drl_Exp = None
+
+        if (column[42]):
+            Victim_Age = column[42]
+        else:
+            Victim_Age = None
+
+        if column[51]:
+            Victim_Drl_Exp = column[51][6:] + "-" + column[51][3:5] + "-" + column[51][:2]
+        else: 
+            Victim_Drl_Exp = None
+
+        if column[53]:
+            investigator = column[53]
+        else: 
+            investigator = None
+
+        if column[54]:
+            date_added = column[54][6:] + "-" + column[54][3:5] + "-" + column[54][:2]
+        else: 
+            date_added = None
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                auth_row = Tbl_add_members.objects.get(id=auth_id)
+                added_by = auth_row.Members_Fname + " " + auth_row.Members_Lname
+        except: pass
+
+
+        _, created = Tbl_pasig_incidents.objects.get_or_create(
+            
+            City=column[0],
+            UnitStation=column[1],
+            CrimeOffense=column[2][1:-1],
+            Week=column[3],
+            Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
+            Time=column[5],
+            Day=column[6],
+            Incident_Type=column[7],
+            Number_of_Persons_Involved=column[8],
+            Light=column[9],
+            Weather=column[10],
+            Case_Status=column[11],
+            
+            District_id=column[12],
+            Barangay_id_id=Barangay,
+            Address=column[14][1:-1],
+            Along=column[15],
+            Corner=column[16],
+            Latitude=column[17],
+            Longitude=column[18],
+
+            Surface_Condition=column[19],
+            Surface_Type=column[20], 
+            Road_Repair = column[21], 
+            Hit_and_Run = column[22], 
+            Road_Character=column[23], 
+    
+            Suspect_Type=column[24],
+            Suspect_Fname=column[25], 
+            Suspect_Lname=column[26], 
+            Suspect_Severity=column[27],
+            Suspect_Age=Suspect_Age,
+            Suspect_Sex=column[29], 
+            Suspect_Civil_Status = column[30], 
+            Suspect_Address=column[31][1:-1],  
+            Suspect_Vehicle=column[32], 
+            Suspect_Vehicle_Body_Type=column[33], 
+            Suspect_Plate_No=column[34],
+            Suspect_Reg_Owner=column[35], 
+            Suspect_Drl_No=column[36], 
+            Suspect_Drl_Exp=Suspect_Drl_Exp,
+
+            Victim_Type=column[38],
+            Victim_Fname=column[39], 
+            Victim_Lname=column[40], 
+            Victim_Severity=column[41],
+            Victim_Age=Victim_Age, 
+            Victim_Sex=column[43], 
+            Victim_Civil_Status = column[44], 
+            Victim_Address=column[45][1:-1], 
+            Victim_Vehicle=column[46], 
+            Victim_Vehicle_Body_Type=column[47], 
+            Victim_Plate_No=column[48],
+            Victim_Reg_Owner=column[49], 
+            Victim_Drl_No=column[50], 
+            Victim_Drl_Exp=Victim_Drl_Exp, 
+
+            Narrative=column[52][1:-1], 
+            Investigator_id=investigator, 
+            date_added=date_added,
+            added_by=added_by,
+            archive = column[56],
+            read_status = column[57]
+
         )
-    context = {}
-    return render(request, 'add_incident.html', context)
+
+    brgy_list = Tbl_barangay.objects.all()
+    
+    context = {
+        'brgy_list': brgy_list, 
+        'success_message':"Successfully Added!",
+        'url':'url',
+        "all": authorized,
+        "pub": pub,
+    }
+    
+    return render(request, 'upload_csv.html', context)
+
+   
+
+
+def processCSV (request):
+    if request.method == 'GET':
+        csv_file = request.FILES['file']
+        try:
+            brgy_list = Tbl_barangay.objects.all()
+            data_set = csv_file.read().decode('UTF-8')
+        
+            # setup a stream which is when we loop through each line we are able to handle a data in a stream
+            io_string = io.StringIO(data_set)
+            next(io_string)
+
+            for column in csv.reader(io_string, delimiter=','):
+                if column[13]:
+                    for brgy in brgy_list:
+                        if brgy.Barangay == column[13]:
+                            Barangay = brgy.id
+                else:
+                    Barangay = None
+
+                if column[28]:
+                    Suspect_Age = column[28]
+                else:
+                    Suspect_Age = None
+
+                if column[37]:
+                    Victim_Drl_Exp = column[37][6:] + "-" + column[37][3:5] + "-" + column[37][:2],
+                else: 
+                    Victim_Drl_Exp = None
+
+                if (column[42]):
+                    Victim_Age = column[42]
+                else:
+                    Victim_Age = None
+
+                if column[51]:
+                    Victim_Drl_Exp = column[51][6:] + "-" + column[51][3:5] + "-" + column[51][:2],
+                else: 
+                    Victim_Drl_Exp = None
+
+                if column[54]:
+                    date_added = column[54][6:] + "-" + column[54][3:5] + "-" + column[54][:2],
+                else: 
+                    date_added = None
+
+                _, created = Tbl_pasig_incidents.objects.get_or_create(
+                    
+                    City=column[0],
+                    UnitStation=column[1],
+                    CrimeOffense=column[2],
+                    Week=column[3],
+                    Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
+                    Time=column[5],
+                    Day=column[6],
+                    Incident_Type=column[7],
+                    Number_of_Persons_Involved=column[8],
+                    Light=column[9],
+                    Weather=column[10],
+                    Case_Status=column[11],
+                    
+                    District_id=column[12],
+                    Barangay_id_id=Barangay,
+                    Address=column[14],
+                    Along=column[15],
+                    Corner=column[16],
+                    Latitude=column[17],
+                    Longitude=column[18],
+
+                    Surface_Condition=column[19],
+                    Surface_Type=column[20], 
+                    Road_Repair = column[21], 
+                    Hit_and_Run = column[22], 
+                    Road_Character=column[23], 
+            
+                    Suspect_Type=column[24],
+                    Suspect_Fname=column[25], 
+                    Suspect_Lname=column[26], 
+                    Suspect_Severity=column[27],
+                    Suspect_Age=Suspect_Age,
+                    Suspect_Sex=column[29], 
+                    Suspect_Civil_Status = column[30], 
+                    Suspect_Address=column[31],  
+                    Suspect_Vehicle=column[32], 
+                    Suspect_Vehicle_Body_Type=column[33], 
+                    Suspect_Plate_No=column[34],
+                    Suspect_Reg_Owner=column[35], 
+                    Suspect_Drl_No=column[36], 
+                    Suspect_Drl_Exp=column[37], 
+
+                    Victim_Type=column[38],
+                    Victim_Fname=column[39], 
+                    Victim_Lname=column[40], 
+                    Victim_Severity=column[41],
+                    Victim_Age=Victim_Age, 
+                    Victim_Sex=column[43], 
+                    Victim_Civil_Status = column[44], 
+                    Victim_Address=column[45], 
+                    Victim_Vehicle=column[46], 
+                    Victim_Vehicle_Body_Type=column[47], 
+                    Victim_Plate_No=column[48],
+                    Victim_Reg_Owner=column[49], 
+                    Victim_Drl_No=column[50], 
+                    Victim_Drl_Exp=Victim_Drl_Exp, 
+
+                    Narrative=column[52], 
+                    Investigator_id=column[53], 
+                    date_added=date_added,
+                    added_by=column[55],
+                    read_status = column[56]
+
+                )
+
+                brgy_list = Tbl_barangay.objects.all()
+                
+                context = {
+                    'brgy_list': brgy_list, 
+                    'success_message':"Successfully Added!",
+                    'url':'url',
+                    "all": authorized,
+                    "pub": pub,
+                }
+            return render(request, 'upload_csv.html', context)
+        except:
+            # let's check if it is a csv file
+            if not csv_file.name.endswith('.csv'):
+                messages.error(request, 'Error: This is not a CSV file.')
+
+            context = {
+                'error_message': "Error uploading file. Please check file format.",
+                "all": authorized,
+                "pub": pub,
+            }
+            return render(request, 'upload_csv.html', context)
 
 def processDeleteIncident (request, incident_id):
     Tbl_pasig_incidents.objects.filter(id=incident_id).delete()
@@ -2192,8 +2362,7 @@ def pub_notif_inbox (request): #Account settings
     }
     return render(request, 'public_notif_setting.html', context)
 
-def change_account (request, prof_id): #Change email or password for gen pub and members - settings
-    
+def change_account (request, prof_id): #Change email or password for gen pub and members - settings 
     if request.method       == "POST":
         try:
             if get_object_or_404(tbl_genpub_users, id = prof_id):
@@ -2203,10 +2372,10 @@ def change_account (request, prof_id): #Change email or password for gen pub and
                 gen_pass            = request.POST.get("gen_pass")
 
                 if (tbl_genpub_users.objects.filter(gen_username = gen_username) & tbl_genpub_users.objects.exclude(id = prof_id)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+                    messages.error(request, ("Oops! That account already exists. Please make sure your email address is unique."))
                     return HttpResponseRedirect(reverse('pub_notif_inbox'))
                 elif (Tbl_add_members.objects.filter(Members_Email = gen_username)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+                    messages.error(request, ("Oops! That account already exists. Please make sure your email address is unique."))
                     return HttpResponseRedirect(reverse('pub_notif_inbox'))
                 else:
                     pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
@@ -2226,10 +2395,10 @@ def change_account (request, prof_id): #Change email or password for gen pub and
                 Members_Password    = request.POST.get("Members_Password")
 
                 if (Tbl_add_members.objects.filter(Members_Email = Members_Email) & Tbl_add_members.objects.exclude(id = prof_id)) | (Tbl_add_members.objects.filter(Members_Username = Members_Username) & Tbl_add_members.objects.exclude(id = prof_id)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+                    messages.error(request, ("Oops! That account already exists. Please make sure your email address is unique."))
                     return HttpResponseRedirect(reverse('pub_notif_inbox'))
                 elif (tbl_genpub_users.objects.filter(gen_username = Members_Email)):
-                    messages.success(request, ("Oops! That account already exists. Please make sure your email address is unique."))
+                    messages.error(request, ("Oops! That account already exists. Please make sure your email address is unique."))
                     return HttpResponseRedirect(reverse('pub_notif_inbox'))
                 else:
                     gen                     = get_object_or_404(Tbl_add_members, id = prof_id)
@@ -2263,7 +2432,7 @@ def add_members (request):
     }
     return render (request, 'add_members.html', context)
 
-def duplicate_members (request): #For checking of duplicates and saving members - add_members
+def duplicate_members (request): #For checking of duplicates and saving members - add_members 
     if request.method       == "POST":
         departments_id      = request.POST["Members_Dept"]
         Members_Dept        = Tbl_add_departments.objects.get( id = departments_id)
@@ -2290,13 +2459,13 @@ def duplicate_members (request): #For checking of duplicates and saving members 
         else:
             Members_Pic     = 'Profile/default.jpg'
 
-    try:
+    try: 
         if (Tbl_add_members.objects.filter(Members_Email = Members_Email) | Tbl_add_members.objects.filter(Members_Username = Members_Username)):
-            messages.success(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
+            messages.error(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
             return HttpResponseRedirect(reverse('add_members'))
 
         elif (tbl_genpub_users.objects.filter(gen_username = Members_Email)):
-            messages.success(request, ("Oops! That account has already been registered by a general public user. Please make sure your email address is unique."))
+            messages.error(request, ("Oops! That account has already been registered by a general public user. Please make sure your email address is unique."))
             return HttpResponseRedirect(reverse('add_members'))
 
         else:
@@ -2316,7 +2485,7 @@ def duplicate_members (request): #For checking of duplicates and saving members 
         return HttpResponseRedirect(reverse('admin_list_members'))
 
 def add_dept (request):
-    departments     = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_Tbl_add_departments ORDER BY id DESC')
+    departments     = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_bl_add_departments ORDER BY id DESC')
 
     context = {
     'departments': departments,
@@ -2331,12 +2500,12 @@ def add_dept (request):
 
     return render (request, 'add_dept.html', context)
 
-def duplicate(request): #For checking of duplicates and saving - add_dept
+def duplicate(request): #For checking of duplicates and saving - add_dept 
     Dept_Dept       = request.POST["Dept_Dept"].title()
 
     try:
         n = Tbl_add_departments.objects.get(Dept_Dept = Dept_Dept)
-        messages.success(request, ("Oops! That department already exists. Please enter a different department."))
+        messages.error(request, ("Oops! That department already exists. Please enter a different department."))
         return HttpResponseRedirect(reverse('add_dept'))
 
     except ObjectDoesNotExist:
@@ -2344,7 +2513,7 @@ def duplicate(request): #For checking of duplicates and saving - add_dept
         submit.save()
         messages.success(request, ("You've added a new department!"))
         return HttpResponseRedirect(reverse('admin_list_departments'))
-        
+ 
 def admin_list_departments(request): #Show list of depaartments
     departments         = Tbl_add_departments.objects.all()
 
@@ -2354,7 +2523,7 @@ def admin_list_departments(request): #Show list of depaartments
         return render (request, 'admin_list_departments.html', {'departments': departments, 'searched': searched, "all": authorized, "pub": pub})
 
     else:
-        departments      = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_Tbl_add_departments ORDER BY id DESC')
+        departments      = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_tbl_add_departments ORDER BY id DESC')
 
         paginator = Paginator(departments, 10) 
         page_number = request.GET.get('page')
@@ -2386,7 +2555,7 @@ def edit_members(request, member_id):
     return render (request, 'edit_members.html', context)
 
 
-def update_members(request, member_id): #For updating the data and checking for duplicates - edit_members
+def update_members(request, member_id): #For updating the data and checking for duplicates - edit_members 
     members                 = get_object_or_404(Tbl_add_members, id = member_id)
     Members_Pic             = request.FILES.get('Members_Pic')
 
@@ -2410,18 +2579,18 @@ def update_members(request, member_id): #For updating the data and checking for 
         Members_Username    = request.POST['Members_Username']
         Members_Password    = request.POST['Members_Password']
         Edit_By             = request.POST['Edit_By']
-        Date_Edit           = datetime.datetime.now()
+        Date_Edit           = date.today() #changed
 
         if request.FILES.get("Members_Pic"):
             Members_Pic     = request.FILES.get('Members_Pic')
 
     try:
         if (Tbl_add_members.objects.filter(Members_Email = Members_Email) & Tbl_add_members.objects.exclude(id = member_id)) | (Tbl_add_members.objects.filter(Members_Username = Members_Username) & Tbl_add_members.objects.exclude(id = member_id)):
-            messages.success(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
+            messages.error(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
             return HttpResponseRedirect(reverse('admin_list_members'))
 
-        elif (tbl_genpub_users.objects.filter(gen_username = members.Members_Email)):
-            messages.success(request, ("Oops! That account has already been registered by a general public user. Please make sure your email address is unique."))
+        elif (tbl_genpub_users.objects.filter(gen_username = Members_Email)):
+            messages.error(request, ("Oops! That account has already been registered by a general public user. Please make sure your email address is unique."))
             return HttpResponseRedirect(reverse('admin_list_members'))
 
         else:
@@ -2446,7 +2615,7 @@ def update_members(request, member_id): #For updating the data and checking for 
             return HttpResponseRedirect(reverse('admin_list_members'))
             
     except (KeyError, Tbl_add_members.DoesNotExist):
-            messages.success(request, ("Oops! There was a problem updating the details. Please try again."))
+            messages.error(request, ("Oops! There was a problem updating the details. Please try again."))
             return HttpResponseRedirect(reverse('admin_list_members'))  
 
 def edit_dept(request, dept_id):
@@ -2587,7 +2756,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
 
         return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
-        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_Tbl_add_members ORDER BY id DESC')
+        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_tbl_add_members ORDER BY id DESC')
 
         paginator = Paginator(members, 10) 
         page_number = request.GET.get('page')
@@ -2606,11 +2775,15 @@ def admin_investigators(request): #Show list of investigators
     else:
         return render (request, 'admin_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
   
-def admin_view_investigators(request, member_id): #Viewing specific investigator profile
-    members           = Tbl_add_members.objects.get(id = member_id)
+def admin_view_investigators(request, member_id): #Viewing specific investigator profile 
+    members          = Tbl_add_members.objects.get(id = member_id)
+    cases            = Tbl_pasig_incidents.objects.filter(Q(Investigator_id = members.id))
 
-    return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
+    paginator = Paginator(cases, 5)
+    page_number = request.GET.get('page')
+    cases = paginator.get_page(page_number) 
 
+    return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count, 'cases': cases})
 
 # Audit trail 
 def admin_audit_members(request): #List of audit for members

@@ -135,13 +135,20 @@
 {% block content %}
 <section style="height: 10px;"></section>
 
-    {% if messages %}
-        {% for message in messages %}
-        <p class="alert alert-primary">
-            <strong>The account "{{ detail.gen_username }}"{{ message }}</strong>
-        </p>  
-        {% endfor %}
-    {% endif %}
+<!-- Alert messages -->
+{% if messages %}
+     {% for message in messages %}
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% endif %}
+     {% endfor %}
+{% endif %}
     
 <!-- <div class="container"> -->
     <div class="mb-3 card-main" style="border-radius: 0px 20px 20px 0">

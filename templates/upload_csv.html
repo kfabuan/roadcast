@@ -1,0 +1,464 @@
+{% extends 'nav_admin.html' %}
+{% load static %}
+
+{% block title %} Upload a csv {% endblock %}
+{% block design %}
+<style>
+  .card {
+    max-width: 100%;
+    width: 900px;
+
+    margin-top: 50px;
+    margin-left: 30px;
+    margin-right: 30px;
+    margin-bottom: 30px;
+
+    padding-top: 10px;
+    padding-left: 100px;
+    padding-right: 100px; 
+    padding-bottom: 50px;
+
+    border-radius: 20px; 
+    border-color:#e6e6e762; 
+    box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);
+
+    text-align: center;
+    align-items: center;
+}
+.img-1 {
+    width: 400px;
+    height: auto;
+}
+.text-1 {
+    margin-top: 20px;
+}
+.row {
+    margin-top: 20px;
+}
+.button {
+    border-radius: 50px;
+}
+
+.text-span {
+    width: 500px;
+}
+
+@media only screen and (max-width: 1025px){
+    .card {
+    width: 700px;
+    margin-left: 30px;
+    margin-top:30px;
+    margin-bottom: 30px;
+    margin-right: 30px !important;
+}
+    .img-1 {
+        width: 500px;
+        height: auto;
+}
+    .text-span {
+        width: 400px;
+    }
+
+}
+
+@media only screen and (max-width: 1000px){
+    .card {
+    width: 700px;
+    margin-left: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    margin-right: 30px !important;
+}
+    .img-1 {
+        width: 500px;
+        height: auto;
+}
+    .text-span {
+            width: 400px;
+        }
+}
+
+@media only screen and (max-width: 750px){
+    .card {
+    width: 500px;
+    margin: 30px;
+    margin-right: 30px !important;
+
+    padding-top: 100px;
+    padding-left: 60px;
+    padding-right: 60px;
+    padding-bottom: 100px;
+
+}
+    .img-1 {
+        width: 500px;
+        height: auto;
+}
+    .text-span {
+        width: 360px;
+    }
+}
+
+
+@media only screen and (max-width: 550px){
+    .card {
+    width: 400px;
+    margin: 30px;
+    margin-top: 70px;
+    margin-right: 30px !important;
+    padding: 40px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    .text-span {
+        width: 300px;
+    }
+}
+
+@media only screen and (max-width: 455px){
+    .card {
+    width: 315px;
+    margin: 30px;
+    margin-top: 90px;
+    margin-right: 30px !important;
+    
+    padding-top: 60px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 60px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    h1 {
+        font-size: 24px;
+    }
+
+    .text-span {
+        width: 240px;
+    }
+
+    p {
+        font-size: 15px;
+    }
+}
+
+@media only screen and (max-width: 360px){
+    .card {
+    width: 250px;
+    margin: 30px;
+    margin-top: 50px;
+    margin-right: 30px !important;
+    
+    padding-top: 60px;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-bottom: 60px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    h1 {
+        font-size: 19px;
+    }
+    .text-span {
+        width: 160px;
+    }
+    p {
+        font-size: 13px;
+    }
+}
+
+@media only screen and (max-width: 285px){
+    .card {
+    width: 215px;
+    margin-top: 100px;
+    margin-right: 30px;
+    
+    padding-top: 60px;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 60px;
+}
+    .img-1 {
+        width: auto;
+        height: auto;
+}
+    h1 {
+        font-size: 18px;
+    }
+    .text-span {
+        width: 140px;
+    }
+    p {
+        font-size: 12px;
+    }
+}
+
+.note {
+    font-style: italic;
+    color: #999;
+    font-size: 13px !important;
+    margin-left: 5px;
+}
+</style>
+
+
+</style>
+{% endblock %}
+{% block content %}
+
+    {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> <i><a href="{% url 'view_incidents' %}">  View Incident Lists </a></i></p>{% endif %}
+    {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
+    {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
+
+ 
+<center>
+    
+    <div class="card">
+        <div class="img-1">
+            <img src="{% static 'image/file_upload.jpg' %}"  class="img-fluid">
+        </div>
+
+      
+        <h3 class="heading">Guidelines in .CSV File Uploading</h3>
+        <p> <i>Dont want to use a .csv file? Add records using <a href="{% url 'add_incident' %}" class="fw-bold text-primary">forms</a> instead.</i></p>
+       
+
+        <div class="text-span mt-3">
+        
+           <p>1. This will only accept <span class="text-success fw-bold"> .csv </span>files. Thus, files such as<span class="text-danger"> <i> .txt, .xlsx, .xls, </i></span>etc. will not be accepted.</p>
+           <p>2. Please make sure that all of the required fields have data. See the <a type="button" class="fw-bold text-primary"  data-bs-toggle="modal" data-bs-target="#staticBackdrop">list</a> of required and optional fields.</p>
+           <p>3. Click <a href="/media/csv_format_template.csv" class="fw-bold text-primary" download="csv_format_template.csv">here</a> to download a sample of .csv file template. All of the provided are for example purposes only.</p>
+           <p>4. Please take note that some of the column values (such as the offenses, addresses, and narratives) are required to be enclosed in a <i>double quotation ("") </i> marks.</p>
+           <p>5. Remove all the sample rows and replace it with your new data.</p>
+
+        </div>
+
+
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="row"  >
+                <label class=" fw-bold csv-btn" style="float:right;">
+                    <input class="form-control" type="file" id="formFile" name="file" style="background-color: white;" required>     
+                </label>
+            </div>
+    
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary button">+ Import File</button>
+            </div>
+        </form>
+
+        <div class="row">
+            <p class="note" style="margin-top: 15px;">Note: Please make sure that your .csv file is in a correct format to avoid errors.</p>
+        </div>
+    </div>
+
+</center>
+
+  <!-- Scrollable modal -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="staticBackdropLabel">Column List (56)</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+                <thead class="table-primary">
+                    <th class="rad_tl">Required</th>
+                    <th class="rad_tr">Optional</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1. City</td>
+                        <td>1. Week</td>
+                    </tr>
+
+                    <tr>
+                        <td>2. UnitStation</td>
+                        <td>2. Number of Person Involved</td>
+                    </tr>
+
+                    <tr>
+                        <td>3. CrimeOffense</td>
+                        <td>3. Light</td>
+                    </tr>
+
+                    <tr>
+                        <td>4. Date</td>
+                        <td>4. Weather</td>
+                    </tr>
+
+                    <tr>
+                        <td>5. Time</td>
+                        <td>5. Along</td>
+                    </tr>
+
+                    <tr>
+                        <td>6. Day</td>
+                        <td>6. Corner</td>
+                    </tr>
+
+                    <tr>
+                        <td>7. Incident Type</td>
+                        <td>7. Surface Condition</td>
+                    </tr>
+
+                    <tr>
+                        <td>8. Case Status</td>
+                        <td>8. Surface Type</td>
+                    </tr>
+
+                    <tr>
+                        <td>9. District</td>
+                        <td>9. Road Repair</td>
+                    </tr>
+
+                    <tr>
+                        <td>10. Barangay</td>
+                        <td>10. Hit and Run</td>
+                    </tr>
+
+                    <tr>
+                        <td>11. Address</td>
+                        <td>11. Road Character</td>
+                    </tr>
+
+                    <tr>
+                        <td>12. Latitude</td>
+                        <td>12. Suspect Vehicle Regular Owner</td>
+                    </tr>
+
+                    <tr>
+                        <td>13. Longitude</td>
+                        <td>13. Suspect Drl License Expiration Date</td>
+                    </tr>
+
+                    <tr>
+                        <td>14. Suspect Type</td>
+                        <td>14. Victim Vehicle Regular Owner</td>
+                    </tr>
+
+                    <tr>
+                        <td>15. Suspect First Name</td>
+                        <td>15. Victim Drl License Expiration Date</td>
+                    </tr>
+
+                    <tr>
+                        <td>16. Suspect Last Name</td>
+                        <td>16. Date Added</td>
+                    </tr>
+
+                    <tr>
+                        <td>17. Suspect Age</td>
+                        <td>17. Added By</td>
+                    </tr>
+
+                    <tr>
+                        <td>18. Suspect Sex</td>
+                        <td>18. Archive</td>
+                    </tr>
+
+                    <tr>
+                        <td>19. Suspect Civil Status</td>
+                        <td>19. Read Status</td>
+                    </tr>
+
+                    <tr>
+                        <td>20. Suspect Address</td>
+                    </tr>
+
+                    <tr>
+                        <td>21. Suspect Vehicle</td>
+                    </tr>
+
+                    <tr>
+                        <td>22. Suspect Vehicle Body Type</td>
+                    </tr>
+
+                    <tr>
+                        <td>23. Suspect Plate Number</td>
+                    </tr>
+
+                    <tr>
+                        <td>24. Suspect Driver's License</td>
+                    </tr>
+
+                    <tr>
+                        <td>25. Victim Type</td>
+                    </tr>
+
+                    <tr>
+                        <td>26. Victim First Name</td>
+                    </tr>
+
+                    <tr>
+                        <td>27. Victim Last Name</td>
+                    </tr>
+
+                    <tr>
+                        <td>28. Victim Age</td>
+                    </tr>
+
+                    <tr>
+                        <td>29. Victim Sex</td>
+                    </tr>
+
+                    <tr>
+                        <td>30. Victim Civil Status</td>
+                    </tr>
+
+                    <tr>
+                        <td>31. Victim Address</td>
+                    </tr>
+
+                    <tr>
+                        <td>32. Victim Vehicle</td>
+                    </tr>
+
+                    <tr>
+                        <td>33. Victim Vehicle Body Type</td>
+                    </tr>
+
+                    <tr>
+                        <td>34. Victim Plate Number</td>
+                    </tr>
+
+                    <tr>
+                        <td>35. Victim Driver's License</td>
+                    </tr>
+
+                    <tr>
+                        <td>36. Narrative</td>
+                    </tr>
+
+                    <tr>
+                        <td>37. Investigator</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+            
+            
+            
+
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+</div>
+{% endblock %}
+
+
+
+

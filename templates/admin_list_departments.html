@@ -24,11 +24,18 @@
       </p>
 {% endif %}
 
+<!-- Alert messages -->
 {% if messages %}
      {% for message in messages %}
-     <p class="alert alert-primary">
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
       <strong>{{message}}</strong>
      </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% endif %}
      {% endfor %}
 {% endif %}
 

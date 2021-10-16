@@ -43,6 +43,17 @@
     .b-no-border {
       border-bottom-width: 0px !important;
     }
+
+    /* .card-resize {
+      height: 400px;
+    } */
+
+    /* @media only screen and (max-width: 455px){
+    .card-resize {
+      height: 300px;
+    }
+   
+} */
   </style>
 {% endblock %}
 
@@ -109,15 +120,15 @@
               <div class="col-sm-6 mb-4">
                   <div class="card">
                       <div class="card-body" style="background-color: white;">
-                          <canvas id="myChart2" height="150"></canvas>
+                          <canvas id="myChart2" height="150" class=""></canvas>
                       </div>
                   </div>
               </div>
 
               <div class="col-sm-6 mb-4">
-                  <div class="card">
+                  <div class="card card-resize">
                       <div class="card-body" style="background-color: white;">
-                          <canvas id="myChart3" height="150"></canvas>
+                          <canvas id="myChart3" height="150" class=""></canvas>
                       </div>
                   </div>
               </div>
@@ -163,7 +174,7 @@
           </div>
 
           <div class="col-sm-6 mb-4">
-              <div class="card">
+              <div class="card card-resize">
                   <div class="card-body" style="background-color: white;">
                       <canvas id="line_day" height="150"></canvas>
                   </div>

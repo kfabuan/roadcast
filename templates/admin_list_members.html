@@ -16,20 +16,28 @@
 {% endblock %}
 {% block content %}
 
+<!-- Search message -->
 {% if searched %}
       <p class="alert alert-primary">
           <strong>Showing the results for "{{ searched }}"</strong>
       </p>
 {% endif %}
 
+<!-- Alert messages -->
 {% if messages %}
      {% for message in messages %}
-     <p class="alert alert-success">
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
       <strong>{{message}}</strong>
      </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% endif %}
      {% endfor %}
 {% endif %}
- 
+
 <div class="container">
  
   <!-- Upper Section (Maayos spacing hehe) -->

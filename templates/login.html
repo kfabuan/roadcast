@@ -9,16 +9,24 @@
 {% block content %}
 
 <div class="container">
- {{ count_gen }} {{ count_authorized }}
-  {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-primary alert-dismissible fade show" role="alert">
+  
+  <!-- Alert messages -->
+{% if messages %}
+     {% for message in messages %}
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
       <b>{{message}}</b>
-    </div>
-    {% endfor %}
-  {% endif %}
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% endif %}
+     {% endfor %}
+{% endif %}
+  
 
-  <div class= "row px-3">
+  <div   class= "row px-3">
     <div class ="col-lg-10 col-xl-9 card flex-row mx-auto px-0">
       <div class="img-right d-none d-md-flex" style="width: 50%; background-repeat: no-repeat; background-size: auto 100%; background-position: center center; background-image: url(static/image/city.gif)"></div>
 

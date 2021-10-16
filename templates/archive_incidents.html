@@ -35,7 +35,7 @@
 {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
     <div class="row mb-4 mt-2">
         <div class="col-3">
-            <span style="font-family: Roboto, sans-serif; color: #1b5082; font-size: x-large;">Archive Records </span>
+            <span style="font-family: Roboto, sans-serif; color: #1b5082; font-size: x-large ;">Archive Records </span>
             <span class="badge bg-primary"> {{unread_count}} unread </span>
         </div>
 
@@ -127,6 +127,14 @@
                         <th class="table-header">Incident Type</th>
                         <th class="table-header">Barangay Committed</th>
                         <th class="table-header">Date and Time Committed</th>
+                        {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
+                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                <th class="table-header">Suspect</th>
+                                <th class="table-header">Victim</th>
+                                {% endif %}
+                            {% endifequal %}
+                        {% endfor %}   
                         <th class="table-header">Case Status</th>
                         <th class="table-header rad_tr">Operation</th>
                     </tr>
@@ -143,6 +151,14 @@
                                 <td>{{incident.Incident_Type}}</td>
                                 <td>{{ incident.Barangay_id.Barangay }}</td>
                                 <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                {% for a in all %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                                        {% endif %}
+                                    {% endifequal %}
+                                {% endfor %}  
                                 <td>{{ incident.Case_Status }}</td>
                                 
                                 <td> 
@@ -177,6 +193,14 @@
                                 <td>{{incident.Incident_Type}}</td>
                                 <td>{{ incident.Barangay_id.Barangay }}</td>
                                 <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                {% for a in all %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                                        {% endif %}
+                                    {% endifequal %}
+                                {% endfor %}  
                                 <td>{{ incident.Case_Status }}</td>
                                 <td>
                                     <!-- Dropdown menu-->

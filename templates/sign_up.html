@@ -13,12 +13,19 @@ input[type=password]::placeholder{
 {% endblock %}
 {% block content %}
 
+<!-- Alert messages -->
 {% if messages %}
-{% for message in messages %}
-<div class="alert alert-primary alert-dismissible fade show" role="alert">
-  <b>{{message}}</b>
-</div>
-{% endfor %}
+     {% for message in messages %}
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% endif %}
+     {% endfor %}
 {% endif %}
 
 <!-- Form validation -->
@@ -338,6 +345,7 @@ input[type=password]::placeholder{
 
               <div class="row">
                 <center>
+                  <script src='https://www.google.com/recaptcha/api.js'></script>
                   <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>
                 </center>
               </div>

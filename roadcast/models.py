@@ -126,7 +126,7 @@ class Tbl_add_members(models.Model):
     Members_Email       = models.EmailField(max_length=200, verbose_name='Email', blank=True, null=True)
     Members_Username    = models.CharField(max_length=200, verbose_name='Username', blank=True, null=True) 
     Members_Password    = models.CharField(max_length=200, verbose_name='Password', blank=True, null=True)
-    Date_Added          = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True) 
+    Date_Added          = models.DateTimeField(auto_now_add=True, verbose_name='Date Added', blank=True, null=True) 
     Added_By            = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
     Members_Pic         = models.ImageField(upload_to=image_path, default='Profile/default.jpg', blank=True, null=True)
     Edit_By             = models.CharField(max_length=200, verbose_name='Edit By', default='Have not been edited yet', blank=True, null=True)
