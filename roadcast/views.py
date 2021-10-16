@@ -979,7 +979,6 @@ def upload_csv (request):
         context ={
             "all": authorized,
             "pub": pub,
-            "success_message": "Di talaga success"
         }
         return render(request, 'upload_csv.html', context)
     
