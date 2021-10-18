@@ -44,16 +44,46 @@
       border-bottom-width: 0px !important;
     }
 
-    /* .card-resize {
-      height: 400px;
-    } */
-
-    /* @media only screen and (max-width: 455px){
-    .card-resize {
-      height: 300px;
+    #report_form {
+        float: right;
     }
-   
-} */
+
+    .wrapper {
+        height: 300px;
+      }
+
+      .chart {
+        height: 100%;
+      } 
+
+    @media only screen and (max-width: 1024px){
+      .wrapper {
+        height: 300px;
+      }
+
+      .chart {
+        height: 100%;
+      } 
+    }
+
+    @media only screen and (max-width: 991px){
+      form#report_form {
+        float: none;
+      }
+    }
+
+    @media only screen and (max-width: 455px){
+      .wrapper {
+        height: 300px;
+      }
+
+      .chart {
+        height: 100%;
+      } 
+    }
+
+
+
   </style>
 {% endblock %}
 
@@ -65,11 +95,11 @@
 
   <div class="container">
   
-    <form id="report_form" action="{% url 'monthly_report' %}" method="POST" class="row row-cols-lg-auto g-3 align-items-center mb-4" style="float: right;">
+    <form id="report_form" action="{% url 'monthly_report' %}" method="POST" class="row row-cols-lg-auto g-3 align-items-center mb-4">
      {% csrf_token %}
         <div class="col-12">
             <select class="form-select form-select-sm" name="select_month" id="select_month" required>
-                <option vallue="">Select a month</option>
+                <option value="">Select a month</option>
                 <option value="1">January</option>
                 <option value="2">February</option>
                 <option value="3">March</option>
@@ -118,17 +148,17 @@
 
           <div class="row" style="border:0; margin:0; padding:0;">
               <div class="col-sm-6 mb-4">
-                  <div class="card">
+                  <div class="card wrapper">
                       <div class="card-body" style="background-color: white;">
-                          <canvas id="myChart2" height="150" class=""></canvas>
+                          <canvas id="myChart2" height="200" class="chart"></canvas>
                       </div>
                   </div>
               </div>
 
               <div class="col-sm-6 mb-4">
-                  <div class="card card-resize">
+                  <div class="card wrapper">
                       <div class="card-body" style="background-color: white;">
-                          <canvas id="myChart3" height="150" class=""></canvas>
+                          <canvas id="myChart3" height="200" class="chart"></canvas>
                       </div>
                   </div>
               </div>
@@ -136,28 +166,28 @@
           
           <div class="row" style="border:0; margin:0; padding:0;">
             <div class="col-sm-4 mb-4">
-                <div class="card" style="">
+                <div class="card wrapper" style="">
                     <div class="card-body" style="background-color: white;">
-                        <canvas id="pie_sex"></canvas>
+                        <canvas id="pie_sex" height="265" class="chart"></canvas>
                     </div>
                 </div>
             </div>
 
             <div class="col-sm-4 mb-4">
-              <div class="card">
+              <div class="card wrapper">
                   <div class="card-body" style="background-color: white;">
                       <div class="">
-                        <canvas id="line_time" height="300"></canvas>
+                        <canvas id="line_time" height="265" class="chart"></canvas>
                       </div>
                   </div>
               </div>
             </div>
     
             <div class="col-sm-4 mb-4">
-                <div class="card">
+                <div class="card wrapper">
                     <div class="card-body" style="background-color: white;">
                         <div class="">
-                            <canvas id="bar_offense" height="300"></canvas>
+                            <canvas id="bar_offense" height="270" class="chart"></canvas>
                         </div>
                     </div>
                 </div>
@@ -166,17 +196,17 @@
 
         <div class="row" style="border:0; margin:0; padding:0;">
           <div class="col-sm-6 mb-4">
-              <div class="card">
+              <div class="card wrapper">
                   <div class="card-body" style="background-color: white;">
-                      <canvas id="bar_severity" height="150"></canvas>
+                      <canvas id="bar_severity" height="200" class="chart"></canvas>
                   </div>
               </div>
           </div>
 
           <div class="col-sm-6 mb-4">
-              <div class="card card-resize">
+              <div class="card wrapper">
                   <div class="card-body" style="background-color: white;">
-                      <canvas id="line_day" height="150"></canvas>
+                      <canvas id="line_day" height="200" class="chart"></canvas>
                   </div>
               </div>
           </div>
@@ -443,6 +473,10 @@ $(document).ready(function(){
 
   var line_time = document.getElementById('line_time'); //time
   var ctx2 = document.getElementById('myChart2'); //district1
+  // var ctx2 = canvas.parentNode;
+  // ctx2.setAttribute("width", window.getComputedStyle(wrapper).width);
+  // ctx2.setAttribute("height", window.getComputedStyle(wrapper).height);
+
   var ctx3 = document.getElementById('myChart3'); //district1
   var pie_sex = document.getElementById('pie_sex'); //sex
   var bar_offense = document.getElementById('bar_offense'); //offenses
@@ -488,7 +522,8 @@ $(document).ready(function(){
               animation: {
                   duration: 1000,
                   easing: 'linear'
-              }
+              },
+              maintainAspectRatio: false,    
           }
       });
 
@@ -527,7 +562,8 @@ $(document).ready(function(){
               animation: {
                   duration: 1000,
                   easing: 'linear'
-              }
+              }, 
+              maintainAspectRatio: false,
           }
       });
 
@@ -562,7 +598,8 @@ $(document).ready(function(){
                       display: true,
                       text: 'Sex Distribution'
                   }
-              }
+              },
+              maintainAspectRatio: false, 
           }
           
       });
@@ -588,7 +625,8 @@ $(document).ready(function(){
                       display: true,
                       text: 'Accident Prone Time'
                   }
-              }
+              },
+              maintainAspectRatio: false, 
           }
       });
 
@@ -622,7 +660,8 @@ $(document).ready(function(){
           options: {
               scales: {
                   y: {beginAtZero: true}
-              }
+              },
+              maintainAspectRatio: false, 
           }
       });
 
@@ -656,7 +695,8 @@ $(document).ready(function(){
           options: {
               scales: {
                   y: {beginAtZero: true}
-              }
+              },
+              maintainAspectRatio: false, 
           }
       });
 
@@ -681,7 +721,8 @@ $(document).ready(function(){
                       display: true,
                       text: 'Day of the week'
                   }
-              }
+              },
+              maintainAspectRatio: false, 
           }
       });
 

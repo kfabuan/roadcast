@@ -1987,7 +1987,6 @@ def notif_public_report_detail (request, gen_pub_report_id):
     except:
         pass
 
-    
 
     data = {
         'public_reports_list': pasig_public_reports,
