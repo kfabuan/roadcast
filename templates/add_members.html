@@ -1,11 +1,28 @@
 {% extends 'nav_admin.html' %}
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
 {% block title %} Add Members {% endblock %}
-
 {% block content %}
 
+<!-- Form validation -->
+<script type="text/javascript">
+  function validate_form () {
+      if ( document.myform.Members_Dept.value == "None" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a department name.");
+          return false;
+      }
+      else if ( document.myform.Members_Substation.value == "None" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a substation." );
+          return false;
+      }
+      else if ( document.myform.Members_User.value == "None" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a member type.");
+      }
+      else if ( document.myform.Members_Position.value == "None" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a position." );
+          return false;
+      }
+    }
+  </script>
 
 {% if messages %}
      {% for message in messages %}
@@ -34,7 +51,7 @@
 
   <!-- Main Content -->
 
-  <form method="POST" enctype="multipart/form-data" action="{% url 'duplicate_members' %}" class="row g-3">
+  <form method="POST" enctype="multipart/form-data" name="myform" onsubmit="return validate_form();" action="{% url 'duplicate_members' %}" class="row g-3">
 
     {% csrf_token %}
 
@@ -43,7 +60,7 @@
       <div class="col-md-6">
         <label for="" class="form-label">Department</label>
         <select name="Members_Dept" class="form-select" required>
-          <option selected selected="true" disabled="disabled">Select a department</option>
+          <option selected="selected" disabled="disabled" value="None">Select a department</option>
           {% for department in departments %}
     
           <option value="{{ department.id }}">{{ department.Dept_Dept }}</option>
@@ -56,7 +73,7 @@
       <div class="col-md-6" style="margin-top: 9px;">
         <label for="" class="col-sm-2 col-form-label">Substation</label>
         <select class="form-select" name="Members_Substation" required>
-            <option selected selected="true" disabled="disabled">Select a substation</option>
+            <option selected="selected" disabled="disabled" value="None">Select a substation</option>
             {% for substation in substations %}
     
           <option value="{{ substation.id }}">{{ substation.Substation }}</option>
@@ -87,7 +104,7 @@
       <div class="col-md-6">
         <label for="" class="col-sm-2 col-form-label">Member Type</label>
         <select class="form-select" name="Members_User" aria-label="D" required>
-            <option selected selected="true" disabled="disabled">Select a type</option>
+            <option selected="selected" disabled="disabled" value="None">Select a type</option>
             {% for membertype in membertypes %}
     
           <option value="{{ membertype.id }}">{{ membertype.Member_Type }}</option>
@@ -99,7 +116,7 @@
       <div class="col-md-6">
         <label for="" class="col-sm-2 col-form-label">Position</label>
         <select class="form-select" name="Members_Position" aria-label="Default select example" required>
-            <option selected selected="true" disabled="disabled">Select a position</option>
+            <option selected="selected" disabled="disabled" value="None">Select a position</option>
             {% for position in positions %}
     
           <option value="{{ position.id }}">{{ position.Position }}</option>

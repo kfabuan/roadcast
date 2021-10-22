@@ -3,6 +3,7 @@ import urllib
 from django.core.checks.messages import INFO
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response, Tbl_add_departments, Tbl_position
+from .models import refregion, refprovince, refcitymun
 from requests.api import request
 # from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect, Http404
@@ -52,7 +53,11 @@ pub        = tbl_genpub_users.objects.all()
 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
 def index(request): #landing/home
-    return render (request, 'landing.html')
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    return render (request, 'landing.html', {"all": authorized, "pub": pub})
 
 #Jew 
 def login(request):
@@ -131,6 +136,70 @@ def deletesession(request):
         pass
     return HttpResponseRedirect('/login')
 
+def forgot_pass(request): #get email of user
+    if request.method   =="POST":
+        username        = request.POST["username"]
+        a = False
+        b = False
+        
+        try:
+            members = Tbl_add_members.objects.get(Members_Email = username)
+            a = True
+        except:
+            a = False
+
+        try:
+            public = tbl_genpub_users.objects.get(gen_username = username)
+            b= True
+        except:
+            b = False   
+
+        if a:
+            if members.Members_Email == username:
+                return render (request, 'members_forgot_password.html')
+        elif b:
+            if public.gen_username == username:  
+                return render (request, 'security_question.html', {"public": public}) 
+        else:
+            messages.error(request, ("Oops! We couldn't find your email address. Please sign up first to be a member!"))
+            return HttpResponseRedirect(reverse('login'))
+    return render (request, 'forgot_password.html')
+
+def security_question(request): #get the answer of user for security check
+    return render (request, 'security_question.html')
+
+def process_security(request, prof_id): #process of validating the security question
+    if request.method   == "POST":
+        answer  = request.POST.get("security_answer")
+
+        user = tbl_genpub_users.objects.get(id = prof_id)
+
+        if user.gen_qa_answer.lower() == answer.lower():
+            return render (request, 'genpub_reset_password.html', {"user": user})
+        else:
+            messages.error(request, ("Oops! Reset password failed as your answer did not match. Please try again."))
+            return HttpResponseRedirect(reverse('forgot_pass'))
+
+def genpub_reset_password(request, prof_id): #reset password of user
+    user = tbl_genpub_users.objects.get(id = prof_id)
+    return render (request, 'genpub_reset_password.html', {"user": user})
+
+def process_reset(request, prof_id): #process of reset password of user
+    user = tbl_genpub_users.objects.get(id = prof_id)
+
+    if request.method   == "POST":
+        newpass     = request.POST.get("newpass")
+        confirmpass = request.POST.get("confirmpass")
+
+        if newpass == confirmpass:
+            user.gen_pass = newpass
+            user.save()
+            messages.success(request, ("Changes saved! You've successfully changed your password. Please try to log in to your account."))
+            return HttpResponseRedirect(reverse('login'))
+        else:
+            messages.error(request, ("Oops! Reset password failed as your passwords did not match. Please try again."))
+            return HttpResponseRedirect(reverse('forgot_pass'))
+
 def about_us(request):
     if request.method == "POST":
         myname        = request.POST['myname'].title()
@@ -163,25 +232,56 @@ def contact_no(request):
 def success(request):
     return render(request, 'submit_success.html')
 
-def sign_up (request):
-    return render (request, 'sign_up.html')
+def sign_up (request): #maybago
+    region      = refregion.objects.all()
+    province    = refprovince.objects.all()
+    city        = refcitymun.objects.all()
+
+    a = {
+        'region':region,
+        'province':province,
+        'city':city,
+    }
+    return render (request, 'sign_up.html', a)
     
 def duplicate_gen (request): #Jew 
+    region      = refregion.objects.all()
+    province    = refprovince.objects.all()
+    city        = refcitymun.objects.all()
+
+    a = {
+        'region':region,
+        'province':province,
+        'city':city,
+    }
+
     if request.method   =="POST": #save data when button is clicked
         gen_surname     = request.POST["gen_surname"].title()
         gen_fname       = request.POST["gen_fname"].title()
         gen_sex         = request.POST["gen_sex"]
         gen_bday        = request.POST["gen_bday"]
-        gen_region      = request.POST["gen_region"].title()
-        gen_province    = request.POST["gen_province"].title()
-        gen_city        = request.POST["gen_city"].title()
+
+        gen_region_id     = request.POST["gen_region"]
+        gen_region        =  refregion.objects.get(id=gen_region_id)
+
+        gen_province_id    = request.POST["gen_province"]
+        gen_province       = refprovince.objects.get(id=gen_province_id)
+
+        gen_city_id       = request.POST["gen_city"]
+        gen_city          = refcitymun.objects.get(id=gen_city_id)
+
         gen_barangay    = request.POST["gen_barangay"].title()
         gen_contact_no  = request.POST["gen_contact_no"]
         gen_username    = request.POST["gen_username"]
         gen_pass        = request.POST["gen_pass"]
         gen_valid_id    = request.POST["gen_valid_id"]
         gen_upload_id   = request.POST["gen_valid_id"]
+
+        gen_qa          = request.POST["gen_qa"].title()
+        gen_qa_answer   = request.POST["gen_qa_answer"] .title()
+
         gen_profile     = 'Public/default.jpg'
+ 
 
         #save image to database 
         if request.FILES.get("gen_upload_id"):
@@ -191,7 +291,7 @@ def duplicate_gen (request): #Jew
 
         if tbl_genpub_users.objects.filter(gen_username = gen_username):
             messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
-            return render(request, 'sign_up.html')  
+            return HttpResponseRedirect('signup') 
 
         if Tbl_add_members.objects.filter(Members_Email=gen_username):
             messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
@@ -214,13 +314,14 @@ def duplicate_gen (request): #Jew
             return HttpResponseRedirect('signup')
             
         submit = tbl_genpub_users.objects.create(gen_surname = gen_surname,gen_fname = gen_fname, gen_sex = gen_sex, gen_bday=gen_bday, gen_region = gen_region, gen_province = gen_province, gen_city = gen_city,
-        gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id, gen_profile = gen_profile )#,gen_upload_id=gen_upload_id
+        gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id, gen_profile = gen_profile, gen_qa = gen_qa, gen_qa_answer=gen_qa_answer )#,gen_upload_id=gen_upload_id
         submit.save()
 
         send_action_email(submit,request)
         messages.success(request, ("We've already sent you an email. Please check your email to verify your account."))
         return HttpResponseRedirect(reverse('login'))
-    return render(request, 'sign_up.html')
+
+    return render(request, 'sign_up.html', a)
 
 #Email verification - Jew
 def send_action_email(public, request):
@@ -263,21 +364,6 @@ def sign_up_validation (request): #Jew
     context={'list':list}
     return render (request, 'sign_up_validation.html',context)
 
-# def admin_audit_trail(request):
-#     return render (request, 'admin_audit_trail.html')  
-
-# def admin_list_members(request):
-#     return render (request, 'admin_list_members.html') 
-
-# def admin_departments(request):
-#     return render (request, 'admin_list_members.html')   
-
-# def admin_investigators(request):
-#     return render (request, 'admin_investigators.html')  
-
-# def admin_view_investigators(request):
-#     return render (request, 'admin_view_investigators.html')  
-
 def is_valid(param):
     return param != "" and param is not None
 def is_not_valid(param):
@@ -290,16 +376,15 @@ def notif_sign_up_validation (request, signup_id):
     unread_sign_up_validation.save()
     
     #for gen pub reports inbox
-    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    sign_up_validation = tbl_genpub_users.objects.filter(id=signup_id).order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
     data = {
         'detail': unread_sign_up_validation,
         'unread_notif_count_signup': unread_notif_count_signup,
         'sign_up_validation':sign_up_validation,
-        "all": authorized,
-        "pub": pub,
-
+        "all": authorized, 
+        "pub": pub
     }
     return render (request, 'notif_sign_up_validation.html', data)
 
@@ -310,7 +395,7 @@ def genpub_verified(request, pk=None):
         genpub.is_verified = True
         genpub.save()
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
-    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    sign_up_validation = tbl_genpub_users.objects.filter(Read_Status="").order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
     data = {
@@ -320,7 +405,7 @@ def genpub_verified(request, pk=None):
         "all": authorized, 
         "pub": pub,
     }
-    messages.success(request, " is verified")
+    messages.success(request, "is verified")
     return render (request, 'notif_sign_up_validation.html', data)
 
 #Jew 
@@ -335,7 +420,7 @@ def genpub_rejected(request,pk):
 
         
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
-    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    sign_up_validation = tbl_genpub_users.objects.filter(Read_Status="").order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
     data = {
@@ -377,6 +462,10 @@ def extract_lat_lng(address_postal):
 
 
 def DashboardView (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
     try:
         if request.session['public_id']:
@@ -385,15 +474,19 @@ def DashboardView (request):
     except:
         pass
 
+    #notif count
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-
             if (auth_row.Members_User_id == 1):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
 
@@ -455,12 +548,6 @@ def DashboardView (request):
 
     # FOR MULTIPLE MARKERS IN DASHBOARD
     markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True) | Q(Longitude ="None") | Q(Latitude ="None"))
-
-    #Sessions
-    authorized = Tbl_add_members.objects.all()
-    pub            = tbl_genpub_users.objects.all()
-
-    
 
     data = {
         "all_total": all_total,
@@ -660,8 +747,27 @@ def unarchiving_solved_cases (request, incident_id):
         raise Http404("Incident does not exist")  
 
 def view_archive_incidents (request):
+    #notif count
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
-   if request.method=="GET":
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
+    if request.method=="GET":
+       #Sessions
+        authorized = Tbl_add_members.objects.all()
+        pub        = tbl_genpub_users.objects.all()
+
         incident_type = request.GET.get('coltype') 
         barang= request.GET.get('barangay')
         from_date =  request.GET.get('from_date')
@@ -671,23 +777,23 @@ def view_archive_incidents (request):
     
         if is_valid(from_date) & is_valid(to_date):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+            return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
                 
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count})
+            return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count, "unread_notif_count":unread_notif_count})
    
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
             elif barang=="0":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" order by id DESC')
-                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
             
             else:
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
         else:
             incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" order by id DESC')
             
@@ -699,7 +805,9 @@ def view_archive_incidents (request):
                 "all": authorized,
                 "pub": pub,
                 "pasig_incident_list":incident_model,
-                "unread_count": unread_count
+                "unread_notif_count": unread_notif_count,
+                "unread_count": unread_count,
+                "unread_notif_count":unread_notif_count
             }
         
             return render (request, 'archive_incidents.html',context)
@@ -708,6 +816,7 @@ def view_incidents (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub            = tbl_genpub_users.objects.all()
+    
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     try:
@@ -717,15 +826,19 @@ def view_incidents (request):
     except:
         pass
 
+    #notif count
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-
             if (auth_row.Members_User_id == 1):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
 
@@ -745,23 +858,23 @@ def view_incidents (request):
         
         if is_valid(from_date) & is_valid(to_date):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
                 
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
-            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count})
+            return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
    
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
             elif barang=="0":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
             
             else:
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
-                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count})
+                return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
         else:
             
 
@@ -788,7 +901,8 @@ def view_incidents (request):
                     "all": authorized,
                     "pub": pub,
                     "pasig_incident_list":incident_model,
-                    "unread_count": unread_count
+                    "unread_count": unread_count,
+                    'unread_notif_count': unread_notif_count,
                 }
             return render (request, 'encoder_view_incidents.html',context)
 
@@ -802,15 +916,36 @@ def view_incidents (request):
                 "all": authorized,
                 "pub": pub,
                 "pasig_incident_list":incident_model,
-                "unread_count": unread_count
+                "unread_count": unread_count,
+                'unread_notif_count': unread_notif_count,
             }
         
             return render (request, 'encoder_view_incidents.html',context)
 
 
 
-def add_incident (request): #add using CSV
+def add_incident (request):
+
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
     
+    #notif count
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
     #Landing page ng add incident page / wala pang process
     if request.method == "GET":
         member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
@@ -975,10 +1110,28 @@ def processAddIncident(request): #Add using forms
     return HttpResponseRedirect('/incidents/view')
 
 def upload_csv (request):
+    #notif count
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
     if request.method == "GET":
         context ={
             "all": authorized,
             "pub": pub,
+            "unread_notif_count": unread_notif_count
+
         }
         return render(request, 'upload_csv.html', context)
     
@@ -1119,10 +1272,7 @@ def upload_csv (request):
         "all": authorized,
         "pub": pub,
     }
-    
     return render(request, 'upload_csv.html', context)
-
-   
 
 
 def processCSV (request):
@@ -1265,6 +1415,26 @@ def processDeleteIncident (request, incident_id):
 
 #encoder and admin view incidents
 def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
+   #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
     try:
         member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
         investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
@@ -1430,6 +1600,10 @@ def processEditIncident(request, incident_id):
 
 #public and subrep view incidents
 def public_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
     
     try:
@@ -1439,15 +1613,19 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
 
     except: pass
 
+    #notif count
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-
             if (auth_row.Members_User_id == 1):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
 
@@ -1474,13 +1652,6 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
          "pub": pub,
          'unread_notif_count': unread_notif_count,})
 
-def report_summary (request):
-    context    = {
-        "all": authorized,
-        "pub": pub,
-    }
-    return render (request, 'report_summary.html', context)
-
 class JSONResponseMixin:
   """
   A mixin that can be used to render a JSON response.
@@ -1495,6 +1666,10 @@ class JSONResponseMixin:
 
 # def report_monthly (request):
 def monthly_report (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
     try:
         if request.session['public_id']:
@@ -1503,15 +1678,19 @@ def monthly_report (request):
     except:
         pass
 
+    #notif count
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-
             if (auth_row.Members_User_id == 1):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
 
@@ -1867,7 +2046,6 @@ def get_monthly_generate(request, *args, **kwargs):
 
 
 def get_monthly_data(request, *args, **kwargs):
-
     if request.method == "GET":
 
         #District 1
@@ -1921,7 +2099,7 @@ def get_monthly_data(request, *args, **kwargs):
 
 
 def notification (request): 
-   
+    #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
 
@@ -1933,6 +2111,24 @@ def notification (request):
     sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
+    #for encoder
+    assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+
+    #notif count
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
     
     if request.method   == "POST":
         searched        = request.POST['searched']
@@ -1940,6 +2136,7 @@ def notification (request):
 
         data = {
             'searched': searched,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
             'pasig_incident_list': pasig_incident_list, 
             'public_reports_list': pasig_public_reports,
             'unread_notif_count': unread_notif_count,
@@ -1951,9 +2148,9 @@ def notification (request):
 
     else:
         pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
-       
         data = {
             'pasig_incident_list': pasig_incident_list, 
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
             'public_reports_list': pasig_public_reports,
             'unread_notif_count': unread_notif_count,
             "all": authorized, 
@@ -1965,11 +2162,15 @@ def notification (request):
 
 
 def notif_public_report_detail (request, gen_pub_report_id):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
     
     member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
     investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     substation_list = Tbl_substation.objects.all()
 
+    #for admin
     unread_public_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
     unread_public_report.Read_Status = "Yes"
     unread_public_report.save()
@@ -1977,6 +2178,11 @@ def notif_public_report_detail (request, gen_pub_report_id):
     #for gen pub reports inbox
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+    #for encoder
+    assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+
+    
 
     try:
         if request.session['authorized_id']:
@@ -1986,7 +2192,6 @@ def notif_public_report_detail (request, gen_pub_report_id):
             pub_info = tbl_genpub_users.objects.all()
     except:
         pass
-
 
     data = {
         'public_reports_list': pasig_public_reports,
@@ -1999,6 +2204,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
         'pub_info':pub_info,
         'replies':replies,
         'admin_responses': replies,
+        'assigned_pasig_public_reports':assigned_pasig_public_reports,
 
 
         "all": authorized, 
@@ -2017,7 +2223,16 @@ def processAssigning (request, report_id):
     messages.success(request, "Your data has been saved!")
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
+def processMarkingInvalid (request, report_id):
+    public_report = Tbl_public_report.objects.get(id=report_id)
+
+    public_report.Report_Status = 'Invalid'
+    public_report.save()
+    messages.success(request, "This report has been marked as invalid!")
+    return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
+
 def processAdmin_Reply (request, report_id):
+
     admin_reply = request.POST.get('admin_reply')
     sender = request.POST.get('sender_id')
     receiver = request.POST.get('receiver_id')
@@ -2035,6 +2250,10 @@ def processAdmin_Reply (request, report_id):
 
 
 def sub_notification (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -2055,6 +2274,11 @@ def sub_notification (request):
     return render (request, 'sub_notification.html', context)
 
 def sub_notification_detail (request, report_id):
+
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     try:
         if request.session['authorized_id']:
             detail = Tbl_public_report.objects.get(id=report_id)
@@ -2080,6 +2304,7 @@ def sub_notification_detail (request, report_id):
 
 #subrep to admin messages    
 def processSubrep_Reply (request, report_id):
+
     public_reply = request.POST.get('public_reply')
     sender = request.POST.get('sender_id')
     receiver = request.POST.get('receiver_id')
@@ -2097,6 +2322,9 @@ def processSubrep_Reply (request, report_id):
 
 #inbox
 def public_inbox (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
     
     try:
         if request.session['public_id']:
@@ -2125,6 +2353,10 @@ def public_inbox (request):
 
 #inbox
 def public_inbox_detail (request, report_id):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     try:
         if request.session['public_id']:
             pub_id = request.session['public_id']
@@ -2142,6 +2374,8 @@ def public_inbox_detail (request, report_id):
 
             replies = Tbl_public_report_response.objects.filter(Q(Report_id=report_id)).filter(Q(Sender=pub_id)|Q(Receiver=pub_id)).order_by('Response_id') 
             replies.update(Read_Status = "Yes")
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
 
     except:
         pass
@@ -2202,6 +2436,26 @@ def unarchiving (request, incident_id):
 
 
 def unsolved_cases (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
     member_type=Tbl_member_type.objects.get(Member_Type="Investigator")
     investigator_list=Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     level1_range=date.today()-timedelta(31)
@@ -2218,6 +2472,7 @@ def unsolved_cases (request):
     level3=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level3_range_gte)&Q(Date__lte=level3_range_lte),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved")
     level4=Tbl_pasig_incidents.objects.filter(Q(Date__lt=archive_range),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved",)
     archive=Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved") & Q(archive="Yes"))
+    
     data = {
         "investigator_list":investigator_list,
         "unsolveds_cases_list":unsolveds_cases_list,
@@ -2242,6 +2497,10 @@ def logout (request):
 
 #PUBLIC
 def submit_report (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     
@@ -2322,9 +2581,12 @@ def submit_report (request):
         return render (request, 'submit_report.html', context)
 
 
-
 # Dane's Codes
 def pub_notif_inbox (request): #Account settings
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     try:
@@ -2339,11 +2601,14 @@ def pub_notif_inbox (request): #Account settings
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-
             if (auth_row.Members_User_id == 1):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
 
@@ -2415,6 +2680,8 @@ def add_members (request):
     substations     = Tbl_substation.objects.all()
     membertypes     = Tbl_member_type.objects.all()
     positions       = Tbl_position.objects.all()
+
+    #Sessions
     all_authorized  = Tbl_add_members.objects.all()  
     pub             = tbl_genpub_users.objects.all() 
 
@@ -2483,7 +2750,11 @@ def duplicate_members (request): #For checking of duplicates and saving members 
         return HttpResponseRedirect(reverse('admin_list_members'))
 
 def add_dept (request):
-    departments     = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_bl_add_departments ORDER BY id DESC')
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    departments     = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_tbl_add_departments ORDER BY id DESC')
 
     context = {
     'departments': departments,
@@ -2513,6 +2784,10 @@ def duplicate(request): #For checking of duplicates and saving - add_dept
         return HttpResponseRedirect(reverse('admin_list_departments'))
  
 def admin_list_departments(request): #Show list of depaartments
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     departments         = Tbl_add_departments.objects.all()
 
     if request.method   == "POST":
@@ -2530,10 +2805,18 @@ def admin_list_departments(request): #Show list of depaartments
         return render (request, 'admin_list_departments.html', {'departments': departments, "all": authorized, "pub": pub})
 
 def view_members(request, member_id): #Show specific profile of members 
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     members     = Tbl_add_members.objects.get(id = member_id)
     return render (request, 'view_members.html', {'members':members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def edit_members(request, member_id): 
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     members     = Tbl_add_members.objects.get(id = member_id)
     departments = Tbl_add_departments.objects.exclude(Dept_Dept = members.Members_Dept)
     substations = Tbl_substation.objects.exclude(Substation = members.Members_Substation)
@@ -2554,6 +2837,7 @@ def edit_members(request, member_id):
 
 
 def update_members(request, member_id): #For updating the data and checking for duplicates - edit_members 
+
     members                 = get_object_or_404(Tbl_add_members, id = member_id)
     Members_Pic             = request.FILES.get('Members_Pic')
 
@@ -2617,6 +2901,10 @@ def update_members(request, member_id): #For updating the data and checking for 
             return HttpResponseRedirect(reverse('admin_list_members'))  
 
 def edit_dept(request, dept_id):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     departments         = Tbl_add_departments.objects.get(id = dept_id)
     return render (request, 'edit_dept.html', {'departments': departments, "all": authorized, "pub": pub,'unread_notif_count': unread_notif_count,})
 
@@ -2653,6 +2941,10 @@ def delete_dept(request, dept_id):
     return HttpResponseRedirect(reverse('admin_list_departments'))  
 
 def user_profile(request): #Profile of users
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
     try:
         if request.session['public_id']:
@@ -2661,17 +2953,22 @@ def user_profile(request): #Profile of users
     except:
         pass
 
+    #notif count
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-
             if (auth_row.Members_User_id == 1):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
+    
 
     context    = {
         "all": authorized,
@@ -2681,31 +2978,40 @@ def user_profile(request): #Profile of users
     return render(request, 'user_profile.html', context)
 
 
-def edit_profile(request, prof_id): #Edit user profile details #*
+def edit_profile(request, prof_id): #Edit user profile details 
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     if request.session['public_id']:
-            pub_id = request.session['public_id']
-            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+        pub_id      = request.session['public_id']
+        unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
 
-    gen                 = tbl_genpub_users.objects.get(id = prof_id)
+        gen         = tbl_genpub_users.objects.get(id = prof_id)
+        region      = refregion.objects.exclude(regDesc = gen.gen_region)
+        province    = refprovince.objects.exclude(provDesc = gen.gen_province)
+        city        = refcitymun.objects.exclude(citymunDesc = gen.gen_city)
 
-    #Functions for profile ek ek
-    username            = gen.gen_username.split('@')[0] 
-    fname               = gen.gen_fname.split(' ')[0]
-    today               = date.today()
-    age                 = today.year - gen.gen_bday.year - ((today.month, today.day) < (gen.gen_bday.month, gen.gen_bday.day))
+        #Functions for profile ek ek
+        username            = gen.gen_username.split('@')[0] 
+        fname               = gen.gen_fname.split(' ')[0]
+        today               = date.today()
+        age                 = today.year - gen.gen_bday.year - ((today.month, today.day) < (gen.gen_bday.month, gen.gen_bday.day))
 
-    context = {
-        'gen': gen, 
-        'username': username, 
-        'fname': fname,
-        'age': age,
-        "all": authorized,
-        "pub": pub,
-        "unread_notif_count": unread_notif_count
+        context = {
+            'gen': gen, 
+            'username': username, 
+            'fname': fname,
+            'age': age,
+            "all": authorized,
+            "pub": pub,
+            "unread_notif_count": unread_notif_count,
+            'region':region,
+            'province':province,
+            'city':city,
+        }
 
-    }
     return render(request, 'edit_profile.html', context)
-    
 
 def update_profile(request, prof_id): #For saving and validating public emails - edit_profile (gen pub)
     pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
@@ -2716,9 +3022,16 @@ def update_profile(request, prof_id): #For saving and validating public emails -
         gen_bday            = request.POST["gen_bday"]
         gen_sex             = request.POST["gen_sex"].title()
         gen_contact_no      = request.POST["gen_contact_no"]
-        gen_region          = request.POST["gen_region"].title()
-        gen_province        = request.POST["gen_province"].title()
-        gen_city            = request.POST["gen_city"].title()
+
+        gen_region_id     = request.POST["gen_region"]
+        gen_region        =  refregion.objects.get(id=gen_region_id)
+
+        gen_province_id    = request.POST["gen_province"]
+        gen_province       = refprovince.objects.get(id=gen_province_id)
+
+        gen_city_id       = request.POST["gen_city"]
+        gen_city          = refcitymun.objects.get(id=gen_city_id)
+
         gen_barangay        = request.POST["gen_barangay"].title()
         gen_profile         = request.FILES.get('gen_profile')
         date_edit           = datetime.datetime.now()
@@ -2742,6 +3055,10 @@ def update_profile(request, prof_id): #For saving and validating public emails -
         return HttpResponseRedirect(reverse('user_profile'))
 
 def admin_list_members(request): #Show list of ALL the members (excluding gen pub)
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     members = Tbl_add_members.objects.all()
 
     if request.method == "POST":
@@ -2763,6 +3080,10 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
         return render (request, 'admin_list_members.html', {'members': members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
 
 def admin_investigators(request): #Show list of investigators
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     members           = Tbl_add_members.objects.all().order_by('-id') 
 
     if request.method == "POST":
@@ -2774,6 +3095,10 @@ def admin_investigators(request): #Show list of investigators
         return render (request, 'admin_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
   
 def admin_view_investigators(request, member_id): #Viewing specific investigator profile 
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     members          = Tbl_add_members.objects.get(id = member_id)
     cases            = Tbl_pasig_incidents.objects.filter(Q(Investigator_id = members.id))
 
@@ -2783,8 +3108,13 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
 
     return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count, 'cases': cases})
 
-# Audit trail 
+
+#Audit trail 
 def admin_audit_members(request): #List of audit for members
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     members           = Tbl_add_members.objects.all()
 
     if request.method == "POST":
@@ -2796,12 +3126,22 @@ def admin_audit_members(request): #List of audit for members
         return render (request, 'admin_audit_trail_members.html', {'audits': audits, 'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def audit_members(request, audit_id): #Specific view for members
+
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     audits  = tbl_audit.objects.get(id = audit_id)
 
     info    = Tbl_add_members.objects.get(Members_Email = audits.username)
     return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
 
 def admin_audit_genpub(request): #List of audit for gen pub
+
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     public  = tbl_genpub_users.objects.all().order_by('-id')
 
     if request.method == "POST":
@@ -2815,6 +3155,11 @@ def admin_audit_genpub(request): #List of audit for gen pub
         return render (request, 'admin_audit_trail_genpub.html', {'audits': audits, 'public': public, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def audit_genpub(request, audit_id): #Specific view for gen pub
+
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
     audits  = tbl_audit.objects.get(id = audit_id)
     info    = tbl_genpub_users.objects.get(gen_username = audits.username)
 
@@ -2823,6 +3168,9 @@ def audit_genpub(request, audit_id): #Specific view for gen pub
 
 #Navbar for all
 def navbar (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
     audit      = tbl_audit.objects.all()
 
     context    = {
@@ -2832,7 +3180,7 @@ def navbar (request):
     }
     return render(request, 'nav_admin.html', context)
 
-#Bagong dagdag 
+#Error pages
 def error_page (request): #403
     context    = {
         "all": authorized,
@@ -2849,3 +3197,6 @@ def no_page (request, exception): #404
 
 def server_error (request): #500
     return render(request, '500.html', status=500)
+
+def login_required (request):
+    return render(request, '_login_required.html')

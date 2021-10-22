@@ -76,9 +76,15 @@
             <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;General Public's Report</button>
         </li>
         
-        <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-verification" id="pills-public-verification-tab" data-bs-toggle="pill" data-bs-target="#pills-public-verification" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;General Public's Verification</button>
-        </li>
+        {% for a in all %}
+            {% ifequal a.id request.session.authorized_id %}
+                {% if a.Members_User.Member_Type == 'Admin' %}
+                <li class="nav-item " role="presentation">
+                    <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-verification" id="pills-public-verification-tab" data-bs-toggle="pill" data-bs-target="#pills-public-verification" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;General Public's Verification</button>
+                </li>
+                {% endif %}
+            {% endifequal %}
+        {% endfor %}
 
         <li class="nav-item " role="presentation">
             <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-incident" id="pills-incident-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-incident" role="tab" aria-controls="pills-incident" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;New Incident Incident</button>
@@ -108,38 +114,79 @@
              <div class="table-responsive mt-3">
                 <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
                     <tbody>
+                        {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
 
-                        {% for report in public_reports_list %}
-                        <!-- row -->
-                        <tr class =" {% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                            <!-- label -->
-                            <td class="pl-3"  style="width: 3%;">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="cst1" />
-                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
-                                </div>
-                            </td>
-                            <!-- star -->
-                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
-                            <td style="width: 15%;">
-                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }}</span>
-                            </td>
-                            <!-- Message -->
-                            <td class="text-truncate" style="width: 58%;">
-                                <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
-                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
-                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
-                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
-                                </a>
-                            </td>
-                            <!-- Attachment -->
-                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
-                            <!-- Time -->
-                            <td  style="width: 16%;"class="{% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ report.Reported_Date }} {{ report.Reported_Time }}</p></td>
-                        </tr>
-
+                                {% if a.Members_User.Member_Type == 'Admin' %}
+                                    {% for report in public_reports_list %} 
+                                        <!-- for admin: all public reports -->
+                                        <tr class =" {% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                                            <!-- label -->
+                                            <td class="pl-3"  style="width: 3%;">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="cst1" />
+                                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                                </div>
+                                            </td>
+                                            <!-- star -->
+                                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                                            <td style="width: 15%;">
+                                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }}</span>
+                                            </td>
+                                            <!-- Message -->
+                                            <td class="text-truncate" style="width: 58%;">
+                                                <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
+                                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
+                                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
+                                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                                </a>
+                                            </td>
+                                            <!-- Attachment -->
+                                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                                            <!-- Time -->
+                                            <td  style="width: 16%;"class="{% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ report.Reported_Date }} {{ report.Reported_Time }}</p></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                                
+                                {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                                    {% for report in public_reports_list %} 
+                                        <!-- for encoder: only assigned cases -->
+                                        <tr class =" {% ifequal report.Read_by_encoder 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                                            <!-- label -->
+                                            <td class="pl-3"  style="width: 3%;">
+                                                <div class="custom-control custom-checkbox">
+                                                    <input type="checkbox" class="custom-control-input" id="cst1" />
+                                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                                </div>
+                                            </td>
+                                            <!-- star -->
+                                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                                            <td style="width: 15%;">
+                                                <span class="mb-0 {% ifequal report.Read_by_encoder 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }}</span>
+                                            </td>
+                                            <!-- Message -->
+                                            <td class="text-truncate" style="width: 58%;">
+                                                <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
+                                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
+                                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
+                                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                                </a>
+                                            </td>
+                                            <!-- Attachment -->
+                                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                                            <!-- Time -->
+                                            <td  style="width: 16%;"class="{% ifequal report.Read_by_encoder 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ report.Reported_Date }} {{ report.Reported_Time }}</p></td>
+                                        </tr>
+                                    {% endfor %}
+                                {% endif %}
+                                   
+                            {% endifequal %}
                         {% endfor %}
+
+
                     </tbody>
                 </table>
             </div> <!--Close Mail-->

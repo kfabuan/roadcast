@@ -50,8 +50,7 @@
               <div class="row">
                 <div class="col">
                   <div class="card-profile-stats d-flex justify-content-center mt-md-5">
-                    <div>
-
+                    <!-- <div>
                       <a href="#"><span class="heading">15</span></a>
                       <span class="description">Total reports</span>
                       </div>
@@ -64,12 +63,12 @@
                       <div>
                       <a href="#"><span class="heading">7</span></a>
                       <span class="description">Invalid reports</span>
-                    </div>
+                    </div> -->
                   </div>
                 </div>
               </div>
 
-              <section style="height: 20px;"></section>
+              <!-- <section style="height: 20px;"></section> -->
 
               <!-- Profile details goes here -->
               <div class="text-center">
@@ -110,7 +109,7 @@
                   <section style="height: 5px;"></section>
                 </span>
                 <span class="text-muted">
-                  {{b.gen_barangay}}, {{b.gen_city}}, {{b.gen_province}} <i>({{b.gen_region}})</i>
+                  {{b.gen_barangay|title}}, {{b.gen_city|title}}, {{b.gen_province|title}} ― <i>{{b.gen_region|title}}</i>
                 </span>
                 <section style="height: 10px;"></section>
               </li>

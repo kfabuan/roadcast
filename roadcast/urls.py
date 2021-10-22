@@ -57,7 +57,6 @@ urlpatterns = [
 
 
     path('report/submit', views.submit_report, name='submit_report'),
-    path('report', views.report_summary, name='report_summary'),
     path('report/monthly', views.monthly_report, name='monthly_report'),
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
     path('report/monthly/generate', views.get_monthly_generate, name='monthly_generate'),
@@ -67,6 +66,7 @@ urlpatterns = [
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
     path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
+    path('notification/public/<int:report_id>/invalid', views.processMarkingInvalid , name='process_mark_invalid'),
 
     #public inbox
     path('public/inbox', views.public_inbox, name='public_inbox'),
@@ -132,9 +132,14 @@ urlpatterns = [
     path('public/settings/update/<prof_id>', views.change_account, name='change_account'), #save settings
 
     path('error', views.error_page, name='error_page'), #error page for login required & permissions
+    path('loginrequired', views.login_required, name='login_required'), #error page for login required
 
-    #csv download template
-    # url(r'^download/(?P<path>.*'),serve,{'document_root':settings.MEDIA_ROOT}),
+    path('forgot_pass', views.forgot_pass, name='forgot_pass'), #html ng forgot password
+    path('validate', views.security_question, name='security_question'), #html for security question
+    path('validating/<prof_id>', views.process_security, name='process_security'), #html for security question
+    path('forgot_pass/reset/<prof_id>', views.genpub_reset_password, name='reset_pass'), #html ng forgot password
+    path('forgot_pass/saving/<prof_id>', views.process_reset, name='process_reset'), #html ng forgot password
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = "roadcast.views.no_page" #page not found

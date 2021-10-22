@@ -139,15 +139,44 @@ class Tbl_add_members(models.Model):
         return self.Members_Fname
 
 
+class refregion(models.Model):
+    id                  = models.AutoField(primary_key=True)
+    psgcCode            = models.CharField(max_length=200, verbose_name='Code', blank=True, null=True)
+    regDesc             = models.CharField(max_length=200, verbose_name='Region', blank=True, null=True)
+    regCode             = models.CharField(max_length=200, verbose_name='Region Code', blank=True, null=True)
 
+    def __str__(self):
+        return self.regDesc 
+
+class refprovince(models.Model):
+    id                      = models.AutoField(primary_key=True)
+    psgcCode                = models.CharField(max_length=200, verbose_name='Code', blank=True, null=True)
+    provDesc                = models.CharField(max_length=200, verbose_name='Province', blank=True, null=True)
+    regCode                 = models.CharField(max_length=200, verbose_name='Region Code', blank=True, null=True)
+    provCode                = models.CharField(max_length=200, verbose_name='Province Code', blank=True, null=True)
+
+    def __str__(self):
+        return self.provDesc
+
+class refcitymun(models.Model):
+    id                      = models.AutoField(primary_key=True)
+    psgcCode                = models.CharField(max_length=200, verbose_name='Code', blank=True, null=True)
+    citymunDesc             = models.CharField(max_length=200, verbose_name='City', blank=True, null=True)
+    regDesc                 = models.CharField(max_length=200, verbose_name='Region', blank=True, null=True)
+    provCode                = models.CharField(max_length=200, verbose_name='Province Code', blank=True, null=True)
+    citymunCode             = models.CharField(max_length=200, verbose_name='City Code', blank=True, null=True)
+
+    def __str__(self):
+        return self.citymunDesc
+        
 class tbl_genpub_users(models.Model):
     gen_surname     = models.CharField(max_length=50, blank=True, null=True)
     gen_fname       = models.CharField(max_length=50, blank=True, null=True)
     gen_sex         = models.CharField(max_length=50, blank=True,null=True)
-    gen_bday        = models.DateTimeField(max_length=50,blank=True,null=True)
-    gen_region      = models.CharField(max_length=50,blank=True, null=True)
-    gen_province    = models.CharField(max_length=50,blank=True, null=True)
-    gen_city        = models.CharField(max_length=50,blank=True, null=True)
+    gen_bday        = models.DateField(blank=True, null=True) 
+    gen_region      = models.ForeignKey(refregion,null=True, on_delete=models.SET_NULL)
+    gen_province    = models.ForeignKey(refprovince,null=True, on_delete=models.SET_NULL)
+    gen_city        = models.ForeignKey(refcitymun,null=True, on_delete=models.SET_NULL)
     gen_barangay    = models.CharField(max_length=50,blank=True, null=True)
     gen_contact_no  = models.CharField(max_length=50,blank=True, null=True)
     gen_username    = models.CharField(max_length=50,blank=True, null=True,)
@@ -157,7 +186,11 @@ class tbl_genpub_users(models.Model):
     gen_profile     = models.ImageField(upload_to=image_path2, default='Public/default.jpg', blank=True, null=True)
     date_signed_up  = models.DateTimeField(auto_now_add=True,blank=True, null=True)
     date_edit       = models.DateField(blank=True, null=True) 
-    
+
+    #new
+    gen_qa          = models.CharField(max_length=50,blank=True,null=True) #bago
+    gen_qa_answer   = models.CharField(max_length=50,blank=True,null=True) #bago
+
     Read_Status         = models.CharField(max_length=200, verbose_name='Read', blank=True)
     is_verified         = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
@@ -424,6 +457,8 @@ class Tbl_public_report(models.Model):
     Recipient               = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
     Read_Status             = models.CharField(max_length=200, verbose_name='Read by Admin', blank=True)
     Read_by_subrep          = models.CharField(default='No', max_length=200, verbose_name='Read by Subrep', blank=True)
+    Read_by_encoder         = models.CharField(default='No', max_length=200, verbose_name='Read by Encoder', blank=True)
+
     Report_Status           = models.CharField(max_length=200, verbose_name='Report Status', default="Unsolved", blank=True)
     Assigned_Investigator   = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
     Substation              = models.ForeignKey(Tbl_substation, null=True, on_delete=models.SET_NULL, related_name='Substation_id') #foreign
@@ -445,6 +480,7 @@ class Tbl_public_report_response (models.Model):
     Response_Date   = models.DateField(default=now, verbose_name='Response Date', blank=True, null=True)
     Response_Time   = models.TimeField(default=now, verbose_name='Response Time', blank=True, null=True)
     Read_Status     = models.CharField(max_length=200, default="No", verbose_name='Read', blank=True, null=True) 
+
     def __str__(self):
         return '{}-to-{}-{}'.format(self.Sender,self.Receiver,self.Reported_City)
 

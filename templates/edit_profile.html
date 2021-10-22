@@ -4,13 +4,6 @@
 {% block title %} Edit Profile {% endblock %}
 {% block content %}
 
-{% if messages %}
-     {% for message in messages %}
-     <p class="alert danger-danger">
-      <strong>{{message}}</strong>
-     </p>
-     {% endfor %}
-{% endif %} 
 
 <div class="container border-1 rounded bg-white border" style="border-color:#e6e6e762; border-radius: 50px !important; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1) !important;">
   <div class="row">
@@ -100,10 +93,10 @@
                       <label class="labels">Region</label>
                       <select id="region" name="gen_region" class="form-select"style="background-color: #e8f0fe;" required>
                         <option value="" disabled="disabled">Region</option>
-                        <option selected selected="true" value="{{ gen.gen_region}}">{{ gen.gen_region}}</option>
-                        <option value=""> 1 </option>
-                        <option value=""> 2 </option>
-                        <option value=""> 3 </option>
+                        <option selected selected="true" value="{{ gen.gen_region.id}}">{{ gen.gen_region}}</option>
+                        {% for reg in region %}
+                        <option value="{{ reg.id }}"> {{ reg.regDesc }} </option>
+                        {% endfor %}
                         </select>
                     </div>
 
@@ -111,10 +104,10 @@
                       <label class="labels">Province</label>
                       <select id="province" name="gen_province" class="form-select" style="background-color: #e8f0fe;" required>
                         <option value="" disabled="disabled">Province</option>
-                        <option selected selected="true" value="{{ gen.gen_province}}">{{ gen.gen_province}}</option>
-                         <option value=""> 1 </option>
-                         <option value=""> 2 </option>
-                         <option value=""> 3 </option>
+                        <option selected selected="true" value="{{ gen.gen_province.id}}">{{ gen.gen_province}}</option>
+                        {% for pro in province %}
+                        <option value="{{ pro.id }}"> {{ pro.provDesc }} </option>
+                        {% endfor %}
                          </select>
                     </div>
 
@@ -122,10 +115,10 @@
                       <label class="labels">City</label>
                       <select id="city" name="gen_city" class="form-select" style="background-color: #e8f0fe;" required>
                         <option value="" disabled="disabled">City</option>
-                        <option selected selected="true" value="{{ gen.gen_city}}">{{ gen.gen_city}}</option>
-                        <option value=""> 1 </option>
-                        <option value=""> 2 </option>
-                        <option value=""> 3 </option>
+                        <option selected selected="true" value="{{ gen.gen_city.id}}">{{ gen.gen_city}}</option>
+                        {% for cit in city %}
+                        <option value="{{ cit.id }}"> {{ cit.citymunDesc }} </option>
+                        {% endfor %}
                         </select>
                     </div>
                     

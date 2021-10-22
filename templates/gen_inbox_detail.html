@@ -391,23 +391,25 @@
                                        
                                     </div>
                                     <div class="col-2 badge-div">
-                                            {% if prev.Assigned_Investigator_id %}
-                                                {% ifequal prev.Report_Status 'Solved' %}
-                                                <span class="badge position-relative bg-success"> Solved</span>
-                                                {% endifequal %}
+                                        {% if prev.Assigned_Investigator_id %}
+                                            {% ifequal prev.Report_Status 'Solved' %}
+                                            <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
+                                            {% endifequal %}
 
-                                                {% ifequal prev.Report_Status 'Unsolved' %}
-                                                <span class="badge position-relative bg-primary"> Assigned</span>
-                                                {% endifequal %}
+                                            {% ifequal prev.Report_Status 'Unsolved' %}
+                                            <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
+                                            {% endifequal %}
 
-                                            {% else %}
-                                            <span class="badge position-relative bg-secondary"> Unassigned</span>
-
-                                            {% endif %}         
+                                        {% else %}
 
                                             {% ifequal prev.Report_Status 'Invalid' %}
-                                            <span class="badge position-relative bg-danger"> Invalid</span>
+                                            <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
+
+                                            {% else %}
+                                            <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
+
                                             {% endifequal %}
+                                        {% endif %}          
                                     </div>
                                 </div>
 

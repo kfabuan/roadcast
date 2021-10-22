@@ -366,76 +366,152 @@
             
             <!--mail list-->
             <div class="card col-3 p-0 card-shadow card-left">
-                    <div class="card-header fw-bold" style="border-radius: 20px 20px 0 0">
-                        <i class="bi bi-envelope-fill"></i>&nbsp; <span class="header-title">Public Reports Inbox</span> 
-                    </div>
-                    <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 20px 20px">
-                        {% for report in public_reports_list %}
-                        <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
-                            <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
-                                <div class="row">
-                                    <div class="col-2 img-col"><img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img"></div>
-                                    <div class="col-6 c_name hide-col">
-                                        <p class="r_name text-muted text-truncate">
-                                            {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
+                <div class="card-header fw-bold" style="border-radius: 20px 20px 0 0">
+                    <i class="bi bi-envelope-fill"></i>&nbsp; <span class="header-title">Public Reports Inbox</span> 
+                </div>
+                <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 20px 20px">
 
-                                            <!-- {% ifequal report.Read_Status 'No' %}
-                                            <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
-                                            {% endifequal %} -->
-                                            </p>
-                                    </div>
-                                    <div class="col-4 hide-col">
-                                        <span class="r_date text-truncate">{{ report.Reported_Date }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2">
-                                        <div class="custom-control custom-checkbox ps-2">
-                                            <!-- <input type="checkbox" class="custom-control-input" id="cst1" />
-                                            <label class="custom-control-label" for="cst1">&nbsp;</label> -->
+                    {% for a in all %}
+                        {% ifequal a.id request.session.authorized_id %}
+                            {% if a.Members_User.Member_Type == 'Admin' %}
+                                {% for report in public_reports_list %}
+                                <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
+                                    <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
+                                        <div class="row">
+                                            <div class="col-2 img-col"><img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img"></div>
+                                            <div class="col-6 c_name hide-col">
+                                                <p class="r_name text-muted text-truncate">
+                                                    {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
+        
+                                                    <!-- {% ifequal report.Read_Status 'No' %}
+                                                    <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
+                                                    {% endifequal %} -->
+                                                    </p>
+                                            </div>
+                                            <div class="col-4 hide-col">
+                                                <span class="r_date text-truncate">{{ report.Reported_Date }}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-8 ">
-                                        <p style="margin-bottom: 0 !important;" class="fw-bold r_barangay text-truncate">{{ report.Reported_Brgy.Barangay }}</p>
-                                    </div>
-                                    <div class="col-2 badge-div">
-                                            {% if report.Assigned_Investigator_id %}
-                                                {% ifequal report.Report_Status 'Solved' %}
-                                                <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
-                                                {% endifequal %}
+        
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <div class="custom-control custom-checkbox ps-2">
+                                                    <!-- <input type="checkbox" class="custom-control-input" id="cst1" />
+                                                    <label class="custom-control-label" for="cst1">&nbsp;</label> -->
+                                                </div>
+                                            </div>
+                                            <div class="col-8 ">
+                                                <p style="margin-bottom: 0 !important;" class="fw-bold r_barangay text-truncate">{{ report.Reported_Brgy.Barangay }}</p>
+                                            </div>
+                                            <div class="col-2 badge-div">
+                                                {% if report.Assigned_Investigator_id %}
+                                                    {% ifequal report.Report_Status 'Solved' %}
+                                                    <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
+                                                    {% endifequal %}
+    
+                                                    {% ifequal report.Report_Status 'Unsolved' %}
+                                                    <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
+                                                    {% endifequal %}
+    
+                                                {% else %}
+    
+                                                    {% ifequal report.Report_Status 'Invalid' %}
+                                                    <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
+    
+                                                    {% else %}
+                                                    <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
+    
+                                                    {% endifequal %}
+                                                {% endif %}           
+                                            </div>
+                                        </div>
+        
+                                        <div class="row">
+                                            <div class="col-2">
+                                                {% ifnotequal report.Reported_Image_Proof '' %}
+                                                    <i class="fa fa-paperclip text-muted float-end"></i>
+                                                {% endifnotequal %}
+                                            </div>
+                                            <div class="col-8"><p class=" text-truncate r_desc" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
+                                            <div class="col-2"></div>
+                                        </div>
+        
+        
+                                    </li></a> 
+                                {% endfor %}
+                            {% endif %}
 
-                                                {% ifequal report.Report_Status 'Unsolved' %}
-                                                <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
-                                                {% endifequal %}
+                            {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                                {% for report in assigned_pasig_public_reports %}
+                                <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
+                                    <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
+                                        <div class="row">
+                                            <div class="col-2 img-col"><img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img"></div>
+                                            <div class="col-6 c_name hide-col">
+                                                <p class="r_name text-muted text-truncate">
+                                                    {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
+        
+                                                    <!-- {% ifequal report.Read_Status 'No' %}
+                                                    <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
+                                                    {% endifequal %} -->
+                                                    </p>
+                                            </div>
+                                            <div class="col-4 hide-col">
+                                                <span class="r_date text-truncate">{{ report.Reported_Date }}</span>
+                                            </div>
+                                        </div>
+        
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <div class="custom-control custom-checkbox ps-2">
+                                                    <!-- <input type="checkbox" class="custom-control-input" id="cst1" />
+                                                    <label class="custom-control-label" for="cst1">&nbsp;</label> -->
+                                                </div>
+                                            </div>
+                                            <div class="col-8 ">
+                                                <p style="margin-bottom: 0 !important;" class="fw-bold r_barangay text-truncate">{{ report.Reported_Brgy.Barangay }}</p>
+                                            </div>
+                                            <div class="col-2 badge-div">
+                                                    {% if report.Assigned_Investigator_id %}
+                                                        {% ifequal report.Report_Status 'Solved' %}
+                                                        <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
+                                                        {% endifequal %}
+        
+                                                        {% ifequal report.Report_Status 'Unsolved' %}
+                                                        <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
+                                                        {% endifequal %}
+        
+                                                    {% else %}
+        
+                                                        {% ifequal report.Report_Status 'Invalid' %}
+                                                        <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
+        
+                                                        {% else %}
+                                                        <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
+        
+                                                        {% endifequal %}
+                                                    {% endif %}           
+                                            </div>
+                                        </div>
+        
+                                        <div class="row">
+                                            <div class="col-2">
+                                                {% ifnotequal report.Reported_Image_Proof '' %}
+                                                    <i class="fa fa-paperclip text-muted float-end"></i>
+                                                {% endifnotequal %}
+                                            </div>
+                                            <div class="col-8"><p class=" text-truncate r_desc" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
+                                            <div class="col-2"></div>
+                                        </div>
+        
+        
+                                    </li></a> 
+                                {% endfor %}
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
 
-                                            {% else %}
-                                            <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
-
-                                            {% endif %}         
-
-                                            {% ifequal report.Report_Status 'Invalid' %}
-                                            <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
-                                            {% endifequal %}
-                                    </div>
-                                </div>
-
-                                <div class="row">
-                                    <div class="col-2">
-                                        {% ifnotequal report.Reported_Image_Proof '' %}
-                                            <i class="fa fa-paperclip text-muted float-end"></i>
-                                        {% endifnotequal %}
-                                    </div>
-                                    <div class="col-8"><p class=" text-truncate r_desc" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
-                                    <div class="col-2"></div>
-                                </div>
-
-
-                            </li></a>
-                           
-                        {% endfor %}
-
-                    </ul>
+                </ul>
             </div>
 
             <!--message-->
@@ -454,30 +530,38 @@
                                 <!-- <p class="text-muted" style="font:small;"> Active Now</p> -->
                             </div>
 
-                            <div class="col-2">
-                              <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
-                                <div id="myDIV" class="showw">
-                                    <form action="{% url 'process_assigning' detail.id %}" method="POST">
-                                        {% csrf_token %}
-                                        <p class="label-blue">Assign Investigator </p> 
-                                        <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
-                                            <option value="">Choose Investigator</option>
-                                            {% for inv in investigators_list %}
-                                                <option value="{{ inv.id }}" {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
-                                            {% endfor %}
-                                        </select>
-
-                                        <p class="label-blue mt-3">Assign Substation </p> 
-                                        <select  name="select-substation" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
-                                            <option value="" {% ifequal detail.Substation.Substation null %} selected {% endifequal %}>Forward to:</option>
-                                            {% for sub in substation_list %}
-                                                <option value="{{ sub.id }}" {% ifequal detail.Substation.Substation sub.Substation %} selected {% endifequal %}>{{ sub.Substation }}</option>      
-                                            {% endfor %}
-                                        </select>
-                                        <button type="submit" class="btn btn-primary btn-sm mt-3">Investigate Case</button>
-                                    </form>
-                                </div>               
-                            </div>
+                            {% for a in all %}
+                                {% ifequal a.id request.session.authorized_id %}
+                                    {% if a.Members_User.Member_Type == 'Admin' %}
+                                        <div class="col-2">
+                                            <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
+                                            <div id="myDIV" class="showw">
+                                                <form action="{% url 'process_assigning' detail.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <p class="label-blue">Assign Investigator </p> 
+                                                    <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
+                                                        <option value="">Choose Investigator</option>
+                                                        {% for inv in investigators_list %}
+                                                            <option value="{{ inv.id }}" {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
+                                                        {% endfor %}
+                                                    </select>
+            
+                                                    <p class="label-blue mt-3">Assign Substation </p> 
+                                                    <select  name="select-substation" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
+                                                        <option value="" {% ifequal detail.Substation.Substation null %} selected {% endifequal %}>Forward to:</option>
+                                                        {% for sub in substation_list %}
+                                                            <option value="{{ sub.id }}" {% ifequal detail.Substation.Substation sub.Substation %} selected {% endifequal %}>{{ sub.Substation }}</option>      
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="submit" class="btn btn-primary btn-sm mt-3" onclick="return confirm('Are you sure you want to assign this case?');">Investigate Case</button>
+                                                </form>
+                                                <a href="{% url 'process_mark_invalid' detail.id %}" onclick="return confirm('Are you sure you want to mark this case as invalid?');"> <p class="text-danger mt-2" style="font-size: 14px;"><i> Mark as invalid</i></p></a>
+                                            </div>               
+                                        </div>
+                                    {% endif %}
+                                {% endifequal %}
+                            {% endfor %}
+                            
                         </div>
                     </div> <!--name header-->
 

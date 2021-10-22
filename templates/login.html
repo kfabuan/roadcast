@@ -48,17 +48,17 @@
 
                   <div class="form-input" style="margin-top: 25px; ">
                     <span><i class="fas fa-user-alt"></i></span>
-                    <input type="email" name="username" placeholder="Email address" tabindex="10" class="form-control" style="background-color: transparent; outline: none; font-size: 14px; border: 1px solid #00000020;;" required>
+                    <input type="email" tabindex="1" name="username" placeholder="Email address" tabindex="10" class="form-control" style="background-color: transparent; outline: none; font-size: 14px; border: 1px solid #00000020;;" required>
                   </div>
 
                   <div class="form-input" style="margin-top: -5px;" >
                       <span><i class="fa fa-key"> </i> </span>
-                      <input type="password" name="password" placeholder="Password" class="form-control" style="background-color: transparent;  font-size: 14px; outline: none; border: 1px solid #00000020;;" required>
+                      <input type="password" tabindex="2" name="password" placeholder="Password" class="form-control" style="background-color: transparent;  font-size: 14px; outline: none; border: 1px solid #00000020;;" required>
                   </div>
 
                   <div class="mb-3">
                       <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="cb1" name="">
+                        <input tabindex="3" type="checkbox" class="custom-control-input" id="cb1" name="">
                           <label class="custom-control-label" for="cb1" style="font-size: 14px;">
                              Remember me </label>
                       </div>
@@ -71,7 +71,7 @@
                   </div>
 
                   <div class="text-right">
-                    <a href="#" class="forget-link" style="font-size: 14px;">
+                    <a href="{% url 'forgot_pass' %}" class="forget-link" style="font-size: 14px;">
                       Forgot Password?
                     </a>
                   </div> 
@@ -81,7 +81,7 @@
                   
                   <div class="text-center mb-2">
                       Don't have an account?
-                  <a href="{% url 'sign_up' %}" class="register-link">
+                  <a tabindex="5" href="{% url 'sign_up' %}" class="register-link">
                       Register Here
                   </a>
                   </div>

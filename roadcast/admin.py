@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_add_members, Tbl_substation, Tbl_add_departments, tbl_audit, tbl_genpub_users, Tbl_member_type, Tbl_position #Class in models.py
+from .models import refregion, refprovince, refcitymun
 from django.contrib.contenttypes.admin import GenericTabularInline
 
 # Register your models here.
@@ -43,22 +44,28 @@ class MemberType(admin.ModelAdmin):
 class Position(admin.ModelAdmin):
     list_display = ['id', 'Position']
 
-#Jewe's codes
-# class genpub_users(admin.ModelAdmin):
-#     list_display = ['gen_surname', 'gen_fname','gen_sex','gen_bday', 'gen_region','gen_province','gen_city', 'gen_barangay','gen_contact_no','gen_username','gen_pass','gen_valid_id', 'gen_upload_id','date_signed_up']
 
 class audit(admin.ModelAdmin):
     list_display = ['Members_id','Genpub_id','username', 'password','date_logged_in']
 
 class genpub_users(admin.ModelAdmin):
-    list_display = ('id', 'Read_Status','is_verified','is_email_verified', 'gen_surname', 'gen_fname','gen_sex','gen_bday', 'gen_region','gen_province','gen_city', 'gen_barangay','gen_contact_no','gen_username','gen_pass','gen_valid_id', 'gen_upload_id', 'gen_profile','date_signed_up', 'date_edit', 'image_tag')
+    list_display = ('id', 'Read_Status','is_verified','is_email_verified', 'gen_surname', 'gen_fname','gen_sex','gen_bday', 'gen_city_id', 'gen_barangay','gen_contact_no','gen_username','gen_pass','gen_valid_id', 'gen_upload_id', 'gen_profile','date_signed_up', 'date_edit', 'image_tag')
+
+class ref_region(admin.ModelAdmin):
+    list_display = ('id', 'psgcCode','regDesc','regCode')
+
+class ref_province(admin.ModelAdmin):
+    list_display = ('id', 'psgcCode','provDesc','regCode','provCode')
+
+class ref_citymun(admin.ModelAdmin):
+    list_display = ('id', 'psgcCode','citymunDesc','regDesc','provCode','citymunCode')
+
 
 admin.site.register(Tbl_pasig_incidents, PasigIncidents) #2 parameters to lagi
 admin.site.register(Tbl_district, PasigDistrict)
 admin.site.register(Tbl_barangay, PasigBrgy)
 admin.site.register(Tbl_public_report, PasigReportedIncidents)
-# admin.site.register(Tbl_add_members, PasigUsers)
-# admin.site.register(Tbl_substation, PasigSubstation)
+
 
 #Dane
 admin.site.register(Tbl_add_members, AddMembers)
@@ -69,6 +76,8 @@ admin.site.register(Tbl_position, Position)
 
 #Jew
 admin.site.register(tbl_genpub_users, genpub_users)
-# admin.site.register(tbl_audit, audit)
+admin.site.register(refregion, ref_region)
+admin.site.register(refprovince, ref_province)
+admin.site.register(refcitymun, ref_citymun)
 
 

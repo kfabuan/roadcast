@@ -16,7 +16,7 @@
 
     .input-group{
         display: flex;
-        width:100%px;
+        width:100%;
     }
 
     .rad_tl {
@@ -25,6 +25,10 @@
 
     .rad_tr {
       border-top-right-radius: 15px !important;
+    }
+
+    @media only screen and (max-width: 1300px){
+        .title-count {width: 100% !important;}
     }
 
 </style>
@@ -41,30 +45,30 @@
     <div class=""style="float: right;">
         <form action = "" method="GET" class="row row-cols-lg-auto g-3 align-items-center mb-4 me-3" style="float: right;">
             {% comment %} {% csrf_token %} {% endcomment %}
-            <div class="col-12">
-                <select class="form-select form-select-sm" id="inc_type" name="coltype" > 
-                    <option value="Collision" selected>Collision type</option>
-                    <option value="Bumped From Behind">Bumped From Behind</option>
-                    <option value="Angle Collision">Angle Collision</option>
-                    <option value="Clash">Clash</option>
-                    <option value="Damage to Property">Damage to Property</option>
-                    <option value="Head On">Head On</option>
-                    <option value="Hit and Run">Hit and Run</option>
-                    <option value="Hit Animals">Hit Animals</option>
-                    <option value="Hit Object On Road">Hit Object On Road</option>
-                    <option value="Hit Object Off Road">Hit Object Off Road</option>
-                    <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
-                    <option value="Hit Pedestrian">Hit Pedestrian</option>
-                    <option value="Hit While Parked">Hit While Parked</option>
-                    <option value="Multi Vehicle">Multi Vehicle</option>
-                    <option value="Rear End">Rear End</option>
-                    <option value="Self Accident">Self Accident</option>
-                    <option value="Impact">Impact</option>
-                    <option value="Sideswiped">Sideswiped</option>
-                    <option value="Side Impact">Side Impact</option>
-                    <option value="Right Angle">Right Angle</option>
-                    <option value="Others">Others</option>
-                </select>
+                <!-- <div class="col-12">
+                    <select class="form-select form-select-sm" id="inc_type" name="coltype" > 
+                        <option value="Collision" selected>Collision type</option>
+                        <option value="Bumped From Behind">Bumped From Behind</option>
+                        <option value="Angle Collision">Angle Collision</option>
+                        <option value="Clash">Clash</option>
+                        <option value="Damage to Property">Damage to Property</option>
+                        <option value="Head On">Head On</option>
+                        <option value="Hit and Run">Hit and Run</option>
+                        <option value="Hit Animals">Hit Animals</option>
+                        <option value="Hit Object On Road">Hit Object On Road</option>
+                        <option value="Hit Object Off Road">Hit Object Off Road</option>
+                        <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
+                        <option value="Hit Pedestrian">Hit Pedestrian</option>
+                        <option value="Hit While Parked">Hit While Parked</option>
+                        <option value="Multi Vehicle">Multi Vehicle</option>
+                        <option value="Rear End">Rear End</option>
+                        <option value="Self Accident">Self Accident</option>
+                        <option value="Impact">Impact</option>
+                        <option value="Sideswiped">Sideswiped</option>
+                        <option value="Side Impact">Side Impact</option>
+                        <option value="Right Angle">Right Angle</option>
+                        <option value="Others">Others</option>
+                    </select>
                 </div>
                 
                 
@@ -103,7 +107,7 @@
                     <option value="26">Santolan</option>
                     <option value="25">Santa Lucia</option>
                 </select>
-                </div>
+                </div> -->
 
                 <div class="col-12">
                     <input type="date" class="form-select form-select-sm" id="from_date" name="from_date">
@@ -121,14 +125,18 @@
 
     <div class=" mb-4 mt-2">
       
-        <!-- <span class="fs-3 me-3" style="font-family: Roboto, sans-serif; color: #1b5082;"> Incident Reports List</span>
-        <span class="badge bg-primary"> {{unread_count}} unread </span> -->
+        <div class="col-3 title-count">
+            <span class="me-2 fs-4 page-title"><a href="{% url 'view_incidents' %}" style="text-decoration: none; color: #1b5082">Incident Records</a> </span>
 
-        <!-- Title section -->
-        <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
-            <a href="{% url 'view_incidents' %}" style="text-decoration: none; color: #1b5082">Incident Records</a> 
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Admin' %}
+                    <span class="badge bg-primary"> {{unread_count}} unread </span>
 
-            
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
+
             {% for a in all %}
                 {% ifequal a.id request.session.authorized_id %}
                     {% if a.Members_User.Member_Type == 'Crime Statistician' %}
@@ -138,8 +146,8 @@
                     {% endif %}
                 {% endifequal %}
             {% endfor %}
-        </h3>
- 
+        </div>
+        
     </div>
   
     <!-- Search bar -->

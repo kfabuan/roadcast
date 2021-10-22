@@ -108,6 +108,14 @@ input[type=password]::placeholder{
           alert ( "Oops! Can't submit form because a field is empty. Please upload a photo of yourself holding any of the given valid IDs." );
           return false;
       }
+      else if ( document.myform.gen_qa.value == "None" || document.myform.gen_qa.value == null ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a security question from the given." );
+          return false;
+      }
+      else if ( document.myform.gen_qa_answer.value == "" || document.myform.gen_qa_answer.value == null ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your answer for the security question." );
+          return false;
+      }
   }
   </script>
 
@@ -170,9 +178,9 @@ input[type=password]::placeholder{
                 <div class="col">
                   <select id="region" name="gen_region" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">Region</option>
-                    <option value="1"> 1 </option>
-                    <option value="2"> 2 </option>
-                    <option value="3"> 3 </option>
+                    {% for reg in region %}
+                    <option value="{{ reg.id }}"> {{ reg.regDesc }} </option>
+                    {% endfor %}
                     </select>
                 </div>
               </div>
@@ -181,17 +189,17 @@ input[type=password]::placeholder{
                   <div class="col">
                     <select id="province" name="gen_province" class="form-select"  >
                      <option value="" selected="true" disabled="disabled">Province</option>
-                      <option value="1"> 1 </option>
-                      <option value="2"> 2 </option>
-                      <option value="3"> 3 </option>
+                     {% for pro in province %}
+                     <option value="{{ pro.id }}"> {{ pro.provDesc }} </option>
+                     {% endfor %}
                       </select>
                   </div>
                   <div class="col">
                   <select id="city" name="gen_city" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">City</option>
-                    <option value="1"> 1 </option>
-                    <option value="2"> 2 </option>
-                    <option value="3"> 3 </option>
+                    {% for cit in city %}
+                     <option value="{{ cit.id }}"> {{ cit.citymunDesc }} </option>
+                     {% endfor %}
                     </select>
                 </div>
               </div>
@@ -329,54 +337,71 @@ input[type=password]::placeholder{
             </section>
 
           <!-- SECTION 5 -->
+          <h2>
+            <p class="step-icon"><span>05</span></p>
+            <span class="step-text">Security Test</span>
+          </h2>
+          <section>
+          <div class="inner">
+                <div class="wizard-header">
+          <h3 class="heading">Security Test</h3>
+          <p>Last step for registration and you're done! We just need to make sure that you are a human.</p><br>
+        </div> 
 
-                <h2>
-                  <p class="step-icon"><span>05</span></p>
-                  <span class="step-text">Security Test</span>
-                </h2>
-                <section>
-                <div class="inner">
-                      <div class="wizard-header">
-                <h3 class="heading">Security Test</h3>
-                <p>Last step for registration and you're done! We just need to make sure that you are a human.</p><br>
-              </div> 
+        <div class="row"style= "margin-top: -20px;">
+        <div class="col">
+          <select id="Valid ID" name="gen_qa" class="form-select" required>
+            <option value="None" selected="true" disabled="disabled">Please select a security question</option>
+            <option value="Favorite Book">What is your favorite book?</option>
+            <option value="FavoriteColor">What is your favorite color?</option>
+            <option value="Favorite Place">What is your favorite place to visit?</option>
+            <option value="City">In what city were you born?</option>
+            <option value="Favorite Food">What was your favorite food as a child?</option>
+            <option value="First School">What is the name of your first school?</option>
+            <option value="Favorite Pet">What is the name of your favorite pet?</option>
+            <option value="Childhood nickname">What was your childhood nickname?</option>
+            <option value="Childhood Hero">Who was your childhood hero?</option>
+            <option value="First concert">What was the first concert you attended?</option>
+            </select>
+        </div>
+      </div>
 
-              <section style="height: 10px;"></section>
+        <div class="row">
+          <div class="col">
+            <input type="text" name="gen_qa_answer" placeholder="Enter your answer" class="form-control custom-form text-capitalize" required>
+          </div>
+        </div>
 
-              <div class="row">
-                <center>
-                  <script src='https://www.google.com/recaptcha/api.js'></script>
-                  <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>
-                </center>
-              </div>
-              
+        <section style="height: 10px;"></section>
 
-              <section style="height: 40px;"></section>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
+          <label class="form-check-label" for="flexCheckDefault">
+            <p style="font-size: 15px;">By creating an account, you agree to the
+              <a href="#" class="fw-bold text-primary">Terms of Use</a> and our
+              <a href="#" class="fw-bold text-primary">Privacy Policy</a>.
+            </p>
+          </label>
+          </div>
 
-              <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
-                <label class="form-check-label" for="flexCheckDefault">
-                  <p style="font-size: 15px;">By creating an account, you agree to the
-                    <a href="#" class="fw-bold text-primary">Terms of Use</a> and our
-                    <a href="#" class="fw-bold text-primary">Privacy Policy</a>.
-                  </p>
-                </label>
-                </div>
+        <section style="height: 13px;"></section>
 
-                <section style="height: 3.5px;"></section>
+        <div class="row">
+          <center>
+            <script src='https://www.google.com/recaptcha/api.js'></script>
+            <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>
+          </center>
+        </div>
 
-                <p class="password" style="margin-top: 0px;">Note: An email will be sent to your email address for you to verify it. Please check your inbox in a bit.</p>
-
-                <section style="height: 40px;"></section>
+        <section style="height: 30px;"></section>
 
                 <center>
                 <div class="submit-btn">
                   <button class="btn btn-primary submit-form btn-lg" id="submit" type=“submit”>Create an Account</button>
                 </div>
 
-                <section style="height: 5px;"></section>
-              </center>
-                  </div>
+                </center>
+                </div>
                 </section>
             </div>    
         </form>
@@ -390,19 +415,6 @@ input[type=password]::placeholder{
         window.history.replaceState( null, null, window.location.href );
       }
     </script>
-
-<!-- Password match --> 
-<!-- oninput="check(this)"  -->
-    <!-- <script>
-       function check(input) {
-        if (input.value != document.getElementById('password').value) {
-            input.setCustomValidity('Please make sure your passwords match.');
-        } else {
-            // input is valid -- reset the error message
-            input.setCustomValidity('');
-        }
-    }
-    </script> -->
 
 <!-- Maximum date is today -->
     <script>

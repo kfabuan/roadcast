@@ -138,13 +138,14 @@
 <!-- Alert messages -->
 {% if messages %}
      {% for message in messages %}
+     
      {% if message.tags  == 'error' %}
      <p class="alert alert-danger" role="alert">
-      <strong>{{message}}</strong>
+            <strong>"{{detail.gen_username}}"{{ message}}</strong>
      </p>
      {% else %}
      <p class="alert alert-success" role="alert">
-      <strong>{{message}}</strong>
+            <strong>"{{detail.gen_username}}"{{ message}}</strong>
      </p>
      {% endif %}
      {% endfor %}

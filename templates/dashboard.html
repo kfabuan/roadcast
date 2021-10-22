@@ -358,7 +358,7 @@
                         title: {
                             display: true,
                             text: 'Weekly Forecasting'
-                        }
+                        },
                     },
 
                     animations: {
@@ -370,7 +370,42 @@
                             loop: false
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false,  
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }      
                 }
             });
             
@@ -388,9 +423,6 @@
                 },
                 options: {
                     plugins: {
-                        legend:{
-                            
-                        },
                         title: {
                             display: true,
                             text: 'Incident Prone Time'
@@ -406,7 +438,43 @@
                             loop: false
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '24-hr time',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }
+
                 }
             });
 
@@ -469,7 +537,42 @@
                             }
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Barangay',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
                 },
                 
             });
@@ -522,7 +625,42 @@
                             }
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Barangay',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    } 
                 },
             });
 
@@ -534,10 +672,6 @@
                         label: 'Sex',
                         data: sex_count,
                         backgroundColor: [
-                        // 'rgb(54, 162, 235)',
-                        // 'rgb(255, 99, 132)',
-                        // 'rgba(75, 192, 192, 1)',
-                        // 'rgba(153, 102, 255, 1)',
                         '#4adede',
                         '#1f2f98',
                         '#7BD5F5',
@@ -556,12 +690,20 @@
                         title: {
                             display: true,
                             text: 'Yearly Sex Distribution'
+                        },
+                        datalabels: {
+                            color: '#ffffff',
+                            formatter: (value) => {
+                            return value + '%'
+                            }
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false,
+                    
                 }
-                
             });
+
+            
 
             var bar_offense = new Chart(bar_offense, {
                 type: 'bar',
@@ -606,7 +748,42 @@
                             }
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Offenses',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
                 }
             });
 
@@ -654,7 +831,42 @@
                             }
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false, 
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Severity',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
                 }
             });
 
@@ -680,266 +892,578 @@
                             text: 'Day of the week',
                         }
                     },
-                    maintainAspectRatio: false,   
+                    maintainAspectRatio: false, 
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Day',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
                 }
             });
 
 
+            
         } //close function
-
+        
     {% endblock %}
 </script>
 
 {% block content %}
 
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("forecast-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("time-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("d1-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("d2-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("sex-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("offense-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("severity-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-    document.addEventListener('DOMContentLoaded', function() {
-      var referenceElement = document.getElementById("day-tooltip");
-      var instance = new Tooltip(referenceElement, {
-        title: referenceElement.getAttribute('data-bs-placement'),
-        placement: "left",
-      });
-    });
-
-
-</script>
-
-    <div class="row" style="border:0; margin:0; padding:0;">
-        <!-- first half -->
-        <div class="col-sm-6">
-          <div class="">
-            <div class="card-body ">
-                <h5 class="card-title">{{ this_year}} Road Incident Cases</h5>
-                <div class="row">
-                    <div class="col-sm-4 tally-div">
-                      <div class="card tally1">
-                        <div class="card-body text-center">
-                          <p style="color: white;" class="tally-title"><i class="bi bi-calendar2-week me-2 icon"></i> Week {{week_num }}:</p>
-                          <p class="tally-value">{{ this_week }}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-sm-4 tally-div">
-                      <div class="card tally2">
-                        <div class="card-body text-center">
-                          <p style="color: white;" class="tally-title"><i class="bi bi-calendar-minus me-2 icon"></i>Yesterday:</p>
-                          <p class="tally-value">{{ yesterday_total }}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="col-sm-4 tally-div">
-                        <div class="card tally3">
-                          <div class="card-body text-center">
-                            <p style="color: white;" class="tally-title"> <i class="bi bi-calendar-check me-2 icon"></i>Today:</p>
-                            <p class="tally-value">{{ this_day }}</p>
-                        </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-                <!-- <div class="card" style="height: 540px;">
-                    <div class="ratio ratio-4x3">
-                        <div id="map"  style="border-radius: 15px;"></div>
-                    </div>
-                </div> -->
-
-                <!-- <div class="card mb-4">
-                    <div class="ratio ratio-4x3">
-                        <div id="map"  style="border-radius: 15px;"></div>
-                    </div>
-                </div> -->
-
-                <div class="card mb-2 map-div" style="">
-                    <div class="mapouter" style="">
-                        <div id="map" style=""></div>
-                    </div>
-                </div>
-                <center>
-                <p class="map-desc"><i>*The red markers in the map indicate locations where incidents have happened this year.</i></p>
-                </center>
-            </div>
-        </div>
-
-    
-
-        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
-
-        <script type="text/javascript">
-
-            var locations = [
-        
-            {% for i in markers_json %}
-        
-            ['{{i.Address}}',{{i.Latitude}},{{i.Longitude}}],
-        
-            {% endfor %}
-        
-            ]
-            var map = new google.maps.Map(document.getElementById('map'), {
-              zoom: 13,
-              center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
-              mapTypeId: google.maps.MapTypeId.ROADMAP
+ <!-- Login required and permission access of users (Should be placed on every template @ first part) -->
+ {% if request.session.authorized_id %}
+ {% for a in all %}
+     {% ifequal a.id request.session.authorized_id %}
+         {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%} 
+         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("forecast-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
             });
         
-            var infowindow = new google.maps.InfoWindow();
-        
-            var marker, i;
-        
-            for (i = 0; i < locations.length; i++) {
-              marker = new google.maps.Marker({
-                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-                map: map
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("time-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
               });
+            });
         
-              google.maps.event.addListener(marker, 'click', (function(marker, i) {
-                return function() {
-                  infowindow.setContent(locations[i][0]);
-                  infowindow.open(map, marker);
-                }
-              })(marker, i));
-            }
-          </script>
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("d1-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
         
-
-
-
-        <!-- second half -->
-        <div class="col-sm-6">
-                <div class="card mb-4">
-                    <div class="card-body fwrapper" style="background-color: white;">
-                        <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="This chart shows the weekly forecasting of incidents. The blue line indicates the count of incidents for the past 7 days, while the light green line indicates the predicted number of incidents for the next 7 days." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                        <canvas id="line_date_forecast" height="200" class="chart"></canvas>
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("d2-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("sex-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("offense-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("severity-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("day-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+        
+        </script>
+        
+            <div class="row" style="border:0; margin:0; padding:0;">
+                <!-- first half -->
+                <div class="col-sm-6">
+                  <div class="">
+                    <div class="card-body ">
+                        <h5 class="card-title">{{ this_year}} Road Incident Cases</h5>
+                        <div class="row">
+                            <div class="col-sm-4 tally-div">
+                              <div class="card tally1">
+                                <div class="card-body text-center">
+                                  <p style="color: white;" class="tally-title"><i class="bi bi-calendar2-week me-2 icon"></i> Week {{week_num }}:</p>
+                                  <p class="tally-value">{{ this_week }}</p>
+                                </div>
+                              </div>
+                            </div>
+        
+                            <div class="col-sm-4 tally-div">
+                              <div class="card tally2">
+                                <div class="card-body text-center">
+                                  <p style="color: white;" class="tally-title"><i class="bi bi-calendar-minus me-2 icon"></i>Yesterday:</p>
+                                  <p class="tally-value">{{ yesterday_total }}</p>
+                                </div>
+                              </div>
+                            </div>
+        
+                            <div class="col-sm-4 tally-div">
+                                <div class="card tally3">
+                                  <div class="card-body text-center">
+                                    <p style="color: white;" class="tally-title"> <i class="bi bi-calendar-check me-2 icon"></i>Today:</p>
+                                    <p class="tally-value">{{ this_day }}</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                        <!-- <div class="card" style="height: 540px;">
+                            <div class="ratio ratio-4x3">
+                                <div id="map"  style="border-radius: 15px;"></div>
+                            </div>
+                        </div> -->
+        
+                        <!-- <div class="card mb-4">
+                            <div class="ratio ratio-4x3">
+                                <div id="map"  style="border-radius: 15px;"></div>
+                            </div>
+                        </div> -->
+        
+                        <div class="card mb-2 map-div" style="">
+                            <div class="mapouter" style="">
+                                <div id="map" style=""></div>
+                            </div>
+                        </div>
+                        <center>
+                        <p class="map-desc"><i>*The red markers in the map indicate locations where incidents have happened this year.</i></p>
+                        </center>
                     </div>
                 </div>
-
-                <div class="card mb-4 wrapper">
-                    <div class="card-body" style="background-color: white;">
-                        <i class="bi bi-info-circle-fill"  id="time-tooltip" title="This chart illustrates this year's count of incidents based on the time the incidents were committed." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                        <canvas id="line_time" height="200" class="chart"></canvas>
+        
+            
+        
+                <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
+        
+                <script type="text/javascript">
+        
+                    var locations = [
+                
+                    {% for i in markers_json %}
+                
+                    ['{{i.Address}}',{{i.Latitude}},{{i.Longitude}}],
+                
+                    {% endfor %}
+                
+                    ]
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                      zoom: 13,
+                      center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
+                      mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                
+                    var infowindow = new google.maps.InfoWindow();
+                
+                    var marker, i;
+                
+                    for (i = 0; i < locations.length; i++) {
+                      marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                        map: map
+                      });
+                
+                      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                        return function() {
+                          infowindow.setContent(locations[i][0]);
+                          infowindow.open(map, marker);
+                        }
+                      })(marker, i));
+                    }
+                  </script>
+                
+        
+        
+        
+                <!-- second half -->
+                <div class="col-sm-6">
+                        <div class="card mb-4">
+                            <div class="card-body fwrapper" style="background-color: white;">
+                                <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="This chart shows the weekly forecasting of incidents. The blue line indicates the count of incidents for the past 7 days, while the light green line indicates the predicted number of incidents for the next 7 days." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                                <canvas id="line_date_forecast" height="200" class="chart"></canvas>
+                            </div>
+                        </div>
+        
+                        <div class="card mb-4 wrapper">
+                            <div class="card-body" style="background-color: white;">
+                                <i class="bi bi-info-circle-fill"  id="time-tooltip" title="This chart illustrates this year's count of incidents based on the time the incidents were committed." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                                <canvas id="line_time" height="200" class="chart"></canvas>
+                            </div>
+                        </div>
+                  </div>
+            </div>
+        
+              <div class="row" style="border:0; margin:0; padding:0;">
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color:white;">
+                            <i class="bi bi-info-circle-fill"  id="d1-tooltip" title="This charts presents this year's count of incidents for each barangay in District 1." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="myChart2" height="135" class="chart"></canvas>
+                        </div>
                     </div>
                 </div>
-          </div>
-    </div>
-
-      <div class="row" style="border:0; margin:0; padding:0;">
-        <div class="col-sm-6 mb-4">
-            <div class="card wrapper">
-                <div class="card-body pt-4" style="background-color:white;">
-                    <i class="bi bi-info-circle-fill"  id="d1-tooltip" title="This charts presents this year's count of incidents for each barangay in District 1." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                    <canvas id="myChart2" height="135" class="chart"></canvas>
+        
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="d2-tooltip" title="This charts shows this year's count of incidents for each barangay in District 2." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="myChart3" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+              </div>
+        
+            
+              <div class="row" style="border:0; margin:0; padding:0;">
+                <div class="col-sm-4 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="sex-tooltip" title="This doughnut charts shows the count of involved males and females for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="pie_sex" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="col-sm-8 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="offense-tooltip" title="This bar graph shows the count of offenses or the crimes committed for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="bar_offense" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-sm-6 mb-4">
-            <div class="card wrapper">
-                <div class="card-body pt-4" style="background-color: white;">
-                    <i class="bi bi-info-circle-fill"  id="d2-tooltip" title="This charts shows this year's count of incidents for each barangay in District 2." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                    <canvas id="myChart3" height="135" class="chart"></canvas>
+        
+            <div class="row" style="border:0; margin:0; padding:0;">
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="severity-tooltip" title="This bar graph shows this year's count of the involved persons' health severity when the incident happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="bar_severity" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="day-tooltip" title="This bar graph displays this year's count of incidents based on the day of the week it happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="line_day" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-      </div>
+         {% endif %}
+     {% endifequal %}
+ {% endfor %}
 
-    
-      <div class="row" style="border:0; margin:0; padding:0;">
-        <div class="col-sm-4 mb-4">
-            <div class="card wrapper">
-                <div class="card-body" style="background-color: white;">
-                    <i class="bi bi-info-circle-fill"  id="sex-tooltip" title="This doughnut charts shows the count of involved males and females for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                    <canvas id="pie_sex" height="135" class="chart"></canvas>
+{% elif request.session.public_id %}
+ {% if request.session.public_id %}
+     {% for b in pub %}
+         {% ifequal b.id request.session.public_id %} 
+         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("forecast-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("time-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("d1-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("d2-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("sex-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("offense-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("severity-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+            document.addEventListener('DOMContentLoaded', function() {
+              var referenceElement = document.getElementById("day-tooltip");
+              var instance = new Tooltip(referenceElement, {
+                title: referenceElement.getAttribute('data-bs-placement'),
+                placement: "left",
+              });
+            });
+        
+        
+        </script>
+        
+            <div class="row" style="border:0; margin:0; padding:0;">
+                <!-- first half -->
+                <div class="col-sm-6">
+                  <div class="">
+                    <div class="card-body ">
+                        <h5 class="card-title">{{ this_year}} Road Incident Cases</h5>
+                        <div class="row">
+                            <div class="col-sm-4 tally-div">
+                              <div class="card tally1">
+                                <div class="card-body text-center">
+                                  <p style="color: white;" class="tally-title"><i class="bi bi-calendar2-week me-2 icon"></i> Week {{week_num }}:</p>
+                                  <p class="tally-value">{{ this_week }}</p>
+                                </div>
+                              </div>
+                            </div>
+        
+                            <div class="col-sm-4 tally-div">
+                              <div class="card tally2">
+                                <div class="card-body text-center">
+                                  <p style="color: white;" class="tally-title"><i class="bi bi-calendar-minus me-2 icon"></i>Yesterday:</p>
+                                  <p class="tally-value">{{ yesterday_total }}</p>
+                                </div>
+                              </div>
+                            </div>
+        
+                            <div class="col-sm-4 tally-div">
+                                <div class="card tally3">
+                                  <div class="card-body text-center">
+                                    <p style="color: white;" class="tally-title"> <i class="bi bi-calendar-check me-2 icon"></i>Today:</p>
+                                    <p class="tally-value">{{ this_day }}</p>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                        <!-- <div class="card" style="height: 540px;">
+                            <div class="ratio ratio-4x3">
+                                <div id="map"  style="border-radius: 15px;"></div>
+                            </div>
+                        </div> -->
+        
+                        <!-- <div class="card mb-4">
+                            <div class="ratio ratio-4x3">
+                                <div id="map"  style="border-radius: 15px;"></div>
+                            </div>
+                        </div> -->
+        
+                        <div class="card mb-2 map-div" style="">
+                            <div class="mapouter" style="">
+                                <div id="map" style=""></div>
+                            </div>
+                        </div>
+                        <center>
+                        <p class="map-desc"><i>*The red markers in the map indicate locations where incidents have happened this year.</i></p>
+                        </center>
+                    </div>
+                </div>
+        
+            
+        
+                <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
+        
+                <script type="text/javascript">
+        
+                    var locations = [
+                
+                    {% for i in markers_json %}
+                
+                    ['{{i.Address}}',{{i.Latitude}},{{i.Longitude}}],
+                
+                    {% endfor %}
+                
+                    ]
+                    var map = new google.maps.Map(document.getElementById('map'), {
+                      zoom: 13,
+                      center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
+                      mapTypeId: google.maps.MapTypeId.ROADMAP
+                    });
+                
+                    var infowindow = new google.maps.InfoWindow();
+                
+                    var marker, i;
+                
+                    for (i = 0; i < locations.length; i++) {
+                      marker = new google.maps.Marker({
+                        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                        map: map
+                      });
+                
+                      google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                        return function() {
+                          infowindow.setContent(locations[i][0]);
+                          infowindow.open(map, marker);
+                        }
+                      })(marker, i));
+                    }
+                  </script>
+                
+        
+        
+        
+                <!-- second half -->
+                <div class="col-sm-6">
+                        <div class="card mb-4">
+                            <div class="card-body fwrapper" style="background-color: white;">
+                                <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="This chart shows the weekly forecasting of incidents. The blue line indicates the count of incidents for the past 7 days, while the light green line indicates the predicted number of incidents for the next 7 days." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                                <canvas id="line_date_forecast" height="200" class="chart"></canvas>
+                            </div>
+                        </div>
+        
+                        <div class="card mb-4 wrapper">
+                            <div class="card-body" style="background-color: white;">
+                                <i class="bi bi-info-circle-fill"  id="time-tooltip" title="This chart illustrates this year's count of incidents based on the time the incidents were committed." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                                <canvas id="line_time" height="200" class="chart"></canvas>
+                            </div>
+                        </div>
+                  </div>
+            </div>
+        
+              <div class="row" style="border:0; margin:0; padding:0;">
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color:white;">
+                            <i class="bi bi-info-circle-fill"  id="d1-tooltip" title="This charts presents this year's count of incidents for each barangay in District 1." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="myChart2" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="d2-tooltip" title="This charts shows this year's count of incidents for each barangay in District 2." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="myChart3" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+              </div>
+        
+            
+              <div class="row" style="border:0; margin:0; padding:0;">
+                <div class="col-sm-4 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="sex-tooltip" title="This doughnut charts shows the count of involved males and females for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="pie_sex" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="col-sm-8 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="offense-tooltip" title="This bar graph shows the count of offenses or the crimes committed for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="bar_offense" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-sm-8 mb-4">
-            <div class="card wrapper">
-                <div class="card-body pt-4" style="background-color: white;">
-                    <i class="bi bi-info-circle-fill"  id="offense-tooltip" title="This bar graph shows the count of offenses or the crimes committed for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                    <canvas id="bar_offense" height="135" class="chart"></canvas>
+        
+            <div class="row" style="border:0; margin:0; padding:0;">
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body pt-4" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="severity-tooltip" title="This bar graph shows this year's count of the involved persons' health severity when the incident happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="bar_severity" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+        
+                <div class="col-sm-6 mb-4">
+                    <div class="card wrapper">
+                        <div class="card-body" style="background-color: white;">
+                            <i class="bi bi-info-circle-fill"  id="day-tooltip" title="This bar graph displays this year's count of incidents based on the day of the week it happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                            <canvas id="line_day" height="135" class="chart"></canvas>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+         {% endifequal %}
+     {% endfor %}
+ 
+ {% else %}
+     <script>
+     // alert("error pub")
+         window.location.href = '{% url 'login_required' %}';
+     </script>
+ {% endif %}
+{% else %}
+ <script>
+  window.location.href = '{% url 'login_required' %}';  
+ </script>
+{% endif %}
 
-    <div class="row" style="border:0; margin:0; padding:0;">
-        <div class="col-sm-6 mb-4">
-            <div class="card wrapper">
-                <div class="card-body pt-4" style="background-color: white;">
-                    <i class="bi bi-info-circle-fill"  id="severity-tooltip" title="This bar graph shows this year's count of the involved persons' health severity when the incident happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                    <canvas id="bar_severity" height="135" class="chart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-sm-6 mb-4">
-            <div class="card wrapper">
-                <div class="card-body" style="background-color: white;">
-                    <i class="bi bi-info-circle-fill"  id="day-tooltip" title="This bar graph displays this year's count of incidents based on the day of the week it happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
-                    <canvas id="line_day" height="135" class="chart"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
 
     
 {% endblock content %}

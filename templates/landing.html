@@ -4,6 +4,19 @@
 {% block design %} {% endblock %}
 {% block content %}
 
+<!-- Login required and permission access of users (Should be placed on every template @ first part) -->
+{% for a in all %}
+{% for b in pub %}
+        {% if a.id == request.session.authorized_id or b.id == request.session.public_id %}
+        <script>
+            window.location.href = '{% url 'dashboard' %}'; //Go to login required  
+          </script>
+        {% else %}
+        <!-- Stay on page -->
+        {% endif %}
+{% endfor %}
+{% endfor %}
+
 <body id="page-top">
  
   <!-- Header-->
