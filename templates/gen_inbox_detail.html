@@ -339,6 +339,39 @@
 {% endblock %}
 
 {% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %} 
+                <script>
+        		    window.location.href = '{% url 'error_page' %}';  
+    		    </script>
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+		<!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
 <section style="height: 10px;"></section>
 
     {% if messages %}
@@ -555,15 +588,13 @@
 
                         {% if request.session.public_id %}
                             <input type="text" name="sender_id" id="sender_id" value="{{pub_info.id}}" hidden>
-                            {% if replies %}
-                                {% for reply in replies %}
-                                        {% for info in admin_info %}
-                                            {% ifequal reply.Sender info.id %}
-                                                <input type="text" name="receiver_id" id="receiver_id" value="{{ info.id }}" hidden>
-                                            {% endifequal %}
-                                        {% endfor %}
-                                {% endfor %}
-                            {% endif %}
+                       
+                            {% for info in admin_info %}
+                                {% ifequal info.Members_User_id 1 %}
+                                    <input type="text" name="receiver_id" id="receiver_id" value="{{ info.id }}" hidden>
+                                {% endifequal %}
+                            {% endfor %}
+                        
                         {% endif %}
 
                     <div class="input-group div-reply">

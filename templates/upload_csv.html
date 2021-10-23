@@ -212,6 +212,44 @@
 {% endblock %}
 {% block content %}
 
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Crime Statistician' %} 
+                <!-- body (no need to paste anything here) -->
+
+            {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+            {% endif %}
+
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+        		    window.location.href = '{% url 'error_page' %}';  
+    		    </script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
     {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> <i><a href="{% url 'view_incidents' %}">  View Incident Lists </a></i></p>{% endif %}
     {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
     {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}

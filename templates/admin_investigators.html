@@ -18,6 +18,44 @@
 
 {% block content %}
 
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' %} 
+                <!-- body (no need to paste anything here) -->
+
+	          {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+                
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+            	 window.location.href = '{% url 'error_page' %}';
+        	</script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
 {% if searched %}
       <p class="alert alert-primary">
           <strong>Showing the results for "{{ searched }}"</strong>

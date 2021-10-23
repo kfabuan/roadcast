@@ -4,18 +4,35 @@
 {% load static %}
 {% block content %}
 
-<!-- Login required and permission access of users (Should be placed on every template @ first part) -->
-{% for a in all %}
-    {% for b in pub %}
-        {% if a.id == request.session.authorized_id or b.id == request.session.public_id %}
-        <!-- Success -->
-        {% else %}
-            <script>
-                window.location.href = '{% url 'login_required' %}'; //Go to login required  
-            </script>
-        {% endif %}
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%} 
+                <!-- body (no need to paste anything here) -->
+            {% endif %}
+        {% endifequal %}
     {% endfor %}
-{% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
 
 <!-- Alert messages -->
 {% if messages %}

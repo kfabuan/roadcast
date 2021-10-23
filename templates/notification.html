@@ -1,4 +1,5 @@
 {% extends 'nav_admin.html' %}
+{% load static %}
 {% block title %} Notification {% endblock %}
 
 {% block design %}
@@ -38,7 +39,6 @@
     }
     .font-light {
         font-weight: 300;
-    
     }
 
     .link {
@@ -55,12 +55,94 @@
         background-color: violet;
     }
 
+    .img-1 {
+        border-radius: 50%;
+        height: 400px;
+        width: 400px;
+    }
+
+    .no-msg {
+        padding-top: 10px;
+        color: #1b5082;
+        font-weight: 500;
+        font-size: 18px;
+    }
+
+    @media only screen and (max-width: 480px){
+        .img-1 {
+            border-radius: 50%;
+            height: 350px;
+            width: 350px;
+        }
+
+        .no-msg {
+            font-size: 15px;
+        }
+    }
+
+    @media only screen and (max-width: 415px){
+        .img-1 {
+
+            border-radius: 50%;
+            height: 300px;
+            width: 300px;
+        }
+
+        .no-msg {
+            font-size: 13px;
+        }
+    }
+
+    @media only screen and (max-width: 345px){
+        .img-1 {
+            border-radius: 50%;
+            height: 260px;
+            width: 260px;
+        }
+
+        .no-msg {
+            font-size: 11px;
+        }
+    }
+
     
 </style>
 
 {% endblock %}
 
 {% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %} 
+                <!-- body (no need to paste anything here) -->
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+        		window.location.href = '{% url 'error_page' %}';  
+    		</script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
 
 {% if searched %}
 <p class="alert alert-primary">
@@ -72,26 +154,59 @@
 
     <div class="row">
     <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
+
+
         <li class="nav-item " role="presentation">
-            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;General Public's Report</button>
+            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;
+                General Public's Report
+
+                {% if public_report_count > 0 %}
+                ({{ public_report_count }})
+                {% endif %}
+            </button>
         </li>
+
+        {% for a in all %}
+            {% ifequal a.id request.session.authorized_id %}
+                {% if a.Members_User.Member_Type == 'Admin' %}
+                <li class="nav-item " role="presentation">
+                    <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-all-replies" id="pills-public-all-replies-tab" data-bs-toggle="pill" data-bs-target="#pills-public-all-replies" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;
+                        All replies
+
+                        {% if public_replies_count > 0 %}
+                        ({{ public_replies_count }})
+                        {% endif %}
+                    </button>
+                </li>
+                {% endif %}
+            {% endifequal %}
+        {% endfor %}
         
         {% for a in all %}
             {% ifequal a.id request.session.authorized_id %}
                 {% if a.Members_User.Member_Type == 'Admin' %}
                 <li class="nav-item " role="presentation">
-                    <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-verification" id="pills-public-verification-tab" data-bs-toggle="pill" data-bs-target="#pills-public-verification" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;General Public's Verification</button>
+                    <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-verification" id="pills-public-verification-tab" data-bs-toggle="pill" data-bs-target="#pills-public-verification" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;
+                        General Public's Verification 
+
+                        {% if unread_notif_count_signup > 0 %}
+                        ({{ unread_notif_count_signup }})
+                        {% endif %}
+                    
+                    </button>
                 </li>
                 {% endif %}
             {% endifequal %}
         {% endfor %}
 
         <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-incident" id="pills-incident-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-incident" role="tab" aria-controls="pills-incident" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;New Incident Incident</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-incident" id="pills-incident-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-incident" role="tab" aria-controls="pills-incident" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;
+                New Incident Incident</button>
         </li>
 
         <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-archives" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-archives" type="button" role="tab" aria-controls="pills-archives" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;Archives</button>
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-archives" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-archives" type="button" role="tab" aria-controls="pills-archives" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;
+                Archives</button>
         </li>
         </div>
     </ul>
@@ -193,6 +308,77 @@
         
         </div>
 
+        <!-- tab for all public replies to admin  -->
+        <div class="tab-pane fade" id="pills-public-all-replies" role="tabpanel" aria-labelledby="pills-home-tab">
+            
+            <!-- Search bar -->
+            <form class="d-flex" method="POST">
+                {% csrf_token %}
+                <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
+                <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+            </form>
+        
+            <div style="" class="visually-hidden">
+                <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Read &nbsp;<i class="fas fa-envelope msg-icon"></i></a>
+                <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Unread &nbsp;<i class="fas fa-envelope-open msg-icon"></i></a>
+            </div>
+            {% if public_replies %}
+            <!-- Main inbox-->
+            <div class="table-responsive mt-3">
+                <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
+                    <tbody>
+                        {% for reply in public_replies %}
+                        <!-- row -->
+                        <tr class =" {% ifequal reply.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                            <!-- label -->
+                            <td class="pl-3"  style="width: 3%;">
+                                <div class="custom-control custom-checkbox">
+                                    <input type="checkbox" class="custom-control-input" id="cst1" />
+                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                </div>
+                            </td>
+                            <!-- star -->
+                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <td style="width: 15%;">
+                                {% for info in pub %}
+                                    {% ifequal reply.Sender info.id %}
+                                        <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">From: {{ info.gen_fname }} {{ info.gen_surname }}</span>
+                                    {% endifequal %}
+                                {% endfor %}
+                            </td>
+                            <!-- Message -->
+                            <td class="text-truncate" style="width: 58%;">
+                                <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' reply.Report_id %}">
+                                    {% for prev in public_reports_list %}
+                                    {% ifequal reply.Report_id prev.id %}
+                                    <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ prev.Reported_City }}</span>
+                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ prev.Reported_District }}</span>
+                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                    <span class=" text-dark">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
+                                    {% endifequal %}
+                                {% endfor %}
+                                </a>
+                            </td>
+                            <!-- Attachment -->
+                            <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                            <!-- Time -->
+                            <td  style="width: 16%;"class="{% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ reply.Response_Date }} {{ reply.Response_Time }}</p></td>
+                        </tr>
+
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div> <!--Close Main Inbox-->
+            {% else %}
+            <center>
+                <div class="pt-5">
+                    <img src="{% static 'image/no_data1.png' %}" class="img-1 img-fluid">
+                    <p class="no-msg"><i>You have no messages at the moment!</i></p>
+                </div>
+            </center>
+            {% endif %}
+        
+        </div>
         <!-- tab for public verification -->
         <div class="tab-pane fade" id="pills-public-verification" role="tabpanel" aria-labelledby="pills-profile-tab">
             <form action="">

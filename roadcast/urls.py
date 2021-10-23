@@ -61,14 +61,14 @@ urlpatterns = [
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
     path('report/monthly/generate', views.get_monthly_generate, name='monthly_generate'),
 
-    #admin inbox
+    #admin notif & inbox
     path('notification', views.notification, name='notification'),
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
     path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
     path('notification/public/<int:report_id>/invalid', views.processMarkingInvalid , name='process_mark_invalid'),
 
-    #public inbox
+    #public notif & inbox
     path('public/inbox', views.public_inbox, name='public_inbox'),
     path('public/inbox/<int:report_id>', views.public_inbox_detail, name='public_inbox_detail'),
     path('public/inbox/<int:report_id>/reply', views.processPublic_Reply , name='process_public_reply'),
@@ -91,12 +91,8 @@ urlpatterns = [
 
     # path('audit', views.admin_audit_trail, name='admin_audit_trail'),
     path('memberlist', views.admin_list_members, name='admin_list_members'),
-    # path('departments', views.admin_departments, name='admin_departments'),
-    # path('investigators', views.admin_investigators, name='admin_investigators'), DELETE VIEW
-    # path('investigator/view', views.admin_view_investigators, name='admin_view_investigators'), DELETE VIEW
-    path('public/incident/detail/<str:incident_id>/', views.public_view_incident_detail, name='gen_incident_detail_view'),
 
-     #Dane's
+    #Dane's
     path('members/add', views.add_members, name='add_members'),
     path('members/status', views.duplicate_members, name='duplicate_members'),
     path('members/view/<member_id>', views.view_members, name='view_members'),
@@ -130,6 +126,8 @@ urlpatterns = [
     # path('public/notification', views.pub_notif_view, name='pub_notif_view'), #notification for public
     path('public/settings', views.pub_notif_inbox, name='pub_notif_inbox'), #settings
     path('public/settings/update/<prof_id>', views.change_account, name='change_account'), #save settings
+    path('public/incident/detail/<str:incident_id>/', views.public_view_incident_detail, name='gen_incident_detail_view'),
+
 
     path('error', views.error_page, name='error_page'), #error page for login required & permissions
     path('loginrequired', views.login_required, name='login_required'), #error page for login required

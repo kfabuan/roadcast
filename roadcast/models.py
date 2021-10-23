@@ -439,6 +439,7 @@ class Tbl_pasig_incidents(models.Model):
         return '{}-{}-{}'.format(self.City, model.Barangay, self.Date)
 
 class Tbl_public_report(models.Model):
+    id                   = models.AutoField(primary_key=True)
     User_ID              = models.ForeignKey(tbl_genpub_users, null=True, on_delete=models.SET_NULL) #foreign
     Reported_City        = models.CharField(max_length=200, verbose_name='City:', blank=True)
     Reported_Brgy        = models.ForeignKey(Tbl_barangay, null=True, on_delete=models.SET_NULL) #foreign
