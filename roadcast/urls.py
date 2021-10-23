@@ -44,15 +44,19 @@ urlpatterns = [
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
     path('incident/public/<int:incident_id>/', views.public_view_incident_detail, name='pub_incident_detail_view'),
+    path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
+    path('incident/create/<int:gen_pub_report_id>', views.create_incident_report, name="create_incident_report"),
+    path('incident/create/<int:gen_pub_report_id>/process', views.processCreateIncidentReport, name="processCreateIncidentReport"),
+
+
     path('incidents/add', views.add_incident, name='add_incident'),
     path('incidents/processadd', views.processAddIncident, name='process_add_incident'),
     path('incidents/uploadcsv/import', views.processCSV, name="process_upload_csv"),
     path('incidents/uploadcsv', views.upload_csv, name="upload_csv"),
 
-    path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
+    path('incidents/view/archives', views.view_archive_incidents, name='view_archive_incidents'),
     path('incident/<int:incident_id>/archiving', views.archiving_solved_cases, name='archiving_solved_cases'),
     path('incident/<int:incident_id>/unarchiving', views.unarchiving_solved_cases, name='unarchiving_solved_cases'),
-    path('incidents/view/archives', views.view_archive_incidents, name='view_archive_incidents'),
     path('incident/<int:incident_id>/delete', views.processDeleteIncident, name='processDeleteIncident'),
 
 
@@ -61,7 +65,7 @@ urlpatterns = [
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
     path('report/monthly/generate', views.get_monthly_generate, name='monthly_generate'),
 
-    #admin notif & inbox
+    #admin/encoder notif & inbox
     path('notification', views.notification, name='notification'),
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),

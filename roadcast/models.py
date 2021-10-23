@@ -463,6 +463,7 @@ class Tbl_public_report(models.Model):
     Report_Status           = models.CharField(max_length=200, verbose_name='Report Status', default="Unsolved", blank=True)
     Assigned_Investigator   = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
     Substation              = models.ForeignKey(Tbl_substation, null=True, on_delete=models.SET_NULL, related_name='Substation_id') #foreign
+    Report_Created = models.CharField(default='No', max_length=200, verbose_name='Report Created', blank=True)
 
     def image_tag(self):
         return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Reported_Image_Proof))

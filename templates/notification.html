@@ -160,9 +160,27 @@
             <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;
                 General Public's Report
 
-                {% if public_report_count > 0 %}
-                ({{ public_report_count }})
-                {% endif %}
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' %}
+                            {% if public_report_count > 0 %}
+                                ({{ public_report_count }})
+                            {% endif %}
+                            {% endif %}
+                    {% endifequal %}
+                {% endfor %}
+
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                            {% if not_yet_recorded_count > 0 %}
+                                ({{ not_yet_recorded_count }})
+                            {% endif %}
+                            {% endif %}
+                    {% endifequal %}
+                {% endfor %}
+
+
             </button>
         </li>
 
@@ -286,7 +304,10 @@
                                                 <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
                                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
-                                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                                    {% ifequal report.Report_Created 'Yes' %}
+                                                    <span class="badge rounded-pill text-white font-medium bg-custom me-2"> Recorded </span>
+
+                                                    {% endifequal %}
                                                     <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
                                                 </a>
                                             </td>

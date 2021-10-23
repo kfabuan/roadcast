@@ -29,8 +29,6 @@ import requests
 from django.core.paginator import Paginator 
 from django.http.response import HttpResponse
 
-from django.template.loader import render_to_string
-
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
@@ -635,6 +633,7 @@ def get_data(request, *args, **kwargs):
 
     sex_combined = list(chain(suspect_sex, victim_sex))
     sex_distinct = set(sex_combined)
+    sex_count_total = len(sex_combined)
     sex_labels = []
     sex_count = []
 
@@ -643,12 +642,13 @@ def get_data(request, *args, **kwargs):
             sex = 'blank'
             sex_labels.append(sex)
             x = sex_combined.count('')
-            sex_count.append(x)
+            sex_count.append((x/sex_count_total)*100)
 
         else:
             sex_labels.append(sex)
             x = sex_combined.count(sex)
-            sex_count.append(x)
+            sex_count.append((x/sex_count_total)*100)
+
     
     #Time Plot
     # time(hour = 0, minute = 0, second = 0)
@@ -938,8 +938,202 @@ def view_incidents (request):
             }
         
             return render (request, 'encoder_view_incidents.html',context)
+#new
+def create_incident_report (request, gen_pub_report_id):
 
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+    
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
+   
+    member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+    investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+    brgy_list = Tbl_barangay.objects.all()
+
+    all_gen_pub_reports = Tbl_public_report.objects.all()
+    pasig_incident_detail = Tbl_public_report.objects.get(id=gen_pub_report_id)
+
+    context = {
+        "all": authorized,
+        "pub": pub,
+        'unread_notif_count': unread_notif_count,
+
+        'brgy_list': brgy_list, 
+        'investigators_list': investigators_list,
+        'pasig_incident_detail':pasig_incident_detail
+    }
+    return render(request, 'encoder_create_incident_report.html', context)
+
+def processCreateIncidentReport(request, gen_pub_report_id): 
+    city = "Pasig"
+    unit_station = "PNP-Pasig"
+    crime_offense = request.POST.get('display_offense')
+    week = request.POST.get('week') 
+    date_committed = request.POST.get('DateCommitted') 
+    current_time = request.POST.get('currentTime')
+    day = request.POST.get('day_of_the_week')
+    col_type = request.POST.get('collision_type')
+    no_of_person_involved = "2"
+    light = "Day"
+    weather = request.POST.get('weather')
+    case_status = request.POST.get('case_status')
+    district = request.POST.get('district')
+    barangay = request.POST.get('barangay')
+    address = request.POST.get('place_committed')
+    along = request.POST.get('along')
+    corner = request.POST.get('corner')
+    latitude = request.POST.get('lat')
+    longitude = request.POST.get('long')
+   
+    surface_cond = request.POST.get('surface_condition')
+    surface_type = request.POST.get('surface_type')
+    road_repair = request.POST.get('road-repair')
+    hit_and_run = request.POST.get('hit-and-run')
+    road_char = request.POST.get('road_character')
+
+    sus_type = request.POST.get('sus_type')
+    sus_fname = request.POST.get('sus_fname')
+    sus_lname = request.POST.get('sus_lname')
+    sus_severity = request.POST.get('sus_severity')
+    sus_age = request.POST.get('sus_age')
+    if sus_age:
+        sus_age = request.POST.get('sus_age')
+    else:
+        sus_age = None
+
+    sus_sex = request.POST.get('s_sex')
+    sus_civil_status = request.POST.get('sus_civil_status')
+    sus_add = request.POST.get('sus_add')
+    sus_vehicle = request.POST.get('sus_vehicle') #brand/model
+    sus_vehicle_body_type = request.POST.get('sus_vehicle_body_type')
+    sus_plate_no = request.POST.get('sus_plate_no')
+    sus_reg_owner = request.POST.get('sus_reg_owner')
+    sus_drl = request.POST.get('sus_drl')
+    sus_drl_exp = request.POST.get('sus_drl_exp')
+    if sus_drl_exp:
+        sus_drl_exp = request.POST.get('sus_drl_exp')
+    else:
+        sus_drl_exp = None
+
+    vic_type = request.POST.get('vic_type')
+    vic_fname = request.POST.get('vic_fname')
+    vic_lname = request.POST.get('vic_lname')
+    vic_severity = request.POST.get('vic_severity')
+    vic_age = request.POST.get('vic_age')
+    if vic_age:
+        vic_age = request.POST.get('vic_age')
+    else:
+        vic_age = None
+        
+    vic_sex = request.POST.get('v_sex')
+    vic_civil_status = request.POST.get('vic_civil_status')
+    vic_add = request.POST.get('vic_add')
+    vic_vehicle = request.POST.get('vic_vehicle')
+    vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+    vic_plate_no = request.POST.get('vic_plate_no')
+    vic_reg_owner = request.POST.get('vic_reg_owner')
+    vic_drl = request.POST.get('vic_drl')
+    vic_drl_exp = request.POST.get('vic_drl_exp')
+    if vic_drl_exp:
+        vic_drl_exp = request.POST.get('sus_drl_exp')
+    else:
+        vic_drl_exp = None
+
+   
+    narrative = request.POST.get('narrative')
+    added_by = "Servidad"
+    inv_name = request.POST.get('inv_name')
+    
+    incident_record = Tbl_pasig_incidents.objects.create(
+                    City        = city, 
+                    UnitStation = unit_station,               
+                    CrimeOffense= crime_offense, 
+                    Week        = week,          
+                    Date        = date_committed,               
+                    Time        = current_time, 
+                    Day         = day, 
+                    Incident_Type   = col_type, 
+                    Number_of_Persons_Involved  = no_of_person_involved, 
+                    Light       = light, 
+                    Weather     = weather, 
+                    Case_Status = case_status, 
+                    District_id = district, 
+                    Barangay_id_id = barangay, 
+                    Address        = address,
+                    Along          = along,
+                    Corner         = corner,
+                    Latitude       = latitude,
+                    Longitude     = longitude,
+
+                    Surface_Condition   = surface_cond, 
+                    Surface_Type        = surface_type, 
+                    Road_Repair         = road_repair, 
+                    Hit_and_Run         = hit_and_run,
+                    Road_Character      = road_char, 
+    
+                    Suspect_Type        = sus_type,
+                    Suspect_Fname       = sus_fname, 
+                    Suspect_Lname       = sus_lname, 
+                    Suspect_Severity    = sus_severity,
+                    Suspect_Age         = sus_age, 
+                    Suspect_Sex         = sus_sex, 
+                    Suspect_Civil_Status = sus_civil_status, 
+                    Suspect_Address     = sus_add,  
+                    Suspect_Vehicle     = sus_vehicle, 
+                    Suspect_Vehicle_Body_Type   = sus_vehicle_body_type, 
+                    Suspect_Plate_No    = sus_plate_no,
+                    Suspect_Reg_Owner   = sus_reg_owner, 
+                    Suspect_Drl_No      = sus_drl, 
+                    Suspect_Drl_Exp     = sus_drl_exp, 
+
+                    Victim_Type         = vic_type,
+                    Victim_Fname        = vic_fname, 
+                    Victim_Lname        = vic_lname, 
+                    Victim_Severity     = vic_severity,
+                    Victim_Age          = vic_age, 
+                    Victim_Sex          = vic_sex, 
+                    Victim_Civil_Status = vic_civil_status, 
+                    Victim_Address      = vic_add, 
+                    Victim_Vehicle      = vic_vehicle, 
+                    Victim_Vehicle_Body_Type = vic_vehicle_body_type, 
+                    Victim_Plate_No          = vic_plate_no,
+                    Victim_Reg_Owner         = vic_reg_owner, 
+                    Victim_Drl_No            = vic_drl, 
+                    Victim_Drl_Exp           = vic_drl_exp, 
+
+                    Narrative    = narrative, 
+                    Investigator_id = inv_name,
+                    added_by     = added_by,
+                    archive      = "No" )
+                    
+    incident_record.save()
+    messages.success(request, ("Incident report successfully created!"))
+
+    created_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
+    created_report.Report_Created = 'Yes' #dito
+    created_report.save()
+    return HttpResponseRedirect('/incidents/view')
 
 def add_incident (request):
 
@@ -994,7 +1188,7 @@ def processAddIncident(request): #Add using forms
     current_time = request.POST.get('currentTime')
     day = request.POST.get('day_of_the_week')
     col_type = request.POST.get('collision_type')
-    no_of_person_involved = "1"
+    no_of_person_involved = "2"
     light = "Day"
     weather = request.POST.get('weather')
     case_status = request.POST.get('case_status')
@@ -1139,7 +1333,11 @@ def upload_csv (request):
             auth_id = request.session['authorized_id']
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
                 unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
@@ -2156,7 +2354,7 @@ def notification (request):
 
     #for encoder
     assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
-
+    not_yet_recorded_count = Tbl_public_report.objects.filter(Report_Created="No").count()
 
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
@@ -2212,6 +2410,7 @@ def notification (request):
         data = {
             
             'searched': searched,
+            'not_yet_recorded_count':not_yet_recorded_count,
             'assigned_pasig_public_reports':assigned_pasig_public_reports,
             'pasig_incident_list': pasig_incident_list, 
             'public_reports_list': pasig_public_reports,
@@ -2246,6 +2445,7 @@ def notification (request):
         except: pass
 
         data = {
+            'not_yet_recorded_count':not_yet_recorded_count,
             'pasig_incident_list': pasig_incident_list, 
             'assigned_pasig_public_reports':assigned_pasig_public_reports,
             'public_reports_list': pasig_public_reports,
@@ -2267,6 +2467,34 @@ def notif_public_report_detail (request, gen_pub_report_id):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
+    
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
     
     member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
     investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
@@ -2279,10 +2507,12 @@ def notif_public_report_detail (request, gen_pub_report_id):
     
     #for gen pub reports inbox
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
-    unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
 
     #for encoder
     assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+    unread_public_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
+    unread_public_report.Read_by_encoder = "Yes"
+    unread_public_report.save()
 
     try:
         if request.session['authorized_id']:

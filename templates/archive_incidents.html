@@ -161,7 +161,7 @@
     <div class="col-3 title-count">
         <span class="me-2 fs-4 page-title"><a href="{% url 'view_incidents' %}" style="text-decoration: none; color: #1b5082">Archive Records</a> </span>
 
-        {% for a in all %}
+        <!-- {% for a in all %}
             {% ifequal a.id request.session.authorized_id %}
                 {% if a.Members_User.Member_Type == 'Admin' %}
                 <span class="badge bg-primary"> {{unread_count}} unread </span>
@@ -178,7 +178,7 @@
                 </button>
                 {% endif %}
             {% endifequal %}
-        {% endfor %}
+        {% endfor %} -->
     </div>
     
 </div>
@@ -243,7 +243,7 @@
                                                 </form>
                                             <li><hr class="dropdown-divider"></li>
                                         
-                                            <form action="{% url 'archiving' incident.id %}" method="post" enctype="multipart/form-data">
+                                            <form action="{% url 'processDeleteIncident' incident.id %}" method="post" enctype="multipart/form-data">
                                             {%csrf_token%}
                                             <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to delete this case?');">Delete case</button></li>
                                             </form>

@@ -369,12 +369,11 @@ function initMap() {
        <div class="col-8">
             <p class="page-title" style="text-shadow:1px 1px 3px #c6c6c6;">CREATE AN INCIDENT REPORT <i class="bi bi-plus-circle"></i>  </p>
        </div>
-       <div class="col-4 csv-col">
-           <a href="{% url 'upload_csv' %}" class="btn btn-light text-primary fw-bold csv-btn">+ Import CSV</a>
-       </div>
+
+       
    
    </div>
-    <form method="POST" enctype="multipart/form-data" action="{% url 'process_add_incident' %}">
+    <form method="POST" enctype="multipart/form-data" action="{% url 'processCreateIncidentReport' pasig_incident_detail.id %}">
         {% csrf_token %}
 
     <p class="page-subheading">
@@ -383,7 +382,7 @@ function initMap() {
             <select name="inv_name" id="inv_name" class="inv-txt" required>
                 <option value=""></option>
                 {% for inv in investigators_list %}
-                    <option value="{{ inv.id }}"> {{ inv.Members_Fname}} {{ inv.Members_Lname}}</option>
+                <option value="{{ inv.id }}" {% ifequal pasig_incident_detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
                 {% endfor %}
             </select>  
         </span> 
@@ -528,11 +527,11 @@ function initMap() {
     
     
                                 <div class="col-12" style="background-color: none; display: grid !important;">
-                                    <div class="btn-group" role="">
-                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck2" value="Physical Injury" autocomplete="off">
+                                    <div class="btn-group checkbox-group" role="">
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck2" value="Physical Injury" autocomplete="off" >
                                         <label class="btn btn-outline-primary chk_offense" for="btncheck2">Physical Injury</label>
                                         
-                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck3" value="Self Accident" autocomplete="off">
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck3" value="Self Accident" autocomplete="off" >
                                         <label class="btn btn-outline-primary chk_offense" for="btncheck3">Self Accident</label>
                                     </div>
         
@@ -546,9 +545,9 @@ function initMap() {
                                         <input type="checkbox" class="btn-check chk_offense_input" id="btncheck1" value="Damage to Property" autocomplete="off">
                                         <label class="btn btn-outline-primary chk_offense" for="btncheck1">Damage to Property</label>
                                     </div> 
-                                    <input type="text" id="display_offense" name ="display_offense" class="form-field" required hidden>
+                                    <input type="text" id="display_offense" name ="display_offense" class="form-field"required hidden>
                                 </div>
-
+                                
                                 <script type="text/javascript">
                                     $(document).ready(function(){
                                          $('#btn-create').click(function(){
@@ -559,7 +558,6 @@ function initMap() {
                                     });
                                 
                                 </script>
-                                
                         
                         </div>
                     </div> <!-- inicdent's detail card closing-->
@@ -575,7 +573,7 @@ function initMap() {
                                     <input type="text" name="city" value="" placeholder ="Pasig City"class="form-control form-control-sm" readonly>
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" id="district" name="district" value="" placeholder="District"class="form-control form-control-sm" readonly>
+                                    <input type="text" id="district" name="district" value="{{pasig_incident_detail.Reported_District}}" placeholder="District"class="form-control form-control-sm" readonly>
                                 </div>
                             </div>
                         
@@ -583,7 +581,7 @@ function initMap() {
                                 <select name="barangay" id="barangay" class="form-select form-select-sm" onchange="selectdistrict(event)" required>
                                     <option value=""></option>
                                     {% for brgy in brgy_list %}
-                                        <option value="{{brgy.id}}">{{brgy.Barangay}} </option>
+                                        <option value="{{brgy.id}}" {% ifequal pasig_incident_detail.Reported_Brgy_id brgy.id %} selected {% endifequal %}>{{brgy.Barangay}} </option>
                                     {% endfor %}
                                 </select>                            
                                 <label for="" style="font-size: small;" class="text-muted">Barangay</label>
@@ -611,26 +609,26 @@ function initMap() {
 
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <input type="text" name="along" value="" placeholder="Along" class="form-control form-control-sm">
+                                    <input type="text" name="along" value="{{pasig_incident_detail.Reported_Along}}" placeholder="Along" class="form-control form-control-sm">
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" id="corner" name="corner" value="" placeholder="Corner" class="form-control form-control-sm">
+                                    <input type="text" id="corner" name="corner" value="{{pasig_incident_detail.Reported_Corner}}" placeholder="Corner" class="form-control form-control-sm">
                                 </div>
                             </div>
 
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="date" id="DateCommitted" name="DateCommitted" class="form-control-sm form-control" required>                                        
+                                        <input type="date" id="DateCommitted" name="DateCommitted" class="form-control-sm form-control" value="{{pasig_incident_detail.Reported_Date|date:'Y-m-d'}}"required>                                        
                                         <label for="" style="font-size: small;" class="text-muted">Date Committed</label>
                                         <input type="text" name="day_of_the_week" id="day_of_the_week" class="form-field" hidden>
-                                        <input type="text" name="week" id="week" class="form-field"  hidden>
+                                        <input type="text" name="week" id="week" class="form-field" hidden>
                                     </div>
                                 </div>
                             
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="time" id="currentTime" name="currentTime" class="form-control-sm form-control text-nowrap overflow-hidden" required>                                        
+                                        <input type="time" id="incidentTime" name="incidentTime" class="form-control-sm form-control text-nowrap overflow-hidden"value="{{ pasig_incident_detail.Reported_Time|date:'H:i' }}" required>                                        
                                         <label for="" style="font-size: small;" class="text-muted">Time Committed</label>
                                     </div>
                                 </div>
@@ -709,7 +707,7 @@ function initMap() {
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select class="form-select form-select-sm" id="sus_type" name="sus_type" required>
+                                        <select class="form-select form-select-sm" id="sus_type" name="sus_type">
                                             <option value=""></option>
                                             <option value="Driver">Driver</option>
                                             <option value="Passenger">Passenger</option>
@@ -734,7 +732,7 @@ function initMap() {
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select class="form-select-sm form-select" name="sus_vehicle_body_type" required>
+                                        <select class="form-select-sm form-select" name="sus_vehicle_body_type">
                                             <option value=""></option>
                                                 <option value="Armored Car">Armored Car</option>
                                                 <option value="Alto">Alto</option>
@@ -797,7 +795,7 @@ function initMap() {
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="text" name="sus_plate_no" class="form-control form-control-smd" required>
+                                        <input type="text" name="sus_plate_no" class="form-control form-control-sm" required>
                                         <label for="" style="font-size: small;" class="text-muted">Plate Number</label>
                                     </div>
                                 </div>
@@ -889,7 +887,7 @@ function initMap() {
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select class="form-select form-select-sm" id="vic_type" name="vic_type">
+                                        <select class="form-select form-select-sm" id="vic_type" name="vic_type" required>
                                             <option value=""></option>
                                             <option value="Driver">Driver</option>
                                             <option value="Passenger">Passenger</option>
@@ -1025,15 +1023,15 @@ function initMap() {
                         <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
                     </div>
                     <div class="card-body">
-                        <textarea class="form-control" name="narrative" placeholder="" style="resize: vertical; height: 200px; width: 100%;" required></textarea> 
+                        <textarea class="form-control" name="narrative" placeholder="" style="resize: vertical; height: 200px; width: 100%;" required>{{pasig_incident_detail.Reported_Narrative}}</textarea> 
                     
                     </div>
                 </div>
 
                 <center>
                 <div class="card mb-3 mt-4" style="width: 60%;">
-                    <button type="submit" class="btn btn-primary p-2"id="btn-create" >
-                        Add Incident Report 
+                    <button type="submit" class="btn btn-success p-2" id="btn-create">
+                        Create Incident Report 
                     </button>
                 </div>
             </center>
@@ -1128,16 +1126,11 @@ function initMap() {
                 return weeknum;
             };
     
-          $('#DateCommitted').change(function(){
             
             dt_committed =  document.getElementById('DateCommitted').value;
             dt = new Date(dt_committed);
             day = dt.getDay();
 
-            // year = new Date(dt.getFullYear(),0,1);
-            // numberOfDays = Math.floor((dt - year) / (24 * 60 * 60 * 1000));
-            // week = Math.ceil(( dt.getDay() + 1 + numberOfDays) / 7);
-            
             week = dt.getWeek()
             document.getElementById('week').value = week;
     
@@ -1168,11 +1161,6 @@ function initMap() {
             if(day==6){
               document.getElementById('day_of_the_week').value = "Saturday";
             }
-          
-          });
-
-          
-    
     
         });
     

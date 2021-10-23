@@ -422,7 +422,8 @@
                                                     <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
     
                                                     {% endifequal %}
-                                                {% endif %}           
+                                                {% endif %}   
+                                                        
                                             </div>
                                         </div>
         
@@ -472,25 +473,9 @@
                                                 <p style="margin-bottom: 0 !important;" class="fw-bold r_barangay text-truncate">{{ report.Reported_Brgy.Barangay }}</p>
                                             </div>
                                             <div class="col-2 badge-div">
-                                                    {% if report.Assigned_Investigator_id %}
-                                                        {% ifequal report.Report_Status 'Solved' %}
-                                                        <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
-                                                        {% endifequal %}
-        
-                                                        {% ifequal report.Report_Status 'Unsolved' %}
-                                                        <span class="badge position-relative bg-primary" style="float: right; font-size: xx-small;"> Assigned</span>
-                                                        {% endifequal %}
-        
-                                                    {% else %}
-        
-                                                        {% ifequal report.Report_Status 'Invalid' %}
-                                                        <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Invalid</span>
-        
-                                                        {% else %}
-                                                        <span class="badge position-relative bg-secondary" style="float: right; font-size: xx-small;"> Unassigned</span>
-        
-                                                        {% endifequal %}
-                                                    {% endif %}           
+                                                {% ifequal report.Report_Created 'Yes' %}
+                                                    <span class="badge position-relative bg-custom" style="float: right; font-size: xx-small;"> Recorded</span>
+                                                {% endifequal %}          
                                             </div>
                                         </div>
         
@@ -535,6 +520,7 @@
                                     {% if a.Members_User.Member_Type == 'Admin' %}
                                         <div class="col-2">
                                             <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
+
                                             <div id="myDIV" class="showw">
                                                 <form action="{% url 'process_assigning' detail.id %}" method="POST">
                                                     {% csrf_token %}
@@ -561,6 +547,39 @@
                                     {% endif %}
                                 {% endifequal %}
                             {% endfor %}
+
+                            {% for a in all %}
+                                {% ifequal a.id request.session.authorized_id %}
+                                    {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <div class="col-2">
+                                            <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
+                                            
+                                            <div id="myDIV" class="showw">
+                                                <form action="{% url 'create_incident_report' detail.id %}" method="POST">
+                                                    {% csrf_token %}
+                                                    <p class="label-blue">Assign Investigator </p> 
+                                                    <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" readonly>
+                                                        <option value="">Choose Investigator</option>
+                                                        {% for inv in investigators_list %}
+                                                            <option value="{{ inv.id }}" {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }}</option>
+                                                        {% endfor %}
+                                                    </select>
+            
+                                                    <p class="label-blue mt-3">Assign Substation </p> 
+                                                    <select  name="select-substation" class="form-select form-select-sm" aria-label=".form-select-sm example" readonly>
+                                                        <option value="" {% ifequal detail.Substation.Substation null %} selected {% endifequal %}>Forward to:</option>
+                                                        {% for sub in substation_list %}
+                                                            <option value="{{ sub.id }}" {% ifequal detail.Substation.Substation sub.Substation %} selected {% endifequal %}>{{ sub.Substation }}</option>      
+                                                        {% endfor %}
+                                                    </select>
+                                                    <button type="submit" class="btn btn-primary btn-sm mt-3 mb-2" onclick="return confirm('Are you sure you want to create a report?');">Create Report</button>
+                                                </form>
+                                            </div>               
+                                        </div>
+                                    {% endif %}
+                                {% endifequal %}
+                            {% endfor %}
+                            
                             
                         </div>
                     </div> <!--name header-->
@@ -631,6 +650,7 @@
                             {% endifnotequal %}
                         <!-- <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p> -->
                        
+                        
                             {% if admin_responses %}
                                 {% for reply in admin_responses %}
                                     <center><hr style="width: 97%"></center>
@@ -671,26 +691,29 @@
                             {% endif %}
                     </div>
 
-                <center>
-                    <form action="{% url 'process_admin_reply' detail.id %}" method="POST">
-                        {% csrf_token %}
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Admin' %}
+                        <center>
+                            <form action="{% url 'process_admin_reply' detail.id %}" method="POST">
+                                {% csrf_token %}
 
-                        {% if request.session.authorized_id %}
-                            <input type="text" name="sender_id" id="sender_id" value="{{request.session.authorized_id}}" hidden>
-                            <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
-                        {% endif %}
+                                {% if request.session.authorized_id %}
+                                    <input type="text" name="sender_id" id="sender_id" value="{{request.session.authorized_id}}" hidden>
+                                    <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
+                                {% endif %}
 
-                      
-
-                    <div class="input-group div-reply">
-                        <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">
-                        <button class="btn btn-reply" type="submit">
-                            <i class="fas fa-paper-plane pe-2" style="color: #1b5082; font-size: large;" ></i>
-                        </button>
-                    </div>
-                    </form>
-                </center>
-                    
+                                <div class="input-group div-reply">
+                                    <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">
+                                    <button class="btn btn-reply" type="submit">
+                                        <i class="fas fa-paper-plane pe-2" style="color: #1b5082; font-size: large;" ></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </center>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
                 
             </div><!--body--> 
             

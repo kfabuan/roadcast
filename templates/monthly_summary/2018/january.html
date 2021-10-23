@@ -152,7 +152,7 @@
         </div>
       
         <div class="col-12">
-            <button type="submit" class="btn btn-primary" id="submit_form">Submit</button>
+            <button type="submit" class="btn btn-primary btn-sm" id="submit_form">Submit</button>
         </div>
     </form>
 
@@ -168,7 +168,7 @@
             </li>
 
             <li class="nav-item" role="presentation">
-              <button style="float:right" id="downloadPdf" type="button" class="btn btn-sm btn-outline-primary">Download Report</button>
+              <button style="float:right" id="downloadPdf" type="button" class="btn btn-sm btn-outline-primary ms-2">Download Report</button>
             </li>
             
         </ul>
@@ -554,7 +554,11 @@ $(document).ready(function(){
                   duration: 1000,
                   easing: 'linear'
               },
-              maintainAspectRatio: false,    
+              maintainAspectRatio: false,  
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }  
           }
       });
 
@@ -595,6 +599,10 @@ $(document).ready(function(){
                   easing: 'linear'
               }, 
               maintainAspectRatio: false,
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }  
           }
       });
 
@@ -630,7 +638,11 @@ $(document).ready(function(){
                       text: 'Sex Distribution'
                   }
               },
-              maintainAspectRatio: false, 
+              maintainAspectRatio: false,
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }   
           }
           
       });
@@ -657,7 +669,11 @@ $(document).ready(function(){
                       text: 'Accident Prone Time'
                   }
               },
-              maintainAspectRatio: false, 
+              maintainAspectRatio: false,
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }   
           }
       });
 
@@ -692,7 +708,11 @@ $(document).ready(function(){
               scales: {
                   y: {beginAtZero: true}
               },
-              maintainAspectRatio: false, 
+              maintainAspectRatio: false,
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }   
           }
       });
 
@@ -727,7 +747,11 @@ $(document).ready(function(){
               scales: {
                   y: {beginAtZero: true}
               },
-              maintainAspectRatio: false, 
+              maintainAspectRatio: false,
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }  
           }
       });
 
@@ -753,7 +777,11 @@ $(document).ready(function(){
                       text: 'Day of the week'
                   }
               },
-              maintainAspectRatio: false, 
+              maintainAspectRatio: false,
+              interaction: {
+                  mode: 'index',
+                  intersect: false,
+              }   
           }
       });
 
