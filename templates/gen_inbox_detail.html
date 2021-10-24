@@ -156,11 +156,11 @@
     .r_name { font-size: 13px;}
     .badge { float: right; font-size: xx-small; }
     .card-header { font-size: 15px;  }
-    .user-img { width: 35px; height: 35px; }
+    .user-img { width: 35px; height: 35px; object-fit: cover; }
 
     /*body*/
     .b-header-row {flex-wrap: nowrap !important;}
-    .b-user-img { width: 70px; height: 70px;}
+    .b-user-img { width: 70px; height: 70px; object-fit: cover;}
     .b-name { font-size: 24px; font-weight: 700; padding-left: 0px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .b-barangay { font-size: 26px; font-weight: 500;}
     .b-date-div {text-align: right;}
@@ -553,7 +553,7 @@
                                     {% ifequal reply.Sender_Type 'Admin' %}
                                         {% for info in admin_info %}
                                             {% ifequal reply.Sender info.id %}
-                                                <div class="col-1 reply-img"><img src="/media/{{ info.Members_Pic }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                                <div class="col-1 reply-img"><img src="/media/{{ info.Members_Pic }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
                                                 <div class="col-11 row convo-deets">
                                                 <b>{{ info.Members_Fname }} {{ info.Members_Lname }}</b> <br>
                                                 
@@ -565,7 +565,7 @@
                                         {% endfor %}
 
                                     {% else %}  
-                                            <div class="col-1 reply-img"><img src="/media/{{ pub_info.gen_profile }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                            <div class="col-1 reply-img"><img src="/media/{{ pub_info.gen_profile }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
                                             <div class="col-11 row convo-deets">
                                             <b>{{ pub_info.gen_fname }} {{ pub_info.gen_surname }}</b> <br>
                                             

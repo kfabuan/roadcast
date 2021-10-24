@@ -16,7 +16,7 @@ def image_path_incident_report(instance, filename):
     randomstr = ''.join((random.choice(chars)) for x in range(10))
     _now = datetime.now()
 
-    return 'incident_images/{year}-{month}-{imageid}={basename}-{randomstring}{ext}'.format(imageid = instance,basename=basefilename, randomstring=randomstr, ext=file_extension, year=_now.strftime("%Y"), month=_now.strftime("%m"), day=_now.strftime("%d"))
+    return 'incident_images/{imageid}={basename}-{randomstring}{ext}'.format(imageid = instance, basename=basefilename, randomstring=randomstr, ext=file_extension, day=_now.strftime("%d"))
 #For PNP members
 def image_path(instance, filename):
     basefilename, file_extension = os.path.splitext(filename)
@@ -24,7 +24,7 @@ def image_path(instance, filename):
     randomstr = ''.join((random.choice(chars)) for x in range(10))
     _now = datetime.now()
 
-    return '{year}-{month}-{basename}-{randomstring}{ext}'.format(basename=basefilename, randomstring=randomstr, ext=file_extension, year=_now.strftime("%Y"), month=_now.strftime("%m"), day=_now.strftime("%d"))
+    return 'Profile/{year}-{month}-{day}-{imageid}-{basename}-{randomstring}{ext}'.format(imageid = instance, basename=basefilename, randomstring=randomstr, ext=file_extension, year=_now.strftime("%Y"), month=_now.strftime("%m"), day=_now.strftime("%d"))
     # return '{basename}-{randomstring}{ext}'.format(basename=basefilename, randomstring=randomstr, ext=file_extension)
 
 #For general public
@@ -34,7 +34,7 @@ def image_path2(instance, filename):
     randomstr = ''.join((random.choice(chars)) for x in range(10))
     _now = datetime.now()
 
-    return 'Public/{year}-{month}-{basename}-{randomstring}{ext}'.format(basename=basefilename, randomstring=randomstr, ext=file_extension, year=_now.strftime("%Y"), month=_now.strftime("%m"), day=_now.strftime("%d"))
+    return 'Public/{year}-{month}-{day}-{imageid}-{basename}-{randomstring}{ext}'.format(imageid = instance, basename=basefilename, randomstring=randomstr, ext=file_extension, year=_now.strftime("%Y"), month=_now.strftime("%m"), day=_now.strftime("%d"))
 
 # Dane's codes
 class Tbl_add_departments(models.Model):

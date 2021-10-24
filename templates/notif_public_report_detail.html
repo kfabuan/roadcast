@@ -151,11 +151,11 @@
     .r_name { font-size: 13px;}
     .badge { float: right; font-size: xx-small; }
     .card-header { font-size: 15px;  }
-    .user-img { width: 35px; height: 35px; }
+    .user-img { width: 35px; height: 35px; object-fit: cover;}
 
     /*body*/
     .b-header-row {flex-wrap: nowrap !important;}
-    .b-user-img { width: 70px; height: 70px;}
+    .b-user-img { width: 70px; height: 70px; object-fit: cover;}
     .b-name { font-size: 24px; font-weight: 700; padding-left: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
     .b-barangay { font-size: 26px; font-weight: 500;}
     .b-date-div {text-align: right;}
@@ -658,7 +658,7 @@
                                 <div class="row" style="min-height: 40px; width: 100%;">
                                     {% ifequal reply.Sender_Type 'Admin' %}
                                                                          
-                                    <div class="col-1"><img src="/media/{{ auth_info.Members_Pic }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                    <div class="col-1"><img src="/media/{{ auth_info.Members_Pic }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
                                     <div class="col-11 row convo-deets">
                                         <b>{{ auth_info.Members_Fname }} {{ auth_info.Members_Lname }}</b> <br>
                                                                          
@@ -672,7 +672,7 @@
                                 {% else %}
                                     {% for pub in pub_info %}
                                     {% ifequal reply.Sender pub.id %}
-                                    <div class="col-1"><img src="/media/{{ pub.gen_profile }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
+                                    <div class="col-1"><img src="/media/{{ pub.gen_profile }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
                                     <div class="col-11 row convo-deets">
                                         <b>{{ pub.gen_fname }} {{ pub.gen_surname }}</b> <br>
                                     
@@ -732,25 +732,23 @@
                     </center>           
                 </div>
                 
-                <center>
                 <ul class="list-group user-details" >
                     <li class="list-group-item" style="border-style: none;">
-                        <p class="" style="margin-bottom: 0 !important; margin-top: 0 !important; text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
-                        <p class="p-deets" > {{ detail.User_ID.gen_contact_no }}</p>
+                        <p class="ps-2" style="margin-bottom: 0 !important; margin-top: 0 !important; text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
+                        <p class="ms-2 p-0 p-deets" > {{ detail.User_ID.gen_contact_no }}</p>
                     </li>
 
                     <li class="list-group-item" style="border-style: none;">
-                        <p class="" style="margin-bottom: 0 !important; margin-top: 0 !important;text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
-                        <p class=" text-wrap p-deets">{{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}</p>
+                        <p class="ps-2" style="margin-bottom: 0 !important; margin-top: 0 !important;text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
+                        <p class="ms-2 p-0 text-wrap p-deets">{{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}</p>
                     </li>
 
                     <li class="list-group-item" style="border-style: none;">
-                        <p class="" style="margin-bottom: 0 !important; margin-top: 0 !important;text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
-                        <p class=" p-deets"> {{ detail.User_ID.gen_username }}</p>
+                        <p class="ps-2" style="margin-bottom: 0 !important; margin-top: 0 !important;text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
+                        <p class="ms-2 p-0 p-deets"> {{ detail.User_ID.gen_username }}</p>
                     </li>
 
                   </ul>
-                </center>
 
             </div>
 

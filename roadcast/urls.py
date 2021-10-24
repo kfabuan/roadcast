@@ -81,7 +81,6 @@ urlpatterns = [
     path('substation/notification', views.sub_notification, name='sub_notification'),
     path('substation/notification/<int:report_id>', views.sub_notification_detail, name='sub_notification_detail'),
 
-
     #jew
     path('notification/verification/<int:signup_id>', views.notif_sign_up_validation, name='notif_sign_up_validation'),
     path('notification/verifed/<int:pk>', views.genpub_verified, name='genpub_verified'),

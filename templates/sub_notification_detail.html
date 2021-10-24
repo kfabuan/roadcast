@@ -26,6 +26,7 @@
     .msg-body {
         height: 65vh;
         overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     .mail-list::-webkit-scrollbar,
@@ -45,7 +46,7 @@
     .mail-list::-webkit-scrollbar-track,
     .msg-body::-webkit-scrollbar-track {
         position: absolute;
-        background: white;
+        background: transparent;
     }
 
     /* Handle */
@@ -112,10 +113,6 @@
         border-style: none;
     }
 
-    .card-main {
-        box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1);
-
-    }
 
     .settings-btn {
        font-size: xx-large; float: right; color:black;
@@ -144,6 +141,206 @@
         left:75%;
         position: absolute;
         float:right;
+        margin-right: 15px;
+    }
+
+    /* for mobile responsiveness */
+    /*left card*/
+    .card-shadow { box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1); }
+    .r_date {font-size: small; float:right; }
+    .r_name { font-size: 13px;}
+    .badge { float: right; font-size: xx-small; }
+    .card-header { font-size: 15px;  }
+    .user-img { width: 35px; height: 35px; object-fit: cover;}
+
+    /*body*/
+    .b-header-row {flex-wrap: nowrap !important;}
+    .b-user-img { width: 70px; height: 70px; object-fit: cover;}
+    .b-name { font-size: 24px; font-weight: 700; padding-left: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .b-barangay { font-size: 26px; font-weight: 500;}
+    .b-date-div {text-align: right;}
+    .convo-reply {margin-bottom: 0 !important;}
+
+    /*profile card*/
+    .p-email { color: #1b5082; font-size: 14px;}
+    .p-deets { font-size: 14px; margin-bottom: 0 !important; margin-top: 0 !important;}
+
+    @media only screen and (max-width: 1280px){
+        .r_date { font-size: 11px; }
+        .r_name { font-size: 12px;  padding-left: 2px;} 
+        .r_barangay { font-size: 13px; }
+
+        .b-user-img { width: 67px; height: 67px;}
+        .b-name { font-size: 20px;}
+        .b-barangay { font-size: 24px;}
+        .showw {  left:68%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 1166px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; }
+        .c_name { width: 70%; padding-left: 20px;}
+
+        .convo-deets {padding-left: 14px;}
+    }
+
+    @media only screen and (max-width: 1136px){
+        .b-user-img { width: 60px; height: 60px;}
+        .b-name { font-size: 18px; font-weight: 500; padding-left: 10px;}
+        .b-barangay { font-size: 20px;}
+        .labels { font-size:15px;}
+        .convo-deets {padding-left: 16px;}
+    }
+
+    @media only screen and (max-width: 1128px){
+        .r_date { font-size: 11px; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; }
+
+        .b-user-img { width: 65px; height: 65px;}
+        .b-name { font-size: 20px;}
+        .convo-deets {padding-left: 18px;}
+        .showw {  left:68%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 1046px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; padding-left: 8px;}
+        .r_desc { font-size: 13px; padding-left: 8px;}
+        .c_name { width: 70%; padding-left: 20px;}
+        .badge { display: none;}
+        .card-header { font-size: 13px;}
+
+        .b-user-img { width: 60px; height: 60px;}
+        .b-name { font-size: 18px;}
+        .b-barangay { font-size: 20px;}
+        .labels { font-size:14px;}
+        .convo-deets {padding-left: 20px;}
+        .showw {  left:60%; margin-right: 15px; }
+
+    }
+
+    @media only screen and (max-width: 960px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; padding-left: 10px; width: 100%;}
+        .r_desc { font-size: 13px; padding-left: 10px;}
+        .c_name { width: 70%; padding-left: 25px;}
+        .badge { display: none;}
+        .card-header { font-size: 13px;}
+        .card-left { width: 30%;}
+        .card-right { width: 70%;}
+
+        .profile-card { display: none;}
+    }
+
+    @media only screen and (max-width: 901px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; padding-left: 10px; width: 100%;}
+        .r_desc { font-size: 13px; padding-left: 10px;}
+        .c_name { width: 70%; padding-left: 25px;}
+        .badge-div { display: none;}
+        .card-header { font-size: 11px;}
+        .card-left { width: 30%;}
+        .card-right { width: 70%;}
+        
+        .convo-deets {padding-left: 22px;}
+    }
+
+    @media only screen and (max-width: 861px){
+        .r_date { display: none; }
+        .r_name { display: none; }
+        .r_barangay { display: none;}
+        .r_desc { display: none;}
+        .fa-paperclip { display: none;}
+        .c_name { display: none;}
+        .badge-div { display: none;}
+        .card-left { width: 15%;}
+        .card-right { width: 85%;}
+        .message-item{ height: 70px; }
+        .bi-envelope-fill { display: none;}
+        .header-title { display: none; }
+        .user-img { display: block; margin:auto; height: 45px; width: 45px; }
+        .hide-col { display: none;}
+        .img-col { width: 100%; margin:auto;}
+
+        .b-name { font-size: 18px; padding-left: 12px;}
+    }
+
+    @media only screen and (max-width: 690px){
+        .b-barangay { font-size: 20px;}
+        .b-barangay-div {width: 100%;} 
+        .b-date-div {width: 100%; text-align: left; display: contents;} 
+        .bi-clock {padding-left: 15px;}
+        .b-user-img { width: 58px; height: 58px;}
+        .showw {  left:60%; margin-right: 15px; }
+
+    }
+
+    @media only screen and (max-width: 600px){
+        .card-left { width: 18%;}
+        .card-right { width: 82%;}
+
+        .b-user-img { width: 55px; height: 55px;}
+        .b-name {padding-left: 18px;}
+        .convo-deets {padding-left: 25px;}
+        .showw {  left:58%; margin-right: 15px; }
+       
+    }
+
+    @media only screen and (max-width: 520px){
+        .card-left { width: 20%;}
+        .card-right { width: 80%;}
+
+        .b-barangay { font-size: 18px;}
+        .b-name {font-size: 18px; padding-left: 16px;}
+        .convo-deets {padding-left: 29px;}
+        .showw {  left:55%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 460px){
+        .card-left { width: 22%;}
+        .card-right { width: 78%;}
+
+        .b-user-img { width: 56px; height: 56px;}
+        .b-name {font-size: 17px; padding-left: 18px;}
+        .convo-reply {font-size:14px;}
+        .showw {  left:50%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 420px){
+        .card-left { width: 24%;}
+        .card-right { width: 76%;}
+
+        .b-name {font-size: 16px; padding-left: 16px;}
+        .b-user-img { width: 50px; height: 50px;}
+        .showw {  left:45%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 392px){
+        .card-left { width: 26%;}
+        .card-right { width: 74%;}
+        .user-img { height: 40px; width: 40px; }
+
+        .convo-reply {font-size:14px;}
+        .showw {  left:40%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 320px){
+        .card-left { width: 29%;}
+        .card-right { width: 71%;}
+        .user-img { height: 38px; width: 38px; }
+        .message-item{ height: 62px; }
+
+        .b-user-img { width: 50px; height: 50px;}
+        .b-name {font-size: 15px; padding-left: 18px;}
+        .b-barangay { font-size: 16px;}
+        .labels {font-size: 16px; font-weight: bold;  }
+        .convo-reply {font-size:14px;}
+        .showw {  left:30%; margin-right: 15px; }
     }
 
   
@@ -201,12 +398,12 @@
     {% endif %}
     
 <!-- <div class="container"> -->
-    <div class="mb-3 card-main" style="border-radius: 0px 20px 20px 0">
+    <div class="mb-3 card-main">
         <div class="row main-body">
             
             <!--mail list-->
-            <div class="card col-3 p-0 " style="border-radius: 20px 0 0 20px">
-                    <div class="card-header fw-bold" style="border-radius: 20px 0 0 0">
+            <div class="card col-3 p-0 card-shadow card-left">
+                    <div class="card-header fw-bold" style="border-radius: 20px 20px 0 0">
                         <i class="bi bi-envelope-fill"></i>  Forwarded Cases
                     </div>
                     <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 0 20px">
@@ -214,18 +411,18 @@
                         <a href="{% url 'sub_notification_detail' report.id %}" style="text-decoration: none;">
                             <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_by_subrep 'No' %} background-color:azure; {% else %}{% endifequal %}">
                                 <div class="row">
-                                    <div class="col-2"><img src="/media/{{ report.User_ID.gen_profile}}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
-                                    <div class="col-5">
-                                        <span style="font-size: 13px;" class=" text-muted">
+                                    <div class="col-2 img-col"><img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img"></div>
+                                    <div class="col-6 c_name hide-col">
+                                        <p class="r_name text-muted text-truncate">
                                             {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
 
-                                            {% ifequal report.Read_by_subrep 'No' %}
+                                            <!-- {% ifequal report.Read_by_subrep 'No' %}
                                             <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
-                                            {% endifequal %}
-                                        </span>
+                                            {% endifequal %} -->
+                                        </p>
                                     </div>
-                                    <div class="col-5">
-                                        <span style="font-size: small; float:right;" class="">{{ report.Reported_Date }}</span>
+                                    <div class="col-4 hide-col">
+                                        <span class="r_date text-truncate">{{ report.Reported_Date }}</span>
                                     </div>
                                 </div>
 
@@ -237,10 +434,10 @@
                                         </div>
                                     </div>
                                     <div class="col-8 ">
-                                        <span style="" class="fw-bold">{{ report.Reported_Brgy.Barangay }}</span>
+                                        <span style="" class="fw-bold r_barangay">{{ report.Reported_Brgy.Barangay }}</span>
                                        
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-2 badge-div">
                                             {% if report.Assigned_Investigator_id %}
                                                 {% ifequal report.Report_Status 'Solved' %}
                                                 <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Solved</span>
@@ -267,7 +464,7 @@
                                             <i class="fa fa-paperclip text-muted float-end"></i>
                                         {% endifnotequal %}
                                     </div>
-                                    <div class="col-8"><p class=" text-truncate" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
+                                    <div class="col-8"><p class=" text-truncate r_desc" style="font-size: small;"> {{ report.Reported_Narrative }}</p></div>
                                     <div class="col-2"></div>
                                 </div>
 
@@ -280,43 +477,43 @@
             </div>
 
             <!--message-->
-            <div class="card col-7">
+            <div class="card col-7 card-right">
                     <div class="card-header" style="background-color: white; ">
-                        <div class="row">
+                        <div class="row b-header-row">
                             <div class="col-1 pe-3" style="background-color: white;">
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
-                                    <div><img src="/media/{{detail.User_ID.gen_profile}}" alt=""class="rounded-circle" style="width: 70px; height: 70px;"></div>
+                                    <div><img src="/media/{{detail.User_ID.gen_profile}}" alt=""class="rounded-circle b-user-img"></div>
                                     <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span>
                                 </div>
                             </div>
 
-                            <div class="col-8 ms-4"  style="background-color: white;">
-                                <span class="fw-bold fs-4">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</span>
-                                <p class="text-muted" style="font:small;"> Active Now</p>
+                            <div class="col-8 ms-4"  style="background-color: white;display: block; margin: auto;">
+                                <p class="b-name pt-2">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</p>
+                                <!-- <p class="text-muted" style="font:small;"> Active Now</p> -->
                             </div>
 
-                            <div class="col-2 ms-4"  style="background-color: white;">
+                            <!-- <div class="col-2 ms-4"  style="background-color: white;">
                               <center><i class="bi bi-three-dots-vertical settings-btn" id="settings-icon"></i>  </center> 
                                 <div id="myDIV" class="showw">
                                     
                                 </div>               
-                            </div>
+                            </div> -->
                         </div>
                     </div> <!--name header-->
 
                     <!--body-->
                     <div class="m-3 msg-body"> 
 
-                        <div class="row" style="width: 100%; background-color: white;">
-                            <div class="col-10"  style="background-color: none;">
+                        <div class="row">
+                            <div class="col-9 b-barangay-div">
                                 <div class="row">
-                                    <h3 class="col"> Incident from Barangay {{detail.Reported_Brgy.Barangay}} </h3>
+                                    <h3 class="col b-barangay"> Incident from Barangay {{detail.Reported_Brgy.Barangay}} </h3>
                                     <!-- <span class="badge rounded-pill bg-danger">Unsolved </span> -->
 
                                 </div>
                             </div>
 
-                            <div class="col-2"  style="background-color: none;">
+                            <div class="col-3 b-date-div">
                                 <span class="" style=" font-size: smaller; float:right;"><i class="bi bi-clock"></i>&nbsp;{{ detail.Reported_Date }}</span>
                                 <p class="text-muted" style="font-size: small; float:right;"> {{ detail.Reported_Time }}</p>
                             </div>
@@ -343,16 +540,23 @@
 
                             {% ifnotequal detail.Reported_Image_Proof '' %}
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" class="btn btn-white" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                 <img src="/media/{{detail.Reported_Image_Proof}}" alt="" style="width: 250px;" class="img-fluid img-thumbnail">
                             </button>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" style="width: 900px !important; ">
-                                    <div class="modal-content" >
+                            <!-- Scrollable modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Image</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
                                         <div class="modal-body">
                                             <img src="/media/{{detail.Reported_Image_Proof}}" alt=""  class="img-fluid img-thumbnail">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -370,13 +574,13 @@
                                 <div class="row" style="min-height: 40px; width: 100%;">
                                     {% ifequal reply.Sender_Type 'Admin' %}
                                                                          
-                                    <div class="col-1"><img src="/media/{{ auth_info.Members_Pic }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
-                                    <div class="col-10">
+                                    <div class="col-1 reply-img"><img src="/media/{{ auth_info.Members_Pic }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
+                                    <div class="col-10 row convo-deets">
                                         <b>{{ auth_info.Members_Fname }} {{ auth_info.Members_Lname }}</b> <br>
                                                                          
                                    
                                         <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
-                                        {{ reply.Response }}  
+                                         <p class="convo-reply">{{ reply.Response }}</p>  
 
                                     </div>
                                 </div>
@@ -384,14 +588,14 @@
                                 {% else %}
                                     {% for pub in pub_info %}
                                     {% ifequal reply.Sender pub.id %}
-                                    <div class="col-1"><img src="/media/{{ pub.gen_profile }}" alt="" style="width: 35px; height: 35px;" class="rounded-circle"></div>
-                                    <div class="col-10">
+                                    <div class="col-1 reply-img"><img src="/media/{{ pub.gen_profile }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
+                                    <div class="col-10 row convo-deets">
                                         <b>{{ pub.gen_fname }} {{ pub.gen_surname }}</b> <br>
                                     
                                         {% endifequal %}
                                     {% endfor %}
                                         <span style="font-size: small;" class="text-muted">{{ reply.Response_Date }} {{ reply.Response_Time }}</span> <br>
-                                        {{ reply.Response }}  
+                                         <p class="convo-reply">{{ reply.Response }}</p>  
 
                                     </div>
                                 </div>
@@ -429,33 +633,33 @@
             
 
             <!--profile preview-->
-            <div class="card col-2 p-0" style="border-radius: 0px 20px 20px 0px;"> <!--tr tl br bl-->
+            <div class="card col-2 p-0 profile-card" style="border-radius: 0px 20px 20px 0px;"> <!--tr tl br bl-->
                 <div class="">
-                    <img src="/media/{{detail.User_ID.gen_profile}}" class="card-img-top p-0" alt="..." style="border-radius: 0px 20px 0px 0px; !important">
+                    <img src="/media/{{detail.User_ID.gen_profile}}" class="card-img-top p-0" alt="..." style="border-radius: 20px 20px 0px 0px; !important">
                     <!-- <img src="/media/incident_images/police.jpg" class="" alt="..." style="width:60%; z-index:3; position:relative; top:-20%;left:20%;"> -->
                     <center>
                     <div class="card-body">
                       <span class="mx-auto fw-bold text-uppercase">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</span>
                       <!-- <span class="badge rounded-pill bg-success ms-2" style="padding: 5px;"> </span> -->
 
-                      <p class="card-text " style="color: #1b5082; font:small;">{{ detail.User_ID.gen_username }}</p>
+                      <p class="card-text p-email" style="color: #1b5082; font:small;">{{ detail.User_ID.gen_username }}</p>
                     </div>
                     </center>           
                 </div>
                 <ul class="list-group user-details" >
                     <li class="list-group-item" style="border-style: none;">
                         <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
-                        <span class="ms-2 p-0"> {{ detail.User_ID.gen_contact_no }}</span>
+                        <p class="ms-2 p-0 p-deets"> {{ detail.User_ID.gen_contact_no }}</p>
                     </li>
 
                     <li class="list-group-item" style="border-style: none;">
                         <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
-                        <p class="ms-2 p-0 text-wrap">{{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}</p>
+                        <p class="ms-2 p-0 text-wrap p-deets">{{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}</p>
                     </li>
 
                     <li class="list-group-item" style="border-style: none;">
                         <p class="ps-2" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
-                        <span class="ms-2 p-0"> {{ detail.User_ID.gen_username }}</span>
+                        <p class="ms-2 p-0 p-deets"> {{ detail.User_ID.gen_username }}</p>
                     </li>
 
                   </ul>

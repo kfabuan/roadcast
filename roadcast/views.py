@@ -484,7 +484,8 @@ def DashboardView (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -548,8 +549,9 @@ def DashboardView (request):
     this_day = Tbl_pasig_incidents.objects.filter(Date__gte = today, Date__lte = today, Date__year__gte=today.year, Date__year__lte=today.year).count()
 
     # FOR MULTIPLE MARKERS IN DASHBOARD
-    markers= Tbl_pasig_incidents.objects.exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True) | Q(Longitude ="None") | Q(Latitude ="None"))
-
+    markers= Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year).exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True) | Q(Longitude ="None") | Q(Latitude ="None"))
+    # Date__month__gte=today.month,
+    # Date__month__lte=today.month,
     data = {
         "all_total": all_total,
         "this_week": this_week,
@@ -770,7 +772,8 @@ def view_archive_incidents (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -852,7 +855,8 @@ def view_incidents (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -959,7 +963,8 @@ def create_incident_report (request, gen_pub_report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -1155,7 +1160,8 @@ def add_incident (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -1340,7 +1346,8 @@ def upload_csv (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -1661,7 +1668,8 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -1857,7 +1865,8 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -1929,7 +1938,8 @@ def monthly_report (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2376,7 +2386,8 @@ def notification (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2489,7 +2500,8 @@ def notif_public_report_detail (request, gen_pub_report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2609,7 +2621,8 @@ def sub_notification (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2661,7 +2674,8 @@ def sub_notification_detail (request, report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2736,7 +2750,8 @@ def public_inbox (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2807,7 +2822,8 @@ def public_inbox_detail (request, report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2925,7 +2941,8 @@ def unsolved_cases (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -2997,22 +3014,13 @@ def submit_report_copy (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-
-    # try:
-    #     if request.session['public_id'] is None or request.session['authorized_id'] is None:
-    #             context    = {
-    #                 "all": authorized,
-    #                 "pub": pub,
-    #             }
-    #     return render(request, '403.html', context)
-    
-    # except: pass
 
     try:
         if request.session['authorized_id']: 
@@ -3119,7 +3127,8 @@ def submit_report (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3224,7 +3233,8 @@ def pub_notif_inbox (request): #Account settings
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3324,14 +3334,13 @@ def add_members (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
-    unread_notif_count = None #if wala nakalogin
 
     context         = {
         'departments': departments,
@@ -3422,7 +3431,8 @@ def add_dept (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3504,7 +3514,8 @@ def view_members(request, member_id): #Show specific profile of members
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3539,7 +3550,8 @@ def edit_members(request, member_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3654,7 +3666,8 @@ def edit_dept(request, dept_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3723,7 +3736,8 @@ def user_profile(request): #Profile of users
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3903,7 +3917,8 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3955,7 +3970,8 @@ def admin_investigators(request): #Show list of investigators
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -3996,7 +4012,8 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -4039,7 +4056,8 @@ def admin_audit_members(request): #List of audit for members
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -4082,7 +4100,8 @@ def audit_members(request, audit_id): #Specific view for members
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -4120,7 +4139,8 @@ def admin_audit_genpub(request): #List of audit for gen pub
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
@@ -4165,7 +4185,8 @@ def audit_genpub(request, audit_id): #Specific view for gen pub
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()

@@ -23,9 +23,6 @@ class PasigBrgy(admin.ModelAdmin):
 class PasigReportedIncidents(admin.ModelAdmin):
     list_display = ['image_tag','id','User_ID', 'Reported_City', 'Reported_Brgy','Report_Status', 'Reported_Date', 'Reported_Time', 'Assigned_Investigator']
    
-class PasigUsers(admin.ModelAdmin):
-    list_display = ['image_tag','Members_id','Members_Fname','Members_Lname','Members_Dept','Members_Position', 'Members_User','Members_Email','Members_Password','Members_Substation','Members_District',]
-
 class PasigSubstation (admin.ModelAdmin):
     list_display = ['id', 'Substation']
 
@@ -33,7 +30,7 @@ class PasigBrgy(admin.ModelAdmin):
     list_display = ['id','Barangay', 'District_id']
 
 class AddMembers(admin.ModelAdmin):
-    list_display = ['id','Members_Dept', 'Members_Substation', 'Members_District', 'Members_User', 'Members_Position', 'Members_Fname', 'Members_Lname', 'Members_Email', 'Members_Username', 'Members_Password', 'Members_Pic', 'Date_Added', 'Added_By', 'Edit_By', 'Date_Edit', 'image_tag']
+    list_display = ['image_tag', 'id','Members_Dept', 'Members_Substation', 'Members_District', 'Members_User', 'Members_Position', 'Members_Fname', 'Members_Lname', 'Members_Email', 'Members_Username', 'Members_Password', 'Members_Pic', 'Date_Added', 'Added_By', 'Edit_By', 'Date_Edit',]
 
 class AddDept(admin.ModelAdmin):
     list_display = ['id', 'Dept_Dept',]
@@ -49,7 +46,7 @@ class audit(admin.ModelAdmin):
     list_display = ['Members_id','Genpub_id','username', 'password','date_logged_in']
 
 class genpub_users(admin.ModelAdmin):
-    list_display = ('id', 'Read_Status','is_verified','is_email_verified', 'gen_surname', 'gen_fname','gen_sex','gen_bday', 'gen_city_id', 'gen_barangay','gen_contact_no','gen_username','gen_pass','gen_valid_id', 'gen_upload_id', 'gen_profile','date_signed_up', 'date_edit', 'image_tag')
+    list_display = ('image_tag', 'id', 'Read_Status','is_verified','is_email_verified', 'gen_surname', 'gen_fname','gen_sex','gen_bday', 'gen_city_id', 'gen_barangay','gen_contact_no','gen_username','gen_pass','gen_valid_id', 'gen_upload_id', 'gen_profile','date_signed_up', 'date_edit',)
 
 class ref_region(admin.ModelAdmin):
     list_display = ('id', 'psgcCode','regDesc','regCode')
