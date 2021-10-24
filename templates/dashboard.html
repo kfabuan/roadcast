@@ -1,6 +1,6 @@
 {% extends 'nav_admin.html' %}
 {% block title %} Dashboard {% endblock %}
-
+{% load static %}
 {% block design %}
 
 <style>
@@ -1096,7 +1096,7 @@
             </div>
         </div>
 
-    
+       
 
         <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
 
@@ -1111,10 +1111,17 @@
             {% endfor %}
         
             ]
+            var img = new Image();
+            
+            const marker_url = '{% static 'image/marker.png' %}';
+    
+            
+    
             var map = new google.maps.Map(document.getElementById('map'), {
               zoom: 13,
               center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
-              mapTypeId: google.maps.MapTypeId.ROADMAP
+              mapTypeId: google.maps.MapTypeId.ROADMAP,
+               
             });
         
             var infowindow = new google.maps.InfoWindow();
@@ -1124,7 +1131,13 @@
             for (i = 0; i < locations.length; i++) {
               marker = new google.maps.Marker({
                 position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-                map: map
+                map: map,
+                icon: {
+                        url: marker_url,
+                        size: new google.maps.Size(36, 50),
+                        scaledSize: new google.maps.Size(25, 25),
+                        anchor: new google.maps.Point(0, 50)
+                    }
               });
         
               google.maps.event.addListener(marker, 'click', (function(marker, i) {

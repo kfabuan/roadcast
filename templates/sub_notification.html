@@ -6,7 +6,107 @@
     th {
         color: #050087;
     }
+
+    .card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        word-wrap: break-word;
+        background-color: #fff;
+        background-clip: border-box;
+        border: 0 solid transparent;
+        border-radius: 0;
+    }
+    .mailbox-widget .custom-tab .nav-item .nav-link {
+        border: 0;
+        color: #fff;
+        border-bottom: 3px solid transparent;
+    }
+    .mailbox-widget .custom-tab .nav-item .nav-link.active {
+        background: 0 0;
+        color: #fff;
+        border-bottom: 3px solid #2cd07e;
+    }
+    .no-wrap td, .no-wrap th {
+        white-space: nowrap;
+    }
+    .table td, .table th {
+        padding: .9375rem .4rem;
+        vertical-align: top;
+        border-top: 1px solid rgba(120,130,140,.13);
+    }
+    .font-light {
+        font-weight: 300;
+    }
+
+    .link {
+        text-decoration: none;
+    }
+
+    .table {
+        width: 100%;
+        /* table-layout: fixed; */
+        background-color: white;
+    }
+    .controls-btn {
+        width: 100px;
+        background-color: violet;
+    }
+
+    .img-1 {
+        border-radius: 50%;
+        height: 400px;
+        width: 400px;
+    }
+
+    .no-msg {
+        padding-top: 10px;
+        color: #1b5082;
+        font-weight: 500;
+        font-size: 18px;
+    }
+
+    @media only screen and (max-width: 480px){
+        .img-1 {
+            border-radius: 50%;
+            height: 350px;
+            width: 350px;
+        }
+
+        .no-msg {
+            font-size: 15px;
+        }
+    }
+
+    @media only screen and (max-width: 415px){
+        .img-1 {
+
+            border-radius: 50%;
+            height: 300px;
+            width: 300px;
+        }
+
+        .no-msg {
+            font-size: 13px;
+        }
+    }
+
+    @media only screen and (max-width: 345px){
+        .img-1 {
+            border-radius: 50%;
+            height: 260px;
+            width: 260px;
+        }
+
+        .no-msg {
+            font-size: 11px;
+        }
+    }
+
+    
 </style>
+
 
 {% endblock %}
 
@@ -49,46 +149,59 @@
     </script>
 {% endif %}
 
-<div class="content">
-    <b id="date-today">Today: </b><span id="ct6"></span>
-        <!-- Mail list-->
-        <div class="table-responsive mt-3">
-            <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
-                <tbody>
+{% if searched %}
+<p class="alert alert-primary">
+    <strong>Showing the results for "{{ searched }}"</strong>
+</p>
+{% endif %}
 
-                    {% for fwd in fwd_reports %}
-                    <!-- row -->
-                    <tr class =" {% ifequal fwd.Read_by_subrep 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                        <!-- label -->
-                        <td class="pl-3"  style="width: 3%;">
-                            <div class="custom-control custom-checkbox">
-                                <input type="checkbox" class="custom-control-input" id="cst1" />
-                                <label class="custom-control-label" for="cst1">&nbsp;</label>
-                            </div>
-                        </td>
-                        <!-- star -->
-                        <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
-                        <td style="width: 15%;">
-                            <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
-                        </td>
-                        <!-- Message -->
-                        <td class="text-truncate" style="width: 58%;">
-                            <a class="link text-decoration-none" href="{% url 'sub_notification_detail' fwd.id %}">
-                                <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
-                                <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
-                                <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
-                            </a>
-                        </td>
-                        <!-- Attachment -->
-                        <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
-                        <!-- Time -->
-                        <td  style="width: 16%;"class="{% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
-                    </tr>
+<div class="container">
 
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div> <!--Close Mail-->
-  </div> <!--closing content div-->
+    <!-- Search bar -->
+    <form class="d-flex" method="POST">
+        {% csrf_token %}
+        <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
+        <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+    </form>
+
+    <!-- Mail list-->
+    <div class="table-responsive mt-3">
+        <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
+            <tbody>
+
+                {% for fwd in fwd_reports %}
+                <!-- row -->
+                <tr class =" {% ifequal fwd.Read_by_subrep 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                    <!-- label -->
+                    <td class="pl-3"  style="width: 3%;">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="cst1" />
+                            <label class="custom-control-label" for="cst1">&nbsp;</label>
+                        </div>
+                    </td>
+                    <!-- star -->
+                    <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                    <td style="width: 15%;">
+                        <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
+                    </td>
+                    <!-- Message -->
+                    <td class="text-truncate" style="width: 58%;">
+                        <a class="link text-decoration-none" href="{% url 'sub_notification_detail' fwd.id %}">
+                            <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
+                            <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
+                            <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                            <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
+                        </a>
+                    </td>
+                    <!-- Attachment -->
+                    <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                    <!-- Time -->
+                    <td  style="width: 16%;"class="{% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+    </div> <!--Close Mail-->
+  </div> <!--closing container div-->
 {% endblock %}

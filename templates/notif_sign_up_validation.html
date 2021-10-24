@@ -2,7 +2,9 @@
 {% block title %} Account Validation {% endblock %}
 {% block design %}
 {% load static %}
+
 <style>
+    
     .table {
         border-color: white;
     }
@@ -14,7 +16,7 @@
     }
 
     .message-item{
-        height: 100px;
+        height: 80px;
     }
     
     .mail-list {
@@ -25,6 +27,7 @@
     .msg-body {
         height: 65vh;
         overflow-y: scroll;
+        overflow-x: hidden;
     }
 
     .mail-list::-webkit-scrollbar,
@@ -44,7 +47,7 @@
     .mail-list::-webkit-scrollbar-track,
     .msg-body::-webkit-scrollbar-track {
         position: absolute;
-        background: white;
+        background: transparent;
     }
 
     /* Handle */
@@ -86,21 +89,31 @@
     @media (min-width: 2000px){
             .modal-dialog {
             max-width: 500px;
-            margin: 1.75rem au  ;
+            margin: 1.75rem auto;
         }
     }
 
-    .txt-reply {
-        box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1);
-        width: 95%; bottom: 3%; border-radius:20px;
+    .div-reply {
+        /* box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1); */
+        width: 100%;
+        min-height: 60px;
+        bottom: 3%; 
+        /* border-radius:20px; */
         border: none !important; outline:none !important
     }
-    
 
-    .card-main {
-        box-shadow: 0 0.2rem 1rem 0 rgba(0,0,0,0.1);
-
+    .txt-reply {
+        background-color:#e8f4f8; 
+        /* border-radius:20px 0px 0 20px;  */
+        border-style: none;
     }
+    
+    .btn-reply {
+        background-color:#e8f4f8; 
+        /* border-radius:0px 20px 20px 0;  */
+        border-style: none;
+    }
+
 
     .settings-btn {
        font-size: xx-large; float: right; color:black;
@@ -129,8 +142,214 @@
         left:75%;
         position: absolute;
         float:right;
+        margin-right: 15px;
     }
+
+    /* for mobile responsiveness */
+    /*left card*/
+    .card-shadow { box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1); }
+    .r_date {font-size: small; float:right; }
+    .r_name { font-size: 13px;}
+    .badge { float: right; font-size: xx-small; }
+    .card-header { font-size: 15px;  }
+    .user-img { width: 35px; height: 35px; object-fit: cover;}
+
+    /*body*/
+    .b-header-row {flex-wrap: nowrap !important;}
+    .b-user-img { width: 70px; height: 70px; object-fit: cover;}
+    .b-name { font-size: 24px; font-weight: 700; padding-left: 10px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .b-barangay { font-size: 26px; font-weight: 500;}
+    .b-date-div {text-align: right;}
+    .convo-reply {margin-bottom: 0 !important;}
+
+    /*profile card*/
+    .p-email { color: #1b5082; font-size: 14px;}
+    .p-deets { font-size: 16px; margin-bottom: 0 !important; margin-top: 0 !important;}
+
+    @media only screen and (max-width: 1280px){
+        .r_date { font-size: 11px; }
+        .r_name { font-size: 12px;  padding-left: 2px;} 
+        .r_barangay { font-size: 13px; }
+
+        .b-user-img { width: 67px; height: 67px;}
+        .b-name { font-size: 20px;}
+        .b-barangay { font-size: 24px;}
+        .showw {  left:68%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 1166px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; }
+        .c_name { width: 70%; padding-left: 20px;}
+
+        .convo-deets {padding-left: 14px;}
+    }
+
+    @media only screen and (max-width: 1136px){
+        .b-user-img { width: 60px; height: 60px;}
+        .b-name { font-size: 18px; font-weight: 500; padding-left: 10px;}
+        .b-barangay { font-size: 20px;}
+        .labels { font-size:15px;}
+        .convo-deets {padding-left: 16px;}
+    }
+
+    @media only screen and (max-width: 1128px){
+        .r_date { font-size: 11px; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; }
+
+        .b-user-img { width: 65px; height: 65px;}
+        .b-name { font-size: 20px;}
+        .convo-deets {padding-left: 18px;}
+        .showw {  left:68%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 1046px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; padding-left: 8px;}
+        .r_desc { font-size: 13px; padding-left: 8px;}
+        .c_name { width: 70%; padding-left: 20px;}
+        .badge { display: none;}
+        .card-header { font-size: 13px;}
+
+        .b-user-img { width: 60px; height: 60px;}
+        .b-name { font-size: 18px;}
+        .b-barangay { font-size: 20px;}
+        .labels { font-size:14px;}
+        .convo-deets {padding-left: 20px;}
+        .showw {  left:60%; margin-right: 15px; }
+
+    }
+
+    @media only screen and (max-width: 960px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; padding-left: 10px; width: 100%;}
+        .r_desc { font-size: 13px; padding-left: 10px;}
+        .c_name { width: 70%; padding-left: 25px;}
+        .badge { display: none;}
+        .card-header { font-size: 13px;}
+        .card-left { width: 30%;}
+        .card-right { width: 70%;}
+
+        .profile-card { display: none;}
+        .labels { display: block; font-size: 11px;}
+        .status-hide {display: none;}
+    }
+
+    @media only screen and (max-width: 901px){
+        .r_date { display: none; }
+        .r_name { font-size: 12px; }
+        .r_barangay { font-size: 13px; padding-left: 10px; width: 100%;}
+        .r_desc { font-size: 13px; padding-left: 10px;}
+        .c_name { width: 70%; padding-left: 25px;}
+        .badge-div { display: none;}
+        .card-header { font-size: 11px;}
+        .card-left { width: 30%;}
+        .card-right { width: 70%;}
+        
+        .convo-deets {padding-left: 22px;}
+    }
+
+    @media only screen and (max-width: 861px){
+        .r_date { display: none; }
+        .r_name { display: none; }
+        .r_barangay { display: none;}
+        .r_desc { display: none;}
+        .fa-paperclip { display: none;}
+        .c_name { display: none;}
+        .badge-div { display: none;}
+        .card-left { width: 15%;}
+        .card-right { width: 85%;}
+        .message-item{ height: 70px; }
+        .fa-user-circle { display: none;}
+        .header-title { display: none; }
+        .user-img { display: block; margin:auto; height: 45px; width: 45px; }
+        .hide-col { display: none;}
+        .img-col { width: 100%; margin:auto;}
+
+        .b-name { font-size: 18px; padding-left: 12px;}
+    }
+
+    @media only screen and (max-width: 690px){
+        .b-barangay { font-size: 20px;}
+        .b-barangay-div {width: 100%;} 
+        .b-date-div {width: 100%; text-align: left; display: contents;} 
+        .bi-clock {padding-left: 15px;}
+        .b-user-img { width: 58px; height: 58px;}
+        .showw {  left:60%; margin-right: 15px; }
+
+    }
+
+    @media only screen and (max-width: 600px){
+        .card-left { width: 18%;}
+        .card-right { width: 82%;}
+
+        .b-user-img { width: 55px; height: 55px;}
+        .b-name {padding-left: 18px;}
+        .convo-deets {padding-left: 25px;}
+        .showw {  left:58%; margin-right: 15px; }
+
+        .p-deets { font-size: 14px;}
+       
+    }
+
+    @media only screen and (max-width: 520px){
+        .card-left { width: 20%;}
+        .card-right { width: 80%;}
+
+        .b-barangay { font-size: 18px;}
+        .b-name {font-size: 18px; padding-left: 16px;}
+        .convo-deets {padding-left: 29px;}
+        .showw {  left:55%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 460px){
+        .card-left { width: 22%;}
+        .card-right { width: 78%;}
+
+        .b-user-img { width: 56px; height: 56px;}
+        .b-name {font-size: 17px; padding-left: 18px;}
+        .convo-reply {font-size:14px;}
+        .showw {  left:50%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 420px){
+        .card-left { width: 24%;}
+        .card-right { width: 76%;}
+
+        .b-name {font-size: 16px; padding-left: 16px;}
+        .b-user-img { width: 50px; height: 50px;}
+        .showw {  left:45%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 392px){
+        .card-left { width: 26%;}
+        .card-right { width: 74%;}
+        .user-img { height: 40px; width: 40px; }
+
+        .convo-reply {font-size:14px;}
+        .showw {  left:40%; margin-right: 15px; }
+    }
+
+    @media only screen and (max-width: 320px){
+        .card-left { width: 29%;}
+        .card-right { width: 71%;}
+        .user-img { height: 38px; width: 38px; }
+        .message-item{ height: 62px; }
+
+        .b-user-img { width: 50px; height: 50px;}
+        .b-name {font-size: 15px; padding-left: 18px;}
+        .b-barangay { font-size: 16px;}
+        /* .labels {font-size: 16px; font-weight: bold;  } */
+        .convo-reply {font-size:14px;}
+        .showw {  left:30%; margin-right: 15px; }
+    }
+
 </style>
+
 {% endblock %}
 {% block content %}
 
@@ -190,75 +409,85 @@
 {% endif %}
     
 <!-- <div class="container"> -->
-    <div class="mb-3 card-main" style="border-radius: 0px 20px 20px 0">
+    <div class="mb-3 card-main">
         <div class="row main-body">
             
             <!--mail list-->
-            <div class="card col-3 p-0 " style="border-radius: 20px 0 0 20px">
+            <div class="card col-3 p-0 card-shadow card-left">
 
                     <div class="card-header fw-bold" style="border-radius: 20px 20px 0 0">
-                        <i class="far fa-user-circle" style="color: #1b5082;"></i>&nbsp; Account validation
+                        <i class="far fa-user-circle" style="color: #1b5082;"></i>&nbsp; <span class="header-title">Account validation</span>
                     </div>
 
                     <ul class="list-group list-group-flush mail-list" style="border-radius: 0 0 0 0px; padding: 0;">
                         {% for validation in sign_up_validation %}
                         <a href="{% url 'notif_sign_up_validation' validation.id %}" style="text-decoration: none;">
                             <li class="list-group-item message-item {% ifequal validation.id detail.id %} active-msg {% endifequal %}" style="{% ifequal validation.Read_Status 'No' %} background-color:azure; {% else %} {% endifequal %}">
-                                <div class="row">
+                                <!-- <div class="row">
                                     <section style="height: 5px;"></section>
-                                    <div class="col-2"><img src="/media/{{ validation.gen_profile }}" alt="" style="width: 35px; height:35px; margin-top: 5px;" class="rounded-circle"></div>
-                                    <div class="col-5">
-                                        <span style="font-size: 13px;" class=" text-muted">
-                                            
-                                            General Public
- 
-                                            {% ifequal validation.Read_Status 'No' %}
-                                            <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
-                                            {% endifequal %}
+                                    <div class="col-2 img-col"><img src="/media/{{ validation.gen_profile }}" class="rounded-circle user-img"></div>
+                                    <div class="col-10 c_name hide-col">
+                                        <span style="font-size: 13px;" class="">   
+                                            <span class="fw-bold r_barangay">{{ validation.gen_fname }} {{ validation.gen_surname }}</span>
+                                     
+                                           
                                         </span>
                                     </div>
-                                    <div class="col-5">
-                                        <span style="font-size: 11px; margin-top: 4px; float:right;" class="text-muted">{{ validation.date_signed_up }}</span>
+                                    <div class="col-5 hide-col">
+                                        <span class="text-muted r_date text-truncate">{{ validation.date_signed_up }}</span>
+                                    </div>
+                                </div> -->
+
+                                <div class="row pt-2">
+                                    <div class="col-2" style="display: block; margin: auto;">
+                                        <img src="/media/{{ validation.gen_profile }}" class="rounded-circle user-img">
+                                    </div>
+                                    <div class="col-8" style="display: block; margin: auto;">
+                                        <span class="fw-bold r_barangay">{{ validation.gen_fname }} {{ validation.gen_surname }}</span>
+                                    </div>
+                                    <div class="col-2 badge-div" style="display: block; margin: auto;">
+                                        {% ifequal validation.is_verified 1 %}
+                                            <span class="badge position-relative bg-success" style="float: right; font-size: xx-small;"> Verified</span>
+                                        {% else %}
+                                            <span class="badge position-relative bg-danger" style="float: right; font-size: xx-small;"> Unverified</span>
+                                        {% endifequal %}
+                                                
                                     </div>
                                 </div>
 
-                                <div class="row">
-                                    <div class="col-2">
-                                        <div class="custom-control custom-checkbox ps-2">
-                                        </div>
-                                    </div>
-                                    <div class="col-8 ">
-                                        <span class="fw-bold">{{ validation.gen_fname }} {{ validation.gen_surname }}</span>
-                                    </div>
-                                </div>
-
-                                <div class="row">
+                                <!-- <div class="row">
                                         {% ifnotequal validation.gen_upload_id '' %}
                                         <i class="fas fa-paperclip text-muted" style="font-size: 17px; float: right;"></i>
                                         <section style="height: 5px;"></section>
                                         {% endifnotequal %}
-                                </div>
+                                </div> -->
                             </li></a>
                         {% endfor %}
                     </ul>
                 </div>
 
             <!--message-->
-            <div class="card col-7">
+            <div class="card col-9 card-shadow card-right">
                     <div class="card-header" style="background-color: white; ">
                         <section style="height: 8px;"></section>
-                        <div class="row">
+                        <div class="row b-header-row">
                             <div class="col-1 pe-3" style="background-color: white;">
                                 <section style="height: 4px;"></section>
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
-                                    <div><img src="/media/{{ detail.gen_profile }}" alt="" class="rounded-circle" style="width: 70px; height: 70px;"></div>
+                                    <div><img src="/media/{{ detail.gen_profile }}" alt="" class="rounded-circle b-user-img"></div>
                                 </div>
                             </div>
 
-                            <div class="col-8 ms-4"  style="background-color: white;">
+                            <div class="col-8 ms-4"  style="background-color: white; display: block; margin: auto;">
                                 <section style="height: 5px;"></section>
-                                <h3 class="col">{{detail.gen_fname}} {{detail.gen_surname}} </h3>
-                                <p class="text-muted"><i class="far fa-clock"></i> &nbsp;{{ detail.date_signed_up }}</p>
+                                <p class="b-name">{{detail.gen_fname}} {{detail.gen_surname}} 
+
+                                    {% ifequal detail.is_verified 1 %}
+                                    <label class="labels text-success"> <span class="status-hide">[  Account Status: </span>Verified <span class="status-hide"> ]</span></label>
+                                    {% else %}
+                                    <label class="labels text-danger"> <span class="status-hide">[  Account Status: </span>Unverified <span class="status-hide"> ]</span></label>
+                                    {% endifequal %}
+                                </p>
                             </div>
 
                         </div>
@@ -268,16 +497,37 @@
                     <div class="m-3 msg-body"> 
 
                         <div class="row" style="width: 100%; background-color: white;">
-                            <div class="col-10"  style="background-color: none;">
+                            <div class="col-9"  style="background-color: none;">
                                 <div class="row">
                                 </div>
                             </div>
 
-                            <div class="col-2"  style="background-color: none;">
-                                <!-- Content here -->
+                            <div class="col-3 b-date-div"  style="background-color: none;">
+                                <span class="" style=" font-size: smaller; float:right;"><i class="bi bi-clock"></i>&nbsp;{{ detail.date_signed_up }}</span>
+
                             </div>
                         </div>
                             <section style="height: 10px;"></section>
+                            
+                            <label class="ps-2 label-blue">Name: </label>
+                            <span class="ms-2 p-0 p-deets">{{ detail.gen_fname }} {{ detail.gen_surname }}</span>   <br><br>
+
+                            <label class="ps-2 label-blue">Email Address: </label>
+                             <span class="ms-2 p-0 p-deets">{{ detail.gen_username }} </span>   <br><br>
+
+                            <label class="ps-2 label-blue">Birthday: </label>
+                             <span class="ms-2 p-0 p-deets">{{ detail.gen_bday }}</span>    <br><br>
+
+                            <label class="ps-2 label-blue">Gender: </label>
+                             <span class="ms-2 p-0 p-deets">{{ detail.gen_sex }}</span>    <br><br>
+
+                            <label class="ps-2 label-blue">Contact number: </label>
+                             <span class="ms-2 p-0 p-deets">{{ detail.gen_contact_no }}</span>    <br><br>
+
+                            <label class="ps-2 label-blue">Location: </label>
+                             <span class="ms-2 p-0 p-deets">{{ detail.gen_barangay }}, {{ detail.gen_city}}, {{ detail.gen_province }} ({{ detail.gen_region }}) </span>  
+                            
+                            <br><br>
 
                             <p class="ps-2 label-blue">Proof of Valid ID: 
                                 <span class="text-muted">&nbsp; ({{ detail.gen_valid_id }})</span>
@@ -286,16 +536,23 @@
 
                             {% ifnotequal detail.gen_upload_id '' %}
                             <!-- Button trigger modal -->
-                            <button type="button" class="btn btn-white ps-2 " data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            <button type="button" class="btn btn-white ps-2 " data-bs-toggle="modal" data-bs-target="#staticBackdrop">
                                 <img src="/media/{{detail.gen_upload_id}}" alt="" style="width: 250px;" class="img-fluid img-thumbnail">
                             </button>
 
-                            <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog" style="width: 900px !important; ">
-                                    <div class="modal-content" >
+                            <!-- Scrollable modal -->
+                            <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="staticBackdropLabel">Image</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
                                         <div class="modal-body">
                                             <img src="/media/{{detail.gen_upload_id}}" alt=""  class="img-fluid img-thumbnail">
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -316,7 +573,7 @@
                     </div><!--body--> 
 
                     <!--profile preview-->
-                    <div class="card col-2 p-0" style="border-radius: 20px 20px 0 0px;"> <!--tr tl br bl-->
+                    <!-- <div class="card col-2 p-0" style="border-radius: 20px 20px 0 0px;">
                         <div>
                             <div class="card-body">
                             <b>
@@ -358,11 +615,11 @@
                             </li>
                             
                         </ul>
-                    </div>
+                    </div> -->
                 </div> <!--row-->
             </div><!--card group-->
  
-            <input type="text" name="unread_notif_count_signup " id="unread_notif_count" value="{{ unread_notif_count_signup }}" hidden>
+            <input type="text" name="unread_notif_count " id="unread_notif_count" value="{{ unread_notif_count }}" hidden>
 
 <!-- Scripts -->
 <script type="text/javascript">

@@ -404,7 +404,7 @@
             <!--mail list-->
             <div class="card col-3 p-0 card-shadow card-left">
                     <div class="card-header fw-bold" style="border-radius: 20px 20px 0 0">
-                        <i class="bi bi-envelope-fill"></i>  Forwarded Cases
+                        <i class="bi bi-envelope-fill"></i><span class="header-title"> Forwarded Cases</span>
                     </div>
                     <ul class="list-group list-group-flush mail-list"  style="border-radius: 0 0 0 20px">
                         {% for report in fwd_reports %}
@@ -483,7 +483,7 @@
                             <div class="col-1 pe-3" style="background-color: white;">
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
                                     <div><img src="/media/{{detail.User_ID.gen_profile}}" alt=""class="rounded-circle b-user-img"></div>
-                                    <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span>
+                                    <!-- <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span> -->
                                 </div>
                             </div>
 
@@ -505,7 +505,7 @@
                     <div class="m-3 msg-body"> 
 
                         <div class="row">
-                            <div class="col-9 b-barangay-div">
+                            <div class="col-10 b-barangay-div">
                                 <div class="row">
                                     <h3 class="col b-barangay"> Incident from Barangay {{detail.Reported_Brgy.Barangay}} </h3>
                                     <!-- <span class="badge rounded-pill bg-danger">Unsolved </span> -->
@@ -513,7 +513,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-3 b-date-div">
+                            <div class="col-2 b-date-div">
                                 <span class="" style=" font-size: smaller; float:right;"><i class="bi bi-clock"></i>&nbsp;{{ detail.Reported_Date }}</span>
                                 <p class="text-muted" style="font-size: small; float:right;"> {{ detail.Reported_Time }}</p>
                             </div>

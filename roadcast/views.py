@@ -373,7 +373,7 @@ def notif_sign_up_validation (request, signup_id):
     unread_sign_up_validation.save()
     
     #for gen pub reports inbox
-    sign_up_validation = tbl_genpub_users.objects.filter(id=signup_id).order_by('-id')
+    sign_up_validation = tbl_genpub_users.objects.order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
     data = {
@@ -385,19 +385,17 @@ def notif_sign_up_validation (request, signup_id):
     }
     return render (request, 'notif_sign_up_validation.html', data)
 
-#Jew
+#Jew ditos
 def genpub_verified(request, pk=None):
     if pk !=None:
         genpub = tbl_genpub_users.objects.get(id=pk)
         genpub.is_verified = True
         genpub.save()
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
-    sign_up_validation = tbl_genpub_users.objects.filter(Read_Status="").order_by('-id')
-    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+    sign_up_validation = tbl_genpub_users.objects.order_by('-id')
 
     data = {
         'detail': unread_sign_up_validation,
-        'unread_notif_count_signup': unread_notif_count_signup,
         'sign_up_validation':sign_up_validation,
         "all": authorized, 
         "pub": pub,
@@ -417,12 +415,10 @@ def genpub_rejected(request,pk):
 
         
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
-    sign_up_validation = tbl_genpub_users.objects.filter(Read_Status="").order_by('-id')
-    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+    sign_up_validation = tbl_genpub_users.objects.order_by('-id')
 
     data = {
         'detail': unread_sign_up_validation,
-        'unread_notif_count_signup': unread_notif_count_signup,
         'sign_up_validation':sign_up_validation,
         "all": authorized, 
         "pub": pub,
@@ -2630,22 +2626,42 @@ def sub_notification (request):
         pass
 
     fwd_reports = None
-    try:
-        if request.session['authorized_id']:
-            auth_id = request.session['authorized_id']
-            subrep_row = Tbl_add_members.objects.get(id=auth_id)
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                subrep_row = Tbl_add_members.objects.get(id=auth_id)
+                #fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id) 
+                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id') 
+   
+                
+        except:
+            pass
 
-            fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)    
-            
-    except:
-        pass
+        context    = {
+            'searched': searched,
+            "unread_notif_count":unread_notif_count,
+            "fwd_reports": fwd_reports,
+            "all": authorized,
+            "pub": pub,
+        }
+    else:
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                subrep_row = Tbl_add_members.objects.get(id=auth_id)
+                fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)    
+                
+        except:
+            pass
 
-    context    = {
-        "unread_notif_count":unread_notif_count,
-        "fwd_reports": fwd_reports,
-        "all": authorized,
-        "pub": pub,
-    }
+        context    = {
+            "unread_notif_count":unread_notif_count,
+            "fwd_reports": fwd_reports,
+            "all": authorized,
+            "pub": pub,
+        }
     return render (request, 'sub_notification.html', context)
 
 def sub_notification_detail (request, report_id):

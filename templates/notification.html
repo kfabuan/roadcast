@@ -434,6 +434,13 @@
                             <!-- Message -->
                             <td class="text-truncate" style="width: 58%;">
                                 <a class="link text-decoration-none" href="{% url 'notif_sign_up_validation' validation.id %}">
+                                    {% ifequal validation.is_verified 1 %}
+                                    <span class="badge rounded-pill text-white font-medium bg-success me-2"> Verified </span>
+
+                                    {% else %}
+                                    <span class="badge rounded-pill text-white font-medium bg-danger me-2"> Unverified </span>
+                                 
+                                    {% endifequal %}
                                  <span class=" text-dark"> Sign Up Validation: {{ validation.gen_fname }} {{ validation.gen_surname }}</span>
                                 </a>
                             </td>
