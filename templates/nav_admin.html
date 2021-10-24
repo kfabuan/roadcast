@@ -137,85 +137,110 @@
                         <label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> 
                     </a>
                 <div class="nav_list"> 
-                    <!-- For admins -->
+    
+    <!-- For admins -->
                     {% if a.Members_User.Member_Type == 'Admin' %}
 
+                    {% if request.get_full_path == '/profile/user' %}
+                    <a href="{% url 'user_profile' %}" class="nav_link active" style="margin-top: -20px;"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ a.Members_Lname }}</span></a> 
+                    {% else %}
+                    <a href="{% url 'user_profile' %}" class="nav_link" style="margin-top: -20px;"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ a.Members_Lname }}</span></a> 
+                    {% endif %}
+
+                    <hr class="divider-hr" style="margin-top: -10px;">
+
+
+
                     {% if request.get_full_path == '/dashboard/' %}
-                    <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
+                    <a href="{% url 'dashboard' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% else %}
-                    <a href="{% url 'dashboard' %}" class="nav_link"><i class='bx bxs-dashboard nav_icon'></i> 
+                    <a href="{% url 'dashboard' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% endif %}
 
                     {% if request.get_full_path == '/report/monthly' %}
-                    <a href="{% url 'monthly_report' %}" class="nav_link active"><i class='fas fa-table nav_icon'></i> 
+                    <a href="{% url 'monthly_report' %}" class="nav_link active" style="margin-top: -5px;"><i class='fas fa-table nav_icon'></i> 
                         <span class="nav_name">Monthly Reports</span></a>
                     {% else %}
-                    <a href="{% url 'monthly_report' %}" class="nav_link"><i class='fas fa-table nav_icon'></i> 
+                    <a href="{% url 'monthly_report' %}" class="nav_link" style="margin-top: -5px;"><i class='fas fa-table nav_icon'></i> 
                         <span class="nav_name">Monthly Reports</span></a>
                     {% endif %}
                     
                     {% if request.get_full_path == '/incidents/view' %}
-                    <a href="{% url 'view_incidents' %}" class="nav_link active"><i class='bx bxs-report nav_icon'></i> 
+                    <a href="{% url 'view_incidents' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-report nav_icon'></i> 
                         <span class="nav_name">Incident Reports</span></a> 
                     {% else %}   
-                    <a href="{% url 'view_incidents' %}" class="nav_link"><i class='bx bxs-report nav_icon'></i> 
+                    <a href="{% url 'view_incidents' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-report nav_icon'></i> 
                     <span class="nav_name">Incident Reports</span></a> 
                     {% endif %}
 
                     {% if request.get_full_path == '/unsolvedcases/' %}
-                    <a href="{% url 'unsolved_cases' %}" class="nav_link active"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
+                    <a href="{% url 'unsolved_cases' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
                         <span class="nav_name">Unsolved Cases</span></a>
                     {% else %}
-                    <a href="{% url 'unsolved_cases' %}" class="nav_link"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
+                    <a href="{% url 'unsolved_cases' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
                         <span class="nav_name">Unsolved Cases</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/memberlist' %}
-                    <a href="{% url 'admin_list_members' %}" class="nav_link active"><i class='bx bxs-group nav_icon'></i> 
+                    <a href="{% url 'admin_list_members' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-group nav_icon'></i> 
                         <span class="nav_name">Members</span></a>
                     {% else %}
-                    <a href="{% url 'admin_list_members' %}" class="nav_link"><i class='bx bxs-group nav_icon'></i> 
+                    <a href="{% url 'admin_list_members' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-group nav_icon'></i> 
                         <span class="nav_name">Members</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/investigators' %}
-                    <a href="{% url 'admin_investigators' %}" class="nav_link active"><i class='bx bx-glasses-alt nav_icon'></i> 
+                    <a href="{% url 'admin_investigators' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bx-glasses-alt nav_icon'></i> 
                         <span class="nav_name">Investigators</span></a>
                     {% else %}
-                    <a href="{% url 'admin_investigators' %}" class="nav_link"><i class='bx bx-glasses-alt nav_icon'></i> 
+                    <a href="{% url 'admin_investigators' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bx-glasses-alt nav_icon'></i> 
                         <span class="nav_name">Investigators</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/notification' %}
-                    <a href="{% url 'notification' %}" class="nav_link active"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'notification' %}" class="nav_link active" style="margin-top: -5px;"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% else %}
-                    <a href="{% url 'notification' %}" class="nav_link"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'notification' %}" class="nav_link" style="margin-top: -5px;"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/audit/members' %}
-                    <a href="{% url 'admin_audit_members' %}" class="nav_link active"><i class='bx bx-history nav_icon' ></i> 
+                    <a href="{% url 'admin_audit_members' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bx-history nav_icon' ></i> 
                         <span class="nav_name">Audit Trail</span> </a> 
                     {% else %}
-                    <a href="{% url 'admin_audit_members' %}" class="nav_link"><i class='bx bx-history nav_icon' ></i> 
+                    <a href="{% url 'admin_audit_members' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bx-history nav_icon' ></i> 
                         <span class="nav_name">Audit Trail</span> </a>  
                     {% endif %}
 
                     {% if request.get_full_path == '/public/settings' %}
-                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link active"><i class='fas fa-cogs '></i>
+                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link active" style="margin-top: -5px;"><i class='fas fa-cogs '></i>
                         <span class="nav_name">Settings</span></a> 
                     {% else %}
-                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link"><i class='fas fa-cogs '></i>
+                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link" style="margin-top: -5px;"><i class='fas fa-cogs '></i>
                         <span class="nav_name">Settings</span></a> 
                     {% endif %}
 
                     <!-- For crime statisticians -->
                     {% elif a.Members_User.Member_Type == 'Crime Statistician' %}
+
+                    {% if request.get_full_path == '/profile/user' %}
+                    <a href="{% url 'user_profile' %}" class="nav_link active"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ a.Members_Lname }}</span></a> 
+                    {% else %}
+                    <a href="{% url 'user_profile' %}" class="nav_link"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ a.Members_Lname }}</span></a> 
+                    {% endif %}
+
+                    <hr class="divider-hr" style="margin-top: -10px;">
+
+
                     {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
@@ -276,6 +301,18 @@
 
                     <!-- For investigator and sub-representative -->
                     {% else %}
+
+                    {% if request.get_full_path == '/profile/user' %}
+                    <a href="{% url 'user_profile' %}" class="nav_link active"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ a.Members_Lname }}</span></a> 
+                    {% else %}
+                    <a href="{% url 'user_profile' %}" class="nav_link"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ a.Members_Lname }}</span></a> 
+                    {% endif %}
+
+                    <hr class="divider-hr" style="margin-top: -10px;">
+
+
                     {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
@@ -320,7 +357,7 @@
                     {% endif %}
                 </div>
             </div> 
-            <a href="{% url 'logout' %}" class="nav_link"> <i class='bx bx-log-out '></i> <span class="nav_name">Logout</span> </a>
+            <a href="{% url 'logout' %}" class="nav_link logout-butt"> <i class='bx bx-log-out '></i> <span class="nav_name">Logout</span> </a>
         </nav>
     </div>      
 
@@ -347,6 +384,18 @@
                 <label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> 
             </a>
             <div class="nav_list"> 
+
+                    {% if request.get_full_path == '/profile/user' %}
+                    <a href="{% url 'user_profile' %}" class="nav_link active"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ b.gen_surname }}</span></a> 
+                    {% else %}
+                    <a href="{% url 'user_profile' %}" class="nav_link"><i class='bx bx-user nav_icon'></i> 
+                        <span class="nav_name">{{ b.gen_surname }}</span></a> 
+                    {% endif %}
+
+                    <hr class="divider-hr" style="margin-top: -10px;">
+
+
                     {% if request.get_full_path == '/dashboard/' %}
                     <a href="{% url 'dashboard' %}" class="nav_link active"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
@@ -398,14 +447,13 @@
                     {% endif %}
                 </div>
             </div> 
-            <a href="{% url 'logout' %}" class="nav_link"> <i class='bx bx-log-out '></i> <span class="nav_name">Logout</span> </a>
+            <a href="{% url 'logout' %}" class="nav_link logout-butt"> <i class='bx bx-log-out '></i> <span class="nav_name">Logout</span> </a>
         </nav>
     </div>        
     {% endifequal %}
     {% endfor %}
-        
 
-    <!-- Content here -->
+    <!-- Start content --> 
     <div class=""style="padding-top: 60px;">
         {% block content %} {% endblock %}
     </div>

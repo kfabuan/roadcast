@@ -165,6 +165,9 @@ def forgot_pass(request): #get email of user
 def security_question(request): #get the answer of user for security check
     return render (request, 'security_question.html')
 
+def terms (request):
+    return render(request, 'terms_and_conditions.html')
+    
 def process_security(request, prof_id): #process of validating the security question
     if request.method   == "POST":
         answer  = request.POST.get("security_answer")

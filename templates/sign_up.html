@@ -378,8 +378,8 @@ input[type=password]::placeholder{
           <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
           <label class="form-check-label" for="flexCheckDefault">
             <p style="font-size: 15px;">By creating an account, you agree to the
-              <a href="#" class="fw-bold text-primary">Terms of Use</a> and our
-              <a href="#" class="fw-bold text-primary">Privacy Policy</a>.
+              <a href="{% url 'terms' %}" target="_blank" class="fw-bold text-primary">Terms of Use</a> and our
+              <a href="{% url 'terms' %}" target="_blank" class="fw-bold text-primary">Privacy Policy</a>.
             </p>
           </label>
           </div>

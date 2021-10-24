@@ -140,7 +140,8 @@ urlpatterns = [
     path('validating/<prof_id>', views.process_security, name='process_security'), #html for security question
     path('forgot_pass/reset/<prof_id>', views.genpub_reset_password, name='reset_pass'), #html ng forgot password
     path('forgot_pass/saving/<prof_id>', views.process_reset, name='process_reset'), #html ng forgot password
-    
+    path('termsofservice', views.terms, name='terms'),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 handler404 = "roadcast.views.no_page" #page not found
