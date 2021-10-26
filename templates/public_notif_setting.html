@@ -4,6 +4,35 @@
 {% load static %}
 {% block content %}
 
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%} 
+                <!-- body (no need to paste anything here) -->
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
 
 <!-- Alert messages -->
 {% if messages %}
@@ -86,7 +115,7 @@
                     </div>
                     <div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="user-notification-1" checked>
+                            <input class="form-check-input" type="checkbox" id="user-notification-1" {% ifequal b.nf_acc_activity 1 %} checked {% endifequal %}>
                             <label class="form-check-label" for="user-notification-1"></label>
                         </div>
                     </div>
@@ -94,11 +123,11 @@
                 <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
                     <div>
                         <h3 class="h6 mb-1">New Incident Notifications</h3>
-                        <p class="small pe-4">Receive incident notifications that have occured in Pasig city.</p>
+                        <p class="small pe-4">Receive all incident notifications that have occured in Pasig city.</p>
                     </div>
                     <div>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="user-notification-2">
+                            <input class="form-check-input" type="checkbox" id="user-notification-2" {% ifequal b.nf_new_incident 1 %} checked {% endifequal %}>
                             <label class="form-check-label" for="user-notification-2"></label>
                         </div>
                     </div>
@@ -110,12 +139,16 @@
                     </div>
                     <div>
                         <div class="form-check form-switch">
-                            <select class="form-select form-select-sm" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
-                                <option selected="true" disabled="disabled">Choose Barangay</option>
-                                {% for bg in barangay %}
-                                <option value="{{ bg.Barangay }}">{{ bg.Barangay }}</option>
-                                {% endfor %}
-                            </select>
+                            <form action="{% url 'custom_alert' %}" method="post">
+                                {% csrf_token %}
+                                <select class="form-select form-select-sm" id="preferred_brgy" name="preferred_brgy" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
+                                    <option selected="true" disabled="disabled">Choose Barangay</option>
+                                    <option value="None">None</option>
+                                    {% for bg in barangay %}
+                                    <option value="{{ bg.Barangay }}"  {% ifequal bg.Barangay b.nf_brgy %} selected {% endifequal %}>{{ bg.Barangay }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
                         </div>                                            
                     </div>
                 </li>
@@ -263,19 +296,20 @@
                         </div>
                         <div>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="user-notification-1" checked>
+                                <input class="form-check-input" type="checkbox" id="user-notification-1" {% ifequal a.nf_acc_activity 1 %} checked {% endifequal %}>
                                 <label class="form-check-label" for="user-notification-1"></label>
                             </div>
                         </div>
                     </li>
+
                     <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
                         <div>
                             <h3 class="h6 mb-1">New Incident Notifications</h3>
-                            <p class="small pe-4">Receive incident notifications that have occured in Pasig city.</p>
+                            <p class="small pe-4">Receive all incident notifications that have occured in Pasig city.</p>
                         </div>
                         <div>
                             <div class="form-check form-switch">
-                                <input class="form-check-input" type="checkbox" id="user-notification-2">
+                                <input class="form-check-input" type="checkbox" id="user-notification-2" {% ifequal a.nf_new_incident 1 %} checked {% endifequal %}>
                                 <label class="form-check-label" for="user-notification-2"></label>
                             </div>
                         </div>
@@ -287,12 +321,16 @@
                         </div>
                         <div>
                             <div class="form-check form-switch">
-                                <select class="form-select form-select-sm" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
-                                    <option selected="true" disabled="disabled">Choose Barangay</option>
-                                    {% for bg in barangay %}
-                                    <option value="{{ bg.Barangay }}">{{ bg.Barangay }}</option>
-                                    {% endfor %}
-                                  </select>
+                                <form action="{% url 'custom_alert' %}" method="post" id="form_custom">
+                                    {% csrf_token %}
+                                    <select class="form-select form-select-sm" id="preferred_brgy" name="preferred_brgy" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
+                                        <option selected="true" disabled="disabled">Choose Barangay</option>
+                                        <option value="None">None</option>
+                                        {% for bg in barangay %}
+                                        <option value="{{ bg.Barangay }}" {% ifequal bg.Barangay a.nf_brgy %} selected {% endifequal %}>{{ bg.Barangay }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
                             </div>                                            
                         </div>
                     </li>
@@ -347,6 +385,80 @@ el.addEventListener('click', function(){
             input.setCustomValidity('');
         }
     }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        // login alerts
+        $('#user-notification-1').change(function(){
+            if (document.getElementById('user-notification-1').checked) {
+                if (confirm("You will now receive email notifications for your login activities!") == true) {
+                    this.checked = true;
+                    window.location.href = '{% url 'account_activity_on' %}';
+                }
+                else{
+                    this.checked = false;
+                    window.location.href = '{% url 'account_activity_off' %}';
+                }
+
+            } else {
+                if (confirm("Turn off notifications for your login activities?") == true) {
+                    this.checked = false;
+                    window.location.href = '{% url 'account_activity_off' %}';
+                }
+
+                else{
+                    this.checked = true;
+                    window.location.href = '{% url 'account_activity_on' %}';
+                }
+             }
+        });
+
+        // new incident alerts
+        $('#user-notification-2').change(function(){
+            if (document.getElementById('user-notification-2').checked) {
+                
+                if (confirm("You will now receive email notifications for new incidents in Pasig City!") == true) {
+                    this.checked = true;
+                    var form_custom = document.getElementById('preferred_brgy');
+                    form_custom.disabled = true;
+                    window.location.href = '{% url 'new_incident_alert_on' %}';
+                }
+                else{
+                    this.checked = false;
+                    window.location.href = '{% url 'new_incident_alert_off' %}';
+                }
+
+            } else {
+                if (confirm("Turn off notifications for new incident cases?") == true) {
+                    this.checked = false;
+                    window.location.href = '{% url 'new_incident_alert_off' %}';
+                }
+
+                else{
+                    this.checked = true;
+                    var form_custom = document.getElementById('preferred_brgy');
+                    form_custom.disabled = true;
+                    window.location.href = '{% url 'new_incident_alert_on' %}';
+                }
+             }
+        });
+
+        //disabled custom
+        if (document.getElementById('user-notification-2').checked) {
+            var form_custom = document.getElementById('preferred_brgy');
+            form_custom.disabled = true;
+        }
+        
+        // custom barangay alerts
+        $('#preferred_brgy').change(function(){
+            this.form.submit();
+        });
+
+
+
+
+    });
 </script>
 
 

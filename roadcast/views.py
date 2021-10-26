@@ -26,7 +26,7 @@ from django.db.models import Avg
 import datetime
 from urllib.parse import urlencode
 import requests
-from django.core.paginator import Paginator 
+from django.core.paginator import Paginator
 from django.http.response import HttpResponse
 
 from django.contrib.sites.shortcuts import get_current_site
@@ -40,6 +40,8 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
+from twilio.rest import Client
+
 # Get date today
 today = date.today()
 
@@ -49,6 +51,7 @@ pub        = tbl_genpub_users.objects.all()
 
 unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
 
+
 def index(request): #landing/home
     #Sessions
     authorized = Tbl_add_members.objects.all()
@@ -56,7 +59,7 @@ def index(request): #landing/home
 
     return render (request, 'landing.html', {"all": authorized, "pub": pub})
 
-#Jew 
+#Jew
 def login(request):
     if request.method == 'POST':
         # try:
@@ -64,7 +67,7 @@ def login(request):
         password = request.POST['password']
         a = False
         b = False
-        
+
         try:
             members = Tbl_add_members.objects.get(Members_Email = username)
             a = True
@@ -78,7 +81,7 @@ def login(request):
             b = False
             print('none')
 
-    
+
         if a == True:
             if (members.Members_Email == username) and (members.Members_Password == password):
 
@@ -89,36 +92,70 @@ def login(request):
 
                 request.session['authorized_id'] = authorized_session.id
 
-                return HttpResponseRedirect(reverse('dashboard')) 
-            else: 
+                #login email alert
+                if (authorized_session.nf_acc_activity == True):
+                    firstname = authorized_session.Members_Fname
+                    logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
+                    logged_in_date = str(date.today())
+                    from_ = '' #roadcast main email in settings.py
+                    to_ = [authorized_session.Members_Email]
+
+                    send_mail (
+                        'Roadcast: Login Notification',
+                        render_to_string('login_alert.html',{
+                        'firstname' : firstname,
+                        "logged_in_date" : logged_in_date,
+                        "logged_in_time" : logged_in_time,
+                        }),
+                        from_, to_,)
+
+                return HttpResponseRedirect(reverse('dashboard'))
+            else:
                 messages.error(request, ("Oops! Please check your email or password."))
                 return HttpResponseRedirect(reverse('login'))
 
         elif b == True:
             if (public.gen_username == username) and (public.gen_pass == password):
-                if public.is_email_verified:    
+                if public.is_email_verified:
                     if public.is_verified:
                         submit = tbl_audit(username = username, password = password)
                         submit.save()
 
                         public_session = tbl_genpub_users.objects.get(gen_username=username, gen_pass= password)
                         request.session['public_id'] = public_session.id
+
+                        #login email alert
+                        if (public_session.nf_acc_activity == True):
+                            firstname = public_session.gen_fname
+                            logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
+                            logged_in_date = str(date.today())
+                            from_ = '' #roadcast main email in settings.py
+                            to_ = [public_session.gen_username]
+
+                            send_mail (
+                                'Roadcast: Login Notification',
+                                render_to_string('login_alert.html',{
+                                'firstname' : firstname,
+                                "logged_in_date" : logged_in_date,
+                                "logged_in_time" : logged_in_time,
+                                }),
+                                from_, to_,)
                         return HttpResponseRedirect(reverse('dashboard'))
-                    
+
                     elif not public.is_verified:
                         messages.error(request, ("Oops! Please wait for the admin to approve your account."))
-                        return HttpResponseRedirect(reverse('login')) 
+                        return HttpResponseRedirect(reverse('login'))
                 elif not public.is_email_verified:
                         messages.error(request, ("Oops! Please check your email to verify your account."))
-                        return HttpResponseRedirect(reverse('login')) 
-            else: 
+                        return HttpResponseRedirect(reverse('login'))
+            else:
                messages.error(request, ("Oops! Please check your email or password."))
-               return HttpResponseRedirect(reverse('login')) 
+               return HttpResponseRedirect(reverse('login'))
 
         else:
             messages.error(request, ("Oops! Please check your email or password."))
-            return HttpResponseRedirect(reverse('login')) 
-    return render (request, 'login.html') 
+            return HttpResponseRedirect(reverse('login'))
+    return render (request, 'login.html')
 
 def deletesession(request):
     try:
@@ -138,7 +175,7 @@ def forgot_pass(request): #get email of user
         username        = request.POST["username"]
         a = False
         b = False
-        
+
         try:
             members = Tbl_add_members.objects.get(Members_Email = username)
             a = True
@@ -149,14 +186,14 @@ def forgot_pass(request): #get email of user
             public = tbl_genpub_users.objects.get(gen_username = username)
             b= True
         except:
-            b = False   
+            b = False
 
         if a:
             if members.Members_Email == username:
                 return render (request, 'members_forgot_password.html')
         elif b:
-            if public.gen_username == username:  
-                return render (request, 'security_question.html', {"public": public}) 
+            if public.gen_username == username:
+                return render (request, 'security_question.html', {"public": public})
         else:
             messages.error(request, ("Oops! We couldn't find your email address. Please sign up first to be a member!"))
             return HttpResponseRedirect(reverse('login'))
@@ -167,7 +204,7 @@ def security_question(request): #get the answer of user for security check
 
 def terms (request):
     return render(request, 'terms_and_conditions.html')
-    
+
 def process_security(request, prof_id): #process of validating the security question
     if request.method   == "POST":
         answer  = request.POST.get("security_answer")
@@ -212,7 +249,7 @@ def about_us(request):
             'Roadcast: ' + mysubject , #subject
             'A user named ' + myname + ' with an email of ' + myemail + ' has send a message of:  ' + mymessage, #message
             myemail, #from email
-            ['danenapigkit@gmail.com'], # to email change to naviliansquads@gmail.com pagsesend na 
+            ['naviliansquads@gmail.com'], # to email change to naviliansquads@gmail.com pagsesend na
         )
 
         context = {
@@ -221,13 +258,13 @@ def about_us(request):
         messages.success(request, ("We've received your email and will respond shortly."))
         return HttpResponseRedirect('/aboutus#contactus')
     else:
-        return render (request, 'about_us.html') 
+        return render (request, 'about_us.html')
 
 def contact_us(request):
-    return render (request, 'contact_us.html') 
+    return render (request, 'contact_us.html')
 
 def contact_no(request):
-    return render (request, 'contact_no.html') 
+    return render (request, 'contact_no.html')
 
 def success(request):
     return render(request, 'submit_success.html')
@@ -243,8 +280,8 @@ def sign_up (request): #maybago
         'city':city,
     }
     return render (request, 'sign_up.html', a)
-    
-def duplicate_gen (request): #Jew 
+
+def duplicate_gen (request): #Jew
     region      = refregion.objects.all()
     province    = refprovince.objects.all()
     city        = refcitymun.objects.all()
@@ -281,9 +318,9 @@ def duplicate_gen (request): #Jew
         gen_qa_answer   = request.POST["gen_qa_answer"] .title()
 
         gen_profile     = 'Public/default.jpg'
- 
 
-        #save image to database 
+
+        #save image to database
         if request.FILES.get("gen_upload_id"):
             gen_upload_id   = request.FILES.get('gen_upload_id')
         else:
@@ -291,28 +328,28 @@ def duplicate_gen (request): #Jew
 
         if tbl_genpub_users.objects.filter(gen_username = gen_username):
             messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
-            return HttpResponseRedirect('signup') 
+            return HttpResponseRedirect('signup')
 
         if Tbl_add_members.objects.filter(Members_Email=gen_username):
             messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
             return HttpResponseRedirect('signup')
 
-        #Recaptcha validation
-        recaptcha_response = request.POST.get('g-recaptcha-response')
-        url = 'https://www.google.com/recaptcha/api/siteverify'
-        values = {
-            'secret': "6LezEbYcAAAAAPs9xoE2PnJsb18ljq1oi1aWZ0Gp",
-            'response': recaptcha_response
-        }
-        data = urllib.parse.urlencode(values).encode()
-        req =  urllib.request.Request(url, data=data)
-        response = urllib.request.urlopen(req)
-        result = json.loads(response.read().decode())
+        # #Recaptcha validation
+        # recaptcha_response = request.POST.get('g-recaptcha-response')
+        # url = 'https://www.google.com/recaptcha/api/siteverify'
+        # values = {
+        #     'secret': "6LezEbYcAAAAAPs9xoE2PnJsb18ljq1oi1aWZ0Gp",
+        #     'response': recaptcha_response
+        # }
+        # data = urllib.parse.urlencode(values).encode()
+        # req =  urllib.request.Request(url, data=data)
+        # response = urllib.request.urlopen(req)
+        # result = json.loads(response.read().decode())
 
-        if result['success'] == False:
-            messages.error(request, ('Oops! Invalid reCAPTCHA. Please try again.'))
-            return HttpResponseRedirect('signup')
-            
+        # if result['success'] == False:
+        #     messages.error(request, ('Oops! Invalid reCAPTCHA. Please try again.'))
+        #     return HttpResponseRedirect('signup')
+
         submit = tbl_genpub_users.objects.create(gen_surname = gen_surname,gen_fname = gen_fname, gen_sex = gen_sex, gen_bday=gen_bday, gen_region = gen_region, gen_province = gen_province, gen_city = gen_city,
         gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id, gen_profile = gen_profile, gen_qa = gen_qa, gen_qa_answer=gen_qa_answer )#,gen_upload_id=gen_upload_id
         submit.save()
@@ -371,42 +408,119 @@ def is_not_valid(param):
 
 #Jew - Sign up Validation / makikita na dito yung details
 def notif_sign_up_validation (request, signup_id):
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
+
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=signup_id) #kukunin id ng mga nag signup
-    unread_sign_up_validation.Read_Status = "Yes" 
+    unread_sign_up_validation.Read_Status = "Yes"
     unread_sign_up_validation.save()
-    
+
     #for gen pub reports inbox
     sign_up_validation = tbl_genpub_users.objects.order_by('-id')
     unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
 
     data = {
+        'unread_notif_count': unread_notif_count,
         'detail': unread_sign_up_validation,
         'unread_notif_count_signup': unread_notif_count_signup,
         'sign_up_validation':sign_up_validation,
-        "all": authorized, 
+        "all": authorized,
         "pub": pub
     }
     return render (request, 'notif_sign_up_validation.html', data)
 
-#Jew ditos
+#Jew 
 def genpub_verified(request, pk=None):
     if pk !=None:
         genpub = tbl_genpub_users.objects.get(id=pk)
         genpub.is_verified = True
         genpub.save()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
+
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
     sign_up_validation = tbl_genpub_users.objects.order_by('-id')
 
     data = {
+        'unread_notif_count': unread_notif_count,
         'detail': unread_sign_up_validation,
         'sign_up_validation':sign_up_validation,
-        "all": authorized, 
+        "all": authorized,
         "pub": pub,
     }
     messages.success(request, "is verified")
+
+ 
+    from_ = '' #roadcast main email in settings.py
+    to_ = [unread_sign_up_validation.gen_username]
+    reporter_fname = unread_sign_up_validation.gen_fname
+    reporter_lname = unread_sign_up_validation.gen_surname
+    reporter_email = unread_sign_up_validation.gen_username
+
+    send_mail (
+        'Roadcast: Account Verified',
+        render_to_string('new_account_verified_alert.html',{
+        'reporter_fname': reporter_fname,
+        'reporter_lname': reporter_lname,
+        'reporter_email': reporter_email
+        }),
+        from_, to_,)
     return render (request, 'notif_sign_up_validation.html', data)
 
-#Jew 
+#Jew
 def genpub_rejected(request,pk):
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
 
@@ -416,14 +530,57 @@ def genpub_rejected(request,pk):
         genpub.save()
         messages.error(request, " is rejected")
 
-        
+        from_ = '' #roadcast main email in settings.py
+        to_ = [unread_sign_up_validation.gen_username]
+        reporter_fname = unread_sign_up_validation.gen_fname
+        reporter_lname = unread_sign_up_validation.gen_surname
+        reporter_email = unread_sign_up_validation.gen_username
+
+        send_mail (
+            'Roadcast: Verification Unsuccessful',
+            render_to_string('new_account_unverified.html',{
+            'reporter_fname': reporter_fname,
+            'reporter_lname': reporter_lname,
+            'reporter_email': reporter_email
+            }),
+            from_, to_,)
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
+
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
     sign_up_validation = tbl_genpub_users.objects.order_by('-id')
 
     data = {
+        'unread_notif_count': unread_notif_count,
         'detail': unread_sign_up_validation,
         'sign_up_validation':sign_up_validation,
-        "all": authorized, 
+        "all": authorized,
         "pub": pub,
     }
     return render (request, 'notif_sign_up_validation.html', data)
@@ -434,17 +591,17 @@ def daterange(start_date, end_date):
 
 def extract_lat_lng(address_postal):
     #FOR GOOGLE MAPS
-    
+
     API_KEY='AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI'
     endpoint=f'https://maps.googleapis.com/maps/api/geocode/json?'
-                    
+
     params={
         'key':API_KEY,
         'address':address_postal
     }
     urlparams= urlencode(params)
     url=f"{endpoint}{urlparams}"
-        
+
     r= requests.get(url)
     if r.status_code not in range(200,299):
         return {}
@@ -453,7 +610,7 @@ def extract_lat_lng(address_postal):
         latlng= r.json()['results'][0]['geometry']['location']
     except:
         pass
-    return latlng.get('lat'),latlng.get('lng')      
+    return latlng.get('lat'),latlng.get('lng')
     #END FOR GOOGLE MAPS
 
 
@@ -470,7 +627,7 @@ def DashboardView (request):
             unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
 
     except: pass
-    
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -503,10 +660,10 @@ def DashboardView (request):
     #END OF FOR CHARTS FORECASTING
 
     # FOR FORECASTING
-    # today = date.today() 
+    # today = date.today()
 
     earliest_day= Tbl_pasig_incidents.objects.exclude(Q(Date__isnull=True)).order_by("Date")[0].Date
-    
+
     a_week= date(2019,1,1)
     test=date.today() + timedelta(7)
 
@@ -539,7 +696,7 @@ def DashboardView (request):
 
     all_total = Tbl_pasig_incidents.objects.count()
 
-    
+
     yesterday = today - timedelta(days=1)
     year, week_num, day_of_week =  date.today().isocalendar()
 
@@ -558,7 +715,7 @@ def DashboardView (request):
         "yesterday_total":yesterday_total,
         "this_day": this_day,
         "this_year": today.year,
-        
+
         "all": authorized,
         "pub": pub,
         'unread_notif_count': unread_notif_count,
@@ -566,7 +723,7 @@ def DashboardView (request):
         'datelist':reversed_datelist,
         'markers_json':markers,
         "reversed_datelist_values":reversed_datelist_values,
-        "reversed_datelist_values_forecast":reversed_datelist_values_forecast     
+        "reversed_datelist_values_forecast":reversed_datelist_values_forecast
     }
     return render (request, 'dashboard.html', data)
 
@@ -575,7 +732,7 @@ def get_data(request, *args, **kwargs):
     d1_brgys = []
     d1_brgys_count = []
     d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
-    
+
     for brgy in d1_brgys_list:
         d1_brgys.append(brgy)
         x = Tbl_pasig_incidents.objects.filter(
@@ -583,14 +740,14 @@ def get_data(request, *args, **kwargs):
                                     Date__year__lte=today.year,
                                     # Date__month__gte=today.month,
                                     # Date__month__lte=today.month,
-                                    Barangay_id__Barangay = brgy).count()        
+                                    Barangay_id__Barangay = brgy).count()
         d1_brgys_count.append(x)
 
     #District 2
     d2_brgys = []
     d2_brgys_count = []
     d2_brgys_list = Tbl_barangay.objects.filter(District_id = '2').values_list('Barangay', flat=True)
-    
+
     for brgy in d2_brgys_list:
         d2_brgys.append(brgy)
         x = Tbl_pasig_incidents.objects.filter(
@@ -598,7 +755,7 @@ def get_data(request, *args, **kwargs):
                                     Date__year__lte=today.year,
                                     # Date__month__gte=today.month,
                                     # Date__month__lte=today.month,
-                                    Barangay_id__Barangay = brgy).count()                          
+                                    Barangay_id__Barangay = brgy).count()
         d2_brgys_count.append(x)
 
 
@@ -622,10 +779,10 @@ def get_data(request, *args, **kwargs):
                                     Date__year__lte=today.year,
                                     # Date__month__gte=today.month,
                                     # Date__month__lte=today.month,
-                                    CrimeOffense = off).exclude(CrimeOffense__isnull=True).count()   
+                                    CrimeOffense = off).exclude(CrimeOffense__isnull=True).count()
         offense_count.append(x)
 
-    #Sex 
+    #Sex
     suspect_sex = []
     victim_sex = []
 
@@ -650,7 +807,7 @@ def get_data(request, *args, **kwargs):
             x = sex_combined.count(sex)
             sex_count.append((x/sex_count_total)*100)
 
-    
+
     #Time Plot
     # time(hour = 0, minute = 0, second = 0)
     am12 = datetime.time(0, 0, 0)
@@ -666,7 +823,7 @@ def get_data(request, *args, **kwargs):
     pm8 = datetime.time(20, 0, 0)
     pm10 = datetime.time(22, 0, 0)
 
-    
+
     am12_am2 = Tbl_pasig_incidents.objects.filter(Time__gte = am12, Time__lt = am2, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     am2_am4 = Tbl_pasig_incidents.objects.filter(Time__gte = am2, Time__lt = am4, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     am4_am6 = Tbl_pasig_incidents.objects.filter(Time__gte = am4, Time__lt = am6, Date__year__gte = today.year, Date__year__lte = today.year,).count()
@@ -681,7 +838,7 @@ def get_data(request, *args, **kwargs):
 
     time_count = [am12_am2, am2_am4,am4_am6, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
 
-    #SEVERITY 
+    #SEVERITY
     suspect_severity = []
     victim_severity = []
 
@@ -698,12 +855,12 @@ def get_data(request, *args, **kwargs):
         severity_count.append(x)
         severity_total += x
 
-    #Day of the week 
+    #Day of the week
     day_labels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     day_count = []
-    
+
     for day in day_labels:
-        x = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year, Day = day).count()                          
+        x = Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year, Day = day).count()
         day_count.append(x)
 
 
@@ -724,7 +881,7 @@ def get_data(request, *args, **kwargs):
 
             "severity_labels":distinct_severity,
             "severity_count":severity_count,
-            
+
             "day_labels": day_labels,
             "day_count": day_count,
     }
@@ -748,7 +905,7 @@ def unarchiving_solved_cases (request, incident_id):
         messages.success(request, ("Incident Successfully Unarchived!"))
         return HttpResponseRedirect('/incidents/view')
     except Tbl_pasig_incidents.DoesNotExist:
-        raise Http404("Incident does not exist")  
+        raise Http404("Incident does not exist")
 
 def view_archive_incidents (request):
     #notif count
@@ -784,21 +941,21 @@ def view_archive_incidents (request):
         authorized = Tbl_add_members.objects.all()
         pub        = tbl_genpub_users.objects.all()
 
-        incident_type = request.GET.get('coltype') 
+        incident_type = request.GET.get('coltype')
         barang= request.GET.get('barangay')
         from_date =  request.GET.get('from_date')
         to_date =   request.GET.get('to_date')
         unread_count = Tbl_pasig_incidents.objects.filter(Q(read_status = "No") & Q(Case_Status = "Solved") &~Q(archive= "No")).exclude(Q(archive__isnull=True) | Q(archive__exact='')).count()
 
-    
+
         if is_valid(from_date) & is_valid(to_date):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
-                
+
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count, "unread_notif_count":unread_notif_count})
-   
+
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Barangay_id_id = "'+barang+'" order by id DESC')
@@ -806,16 +963,16 @@ def view_archive_incidents (request):
             elif barang=="0":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" order by id DESC')
                 return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
-            
+
             else:
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
                 return render(request, 'archive_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, "unread_notif_count":unread_notif_count})
         else:
             incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "Yes" and Case_Status = "Solved" order by id DESC')
-            
+
             paginator = Paginator(incident_model, 10)
             page_number = request.GET.get('page')
-            incident_model = paginator.get_page(page_number) 
+            incident_model = paginator.get_page(page_number)
 
             context = {
                 "all": authorized,
@@ -825,14 +982,14 @@ def view_archive_incidents (request):
                 "unread_count": unread_count,
                 "unread_notif_count":unread_notif_count
             }
-        
+
             return render (request, 'archive_incidents.html',context)
 
 def view_incidents (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub            = tbl_genpub_users.objects.all()
-    
+
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
     try:
@@ -841,7 +998,7 @@ def view_incidents (request):
             unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
 
     except: pass
-    
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -863,27 +1020,27 @@ def view_incidents (request):
         pass
 
     incident_model=Tbl_pasig_incidents.objects.raw('select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" order by id DESC')
-            
+
     paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
     page_number = request.GET.get('page') #ganto talaga
     incident_model = paginator.get_page(page_number) #ito ren, except sa var name
 
     unread_count = Tbl_pasig_incidents.objects.filter(Q(read_status = "No") & Q(Case_Status = "Solved") &~Q(archive= "Yes")).count()
-    
+
     if request.method=="GET":
-        incident_type = request.GET.get('coltype') 
+        incident_type = request.GET.get('coltype')
         barang= request.GET.get('barangay')
         from_date =  request.GET.get('from_date')
         to_date =   request.GET.get('to_date')
-        
+
         if is_valid(from_date) & is_valid(to_date):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
-                
+
         elif is_valid(from_date) & is_valid(to_date) & is_not_valid(incident_type) & is_not_valid(barang):
             incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'"AND Date BETWEEN "'+from_date+'" AND "'+to_date+'" order by id DESC')
             return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub, "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
-   
+
         if bool(incident_type) & bool(barang) :
             if incident_type=="Collision":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Barangay_id_id = "'+barang+'" order by id DESC')
@@ -891,12 +1048,12 @@ def view_incidents (request):
             elif barang=="0":
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" order by id DESC')
                 return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
-            
+
             else:
                 incident_model_search=Tbl_pasig_incidents.objects.raw('Select * from roadcast_tbl_pasig_incidents WHERE archive = "No" and Case_Status = "Solved" and Incident_Type = "'+incident_type+'" AND Barangay_id_id = "'+barang+'" order by id DESC')
                 return render(request, 'encoder_view_incidents.html', {"pasig_incident_list":incident_model_search, "all": authorized, "pub": pub,  "unread_count": unread_count, 'unread_notif_count': unread_notif_count,})
         else:
-            
+
 
             context = {
                 'unread_notif_count': unread_notif_count,
@@ -905,7 +1062,7 @@ def view_incidents (request):
                 "pasig_incident_list":incident_model,
                 "unread_count": unread_count
             }
-           
+
             return render (request, 'encoder_view_incidents.html',context)
 
     else:
@@ -939,7 +1096,7 @@ def view_incidents (request):
                 "unread_count": unread_count,
                 'unread_notif_count': unread_notif_count,
             }
-        
+
             return render (request, 'encoder_view_incidents.html',context)
 #new
 def create_incident_report (request, gen_pub_report_id):
@@ -947,7 +1104,7 @@ def create_incident_report (request, gen_pub_report_id):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
-    
+
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
     try:
@@ -970,7 +1127,7 @@ def create_incident_report (request, gen_pub_report_id):
     except:
         pass
 
-   
+
     member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
     investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     brgy_list = Tbl_barangay.objects.all()
@@ -983,18 +1140,18 @@ def create_incident_report (request, gen_pub_report_id):
         "pub": pub,
         'unread_notif_count': unread_notif_count,
 
-        'brgy_list': brgy_list, 
+        'brgy_list': brgy_list,
         'investigators_list': investigators_list,
         'pasig_incident_detail':pasig_incident_detail
     }
     return render(request, 'encoder_create_incident_report.html', context)
 
-def processCreateIncidentReport(request, gen_pub_report_id): 
+def processCreateIncidentReport(request, gen_pub_report_id):
     city = "Pasig"
     unit_station = "PNP-Pasig"
     crime_offense = request.POST.get('display_offense')
-    week = request.POST.get('week') 
-    date_committed = request.POST.get('DateCommitted') 
+    week = request.POST.get('week')
+    date_committed = request.POST.get('DateCommitted')
     current_time = request.POST.get('currentTime')
     day = request.POST.get('day_of_the_week')
     col_type = request.POST.get('collision_type')
@@ -1009,7 +1166,7 @@ def processCreateIncidentReport(request, gen_pub_report_id):
     corner = request.POST.get('corner')
     latitude = request.POST.get('lat')
     longitude = request.POST.get('long')
-   
+
     surface_cond = request.POST.get('surface_condition')
     surface_type = request.POST.get('surface_type')
     road_repair = request.POST.get('road-repair')
@@ -1049,7 +1206,7 @@ def processCreateIncidentReport(request, gen_pub_report_id):
         vic_age = request.POST.get('vic_age')
     else:
         vic_age = None
-        
+
     vic_sex = request.POST.get('v_sex')
     vic_civil_status = request.POST.get('vic_civil_status')
     vic_add = request.POST.get('vic_add')
@@ -1064,78 +1221,78 @@ def processCreateIncidentReport(request, gen_pub_report_id):
     else:
         vic_drl_exp = None
 
-   
+
     narrative = request.POST.get('narrative')
     added_by = "Servidad"
     inv_name = request.POST.get('inv_name')
-    
+
     incident_record = Tbl_pasig_incidents.objects.create(
-                    City        = city, 
-                    UnitStation = unit_station,               
-                    CrimeOffense= crime_offense, 
-                    Week        = week,          
-                    Date        = date_committed,               
-                    Time        = current_time, 
-                    Day         = day, 
-                    Incident_Type   = col_type, 
-                    Number_of_Persons_Involved  = no_of_person_involved, 
-                    Light       = light, 
-                    Weather     = weather, 
-                    Case_Status = case_status, 
-                    District_id = district, 
-                    Barangay_id_id = barangay, 
+                    City        = city,
+                    UnitStation = unit_station,
+                    CrimeOffense= crime_offense,
+                    Week        = week,
+                    Date        = date_committed,
+                    Time        = current_time,
+                    Day         = day,
+                    Incident_Type   = col_type,
+                    Number_of_Persons_Involved  = no_of_person_involved,
+                    Light       = light,
+                    Weather     = weather,
+                    Case_Status = case_status,
+                    District_id = district,
+                    Barangay_id_id = barangay,
                     Address        = address,
                     Along          = along,
                     Corner         = corner,
                     Latitude       = latitude,
                     Longitude     = longitude,
 
-                    Surface_Condition   = surface_cond, 
-                    Surface_Type        = surface_type, 
-                    Road_Repair         = road_repair, 
+                    Surface_Condition   = surface_cond,
+                    Surface_Type        = surface_type,
+                    Road_Repair         = road_repair,
                     Hit_and_Run         = hit_and_run,
-                    Road_Character      = road_char, 
-    
+                    Road_Character      = road_char,
+
                     Suspect_Type        = sus_type,
-                    Suspect_Fname       = sus_fname, 
-                    Suspect_Lname       = sus_lname, 
+                    Suspect_Fname       = sus_fname,
+                    Suspect_Lname       = sus_lname,
                     Suspect_Severity    = sus_severity,
-                    Suspect_Age         = sus_age, 
-                    Suspect_Sex         = sus_sex, 
-                    Suspect_Civil_Status = sus_civil_status, 
-                    Suspect_Address     = sus_add,  
-                    Suspect_Vehicle     = sus_vehicle, 
-                    Suspect_Vehicle_Body_Type   = sus_vehicle_body_type, 
+                    Suspect_Age         = sus_age,
+                    Suspect_Sex         = sus_sex,
+                    Suspect_Civil_Status = sus_civil_status,
+                    Suspect_Address     = sus_add,
+                    Suspect_Vehicle     = sus_vehicle,
+                    Suspect_Vehicle_Body_Type   = sus_vehicle_body_type,
                     Suspect_Plate_No    = sus_plate_no,
-                    Suspect_Reg_Owner   = sus_reg_owner, 
-                    Suspect_Drl_No      = sus_drl, 
-                    Suspect_Drl_Exp     = sus_drl_exp, 
+                    Suspect_Reg_Owner   = sus_reg_owner,
+                    Suspect_Drl_No      = sus_drl,
+                    Suspect_Drl_Exp     = sus_drl_exp,
 
                     Victim_Type         = vic_type,
-                    Victim_Fname        = vic_fname, 
-                    Victim_Lname        = vic_lname, 
+                    Victim_Fname        = vic_fname,
+                    Victim_Lname        = vic_lname,
                     Victim_Severity     = vic_severity,
-                    Victim_Age          = vic_age, 
-                    Victim_Sex          = vic_sex, 
-                    Victim_Civil_Status = vic_civil_status, 
-                    Victim_Address      = vic_add, 
-                    Victim_Vehicle      = vic_vehicle, 
-                    Victim_Vehicle_Body_Type = vic_vehicle_body_type, 
+                    Victim_Age          = vic_age,
+                    Victim_Sex          = vic_sex,
+                    Victim_Civil_Status = vic_civil_status,
+                    Victim_Address      = vic_add,
+                    Victim_Vehicle      = vic_vehicle,
+                    Victim_Vehicle_Body_Type = vic_vehicle_body_type,
                     Victim_Plate_No          = vic_plate_no,
-                    Victim_Reg_Owner         = vic_reg_owner, 
-                    Victim_Drl_No            = vic_drl, 
-                    Victim_Drl_Exp           = vic_drl_exp, 
+                    Victim_Reg_Owner         = vic_reg_owner,
+                    Victim_Drl_No            = vic_drl,
+                    Victim_Drl_Exp           = vic_drl_exp,
 
-                    Narrative    = narrative, 
+                    Narrative    = narrative,
                     Investigator_id = inv_name,
                     added_by     = added_by,
                     archive      = "No" )
-                    
+
     incident_record.save()
     messages.success(request, ("Incident report successfully created!"))
 
     created_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
-    created_report.Report_Created = 'Yes' #dito
+    created_report.Report_Created = 'Yes' 
     created_report.save()
     return HttpResponseRedirect('/incidents/view')
 
@@ -1144,9 +1301,16 @@ def add_incident (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
-    
+
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -1174,7 +1338,7 @@ def add_incident (request):
         brgy_list = Tbl_barangay.objects.all()
 
         context = {
-            'brgy_list': brgy_list, 
+            'brgy_list': brgy_list,
             'investigators_list': investigators_list,
             "all": authorized,
             "pub": pub,
@@ -1182,13 +1346,13 @@ def add_incident (request):
         }
         return render(request, 'add_incident.html', context)
 
-        
+
 
 def processAddIncident(request): #Add using forms
     city = "Pasig"
     unit_station = "PNP-Pasig"
     crime_offense = request.POST.get('display_offense')
-    week = request.POST.get('week') 
+    week = request.POST.get('week')
     date_committed = request.POST.get('DateCommitted') #name attribute of textbox
     current_time = request.POST.get('currentTime')
     day = request.POST.get('day_of_the_week')
@@ -1204,7 +1368,7 @@ def processAddIncident(request): #Add using forms
     corner = request.POST.get('corner')
     latitude = request.POST.get('lat')
     longitude = request.POST.get('long')
-   
+
     surface_cond = request.POST.get('surface_condition')
     surface_type = request.POST.get('surface_type')
     road_repair = request.POST.get('road-repair')
@@ -1244,7 +1408,7 @@ def processAddIncident(request): #Add using forms
         vic_age = request.POST.get('vic_age')
     else:
         vic_age = None
-        
+
     vic_sex = request.POST.get('v_sex')
     vic_civil_status = request.POST.get('vic_civil_status')
     vic_add = request.POST.get('vic_add')
@@ -1259,80 +1423,186 @@ def processAddIncident(request): #Add using forms
     else:
         vic_drl_exp = None
 
-   
+
     narrative = request.POST.get('narrative')
     added_by = "Servidad"
     inv_name = request.POST.get('inv_name')
-    
+
     incident_record = Tbl_pasig_incidents.objects.create(
-                    City        = city, 
-                    UnitStation = unit_station,               
-                    CrimeOffense= crime_offense, 
-                    Week        = week,          
-                    Date        = date_committed,               
-                    Time        = current_time, 
-                    Day         = day, 
-                    Incident_Type   = col_type, 
-                    Number_of_Persons_Involved  = no_of_person_involved, 
-                    Light       = light, 
-                    Weather     = weather, 
-                    Case_Status = case_status, 
-                    District_id = district, 
-                    Barangay_id_id = barangay, 
+                    City        = city,
+                    UnitStation = unit_station,
+                    CrimeOffense= crime_offense,
+                    Week        = week,
+                    Date        = date_committed,
+                    Time        = current_time,
+                    Day         = day,
+                    Incident_Type   = col_type,
+                    Number_of_Persons_Involved  = no_of_person_involved,
+                    Light       = light,
+                    Weather     = weather,
+                    Case_Status = case_status,
+                    District_id = district,
+                    Barangay_id_id = barangay,
                     Address        = address,
                     Along          = along,
                     Corner         = corner,
                     Latitude       = latitude,
                     Longitude     = longitude,
 
-                    Surface_Condition   = surface_cond, 
-                    Surface_Type        = surface_type, 
-                    Road_Repair         = road_repair, 
+                    Surface_Condition   = surface_cond,
+                    Surface_Type        = surface_type,
+                    Road_Repair         = road_repair,
                     Hit_and_Run         = hit_and_run,
-                    Road_Character      = road_char, 
-    
+                    Road_Character      = road_char,
+
                     Suspect_Type        = sus_type,
-                    Suspect_Fname       = sus_fname, 
-                    Suspect_Lname       = sus_lname, 
+                    Suspect_Fname       = sus_fname,
+                    Suspect_Lname       = sus_lname,
                     Suspect_Severity    = sus_severity,
-                    Suspect_Age         = sus_age, 
-                    Suspect_Sex         = sus_sex, 
-                    Suspect_Civil_Status = sus_civil_status, 
-                    Suspect_Address     = sus_add,  
-                    Suspect_Vehicle     = sus_vehicle, 
-                    Suspect_Vehicle_Body_Type   = sus_vehicle_body_type, 
+                    Suspect_Age         = sus_age,
+                    Suspect_Sex         = sus_sex,
+                    Suspect_Civil_Status = sus_civil_status,
+                    Suspect_Address     = sus_add,
+                    Suspect_Vehicle     = sus_vehicle,
+                    Suspect_Vehicle_Body_Type   = sus_vehicle_body_type,
                     Suspect_Plate_No    = sus_plate_no,
-                    Suspect_Reg_Owner   = sus_reg_owner, 
-                    Suspect_Drl_No      = sus_drl, 
-                    Suspect_Drl_Exp     = sus_drl_exp, 
+                    Suspect_Reg_Owner   = sus_reg_owner,
+                    Suspect_Drl_No      = sus_drl,
+                    Suspect_Drl_Exp     = sus_drl_exp,
 
                     Victim_Type         = vic_type,
-                    Victim_Fname        = vic_fname, 
-                    Victim_Lname        = vic_lname, 
+                    Victim_Fname        = vic_fname,
+                    Victim_Lname        = vic_lname,
                     Victim_Severity     = vic_severity,
-                    Victim_Age          = vic_age, 
-                    Victim_Sex          = vic_sex, 
-                    Victim_Civil_Status = vic_civil_status, 
-                    Victim_Address      = vic_add, 
-                    Victim_Vehicle      = vic_vehicle, 
-                    Victim_Vehicle_Body_Type = vic_vehicle_body_type, 
+                    Victim_Age          = vic_age,
+                    Victim_Sex          = vic_sex,
+                    Victim_Civil_Status = vic_civil_status,
+                    Victim_Address      = vic_add,
+                    Victim_Vehicle      = vic_vehicle,
+                    Victim_Vehicle_Body_Type = vic_vehicle_body_type,
                     Victim_Plate_No          = vic_plate_no,
-                    Victim_Reg_Owner         = vic_reg_owner, 
-                    Victim_Drl_No            = vic_drl, 
-                    Victim_Drl_Exp           = vic_drl_exp, 
+                    Victim_Reg_Owner         = vic_reg_owner,
+                    Victim_Drl_No            = vic_drl,
+                    Victim_Drl_Exp           = vic_drl_exp,
 
-                    Narrative    = narrative, 
+                    Narrative    = narrative,
                     Investigator_id = inv_name,
                     added_by     = added_by,
                     archive      = "No" )
-                    
+
     incident_record.save()
     messages.success(request, ("Incident details successfully added!"))
+
+    #alerts for new incidents
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+    brgy_list  = Tbl_barangay.objects.all()
+
+
+    for p in pub:
+        if (p.nf_new_incident == True):
+            for x in brgy_list:
+                if(x.id == int(barangay)):
+                    barangay_ = x.Barangay
+
+                    loc = address
+                    time = current_time
+                    incident_date = date_committed
+                    from_ = '' #roadcast main email in settings.py
+                    to_ = [p.gen_username]
+
+                    send_mail (
+                        'Roadcast: New Traffic Incident in Brgy. ' + barangay_,
+                        render_to_string('new_incidents_alert.html',{
+                        'barangay' : barangay_,
+                        'loc':loc,
+                        "time" : time,
+                        "incident_date" : incident_date,
+                        
+                        }),
+                        from_, to_,)
+        else:
+            for x in brgy_list:
+                if(x.id == int(barangay)):
+                    if(x.Barangay == p.nf_brgy):
+                        barangay_ = x.Barangay
+
+                        loc = address
+                        time = current_time
+                        incident_date = date_committed
+                        from_ = '' #roadcast main email in settings.py
+                        to_ = [p.gen_username]
+
+                        send_mail (
+                            'Roadcast: New Traffic Incident in Brgy. ' + barangay_,
+                            render_to_string('new_incidents_alert.html',{
+                            'barangay' : barangay_,
+                            'loc':loc,
+                            "time" : time,
+                            "incident_date" : incident_date,
+                            
+                            }),
+                            from_, to_,)
+                    else: pass
+
+
+    for a in authorized:
+        if (a.nf_new_incident == True):
+            for x in brgy_list:
+                if(x.id == int(barangay)):
+                    barangay_ = x.Barangay
+
+                    loc = address
+                    time = current_time
+                    incident_date = date_committed
+                    from_ = '' #roadcast main email in settings.py
+                    to_ = [a.Members_Email]
+
+                    send_mail (
+                        'Roadcast: New Traffic Incident in Brgy. ' + barangay_,
+                        render_to_string('new_incidents_alert.html',{
+                        'barangay' : barangay_,
+                        'loc':loc,
+                        "time" : time,
+                        "incident_date" : incident_date,
+                        
+                        }),
+                        from_, to_,)
+        else:
+            for x in brgy_list:
+                if(x.id == int(barangay)):
+                    if(x.Barangay == a.nf_brgy):
+                        barangay_ = x.Barangay
+
+                        loc = address
+                        time = current_time
+                        incident_date = date_committed
+                        from_ = '' #roadcast main email in settings.py
+                        to_ = [a.Members_Email]
+
+                        send_mail (
+                            'Roadcast: New Traffic Incident in Brgy. ' + barangay_,
+                            render_to_string('new_incidents_alert.html',{
+                            'barangay' : barangay_,
+                            'loc':loc,
+                            "time" : time,
+                            "incident_date" : incident_date,
+                            
+                            }),
+                            from_, to_,)
+                    else: pass
     return HttpResponseRedirect('/incidents/view')
 
 def upload_csv (request):
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -1361,14 +1631,14 @@ def upload_csv (request):
 
         }
         return render(request, 'upload_csv.html', context)
-    
+
     #process
     csv_file = request.FILES['file']
 
     # let's check if it is a csv file
     if not csv_file.name.endswith('.csv'):
         messages.error(request, 'Error: This is not a CSV file.')
-        
+
     brgy_list = Tbl_barangay.objects.all()
     data_set = csv_file.read().decode('UTF-8')
 
@@ -1391,7 +1661,7 @@ def upload_csv (request):
 
         if column[37]:
             Suspect_Drl_Exp = column[37][6:] + "-" + column[37][3:5] + "-" + column[37][:2]
-        else: 
+        else:
             Suspect_Drl_Exp = None
 
         if (column[42]):
@@ -1401,17 +1671,17 @@ def upload_csv (request):
 
         if column[51]:
             Victim_Drl_Exp = column[51][6:] + "-" + column[51][3:5] + "-" + column[51][:2]
-        else: 
+        else:
             Victim_Drl_Exp = None
 
         if column[53]:
             investigator = column[53]
-        else: 
+        else:
             investigator = None
 
         if column[54]:
             date_added = column[54][6:] + "-" + column[54][3:5] + "-" + column[54][:2]
-        else: 
+        else:
             date_added = None
 
         try:
@@ -1423,7 +1693,7 @@ def upload_csv (request):
 
 
         _, created = Tbl_pasig_incidents.objects.get_or_create(
-            
+
             City=column[0],
             UnitStation=column[1],
             CrimeOffense=column[2][1:-1],
@@ -1436,7 +1706,7 @@ def upload_csv (request):
             Light=column[9],
             Weather=column[10],
             Case_Status=column[11],
-            
+
             District_id=column[12],
             Barangay_id_id=Barangay,
             Address=column[14][1:-1],
@@ -1446,43 +1716,43 @@ def upload_csv (request):
             Longitude=column[18],
 
             Surface_Condition=column[19],
-            Surface_Type=column[20], 
-            Road_Repair = column[21], 
-            Hit_and_Run = column[22], 
-            Road_Character=column[23], 
-    
+            Surface_Type=column[20],
+            Road_Repair = column[21],
+            Hit_and_Run = column[22],
+            Road_Character=column[23],
+
             Suspect_Type=column[24],
-            Suspect_Fname=column[25], 
-            Suspect_Lname=column[26], 
+            Suspect_Fname=column[25],
+            Suspect_Lname=column[26],
             Suspect_Severity=column[27],
             Suspect_Age=Suspect_Age,
-            Suspect_Sex=column[29], 
-            Suspect_Civil_Status = column[30], 
-            Suspect_Address=column[31][1:-1],  
-            Suspect_Vehicle=column[32], 
-            Suspect_Vehicle_Body_Type=column[33], 
+            Suspect_Sex=column[29],
+            Suspect_Civil_Status = column[30],
+            Suspect_Address=column[31][1:-1],
+            Suspect_Vehicle=column[32],
+            Suspect_Vehicle_Body_Type=column[33],
             Suspect_Plate_No=column[34],
-            Suspect_Reg_Owner=column[35], 
-            Suspect_Drl_No=column[36], 
+            Suspect_Reg_Owner=column[35],
+            Suspect_Drl_No=column[36],
             Suspect_Drl_Exp=Suspect_Drl_Exp,
 
             Victim_Type=column[38],
-            Victim_Fname=column[39], 
-            Victim_Lname=column[40], 
+            Victim_Fname=column[39],
+            Victim_Lname=column[40],
             Victim_Severity=column[41],
-            Victim_Age=Victim_Age, 
-            Victim_Sex=column[43], 
-            Victim_Civil_Status = column[44], 
-            Victim_Address=column[45][1:-1], 
-            Victim_Vehicle=column[46], 
-            Victim_Vehicle_Body_Type=column[47], 
+            Victim_Age=Victim_Age,
+            Victim_Sex=column[43],
+            Victim_Civil_Status = column[44],
+            Victim_Address=column[45][1:-1],
+            Victim_Vehicle=column[46],
+            Victim_Vehicle_Body_Type=column[47],
             Victim_Plate_No=column[48],
-            Victim_Reg_Owner=column[49], 
-            Victim_Drl_No=column[50], 
-            Victim_Drl_Exp=Victim_Drl_Exp, 
+            Victim_Reg_Owner=column[49],
+            Victim_Drl_No=column[50],
+            Victim_Drl_Exp=Victim_Drl_Exp,
 
-            Narrative=column[52][1:-1], 
-            Investigator_id=investigator, 
+            Narrative=column[52][1:-1],
+            Investigator_id=investigator,
             date_added=date_added,
             added_by=added_by,
             archive = column[56],
@@ -1491,9 +1761,9 @@ def upload_csv (request):
         )
 
     brgy_list = Tbl_barangay.objects.all()
-    
+
     context = {
-        'brgy_list': brgy_list, 
+        'brgy_list': brgy_list,
         'success_message':"Successfully Added!",
         'url':'url',
         "all": authorized,
@@ -1508,7 +1778,7 @@ def processCSV (request):
         try:
             brgy_list = Tbl_barangay.objects.all()
             data_set = csv_file.read().decode('UTF-8')
-        
+
             # setup a stream which is when we loop through each line we are able to handle a data in a stream
             io_string = io.StringIO(data_set)
             next(io_string)
@@ -1528,7 +1798,7 @@ def processCSV (request):
 
                 if column[37]:
                     Victim_Drl_Exp = column[37][6:] + "-" + column[37][3:5] + "-" + column[37][:2],
-                else: 
+                else:
                     Victim_Drl_Exp = None
 
                 if (column[42]):
@@ -1538,16 +1808,16 @@ def processCSV (request):
 
                 if column[51]:
                     Victim_Drl_Exp = column[51][6:] + "-" + column[51][3:5] + "-" + column[51][:2],
-                else: 
+                else:
                     Victim_Drl_Exp = None
 
                 if column[54]:
                     date_added = column[54][6:] + "-" + column[54][3:5] + "-" + column[54][:2],
-                else: 
+                else:
                     date_added = None
 
                 _, created = Tbl_pasig_incidents.objects.get_or_create(
-                    
+
                     City=column[0],
                     UnitStation=column[1],
                     CrimeOffense=column[2],
@@ -1560,7 +1830,7 @@ def processCSV (request):
                     Light=column[9],
                     Weather=column[10],
                     Case_Status=column[11],
-                    
+
                     District_id=column[12],
                     Barangay_id_id=Barangay,
                     Address=column[14],
@@ -1570,43 +1840,43 @@ def processCSV (request):
                     Longitude=column[18],
 
                     Surface_Condition=column[19],
-                    Surface_Type=column[20], 
-                    Road_Repair = column[21], 
-                    Hit_and_Run = column[22], 
-                    Road_Character=column[23], 
-            
+                    Surface_Type=column[20],
+                    Road_Repair = column[21],
+                    Hit_and_Run = column[22],
+                    Road_Character=column[23],
+
                     Suspect_Type=column[24],
-                    Suspect_Fname=column[25], 
-                    Suspect_Lname=column[26], 
+                    Suspect_Fname=column[25],
+                    Suspect_Lname=column[26],
                     Suspect_Severity=column[27],
                     Suspect_Age=Suspect_Age,
-                    Suspect_Sex=column[29], 
-                    Suspect_Civil_Status = column[30], 
-                    Suspect_Address=column[31],  
-                    Suspect_Vehicle=column[32], 
-                    Suspect_Vehicle_Body_Type=column[33], 
+                    Suspect_Sex=column[29],
+                    Suspect_Civil_Status = column[30],
+                    Suspect_Address=column[31],
+                    Suspect_Vehicle=column[32],
+                    Suspect_Vehicle_Body_Type=column[33],
                     Suspect_Plate_No=column[34],
-                    Suspect_Reg_Owner=column[35], 
-                    Suspect_Drl_No=column[36], 
-                    Suspect_Drl_Exp=column[37], 
+                    Suspect_Reg_Owner=column[35],
+                    Suspect_Drl_No=column[36],
+                    Suspect_Drl_Exp=column[37],
 
                     Victim_Type=column[38],
-                    Victim_Fname=column[39], 
-                    Victim_Lname=column[40], 
+                    Victim_Fname=column[39],
+                    Victim_Lname=column[40],
                     Victim_Severity=column[41],
-                    Victim_Age=Victim_Age, 
-                    Victim_Sex=column[43], 
-                    Victim_Civil_Status = column[44], 
-                    Victim_Address=column[45], 
-                    Victim_Vehicle=column[46], 
-                    Victim_Vehicle_Body_Type=column[47], 
+                    Victim_Age=Victim_Age,
+                    Victim_Sex=column[43],
+                    Victim_Civil_Status = column[44],
+                    Victim_Address=column[45],
+                    Victim_Vehicle=column[46],
+                    Victim_Vehicle_Body_Type=column[47],
                     Victim_Plate_No=column[48],
-                    Victim_Reg_Owner=column[49], 
-                    Victim_Drl_No=column[50], 
-                    Victim_Drl_Exp=Victim_Drl_Exp, 
+                    Victim_Reg_Owner=column[49],
+                    Victim_Drl_No=column[50],
+                    Victim_Drl_Exp=Victim_Drl_Exp,
 
-                    Narrative=column[52], 
-                    Investigator_id=column[53], 
+                    Narrative=column[52],
+                    Investigator_id=column[53],
                     date_added=date_added,
                     added_by=column[55],
                     read_status = column[56]
@@ -1614,9 +1884,9 @@ def processCSV (request):
                 )
 
                 brgy_list = Tbl_barangay.objects.all()
-                
+
                 context = {
-                    'brgy_list': brgy_list, 
+                    'brgy_list': brgy_list,
                     'success_message':"Successfully Added!",
                     'url':'url',
                     "all": authorized,
@@ -1689,7 +1959,7 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
 
-    return render(request, 'encoder_view_incident_detail.html', 
+    return render(request, 'encoder_view_incident_detail.html',
         {'pasig_incident_detail': pasig_incident_detail,
          'all_incidents': all_incidents,
          'investigators_list': investigators_list,
@@ -1703,7 +1973,7 @@ def processEditIncident(request, incident_id):
     incident_detail =  Tbl_pasig_incidents.objects.get(id=incident_id)
 
     try:
-        crime_offense = request.POST.get('display_offense') 
+        crime_offense = request.POST.get('display_offense')
         date_committed = request.POST.get('DateCommitted') #name attribute of textbox
         incident_time = request.POST.get('incidentTime')
         day = request.POST.get('day_of_the_week')
@@ -1719,7 +1989,7 @@ def processEditIncident(request, incident_id):
         corner = request.POST.get('corner')
         latitude = request.POST.get('lat')
         longitude = request.POST.get('lon')
-   
+
         surface_cond = request.POST.get('surface_condition')
         surface_type = request.POST.get('surface_type')
         road_repair = request.POST.get('road-repair')
@@ -1763,11 +2033,11 @@ def processEditIncident(request, incident_id):
             vic_drl_exp = request.POST.get('sus_drl_exp')
         else:
             vic_drl_exp = None
-    
+
         narrative = request.POST.get('narrative')
         # added_by = "Encoder"
         inv_name = request.POST.get('inv_name')
-      
+
     except (KeyError, Tbl_pasig_incidents.DoesNotExist): #KeyError is partner nung get_object_or_404
         return render(request, 'encoder_view_incident_detail.html', {
             'detail':incident_detail,
@@ -1776,26 +2046,26 @@ def processEditIncident(request, incident_id):
         })
     else:
         incident = Tbl_pasig_incidents.objects.get(id=incident_id) #kukunin yung row sa database na kapareha ng incident_id
-        incident.CrimeOffense=crime_offense         
-        incident.Date=date_committed             
+        incident.CrimeOffense=crime_offense
+        incident.Date=date_committed
         incident.Time=incident_time
-        incident.Day = day 
+        incident.Day = day
         incident.Incident_Type=col_type
         # incident.Number_of_Persons_Involved=no_of_person_involve
-        # incident.Light=light 
-        incident.Weather=weather 
-        incident.Case_Status=case_status 
-        incident.District_id = district 
-        incident.Barangay_id_id = barangay 
-        incident.Address = address 
-        incident.Along_Avenue = along 
+        # incident.Light=light
+        incident.Weather=weather
+        incident.Case_Status=case_status
+        incident.District_id = district
+        incident.Barangay_id_id = barangay
+        incident.Address = address
+        incident.Along_Avenue = along
         incident.Corner_Avenue = corner
         incident.Latitude       = latitude
         incident.Longitude     = longitude
 
-        incident.Surface_Condition=surface_cond 
+        incident.Surface_Condition=surface_cond
         incident.Surface_Type=surface_type
-        incident.Road_Repair = road_repair 
+        incident.Road_Repair = road_repair
         incident.Hit_and_Run = hit_and_run
         incident.Road_Character=road_char
 
@@ -1803,30 +2073,30 @@ def processEditIncident(request, incident_id):
         incident.Suspect_Fname=sus_fname
         incident.Suspect_Lname=sus_lname
         incident.Suspect_Severity=sus_severity
-        incident.Suspect_Age=sus_age 
-        incident.Suspect_Sex=sus_sex 
-        incident.Suspect_Civil_Status = sus_civil_status 
-        incident.Suspect_Address=sus_add  
-        incident.Suspect_Vehicle=sus_vehicle 
-        incident.Suspect_Vehicle_Body_Type=sus_vehicle_body_type 
+        incident.Suspect_Age=sus_age
+        incident.Suspect_Sex=sus_sex
+        incident.Suspect_Civil_Status = sus_civil_status
+        incident.Suspect_Address=sus_add
+        incident.Suspect_Vehicle=sus_vehicle
+        incident.Suspect_Vehicle_Body_Type=sus_vehicle_body_type
         incident.Suspect_Plate_No=sus_plate_no
-        incident.Suspect_Reg_Owner=sus_reg_owner 
-        incident.Suspect_Drl_No=sus_drl 
+        incident.Suspect_Reg_Owner=sus_reg_owner
+        incident.Suspect_Drl_No=sus_drl
         incident.Suspect_Drl_Exp=sus_drl_exp
-        
+
         incident.Victim_Type = vic_type
         incident.Victim_Fname=vic_fname
-        incident.Victim_Lname=vic_lname  
+        incident.Victim_Lname=vic_lname
         incident.Victim_Severity=vic_severity
-        incident.Victim_Age=vic_age 
-        incident.Victim_Sex=vic_sex 
-        incident.Victim_Civil_Status = vic_civil_status 
-        incident.Victim_Address=vic_add 
-        incident.Victim_Vehicle=vic_vehicle 
-        incident.Victim_Vehicle_Body_Type=vic_vehicle_body_type 
+        incident.Victim_Age=vic_age
+        incident.Victim_Sex=vic_sex
+        incident.Victim_Civil_Status = vic_civil_status
+        incident.Victim_Address=vic_add
+        incident.Victim_Vehicle=vic_vehicle
+        incident.Victim_Vehicle_Body_Type=vic_vehicle_body_type
         incident.Victim_Plate_No=vic_plate_no
-        incident.Victim_Reg_Owner=vic_reg_owner 
-        incident.Victim_Drl_No=vic_drl 
+        incident.Victim_Reg_Owner=vic_reg_owner
+        incident.Victim_Drl_No=vic_drl
         incident.Victim_Drl_Exp=vic_drl_exp
 
 
@@ -1873,7 +2143,7 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
         pass
 
     try:
-        
+
         member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
         investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
         substation_list = Tbl_substation.objects.all()
@@ -1886,7 +2156,7 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
 
-    return render(request, 'gen_incident_detail_view.html', 
+    return render(request, 'gen_incident_detail_view.html',
         {'pasig_incident_detail': pasig_incident_detail,
          'all_incidents': all_incidents,
          'investigators_list': investigators_list,
@@ -1915,7 +2185,7 @@ def monthly_report (request):
     pub        = tbl_genpub_users.objects.all()
 
     unread_notif_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-   
+
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
     try:
@@ -1948,7 +2218,7 @@ def monthly_report (request):
     months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
 
     if request.method == 'POST':
-        select_year = request.POST.get('select_year') 
+        select_year = request.POST.get('select_year')
         select_month = int(request.POST.get('select_month'))
 
         month = select_month
@@ -1956,7 +2226,7 @@ def monthly_report (request):
 
         month_label = months[select_month-1]
         year_label = select_year
-        
+
     else:
         month = today.month
         year = today.year
@@ -1976,7 +2246,7 @@ def monthly_report (request):
                                     Date__year__lte=year,
                                     Date__month__gte=month,
                                     Date__month__lte=month,
-                                    Barangay_id__Barangay = brgy).count()        
+                                    Barangay_id__Barangay = brgy).count()
         d1_brgys_count.append(x)
         d1_brgys_total += x
 
@@ -1985,7 +2255,7 @@ def monthly_report (request):
     d2_brgys_count = []
     d2_brgys_total = 0
     d2_brgys_list = Tbl_barangay.objects.filter(District_id = '2').values_list('Barangay', flat=True)
-    
+
     for brgy in d2_brgys_list:
         d2_brgys.append(brgy)
         x = Tbl_pasig_incidents.objects.filter(
@@ -1993,7 +2263,7 @@ def monthly_report (request):
                                     Date__year__lte=year,
                                     Date__month__gte=month,
                                     Date__month__lte=month,
-                                    Barangay_id__Barangay = brgy).count()                          
+                                    Barangay_id__Barangay = brgy).count()
         d2_brgys_count.append(x)
         d2_brgys_total += x
 
@@ -2018,11 +2288,11 @@ def monthly_report (request):
                                     Date__year__lte=year,
                                     Date__month__gte=month,
                                     Date__month__lte=month,
-                                    CrimeOffense = off).exclude(CrimeOffense__isnull=True).count()   
+                                    CrimeOffense = off).exclude(CrimeOffense__isnull=True).count()
         offense_count.append(x)
         offense_total += x
 
-    #Sex 
+    #Sex
     suspect_sex = []
     victim_sex = []
 
@@ -2050,7 +2320,7 @@ def monthly_report (request):
             sex_labels.append(sex)
             x = sex_combined.count(sex)
             sex_count.append(x)
-    
+
     #Time Plot
     # time(hour = 0, minute = 0, second = 0)
     am12 = datetime.time(0, 0, 0)
@@ -2066,7 +2336,7 @@ def monthly_report (request):
     pm8 = datetime.time(20, 0, 0)
     pm10 = datetime.time(22, 0, 0)
 
-    
+
     am12_am2 = Tbl_pasig_incidents.objects.filter(Time__gte = am12, Time__lt = am2, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     am2_am4 = Tbl_pasig_incidents.objects.filter(Time__gte = am2, Time__lt = am4, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     am4_am6 = Tbl_pasig_incidents.objects.filter(Time__gte = am4, Time__lt = am6, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
@@ -2106,7 +2376,7 @@ def monthly_report (request):
     suspect_age_m = []
     victim_age_m = []
 
-    suspect_age_m = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Male') & Q(Suspect_Age__isnull=False), 
+    suspect_age_m = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Male') & Q(Suspect_Age__isnull=False),
                                 Date__year__gte=year,Date__year__lte=year,
                                 Date__month__gte=month,Date__month__lte=month,).values_list('Suspect_Age', flat=True)
 
@@ -2132,21 +2402,21 @@ def monthly_report (request):
     for adult in range(20, 60):
         x = age_combined_m.count(adult)
         adult_m = adult_m + x
-    
+
     for geriatric in range(60, max(age_combined_m)+1):
         x = age_combined_m.count(geriatric)
         geriatric_m = geriatric_m + x
 
-    age_total_m = child_m + adolescent_m + adult_m + geriatric_m 
+    age_total_m = child_m + adolescent_m + adult_m + geriatric_m
 
     #AGE STATS - FEMALE - monthly
     suspect_age_f = []
     victim_age_f = []
 
-    suspect_age_f = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Female') & Q(Suspect_Age__isnull=False), 
+    suspect_age_f = Tbl_pasig_incidents.objects.filter(Q(Suspect_Sex='Female') & Q(Suspect_Age__isnull=False),
                                 Date__year__gte=year,Date__year__lte=year,
                                 Date__month__gte=month,Date__month__lte=month).values_list('Suspect_Age', flat=True)
-    victim_age_f = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Female') & Q(Victim_Age__isnull=False), 
+    victim_age_f = Tbl_pasig_incidents.objects.filter(Q(Victim_Sex='Female') & Q(Victim_Age__isnull=False),
                                 Date__year__gte=year,Date__year__lte=year,
                                 Date__month__gte=month,Date__month__lte=month).values_list('Victim_Age', flat=True)
 
@@ -2168,14 +2438,14 @@ def monthly_report (request):
     for adult in range(20, 60):
         x = age_combined_f.count(adult)
         adult_f = adult_f + x
-    
+
     for geriatric in range(60, max(age_combined_f)+1):
         x = age_combined_f.count(geriatric)
         geriatric_f = geriatric_f + x
 
-    age_total_f = child_f + adolescent_f + adult_f + geriatric_f 
-    
-    #SEVERITY 
+    age_total_f = child_f + adolescent_f + adult_f + geriatric_f
+
+    #SEVERITY
     suspect_severity = []
     victim_severity = []
 
@@ -2196,13 +2466,13 @@ def monthly_report (request):
         severity_count.append(x)
         severity_total += x
 
-    #Day of the week 
+    #Day of the week
     day_labels = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
     day_count = []
     day_total = 0
     # day_list = Tbl_pasig_incidents.objects.all().values_list('Day', flat=True)
-    
-    
+
+
     for day in day_labels:
         # day_labels.append(day)
         x = Tbl_pasig_incidents.objects.filter(
@@ -2210,7 +2480,7 @@ def monthly_report (request):
                                     Date__year__lte=year,
                                     Date__month__gte=month,
                                     Date__month__lte=month,
-                                    Day = day).count()                          
+                                    Day = day).count()
         day_count.append(x)
         day_total += x
 
@@ -2234,10 +2504,10 @@ def monthly_report (request):
             "offense_total": offense_total,
 
             "sex_labels": sex_labels,
-            "sex_count": sex_count, 
+            "sex_count": sex_count,
 
             "time_count":time_count,
-            
+
             "vehicle_data": zip(distinct_vehicles, vehicle_count),
             "vehicle_total": vehicle_total,
 
@@ -2254,7 +2524,7 @@ def monthly_report (request):
             "adolescent_f": adolescent_f,
             "adult_f": adult_f,
             "geriatric_f": geriatric_f,
-            "all": authorized, 
+            "all": authorized,
             "pub": pub,
 
             "severity_labels":distinct_severity,
@@ -2278,7 +2548,7 @@ def get_monthly_generate(request, *args, **kwargs):
         d1_brgys = []
         d1_brgys_count = []
         d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
-        
+
         for brgy in d1_brgys_list:
             d1_brgys.append(brgy)
             x = Tbl_pasig_incidents.objects.filter(
@@ -2286,14 +2556,14 @@ def get_monthly_generate(request, *args, **kwargs):
                                         Date__year__lte=select_year,
                                         Date__month__gte=select_month,
                                         Date__month__lte=select_month,
-                                        Barangay_id__Barangay = brgy).count()        
+                                        Barangay_id__Barangay = brgy).count()
             d1_brgys_count.append(x)
-        
+
         report_data = {
                 "district1_labels": d1_brgys,
                 "district1_count": d1_brgys_count,
             }
-        return JsonResponse(report_data) 
+        return JsonResponse(report_data)
 
 
 def get_monthly_data(request, *args, **kwargs):
@@ -2303,7 +2573,7 @@ def get_monthly_data(request, *args, **kwargs):
         d1_brgys = []
         d1_brgys_count = []
         d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
-        
+
         for brgy in d1_brgys_list:
             d1_brgys.append(brgy)
             x = Tbl_pasig_incidents.objects.filter(
@@ -2311,7 +2581,7 @@ def get_monthly_data(request, *args, **kwargs):
                                         Date__year__lte=today.year,
                                         Date__month__gte=today.month,
                                         Date__month__lte=today.month,
-                                        Barangay_id__Barangay = brgy).count()        
+                                        Barangay_id__Barangay = brgy).count()
             d1_brgys_count.append(x)
 
         monthly_data = {
@@ -2328,7 +2598,7 @@ def get_monthly_data(request, *args, **kwargs):
         d1_brgys = []
         d1_brgys_count = []
         d1_brgys_list = Tbl_barangay.objects.filter(District_id = '1').values_list('Barangay', flat=True)
-        
+
         for brgy in d1_brgys_list:
             d1_brgys.append(brgy)
             x = Tbl_pasig_incidents.objects.filter(
@@ -2336,9 +2606,9 @@ def get_monthly_data(request, *args, **kwargs):
                                         Date__year__lte=select_year,
                                         Date__month__gte=select_month,
                                         Date__month__lte=select_month,
-                                        Barangay_id__Barangay = brgy).count()        
+                                        Barangay_id__Barangay = brgy).count()
             d1_brgys_count.append(x)
-        
+
         report_data = {
                 "district1_labels": d1_brgys,
                 "district1_count": d1_brgys_count,
@@ -2348,7 +2618,7 @@ def get_monthly_data(request, *args, **kwargs):
         # return HttpResponse(serialized_data)
         return render (request, 'monthly_summary/2018/january.html', {"serialized_data": serialized_data, "all": authorized, "pub": pub,})
 
-def notification (request): 
+def notification (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -2392,7 +2662,7 @@ def notification (request):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
 
     public_replies = None
     public_report_count = None
@@ -2400,11 +2670,11 @@ def notification (request):
 
     if request.method   == "POST":
         searched        = request.POST['searched']
-        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id') 
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
         try:
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
-                public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id') 
+                public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
 
         except: pass
 
@@ -2415,14 +2685,14 @@ def notification (request):
                 public_replies_count = None
 
         except: pass
-        
-        
+
+
         data = {
-            
+
             'searched': searched,
             'not_yet_recorded_count':not_yet_recorded_count,
             'assigned_pasig_public_reports':assigned_pasig_public_reports,
-            'pasig_incident_list': pasig_incident_list, 
+            'pasig_incident_list': pasig_incident_list,
             'public_reports_list': pasig_public_reports,
             'public_replies':public_replies,
 
@@ -2431,7 +2701,7 @@ def notification (request):
             'unread_notif_count_signup':unread_notif_count_signup,
             'unread_notif_count': unread_notif_count,
 
-            "all": authorized, 
+            "all": authorized,
             "pub": pub,
             'sign_up_validation': sign_up_validation,
         }
@@ -2442,7 +2712,7 @@ def notification (request):
         try:
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
-                public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id') 
+                public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
 
         except: pass
 
@@ -2456,17 +2726,17 @@ def notification (request):
 
         data = {
             'not_yet_recorded_count':not_yet_recorded_count,
-            'pasig_incident_list': pasig_incident_list, 
+            'pasig_incident_list': pasig_incident_list,
             'assigned_pasig_public_reports':assigned_pasig_public_reports,
             'public_reports_list': pasig_public_reports,
             'public_replies':public_replies,
-        
+
             'public_report_count':public_report_count,
             'public_replies_count': public_replies_count,
             'unread_notif_count_signup':unread_notif_count_signup,
             'unread_notif_count': unread_notif_count,
 
-            "all": authorized, 
+            "all": authorized,
             "pub": pub,
             'sign_up_validation': sign_up_validation,
         }
@@ -2486,7 +2756,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
             unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
 
     except: pass
-    
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -2506,7 +2776,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
     member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
     investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     substation_list = Tbl_substation.objects.all()
@@ -2515,7 +2785,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
     unread_public_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
     unread_public_report.Read_Status = "Yes"
     unread_public_report.save()
-    
+
     #for gen pub reports inbox
     pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
 
@@ -2530,10 +2800,10 @@ def notif_public_report_detail (request, gen_pub_report_id):
             auth_id = request.session['authorized_id']
             auth_info = Tbl_add_members.objects.get(id=auth_id)
 
-            received_replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Receiver=auth_id)).order_by('Response_id') 
+            received_replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Receiver=auth_id)).order_by('Response_id')
             received_replies.update(Read_Status = "Yes")
 
-            replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Sender=auth_id)|Q(Receiver=auth_id)).order_by('Response_id') 
+            replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Sender=auth_id)|Q(Receiver=auth_id)).order_by('Response_id')
 
             pub_info = tbl_genpub_users.objects.all()
     except:
@@ -2553,7 +2823,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
         'assigned_pasig_public_reports':assigned_pasig_public_reports,
 
 
-        "all": authorized, 
+        "all": authorized,
         "pub": pub,
     }
     return render (request, 'notif_public_report_detail.html', data)
@@ -2595,7 +2865,7 @@ def processAdmin_Reply (request, report_id):
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
 
-def sub_notification (request): 
+def sub_notification (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -2635,10 +2905,10 @@ def sub_notification (request):
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
                 subrep_row = Tbl_add_members.objects.get(id=auth_id)
-                #fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id) 
-                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id') 
-   
-                
+                #fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)
+                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
+
+
         except:
             pass
 
@@ -2654,8 +2924,8 @@ def sub_notification (request):
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
                 subrep_row = Tbl_add_members.objects.get(id=auth_id)
-                fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)    
-                
+                fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).order_by('-id')
+
         except:
             pass
 
@@ -2701,7 +2971,7 @@ def sub_notification_detail (request, report_id):
     except:
         pass
 
-    
+
     detail = None
     fwd_reports = None
     try:
@@ -2725,7 +2995,7 @@ def sub_notification_detail (request, report_id):
     }
     return render (request, 'sub_notification_detail.html', context)
 
-#subrep to admin messages    
+#subrep to admin messages
 def processSubrep_Reply (request, report_id):
 
     public_reply = request.POST.get('public_reply')
@@ -2748,7 +3018,7 @@ def public_inbox (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
-    
+
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
     try:
@@ -2776,7 +3046,7 @@ def public_inbox (request):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
     pub_inbox = None
     pub_info = None
     admin_replies = None
@@ -2788,13 +3058,13 @@ def public_inbox (request):
             pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id) #list ng reports nya
             pub_info = tbl_genpub_users.objects.get(id=pub_id)
 
-            admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id') 
+            admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id')
             admin_info = Tbl_add_members.objects.all()
     except:
         pass
 
     try:
-        if request.session['authorized_id']: 
+        if request.session['authorized_id']:
             context    = {
             "all": authorized,
             "pub": pub,
@@ -2850,7 +3120,7 @@ def public_inbox_detail (request, report_id):
         pass
 
     try:
-        if request.session['authorized_id']: 
+        if request.session['authorized_id']:
             context    = {
             "all": authorized,
             "pub": pub,
@@ -2873,9 +3143,9 @@ def public_inbox_detail (request, report_id):
             pub_info = tbl_genpub_users.objects.get(id=pub_id)
             prev_report = Tbl_public_report.objects.get(id=report_id)
 
-            received_replies = Tbl_public_report_response.objects.filter(Q(Report_id=report_id)).filter(Q(Receiver=pub_id)).order_by('Response_id') 
+            received_replies = Tbl_public_report_response.objects.filter(Q(Report_id=report_id)).filter(Q(Receiver=pub_id)).order_by('Response_id')
             received_replies.update(Read_Status = "Yes")
-            replies = Tbl_public_report_response.objects.filter(Q(Report_id=report_id)).filter(Q(Sender=pub_id)|Q(Receiver=pub_id)).order_by('Response_id') 
+            replies = Tbl_public_report_response.objects.filter(Q(Report_id=report_id)).filter(Q(Sender=pub_id)|Q(Receiver=pub_id)).order_by('Response_id')
     except:
         pass
 
@@ -2893,7 +3163,7 @@ def public_inbox_detail (request, report_id):
     }
     return render (request, 'gen_inbox_detail.html', context)
 
-#public to admin messages    
+#public to admin messages
 def processPublic_Reply (request, report_id):
     public_reply = request.POST.get('public_reply')
     sender = request.POST.get('sender_id')
@@ -2932,7 +3202,7 @@ def unarchiving (request, incident_id):
 
         return HttpResponseRedirect('/unsolvedcases')
     except Tbl_pasig_incidents.DoesNotExist:
-        raise Http404("Incident does not exist")   
+        raise Http404("Incident does not exist")
 
 
 def unsolved_cases (request):
@@ -2973,7 +3243,7 @@ def unsolved_cases (request):
     level1_range=date.today()-timedelta(31)
     level2_range_gte=date.today()-timedelta(186)
     level2_range_lte=date.today()-timedelta(31)
-    
+
     level3_range_lte=date.today()-timedelta(186)
     level3_range_gte=date.today()-timedelta(372)
 
@@ -2984,7 +3254,7 @@ def unsolved_cases (request):
     level3=Tbl_pasig_incidents.objects.filter(Q(Date__gte=level3_range_gte)&Q(Date__lte=level3_range_lte),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved")
     level4=Tbl_pasig_incidents.objects.filter(Q(Date__lt=archive_range),Q(archive="No")|Q(archive__isnull=True),Case_Status="Unsolved",)
     archive=Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved") & Q(archive="Yes"))
-    
+
     data = {
         "investigator_list":investigator_list,
         "unsolveds_cases_list":unsolveds_cases_list,
@@ -3008,119 +3278,6 @@ def logout (request):
     return render (request, 'logout.html')
 
 #PUBLIC
-def submit_report_copy (request):
-    #Sessions
-    authorized = Tbl_add_members.objects.all()
-    pub        = tbl_genpub_users.objects.all()
-
-    #notif count
-    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
-    try:
-        if request.session['public_id']:
-            pub_id = request.session['public_id']
-            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
-    except:
-        pass
-    try:
-        if request.session['authorized_id']:
-            auth_id = request.session['authorized_id']
-            auth_row = Tbl_add_members.objects.get(id=auth_id)
-            if (auth_row.Members_User_id == 1):
-                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
-                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
-                #total
-                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
-
-            if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
-               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
-
-            if (auth_row.Members_User_id == 3):
-                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
-    except:
-        pass
-
-    try:
-        if request.session['authorized_id']: 
-            context    = {
-            "all": authorized,
-            "pub": pub,
-        }
-        return render(request, '403.html', context)
-    except: pass
-
-
-    try:
-        if request.method == "GET":
-            if request.session['public_id']:
-                pub_id = request.session['public_id']
-                unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
-
-            context    = {
-                "all": authorized,
-                "pub": pub,
-                "unread_notif_count":unread_notif_count
-            }
-            return render (request, 'submit_report.html', context) #Load view
-
-        user_id = request.POST.get('user_id')
-        city = request.POST.get('city')
-        barangay = request.POST.get('Barangay')
-        district = request.POST.get('district')
-        address = request.POST.get('address')
-        along = request.POST.get('along')
-        corner = request.POST.get('corner')
-        latitude = request.POST.get('lat')
-        longitude = request.POST.get('lon')
-        narrative = request.POST.get('narrative')
-
-        if request.FILES.get('image'):
-            image_proof = request.FILES.get('image')
-
-        incident_report = Tbl_public_report.objects.create(
-                        User_ID_id = user_id,
-                        Reported_City=city, 
-                        Reported_Brgy_id=barangay,               
-                        Reported_District=district,   
-                        Reported_Location=address,               
-                        Reported_Along=along,
-                        Reported_Corner=corner, 
-                        Reported_Latitude = latitude,
-                        Reported_Longitude = longitude,
-                        Reported_Narrative = narrative,
-                        Reported_Image_Proof = image_proof,
-                        Report_Status = 'Unsolved',
-                        Read_Status='No',
-                        Recipient = 'Admin',
-                        )
-        
-        incident_report.save()
-
-        context = {
-            'success_message':"Your report has been submitted!",
-            "all": authorized, 
-            "pub": pub,
-            "unread_notif_count":unread_notif_count,
-
-        }
-        return render (request, 'submit_report.html', context)
-
-    except:
-        image_proof = request.FILES['image']
-        
-        if not image_proof.name.endswith('.png'| '.jpg'| '.jpeg'):
-            messages.error(request, 'Error: Invalid Image Format')
-
-        context = {
-            'error_message': "Error sending report!",
-            "all": authorized, 
-            "pub": pub,
-        }
-
-        return render (request, 'submit_report.html', context)
-
-
 def submit_report (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
@@ -3155,7 +3312,7 @@ def submit_report (request):
         pass
 
     try:
-        if request.session['authorized_id']: 
+        if request.session['authorized_id']:
             context    = {
             "all": authorized,
             "pub": pub,
@@ -3164,7 +3321,7 @@ def submit_report (request):
     except: pass
 
     try:
-        if request.session['public_id']: 
+        if request.session['public_id']:
             if request.method == "GET":
                 context    = {
                     "all": authorized,
@@ -3174,7 +3331,7 @@ def submit_report (request):
                 return render (request, 'submit_report.html', context) #Load view
 
             #if form is submitted
-            else: 
+            else:
                 user_id = request.POST.get('user_id')
                 city = request.POST.get('city')
                 barangay = request.POST.get('Barangay')
@@ -3191,12 +3348,12 @@ def submit_report (request):
 
                 incident_report = Tbl_public_report.objects.create(
                                 User_ID_id = user_id,
-                                Reported_City=city, 
-                                Reported_Brgy_id=barangay,               
-                                Reported_District=district,   
-                                Reported_Location=address,               
+                                Reported_City=city,
+                                Reported_Brgy_id=barangay,
+                                Reported_District=district,
+                                Reported_Location=address,
                                 Reported_Along=along,
-                                Reported_Corner=corner, 
+                                Reported_Corner=corner,
                                 Reported_Latitude = latitude,
                                 Reported_Longitude = longitude,
                                 Reported_Narrative = narrative,
@@ -3205,16 +3362,49 @@ def submit_report (request):
                                 Read_Status='No',
                                 Recipient = 'Admin',
                                 )
-                
+
                 incident_report.save()
+
+                auth_all = Tbl_add_members.objects.all()
+                pub_row = tbl_genpub_users.objects.get(id=user_id)
+                brgy_list  = Tbl_barangay.objects.all()
+
+                for a in auth_all:
+                    if (a.Members_User_id == 1):
+                        for x in brgy_list:
+                            if(x.id == int(barangay)):
+                                barangay_ = x.Barangay
+
+                                time = datetime.datetime.now().strftime('%H:%M:%S')
+                                incident_date = str(date.today())
+                                loc = address
+                                from_ = '' #roadcast main email in settings.py
+                                to_ = [a.Members_Email]
+                                reporter_fname = pub_row.gen_fname
+                                reporter_lname = pub_row.gen_surname
+                                reporter_email = pub_row.gen_username
+
+                                send_mail (
+                                    'Roadcast: New Reported Incident in Brgy. ' + barangay_,
+                                    render_to_string('new_gen_report_alert.html',{
+                                    'barangay' : barangay_,
+                                    'loc':loc,
+                                    "time" : time,
+                                    "incident_date" : incident_date,
+                                    'reporter_fname': reporter_fname,
+                                    'reporter_lname': reporter_lname,
+                                    'reporter_email': reporter_email
+                                    }),
+                                    from_, to_,)
+
                 context = {
                     'success_message':"Your report has been submitted!",
-                    "all": authorized, 
+                    "all": authorized,
                     "pub": pub,
                     "unread_notif_count":unread_notif_count,
-
                 }
-                return render (request, 'submit_report.html', context)
+
+                return render (request, 'submit_report.html', context) #Submitted
 
     except: pass
 
@@ -3223,8 +3413,127 @@ def submit_report (request):
             "pub": pub,
             "unread_notif_count":unread_notif_count
         }
-    return render (request, 'submit_report.html', context) #Load view
+    return render (request, 'submit_report.html', context) #May error
 
+#Alerts/Notifs
+def account_activity_on (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            pub_row = tbl_genpub_users.objects.get(id=pub_id)  
+            pub_row.nf_acc_activity = True
+            pub_row.save() 
+    except: pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            auth_row.nf_acc_activity = True
+            auth_row.save()
+    except: pass
+
+    messages.success(request, ("Email notifications for login activities are successfully turned on!"))
+    return HttpResponseRedirect(reverse('pub_notif_inbox'))
+
+def account_activity_off (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            pub_row = tbl_genpub_users.objects.get(id=pub_id)  
+            pub_row.nf_acc_activity = False
+            pub_row.save()  
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            auth_row.nf_acc_activity = False
+            auth_row.save()
+    except: pass
+    messages.success(request, ("Email notifications for login activities are successfully turned off!"))
+    return HttpResponseRedirect(reverse('pub_notif_inbox'))
+
+def new_incident_alert_on (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            pub_row = tbl_genpub_users.objects.get(id=pub_id)  
+            pub_row.nf_new_incident = True
+            pub_row.save() 
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            auth_row.nf_new_incident = True
+            auth_row.save()
+    except: pass
+    messages.success(request, ("Email notifications for new incidents are successfully turned on!"))
+    return HttpResponseRedirect(reverse('pub_notif_inbox'))
+
+def new_incident_alert_off (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            pub_row = tbl_genpub_users.objects.get(id=pub_id)  
+            pub_row.nf_new_incident = False
+            pub_row.save()  
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            auth_row.nf_new_incident = False
+            auth_row.save()
+    except: pass
+
+    messages.success(request, ("Email notifications for new incidents are successfully turned off!"))
+    return HttpResponseRedirect(reverse('pub_notif_inbox'))
+
+def custom_alert (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    custom_brgy = request.POST.get('preferred_brgy')
+
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            pub_row = tbl_genpub_users.objects.get(id=pub_id)  
+            pub_row.nf_brgy = custom_brgy
+            pub_row.save()  
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            auth_row.nf_brgy = custom_brgy
+            auth_row.save()
+    except: pass
+
+    messages.success(request, ("You will now receive email notifications for incidents on your chosen barangay!"))
+    return HttpResponseRedirect(reverse('pub_notif_inbox'))
 
 # Dane's Codes
 def pub_notif_inbox (request): #Account settings
@@ -3261,7 +3570,7 @@ def pub_notif_inbox (request): #Account settings
         pass
 
 
-    authorized  = Tbl_add_members.objects.all()  
+    authorized  = Tbl_add_members.objects.all()
     pub         = tbl_genpub_users.objects.all()
     barangay    = Tbl_barangay.objects.all()
 
@@ -3273,12 +3582,12 @@ def pub_notif_inbox (request): #Account settings
     }
     return render(request, 'public_notif_setting.html', context)
 
-def change_account (request, prof_id): #Change email or password for gen pub and members - settings 
+def change_account (request, prof_id): #Change email or password for gen pub and members - settings
     if request.method       == "POST":
         try:
             if get_object_or_404(tbl_genpub_users, id = prof_id):
                 pub                     = get_object_or_404(tbl_genpub_users, id = prof_id)
-            
+
                 gen_username        = request.POST.get("gen_username")
                 gen_pass            = request.POST.get("gen_pass")
 
@@ -3330,8 +3639,8 @@ def add_members (request):
     positions       = Tbl_position.objects.all()
 
     #Sessions
-    all_authorized  = Tbl_add_members.objects.all()  
-    pub             = tbl_genpub_users.objects.all() 
+    all_authorized  = Tbl_add_members.objects.all()
+    pub             = tbl_genpub_users.objects.all()
 
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
@@ -3373,7 +3682,7 @@ def add_members (request):
     }
     return render (request, 'add_members.html', context)
 
-def duplicate_members (request): #For checking of duplicates and saving members - add_members 
+def duplicate_members (request): #For checking of duplicates and saving members - add_members
     if request.method       == "POST":
         departments_id      = request.POST["Members_Dept"]
         Members_Dept        = Tbl_add_departments.objects.get( id = departments_id)
@@ -3400,7 +3709,7 @@ def duplicate_members (request): #For checking of duplicates and saving members 
         else:
             Members_Pic     = 'Profile/default.jpg'
 
-    try: 
+    try:
         if (Tbl_add_members.objects.filter(Members_Email = Members_Email) | Tbl_add_members.objects.filter(Members_Username = Members_Username)):
             messages.error(request, ("Oops! That account already exists. Please make sure your email address and username is unique."))
             return HttpResponseRedirect(reverse('add_members'))
@@ -3410,7 +3719,7 @@ def duplicate_members (request): #For checking of duplicates and saving members 
             return HttpResponseRedirect(reverse('add_members'))
 
         else:
-            submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District, 
+            submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District,
             Members_Fname = Members_Fname, Members_Lname = Members_Lname, Members_Position = Members_Position, Members_Email = Members_Email, Members_Username = Members_Username,
             Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By)
             submit.save()
@@ -3418,14 +3727,14 @@ def duplicate_members (request): #For checking of duplicates and saving members 
             return HttpResponseRedirect(reverse('admin_list_members'))
 
     except (KeyError, Tbl_add_members.DoesNotExist):
-        submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District, 
+        submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District,
         Members_Fname = Members_Fname, Members_Lname = Members_Lname, Members_Position = Members_Position, Members_Email = Members_Email, Members_Username = Members_Username,
         Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By)
         submit.save()
         messages.success(request, ("You've added a new member!"))
         return HttpResponseRedirect(reverse('admin_list_members'))
 
-def add_dept (request): 
+def add_dept (request):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -3467,13 +3776,13 @@ def add_dept (request):
      "unread_notif_count":unread_notif_count,
     }
 
-    paginator = Paginator(departments, 10) 
+    paginator = Paginator(departments, 10)
     page_number = request.GET.get('page')
     departments = paginator.get_page(page_number)
 
     return render (request, 'add_dept.html', context)
 
-def duplicate(request): #For checking of duplicates and saving - add_dept 
+def duplicate(request): #For checking of duplicates and saving - add_dept
     Dept_Dept       = request.POST["Dept_Dept"].title()
 
     try:
@@ -3486,7 +3795,7 @@ def duplicate(request): #For checking of duplicates and saving - add_dept
         submit.save()
         messages.success(request, ("You've added a new department!"))
         return HttpResponseRedirect(reverse('admin_list_departments'))
- 
+
 def admin_list_departments(request): #Show list of depaartments
     #Sessions
     authorized = Tbl_add_members.objects.all()
@@ -3496,19 +3805,19 @@ def admin_list_departments(request): #Show list of depaartments
 
     if request.method   == "POST":
         searched        = request.POST['searched']
-        departments     = Tbl_add_departments.objects.filter(Dept_Dept__icontains = searched).order_by('-id') 
+        departments     = Tbl_add_departments.objects.filter(Dept_Dept__icontains = searched).order_by('-id')
         return render (request, 'admin_list_departments.html', {'departments': departments, 'searched': searched, "all": authorized, "pub": pub})
 
     else:
         departments      = Tbl_add_departments.objects.raw('SELECT * FROM roadcast_tbl_add_departments ORDER BY id DESC')
 
-        paginator = Paginator(departments, 10) 
+        paginator = Paginator(departments, 10)
         page_number = request.GET.get('page')
         departments = paginator.get_page(page_number)
 
         return render (request, 'admin_list_departments.html', {'departments': departments, "all": authorized, "pub": pub})
 
-def view_members(request, member_id): #Show specific profile of members 
+def view_members(request, member_id): #Show specific profile of members
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -3544,7 +3853,7 @@ def view_members(request, member_id): #Show specific profile of members
     members     = Tbl_add_members.objects.get(id = member_id)
     return render (request, 'view_members.html', {'members':members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
-def edit_members(request, member_id): 
+def edit_members(request, member_id):
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -3589,14 +3898,14 @@ def edit_members(request, member_id):
         'substations': substations,
         'membertypes': membertypes,
         'positions': positions,
-        "all": authorized, 
+        "all": authorized,
         "pub": pub,
         'unread_notif_count': unread_notif_count,
     }
     return render (request, 'edit_members.html', context)
 
 
-def update_members(request, member_id): #For updating the data and checking for duplicates - edit_members 
+def update_members(request, member_id): #For updating the data and checking for duplicates - edit_members
 
     members                 = get_object_or_404(Tbl_add_members, id = member_id)
     Members_Pic             = request.FILES.get('Members_Pic')
@@ -3655,10 +3964,10 @@ def update_members(request, member_id): #For updating the data and checking for 
             members.save()
             messages.success(request, ("Changes saved."))
             return HttpResponseRedirect(reverse('admin_list_members'))
-            
+
     except (KeyError, Tbl_add_members.DoesNotExist):
             messages.error(request, ("Oops! There was a problem updating the details. Please try again."))
-            return HttpResponseRedirect(reverse('admin_list_members'))  
+            return HttpResponseRedirect(reverse('admin_list_members'))
 
 def edit_dept(request, dept_id):
     #Sessions
@@ -3706,27 +4015,27 @@ def update_dept(request, dept_id): #For saving the data - edit_dept
     try:
         if (Tbl_add_departments.objects.filter(Dept_Dept = Dept_Dept) & Tbl_add_departments.objects.exclude(id = dept_id)):
             messages.error(request, ("Oops! That department already exists. Please enter a different department."))
-            return HttpResponseRedirect(reverse('admin_list_departments')) 
-        else:  
+            return HttpResponseRedirect(reverse('admin_list_departments'))
+        else:
             departments.Dept_Dept = Dept_Dept
             departments.save()
             messages.success(request, ("Changes saved."))
-            return HttpResponseRedirect(reverse('admin_list_departments')) 
+            return HttpResponseRedirect(reverse('admin_list_departments'))
     except (KeyError, Tbl_add_departments.DoesNotExist):
             departments.Dept_Dept = Dept_Dept
             departments.save()
             messages.success(request, ("Changes saved."))
-            return HttpResponseRedirect(reverse('admin_list_departments'))    
+            return HttpResponseRedirect(reverse('admin_list_departments'))
 
 def delete_member(request, member_id):
     Tbl_add_members.objects.filter(id = member_id).delete()
     messages.success(request, ("Member successfully deleted."))
-    return HttpResponseRedirect(reverse('admin_list_members')) 
+    return HttpResponseRedirect(reverse('admin_list_members'))
 
 def delete_dept(request, dept_id):
     Tbl_add_departments.objects.filter(id = dept_id).delete()
     messages.success(request, ("Department successfully deleted."))
-    return HttpResponseRedirect(reverse('admin_list_departments'))  
+    return HttpResponseRedirect(reverse('admin_list_departments'))
 
 def user_profile(request): #Profile of users
     #Sessions
@@ -3742,7 +4051,7 @@ def user_profile(request): #Profile of users
             unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
 
     except: pass
-    
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -3762,7 +4071,7 @@ def user_profile(request): #Profile of users
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
 
     context    = {
         "all": authorized,
@@ -3772,7 +4081,7 @@ def user_profile(request): #Profile of users
     return render(request, 'user_profile.html', context)
 
 
-def edit_profile(request, prof_id): #Edit user profile details 
+def edit_profile(request, prof_id): #Edit user profile details
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -3785,7 +4094,7 @@ def edit_profile(request, prof_id): #Edit user profile details
             unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
 
     except: pass
-    
+
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -3804,7 +4113,7 @@ def edit_profile(request, prof_id): #Edit user profile details
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
     gen         = None
     region      = None
     province    = None
@@ -3823,14 +4132,14 @@ def edit_profile(request, prof_id): #Edit user profile details
             city        = refcitymun.objects.exclude(citymunDesc = gen.gen_city)
 
             #Functions for profile ek ek
-            username            = gen.gen_username.split('@')[0] 
+            username            = gen.gen_username.split('@')[0]
             fname               = gen.gen_fname.split(' ')[0]
             today               = date.today()
             age                 = today.year - gen.gen_bday.year - ((today.month, today.day) < (gen.gen_bday.month, gen.gen_bday.day))
 
             context = {
-                'gen': gen, 
-                'username': username, 
+                'gen': gen,
+                'username': username,
                 'fname': fname,
                 'age': age,
                 "all": authorized,
@@ -3841,8 +4150,8 @@ def edit_profile(request, prof_id): #Edit user profile details
                 'city':city,
             }
 
-            return render(request, 'edit_profile.html', context) 
-        
+            return render(request, 'edit_profile.html', context)
+
     except: pass
 
     try:
@@ -3853,10 +4162,10 @@ def edit_profile(request, prof_id): #Edit user profile details
         }
         return render(request, '403.html', context)
     except: pass
-    
+
     context = {
-            'gen': gen, 
-            'username': username, 
+            'gen': gen,
+            'username': username,
             'fname': fname,
             'age': age,
             "all": authorized,
@@ -3867,7 +4176,7 @@ def edit_profile(request, prof_id): #Edit user profile details
             'city':city,
         }
 
-    return render(request, 'edit_profile.html', context) 
+    return render(request, 'edit_profile.html', context)
 
 
 def update_profile(request, prof_id): #For saving and validating public emails - edit_profile (gen pub)
@@ -3948,9 +4257,9 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
 
     if request.method == "POST":
         searched      = request.POST['searched']
-        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched).order_by('-id') 
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched).order_by('-id')
 
-        paginator = Paginator(members, 10) 
+        paginator = Paginator(members, 10)
         page_number = request.GET.get('page')
         members = paginator.get_page(page_number)
 
@@ -3958,11 +4267,11 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
     else:
         members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_tbl_add_members ORDER BY id DESC')
 
-        paginator = Paginator(members, 10) 
+        paginator = Paginator(members, 10)
         page_number = request.GET.get('page')
         members = paginator.get_page(page_number)
 
-        return render (request, 'admin_list_members.html', {'members': members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
+        return render (request, 'admin_list_members.html', {'members': members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def admin_investigators(request): #Show list of investigators
     #Sessions
@@ -3996,17 +4305,17 @@ def admin_investigators(request): #Show list of investigators
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    members           = Tbl_add_members.objects.all().order_by('-id') 
+    members           = Tbl_add_members.objects.all().order_by('-id')
 
     if request.method == "POST":
         searched      = request.POST['searched']
-        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id')  | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') 
-        
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id')  | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id')
+
         return render (request, 'admin_investigators.html', {'members': members, 'searched': searched, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
         return render (request, 'admin_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
-  
-def admin_view_investigators(request, member_id): #Viewing specific investigator profile 
+
+def admin_view_investigators(request, member_id): #Viewing specific investigator profile
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -4044,12 +4353,12 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
 
     paginator = Paginator(cases, 5)
     page_number = request.GET.get('page')
-    cases = paginator.get_page(page_number) 
+    cases = paginator.get_page(page_number)
 
     return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count, 'cases': cases})
 
 
-#Audit trail 
+#Audit trail
 def admin_audit_members(request): #List of audit for members
     #Sessions
     authorized = Tbl_add_members.objects.all()
@@ -4126,11 +4435,11 @@ def audit_members(request, audit_id): #Specific view for members
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
     audits  = tbl_audit.objects.get(id = audit_id)
 
     info    = Tbl_add_members.objects.get(Members_Email = audits.username)
-    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
+    return render (request, 'audit_member.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def admin_audit_genpub(request): #List of audit for gen pub
 
@@ -4165,7 +4474,7 @@ def admin_audit_genpub(request): #List of audit for gen pub
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
     except:
         pass
-    
+
     public  = tbl_genpub_users.objects.all().order_by('-id')
 
     if request.method == "POST":
@@ -4215,7 +4524,7 @@ def audit_genpub(request, audit_id): #Specific view for gen pub
     audits  = tbl_audit.objects.get(id = audit_id)
     info    = tbl_genpub_users.objects.get(gen_username = audits.username)
 
-    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,}) 
+    return render (request, 'audit_genpub.html', {'audits': audits, 'info': info, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 
 #Navbar for all
@@ -4224,7 +4533,7 @@ def navbar (request):
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
     audit      = tbl_audit.objects.all()
-    
+
     context    = {
         "all": authorized,
         "pub": pub,

@@ -132,6 +132,10 @@ class Tbl_add_members(models.Model):
     Edit_By             = models.CharField(max_length=200, verbose_name='Edit By', default='Have not been edited yet', blank=True, null=True)
     Date_Edit           = models.DateField(verbose_name='Date Added', blank=True, null=True) 
 
+    nf_acc_activity   = models.BooleanField(default=True)
+    nf_new_incident   = models.BooleanField(default=True)
+    nf_brgy   = models.CharField(max_length=50,blank=True,null=True)
+    
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Members_Pic))
 
@@ -194,6 +198,11 @@ class tbl_genpub_users(models.Model):
     Read_Status         = models.CharField(max_length=200, verbose_name='Read', blank=True)
     is_verified         = models.BooleanField(default=False)
     is_email_verified = models.BooleanField(default=False)
+
+    nf_acc_activity   = models.BooleanField(default=True)
+    nf_new_incident   = models.BooleanField(default=True)
+    nf_brgy   = models.CharField(max_length=50,blank=True,null=True)
+
 
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.gen_upload_id))
@@ -429,7 +438,7 @@ class Tbl_pasig_incidents(models.Model):
 
     Narrative       = models.CharField(max_length=3000, verbose_name='Narrative', blank=True, null=True)
     Investigator    = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
-    date_added      = models.DateField(default=now, verbose_name='Date Added', blank=True, null=True)
+    date_added      = models.DateField(auto_now_add=True, verbose_name='Date Added', blank=True, null=True)
     added_by        = models.CharField(max_length=200, verbose_name='Added By', blank=True, null=True)
     archive         = models.CharField(max_length=200, verbose_name='Archive', blank=True, null=True, choices=YES_NO)
     read_status     = models.CharField(max_length=200, default="No", verbose_name='Read', blank=True, null=True, choices=YES_NO)
@@ -452,8 +461,8 @@ class Tbl_public_report(models.Model):
     Reported_Corner      = models.CharField(max_length=200, verbose_name='Corner', blank=True)
     Reported_Narrative   = models.CharField(max_length=800, verbose_name='Narrative', blank=True)
     Reported_Image_Proof = models.ImageField(upload_to=image_path_incident_report,verbose_name='Proof of Incident', blank=True)
-    Reported_Date        = models.DateField(default=now, verbose_name='Date Reported', blank=True)
-    Reported_Time        = models.TimeField(default=now, verbose_name='Time Reported', blank=True)
+    Reported_Date        = models.DateField(auto_now_add=True, verbose_name='Date Reported', blank=True)
+    Reported_Time        = models.TimeField(auto_now_add=True, verbose_name='Time Reported', blank=True)
 
     Recipient               = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
     Read_Status             = models.CharField(max_length=200, verbose_name='Read by Admin', blank=True)
@@ -479,8 +488,8 @@ class Tbl_public_report_response (models.Model):
     Sender          = models.IntegerField( null=True, verbose_name ='Sender', blank=True)
     Receiver        = models.IntegerField(null=True, verbose_name='Receiver', blank = True) 
     Response        = models.CharField(max_length=200, verbose_name='Response', blank=True, null=True)
-    Response_Date   = models.DateField(default=now, verbose_name='Response Date', blank=True, null=True)
-    Response_Time   = models.TimeField(default=now, verbose_name='Response Time', blank=True, null=True)
+    Response_Date   = models.DateField(auto_now_add=True, verbose_name='Response Date', blank=True, null=True)
+    Response_Time   = models.TimeField(auto_now_add=True, verbose_name='Response Time', blank=True, null=True)
     Read_Status     = models.CharField(max_length=200, default="No", verbose_name='Read', blank=True, null=True) 
 
     def __str__(self):

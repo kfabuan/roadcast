@@ -125,11 +125,17 @@ urlpatterns = [
     path('profile/edit/<prof_id>', views.edit_profile, name='edit_profile'), #edit profile for public
     path('profile/update/<prof_id>', views.update_profile, name='update_profile'), #save profile for public
 
-
     # path('public/notification', views.pub_notif_view, name='pub_notif_view'), #notification for public
     path('public/settings', views.pub_notif_inbox, name='pub_notif_inbox'), #settings
     path('public/settings/update/<prof_id>', views.change_account, name='change_account'), #save settings
     path('public/incident/detail/<str:incident_id>/', views.public_view_incident_detail, name='gen_incident_detail_view'),
+
+    #alerts&notifs
+    path('public/settings/account_activity_on', views.account_activity_on, name='account_activity_on'), 
+    path('public/settings/account_activity_off', views.account_activity_off, name='account_activity_off'), 
+    path('public/settings/new_incident_alert_on', views.new_incident_alert_on, name='new_incident_alert_on'), 
+    path('public/settings/new_incident_alert_off', views.new_incident_alert_off, name='new_incident_alert_off'), 
+    path('public/settings/custom_alert', views.custom_alert, name='custom_alert'), 
 
 
     path('error', views.error_page, name='error_page'), #error page for login required & permissions

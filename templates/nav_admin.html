@@ -38,7 +38,6 @@
         body {
             background-color: #e8f4f8;
         }
-        
         .l-navbar {
         background-color: rgb(27, 38, 49);
         }
@@ -78,9 +77,62 @@
             .divider-hr {
                 display: none !important;
             }
+            .bx-menu {
+                margin-top: 10px;
+            }
+            .date-today {
+                margin-top: 11px !important;
+                margin-left: -11px !important;
+                font-size: 8px !important;
+            }
+        }
+        @media screen and (max-height: 570px) {
+            .nav_link {
+                margin-top: -25px !important;
+            }
+            .logout-butt {
+                margin-top: -35px !important;
+            }
+            .divider-hr {
+                display: none !important;
+            }
+        }
+        @media screen and (max-height: 516px) {
+            .nav_link {
+                margin-top: -32px !important;
+            }
+            .logout-butt {
+                margin-top: -40px !important;
+            }
+            .divider-hr {
+                display: none !important;
+            }
         }
 
+        @media screen and (max-height: 440px) {
+            .nav_list {
+                margin-top: -10px;
+                height: 230px;
+                overflow-y: scroll;
+            }
+            #notif-count {
+                position: absolute !important;
+                left: 26.5px;
+            }
+        }
 
+        @media screen and (max-height: 330px) {
+            .nav_list {
+                margin-top: -10px;
+                height: 170px;
+                overflow-y: scroll;
+            }
+            #notif-count {
+                position: absolute !important;
+                left: 26.5px;
+            }
+        }
+      
       </style>
 
     <script>function display_ct6() {
@@ -110,7 +162,7 @@
                 <i class='bx bx-menu' id="header-toggle" style="font-size: 1.5rem;"></i>
             </div>
 
-            <div class="col-10 pb-3">
+            <div class="col-10 pb-3 date-today">
                 <b id="date-today" style="font-size: small;">Today: </b>
                 <span id="ct6" style="font-size: small;"></span>
             </div>
@@ -130,22 +182,22 @@
     <!-- Navbar -->
     <div class="l-navbar" id="nav-bar">
         <nav class="nav main-nav">
-            <div> 
+            <div>
                 <a href="{% url 'dashboard' %}" class="nav_logo">
                     <img src="{% static 'image/logo1.png' %}" class="img-fluid" style="width: 35px; margin-left:-5px;"></i> 
                     <span class="nav_logo-name">
                         <label style="color: #fff">ROAD</label><label style="color: #19B3D3">CAST</label></span> 
                     </a>
                 <div class="nav_list"> 
-    
+     
     <!-- For admins -->
                     {% if a.Members_User.Member_Type == 'Admin' %}
 
                     {% if request.get_full_path == '/profile/user' %}
-                    <a href="{% url 'user_profile' %}" class="nav_link active" style="margin-top: -20px;"><i class='bx bx-user nav_icon'></i> 
+                    <a href="{% url 'user_profile' %}" class="nav_link active profile-prof" style="margin-top: -20px;"><i class='bx bx-user nav_icon'></i> 
                         <span class="nav_name">{{ a.Members_Lname }}</span></a> 
                     {% else %}
-                    <a href="{% url 'user_profile' %}" class="nav_link" style="margin-top: -20px;"><i class='bx bx-user nav_icon'></i> 
+                    <a href="{% url 'user_profile' %}" class="nav_link profile-prof" style="margin-top: -20px;"><i class='bx bx-user nav_icon'></i> 
                         <span class="nav_name">{{ a.Members_Lname }}</span></a> 
                     {% endif %}
 
@@ -453,7 +505,7 @@
     {% endifequal %}
     {% endfor %}
 
-    <!-- Start content --> 
+    <!-- Start content -->
     <div class=""style="padding-top: 60px;">
         {% block content %} {% endblock %}
     </div>

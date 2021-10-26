@@ -1,9 +1,9 @@
 {% extends 'base_sign_up.html' %}
 {% block title %} Create an Account {% endblock %}
-{% block design %}
+{% block design %} 
 <style>
-input[type=text]::placeholder,
-select:invalid,
+input[type=text]::placeholder, 
+select:invalid, 
 input[type=date]:invalid,
 input[type=password]::placeholder{
     color: black;
@@ -31,11 +31,11 @@ input[type=password]::placeholder{
 <!-- Form validation -->
 <script type="text/javascript">
   function validate_form () {
-    var x = document.myform.gen_username.value;
-    var atposition = x.indexOf("@");
-    var dotposition = x.lastIndexOf(".");
+    var x = document.myform.gen_username.value;  
+    var atposition = x.indexOf("@");  
+    var dotposition = x.lastIndexOf(".");  
     var mobile = /^\d{11}$/;
-
+  
       if ( document.myform.gen_fname.value == "" ) {
           alert ( "Oops! Can't submit form because a field is empty. Please enter your first name." );
           return false;
@@ -80,9 +80,9 @@ input[type=password]::placeholder{
           alert ( "Oops! Can't submit form because a field is empty. Please enter your email address." );
           return false;
       }
-      else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=x.length){
-        alert("Oops! Can't submit form. Please enter a valid email address (e.g. user@domain.com).");
-        return false;
+      else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=x.length){  
+        alert("Oops! Can't submit form. Please enter a valid email address (e.g. user@domain.com).");  
+        return false;  
       }
       else if ( document.myform.gen_pass.value == "" ) {
           alert ( "Oops! Can't submit form because a field is empty. Please enter your password." );
@@ -144,19 +144,19 @@ input[type=password]::placeholder{
                 <h3 class="heading">Personal Details</h3>
                 <p>Hi, we're glad you're here! Do you already have an account? <a href="{% url 'login' %}" class="fw-bold text-primary">Log in </a>instead.</p>
                 </div>
-
+              
               <div class="row">
                 <div class="col">
-                  <input type="text" name="gen_fname" placeholder="First name" class="form-control custom-form text-capitalize"  >
+                  <input type="text" name="gen_fname" placeholder="First name" class="form-control custom-form text-capitalize"  > 
                 </div>
                 <div class="col">
-                  <input type="text" name="gen_surname" placeholder="Last name" class="form-control custom-form text-capitalize"  >
+                  <input type="text" name="gen_surname" placeholder="Last name" class="form-control custom-form text-capitalize"  > 
                 </div>
               </div>
 
               <div class="row">
                 <div class="col">
-                  <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control custom-form"  >
+                  <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control custom-form"  > 
                 </div>
               </div>
 
@@ -170,9 +170,9 @@ input[type=password]::placeholder{
                     </select>
                 </div>
                 <div class="col">
-                  <input type="text" name="gen_contact_no" placeholder="Contact number" class="form-control custom-form" >
+                  <input type="text" name="gen_contact_no" placeholder="Contact number" class="form-control custom-form" > 
                 </div>
-              </div>
+              </div> 
 
               <div class="row">
                 <div class="col">
@@ -222,13 +222,13 @@ input[type=password]::placeholder{
                       <div class="wizard-header">
                 <h3 class="heading">Account Details</h3>
                 <p>Please enter a unique email and password. Make sure to not share your account details to anyone.</p>
-              </div>
+              </div> 
 
               <section style="height: 20px;"></section>
 
               <div class="row">
                 <div class="col">
-                  <input type="text" name="gen_username" id="username" placeholder="Email address" class="form-control custom-form"  >
+                  <input type="text" name="gen_username" id="username" placeholder="Email address" class="form-control custom-form"  > 
                 </div>
               </div>
 
@@ -240,13 +240,13 @@ input[type=password]::placeholder{
 
               <div class="row">
                 <div class="col">
-                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form"  >
+                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form"  > 
                 </div>
               </div>
 
               <div class="row">
                 <div class="col">
-                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" >
+                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" > 
                 </div>
               </div>
 
@@ -258,7 +258,7 @@ input[type=password]::placeholder{
 
                 </div>
                 </section>
-
+          
                 <!-- SECTION 3 -->
                 <h2>
                   <p class="step-icon"><span>03</span></p>
@@ -283,7 +283,7 @@ input[type=password]::placeholder{
 
               </div>
               </section>
-
+              
               <!-- SECTION 4 -->
               <h2>
                 <p class="step-icon"><span>04</span></p>
@@ -326,11 +326,11 @@ input[type=password]::placeholder{
                 </div>
               </div>
             </div>
-
+            
             <div class="row">
               <p class="password" style="margin-top: 15px;">Note: Failure to follow the instruction will result in account registration being denied.</p>
             </div>
-
+            
             <section style="height: 17.4px;"></section>
 
             </div>
@@ -346,11 +346,11 @@ input[type=password]::placeholder{
                 <div class="wizard-header">
           <h3 class="heading">Security Test</h3>
           <p>Last step for registration and you're done! We just need to make sure that you are a human.</p><br>
-        </div>
+        </div> 
 
         <div class="row"style= "margin-top: -20px;">
         <div class="col">
-          <select id="gen_qa" name="gen_qa" class="form-select" required>
+          <select id="Valid ID" name="gen_qa" class="form-select" required>
             <option value="None" selected="true" disabled="disabled">Please select a security question</option>
             <option value="Favorite Book">What is your favorite book?</option>
             <option value="FavoriteColor">What is your favorite color?</option>
@@ -386,39 +386,12 @@ input[type=password]::placeholder{
 
         <section style="height: 13px;"></section>
 
-        <!--<div class="row">-->
-        <!--  <center>-->
-        <!--     <script src="https://www.google.com/recaptcha/api.js" async defer></script>-->
-        <!--    <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>-->
-        <!--  </center>-->
-        <!--</div>-->
-<!--<script>-->
-
-<!--        var onloadCallback = function() {-->
-
-<!--            var myobj = document.getElementById("g-recaptcha");-->
-
-
-
-
-<!--            $('.g-recaptcha').html('');-->
-
-<!--            $('.g-recaptcha').each(function (i, captcha) {-->
-<!--                grecaptcha.render(captcha, {-->
-<!--                    'sitekey' : '6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy'-->
-<!--                });-->
-<!--            });-->
-
-<!--        };-->
-<!--    </script>-->
-<!--        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>-->
-
-<!--    <div class="row">-->
-<!--        <center>-->
-<!--    <div class="g-recaptcha"></div>-->
-<!--    </center>-->
-<!--    </div>-->
-
+        <div class="row">
+          <center>
+            <script src='https://www.google.com/recaptcha/api.js'></script>
+            <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>
+          </center>
+        </div>
 
         <section style="height: 30px;"></section>
 
@@ -430,7 +403,7 @@ input[type=password]::placeholder{
                 </center>
                 </div>
                 </section>
-            </div>
+            </div>    
         </form>
     </div>
   </div>
@@ -447,7 +420,7 @@ input[type=password]::placeholder{
     <script>
     var today = new Date();
     var dd = today.getDate();
-    var mm = today.getMonth() + 1;
+    var mm = today.getMonth() + 1; 
     var yyyy = today.getFullYear();
 
     if (dd < 10) {
@@ -456,8 +429,8 @@ input[type=password]::placeholder{
 
     if (mm < 10) {
       mm = '0' + mm;
-    }
-
+    } 
+        
     today = yyyy + '-' + mm + '-' + dd;
     document.getElementById("datefield").setAttribute("max", today);
     </script>
