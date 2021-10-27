@@ -1,0 +1,220 @@
+{% extends 'nav_admin.html' %}
+{% load static %}
+{% block design %}<link rel="stylesheet" href="{% static 'css/edit_profile.css' %}">{% endblock %}
+{% block title %} Edit Profile {% endblock %}
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %} 
+                <script>
+        		    window.location.href = '{% url 'error_page' %}';  
+    		    </script>
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+		<!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+
+<div class="container border-1 rounded bg-white border" style="border-color:#e6e6e762; border-radius: 50px !important; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1) !important;">
+  <div class="row">
+      <div class="col-md-3 border-right"  style="padding-left: 50px;">
+          <div class="d-flex flex-column align-items-center text-center p-3 py-5"> 
+            
+            <!-- Form-->
+            <form class="image-upload" method="POST" enctype="multipart/form-data" action="{% url 'update_profile' gen.id %}" style="margin-top: 40px; width: 160px; height: 160px;">
+              
+              {% csrf_token %} 
+
+                <!-- Profile picture-->
+                <div id="imageUpload" class="fileupload-image" style="width: 160px; height: 160px; background-image: url('/media/{{ gen.gen_profile }}');">
+                  <input type="file" onchange="previewFile()" title="Upload Profile" name="gen_profile"">
+                  <i class="mdi mdi-camera mdi-24px"></i>
+                </div>
+                
+              <!-- Name-->
+              <div id="name" style="border: none; outline:none; display: block;">
+                <b>{{ fname }} {{ gen.gen_surname }}</b>
+              </div>
+
+              <!-- Username (Email)-->
+              <span class="badge badge-pill badge-dark" style="border: none; outline: none; border-radius: 50px; background-color: #0275d8;">
+              @{{ username }}
+            </span><br>
+            <span class="font-weight-normal text-uppercase" style="font-size: 15px;"> 
+              {{age}}, {{ gen.gen_sex}}
+            </span><br>
+            <span class="text-black-50">
+              {{gen.gen_username}}
+            </span><br>
+            <section style="height: 30px;"></section>
+          </div>
+      </div>
+
+      <div class="col" style="padding-left: 30px; padding-right: 30px;">
+          <div class="p-3 py-5">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                  <h3 class="text-right"style="font-family: Roboto, sans-serif; color: #1b5082; padding-top: 50px">
+                  <i class="fas fa-user-edit" style="font-size: 23px; margin-right: 10px;"></i>
+                    Edit Profile</h3>
+              </div>
+
+              <div class="row mt-2">
+                <section style="height: 15px"></section>
+
+                <h2 class="h5 mb-4">Personal details</h2>
+
+                  <div class="col-md-12">
+                      <label class="labels">First name</label>
+                      <input type="text" name="gen_fname" placeholder="First name" value="{{gen.gen_fname}}" class="form-control custom-form text-capitalize" style="background-color: #e8f0fe;" required> 
+                  </div>
+                  <div class="col-md-12">
+                      <label class="labels">Last name</label>
+                      <input type="text" name="gen_surname" placeholder="Last name" value="{{gen.gen_surname}}" class="form-control custom-form text-capitalize" style="background-color: #e8f0fe;" required> 
+                  </div>
+              </div>
+
+              <div class="row mt-3">
+                  <div class="col-md-12">
+                      <label class="labels">Birthday</label>
+                      <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" value="{{gen.gen_bday|date:'Y-m-d'}}" class="form-control custom-form" style="background-color: #e8f0fe;" required>
+                  </div>
+
+                  <div class="col-md-6">
+                      <label class="labels">Gender</label>
+                      <select id="sex" name="gen_sex" class="form-select" style="background-color: #e8f0fe;" required>
+                        <option value="" disabled="disabled">Sex</option>
+                        <option selected selected="true" value="{{ gen.gen_sex}}">{{ gen.gen_sex}}</option>
+                        <option value="Female"> Female </option>
+                        <option value="Male"> Male </option>
+                        <option value="Other"> Other </option>
+                        </select>
+                  </div>
+
+                  <div class="col-md-6">
+                      <label class="labels">Contact number</label>
+                      <input type="tel" name="gen_contact_no" minlength="11" maxlength="11" placeholder="Contact number" value="{{gen.gen_contact_no}}" class="form-control custom-form" minlength="11" maxlength="11" style="background-color: #e8f0fe;" required> 
+                    </div>
+
+                    <section style="height: 40px"></section>
+
+                    <h2 class="h5 mb-4">Location details</h2>
+
+                  <div class="col-md-12">
+                      <label class="labels">Region</label>
+                      <select id="region" name="gen_region" class="form-select"style="background-color: #e8f0fe;" required>
+                        <option value="" disabled="disabled">Region</option>
+                        <option selected selected="true" value="{{ gen.gen_region.id}}">{{ gen.gen_region}}</option>
+                        {% for reg in region %}
+                        <option value="{{ reg.id }}"> {{ reg.regDesc }} </option>
+                        {% endfor %}
+                        </select>
+                    </div>
+
+                  <div class="col-md-6">
+                      <label class="labels">Province</label>
+                      <select id="province" name="gen_province" class="form-select" style="background-color: #e8f0fe;" required>
+                        <option value="" disabled="disabled">Province</option>
+                        <option selected selected="true" value="{{ gen.gen_province.id}}">{{ gen.gen_province}}</option>
+                        {% for pro in province %}
+                        <option value="{{ pro.id }}"> {{ pro.provDesc }} </option>
+                        {% endfor %}
+                         </select>
+                    </div>
+
+                  <div class="col-md-6">
+                      <label class="labels">City</label>
+                      <select id="city" name="gen_city" class="form-select" style="background-color: #e8f0fe;" required>
+                        <option value="" disabled="disabled">City</option>
+                        <option selected selected="true" value="{{ gen.gen_city.id}}">{{ gen.gen_city}}</option>
+                        {% for cit in city %}
+                        <option value="{{ cit.id }}"> {{ cit.citymunDesc }} </option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                    
+                  <div class="col-md-12">
+                      <label class="labels">Barangay</label>
+                      <input type="text" name="gen_barangay" placeholder="Barangay" value="{{gen.gen_barangay}}" class="form-control custom-form text-capitalize" style="background-color: #e8f0fe;" required>
+                    </div>
+                </div>
+          </div>
+      </div> 
+      <div class="text-center">
+        <button class="btn btn-primary custom-butt" type="submit">Save Changes</button>
+        <button class="btn btn-outline-primary custom-butt" type="button" onclick="location.href = '{% url 'user_profile' %}'">Discard Changes</button>
+        <section style="height: 90px;"></section>
+    </div>
+  </div>
+</div>
+</form>
+
+<section style="height: 50px;"></section>
+
+<script>
+function showDiv() {
+  var x = document.getElementById("hidepanel");
+
+  if (x.style.display === "block") {
+    x.style.display = "none";
+  } else {
+    x.style.display = "block";
+  }
+}
+</script>
+
+<script>
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth() + 1; //January is 0!
+  var yyyy = today.getFullYear();
+
+  if (dd < 10) {
+    dd = '0' + dd;
+  }
+
+  if (mm < 10) {
+    mm = '0' + mm;
+  } 
+      
+  today = yyyy + '-' + mm + '-' + dd;
+  document.getElementById("datefield").setAttribute("max", today);
+  </script>
+
+<script>
+function previewFile(){
+  var imageUpload = document.querySelector('#imageUpload'),
+      file = document.querySelector('input[type="file"]').files[0],
+      reader = new FileReader();
+reader.onloadend = () => imageUpload.style.backgroundImage = 'url(' + reader.result + ')'
+if (file)
+  reader.readAsDataURL(file)
+else
+  imageUpload.style.backgroundImage = ''
+  
+  document.getElementById('upload-bg').reset()
+}
+</script>
+
+{% endblock %}

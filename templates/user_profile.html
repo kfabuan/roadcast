@@ -1,0 +1,315 @@
+{% extends 'nav_admin.html' %}
+{% load static %}
+{% block design %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
+{% block title %} Profile {% endblock %}
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' or a.Members_User.Member_Type == 'Sub-representative' %} 
+                <!-- body (no need to paste anything here) -->
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+
+<!-- General public profile -------------------------------------------------------------->
+
+{% if messages %}
+     {% for message in messages %}
+     <div class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </div>
+     {% endfor %}
+{% endif %}
+
+{% for b in pub %}
+  {% ifequal b.id request.session.public_id %}
+  
+<form method="POST" enctype="multipart/form-data" action="{% url 'edit_profile' b.id %}">
+{% csrf_token %}
+<div class="row" >
+    <img src="{% static 'image/city.gif'%}" class="img-fluid cover-bg" alt="Background Cover">
+</div>
+
+<div class="container profile-det">
+    <div class="row">
+        <!-- Profile (left) -->
+        <div class="col-xl-8 card-layout">
+          <div class="card card-profile">
+            <div class="row justify-content-center">
+              <div class="col-lg-3 order-lg-2">
+                <div class="card-profile-image">
+                    <img src="/media/{{ b.gen_profile }}" class="rounded-circle" alt="Profile picture" style="width: 200px; height: 200px; object-fit: cover;"> <!-- Profile picture of user goes here -->
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-header bg-light text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4" style="border-radius:20px 20px 0px 0px;">
+              <div class="d-flex justify-content-between">
+                <!-- Edit button goes here -->
+                <span></span>
+                <button type="submit" class="btn btn-primary submit_me" style="border-radius: 50px;" >
+                  <i class="fas fa-pen"></i><span id="submit_me_text">Edit Profile</span></button>
+              </div>
+            </div>
+
+            <!-- Stats goes here -->
+            <div class="card-body pt-0 pt-md-4">
+              <div class="row">
+                <div class="col">
+                  <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                    <!-- <div>
+                      <a href="#"><span class="heading">15</span></a>
+                      <span class="description">Total reports</span>
+                      </div>
+
+                      <div>
+                      <a href="#"><span class="heading">8</span></a>
+                      <span class="description">Valid reports</span>
+                      </div>
+
+                      <div>
+                      <a href="#"><span class="heading">7</span></a>
+                      <span class="description">Invalid reports</span>
+                    </div> -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- <section style="height: 20px;"></section> -->
+
+              <!-- Profile details goes here -->
+              <div class="text-center">
+                <h3>
+                  {{b.gen_fname}} {{b.gen_surname}}
+                </h3>
+                <div class="h5 font-weight-300">
+                  {{b.gen_username}}
+                </div>
+
+                <div class="h5 font-weight-light">
+                  <a class="verified" title="Verified User"><i class="fas fa-star"></i></a>&nbsp;
+                  <span class="text-muted" style="font-size: 16px;"><i>Verified user &nbsp; | &nbsp;</i></span>
+
+                  <a class="verified" title="Verified User"><i class="fas fa-check-circle"></i></a>&nbsp;
+                  <span class="text-muted" style="font-size: 16px;"><i>Approved user</i></span>&nbsp;
+                </div>
+
+                <section style="height: 40px;"></section>
+
+            </form>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details (right) -->
+        <div class="col-xl-4 details-prof card-layout" >
+            <div class="card" style="border-radius:50px 50px 0px 0px; padding-left: 10px;">
+            <div class="card-header bg-light" style="border-radius:20px 20px 0px 0px;">
+                <h5 class="right-panel">About me</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-map-marker-alt prof_icons"></i>Location Details
+                  <section style="height: 5px;"></section>
+                </span>
+                <span class="text-muted">
+                  {{b.gen_barangay|title}}, {{b.gen_city|title}}, {{b.gen_province|title}} ― <i>{{b.gen_region|title}}</i>
+                </span>
+                <section style="height: 10px;"></section>
+              </li>
+              <li class="list-group-item">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-info-circle prof_icons"></i>Other information
+                  <section style="height: 5px;"></section>
+                </span>
+                <span>
+                  <span class="badge badge-pill badge-secondary custom_ic2">General Public</span>&nbsp;
+                  <span class="badge badge-pill badge-secondary custom_ic3">{{ b.gen_contact_no }}</span>&nbsp;
+                  <span class="badge rounded-pill 
+                              {% if b.gen_sex  == 'Female'%} bg-custom4
+                              {% elif b.gen_sex  == 'Male'%} bg-custom3 
+                              {% else %} bg-custom
+                              {% endif %}">{{ b.gen_sex }}</span>&nbsp;
+                  <span class="badge badge-pill custom_ic1">{{ b.gen_bday }}</span>
+                </span>
+                <section style="height: 20px;"></section>
+              </li>
+              <li class="list-group-item">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-calendar-check prof_icons"></i>Joined date
+                </span>
+                <section style="height: 5px;"></section>
+                <span class="text-muted">
+                  {{ b.date_signed_up }}
+                </span>
+                <section style="height: 10px;"></section>
+              </li> 
+              <li class="list-group-item" style="border-radius: 0px 0px 20px 20px;">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-calendar-minus prof_icons"></i>Last edit
+                </span>
+                <section style="height: 5px;"></section>
+                <span class="text-muted">
+                  {{ b.date_edit }}
+                </span>
+                <section style="height: 10px;"></section>
+              </li> 
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endifequal %}
+  {% endfor %}
+
+<!-- Members --------------------------------------------------------------------------------------->
+{% for a in all %}
+  {% ifequal a.id request.session.authorized_id %}
+  <div class="row" >
+    <img src="{% static 'image/city.gif'%}" class="img-fluid cover-bg" alt="Background Cover">
+</div>
+
+<div class="container profile-det">
+    <div class="row">
+        <!-- Profile (left) -->
+        <div class="col-xl-8 card-layout">
+          <div class="card card-profile">
+            <div class="row justify-content-center">
+              <div class="col-lg-3 order-lg-2">
+                <div class="card-profile-image">
+                    <img src="/media/{{ a.Members_Pic }}" class="rounded-circle" alt="Profile picture" style="width: 200px; height: 200px; object-fit: cover;"> <!-- Profile picture of user goes here -->
+                </div>
+              </div>
+            </div>
+            
+            <div class="card-header bg-light text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4" style="border-radius:20px 20px 0px 0px;">
+              <div class="d-flex justify-content-between">
+                <!-- For header ng card -->
+                <span></span>
+              </div>
+            </div>
+            <!-- Stats goes here -->
+            <div class="card-body pt-0 pt-md-4">
+              <div class="row">
+                <div class="col">
+                  <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                    <div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Profile details goes here -->
+              <div class="text-center">
+                <h3>
+                  {{a.Members_Fname}} {{a.Members_Lname}}, {{a.Members_Position}}
+                </h3>
+                <div class="h5 font-weight-300">
+                  <span class="text-muted font-weight-light"><i>@{{a.Members_Username}}</i></span>
+                </div>
+                <div class="h5 font-weight-300">
+                  {{a.Members_Email}}
+                </div>
+            <section style="height: 25px;"></section>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Details (right) -->
+        <div class="col-xl-4 details-prof card-layout" >
+            <div class="card" style="border-radius:50px 50px 0px 0px; padding-left: 10px;">
+            <div class="card-header bg-light" style="border-radius:20px 20px 0px 0px;">
+                <h5 class="right-panel">About me</h5>
+            </div>
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-building prof_icons"></i>Department Details
+                  <section style="height: 5px;"></section>
+                </span>
+                <span class="text-muted">
+                  {{a.Members_Dept}}
+                </span>
+                <section style="height: 10px;"></section>
+              </li>
+              <li class="list-group-item">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-info-circle prof_icons"></i>Other information
+                  <section style="height: 5px;"></section>
+                </span>
+                <span>
+                  <span class="badge rounded-pill 
+                              {% if a.Members_User.Member_Type  == 'Admin'%} bg-custom4 
+                              {% elif a.Members_User.Member_Type  == 'Crime Statistician'%} bg-custom2 
+                              {% elif a.Members_User.Member_Type  == 'Investigator'%} bg-custom 
+                              {% else %} bg-custom3  
+                              {% endif %}">{{a.Members_User}}</span>&nbsp;
+                  <span class="badge badge-pill badge-secondary custom_ic3">{{a.Members_Position}}</span>&nbsp;
+                  <span class="badge badge-pill badge-secondary custom_ic2">{{a.Members_Substation}}</span>&nbsp;
+                  <span class="badge badge-pill custom_ic1">{{a.Members_District}}</span>
+                </span>
+                <section style="height: 20px;"></section>
+              </li>
+              <li class="list-group-item">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-calendar-check prof_icons"></i>Joined date
+                </span>
+                <section style="height: 5px;"></section>
+                <span class="text-muted">
+                  {{ a.Date_Added }}
+                </span>
+                <section style="height: 10px;"></section>
+              </li> 
+              <li class="list-group-item" style="border-radius: 0px 0px 20px 20px;">
+                <section style="height: 10px;"></section>
+                <span class="h5 mt-4">
+                  <i class="fas fa-calendar-minus prof_icons"></i>Last edit
+                </span>
+                <section style="height: 5px;"></section>
+                <span class="text-muted">
+                  {{ a.Date_Edit }}
+                </span>
+                <section style="height: 10px;"></section>
+              </li> 
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endifequal %}
+  {% endfor %}
+{% endblock %}

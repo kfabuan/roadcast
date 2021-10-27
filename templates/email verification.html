@@ -1,0 +1,12 @@
+{% autoescape off %}
+Hi, {{public.gen_fname}}. You're one step away! 
+
+In order to get your account verified by the admin and start experiencing Roadcast, you need to confirm that this is your email address.
+
+Please use the link below to verify your account (you will be redirected to Roadcast).
+http://{{domain}}{% url 'activate' uidb64=uid token=token %}
+
+
+- Roadcast Team
+
+{% endautoescape %}

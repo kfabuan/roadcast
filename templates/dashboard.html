@@ -1,0 +1,1235 @@
+{% extends 'nav_admin.html' %}
+{% block title %} Dashboard {% endblock %}
+{% load static %}
+{% block design %}
+
+<style>
+
+.popper,
+    .tooltip {
+        position: absolute;
+        background: rgb(75, 75, 75);
+        color: white;
+        min-width: 80px;
+        border-radius: 3px;
+        box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+        padding: 12px;
+        text-align: center;
+    }
+    .popper .popper__arrow,
+    .tooltip .tooltip-arrow {
+        width: 0;
+        height: 0;
+        border-style: solid;
+        position: absolute;
+        margin: 5px;
+    }
+
+    .tooltip .tooltip-arrow,
+    .popper .popper__arrow {
+        border-color: rgb(75, 75, 75);
+    }
+    .popper[x-placement^="top"],
+    .tooltip[x-placement^="top"] {
+        margin-bottom: 6px;
+    }
+    .popper[x-placement^="top"] .popper__arrow,
+    .tooltip[x-placement^="top"] .tooltip-arrow {
+        border-width: 5px 5px 0 5px;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        bottom: -5px;
+        left: calc(50% - 5px);
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .popper[x-placement^="bottom"],
+    .tooltip[x-placement^="bottom"] {
+        margin-top: 6px;
+    }
+    .tooltip[x-placement^="bottom"] .tooltip-arrow,
+    .popper[x-placement^="bottom"] .popper__arrow {
+        border-width: 0 5px 5px 5px;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-top-color: transparent;
+        top: -5px;
+        left: calc(50% - 5px);
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .tooltip[x-placement^="right"],
+    .popper[x-placement^="right"] {
+        margin-left: 6px;
+    }
+    .popper[x-placement^="right"] .popper__arrow,
+    .tooltip[x-placement^="right"] .tooltip-arrow {
+        border-width: 5px 5px 5px 0;
+        border-left-color: transparent;
+        border-top-color: transparent;
+        border-bottom-color: transparent;
+        left: -5px;
+        top: calc(50% - 5px);
+        margin-left: 0;
+        margin-right: 0;
+    }
+    .popper[x-placement^="left"],
+    .tooltip[x-placement^="left"] {
+        margin-right: 6px;
+    }
+    .popper[x-placement^="left"] .popper__arrow,
+    .tooltip[x-placement^="left"] .tooltip-arrow {
+        border-width: 5px 0 5px 5px;
+        border-top-color: transparent;
+        border-right-color: transparent;
+        border-bottom-color: transparent;
+        right: -6px;
+        top: calc(50% - 5px);
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .tooltip[aria-hidden="false"]{
+        opacity:1;
+    }
+
+    
+    .vl {
+      border-left: 6px solid green;
+      height: 500px;
+    }
+
+    .card {
+            box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
+            border-radius: 15px !important;
+        }
+    .card-body {
+        border-radius: 15px !important;
+        position: relative;
+    }
+
+    .bi-info-circle-fill {
+        color: #1b5082; 
+        right: 15px;
+        font-size: 19px;
+        position: absolute;
+        z-index: 999;
+    }
+
+    .bi-info-circle-fill:hover {
+       color: rgb(53, 187, 202) ;
+       cursor: pointer;
+    }
+
+    .tally1 {
+        background: linear-gradient(0deg, rgba(31,75,117,1) 0%, rgba(8,45,73,1) 90%);
+        color: white;
+    }
+
+    .tally2 {
+        background: rgb(1,145,180);
+        background: linear-gradient(0deg, rgba(1,145,180,1) 0%, rgb(53, 187, 202) 90%);
+        color: white;
+    }
+
+    .tally3 {
+        background: rgb(31,36,152);
+        background: linear-gradient(0deg, rgba(31,36,152,1) 0%, rgba(1,145,180,1) 100%);
+        color: white;
+    }
+
+    .tally-title {
+        font-size: large;
+    }
+
+    .tally-value {
+        font-weight: 500;
+        font-size: 27.5px;
+        margin-top: 0;
+        margin-bottom: .5rem;
+        line-height: 1.2;
+    }
+
+    .wrapper {
+        height: 350px;
+        padding-bottom: 10px;
+    }
+
+    .fwrapper {
+        height: 350px;
+        padding-bottom: 40px;
+    }
+
+    .chart {
+        height: 100%;
+    }
+
+    .map-div {
+        height: 540px;
+    }
+
+    .mapouter {
+        height: 100%;
+    }
+
+    #map {
+        width:100%;
+        height:100%;
+        border-radius: 15px;
+    }
+
+    .map-desc {
+        padding-top: 5px;
+        padding-bottom: 5px;
+        font-size: 13px;
+        color: #1b5082;
+        font-weight: 500;
+    }
+
+    @media only screen and (max-width: 1160px){
+        .tally-title {
+            font-size: 12px;
+        }
+
+        .tally-value {
+            font-weight: 500;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: .5rem;
+            line-height: 1;
+        }
+    }
+
+    @media only screen and (max-width: 1030px){
+        .tally-title {
+            font-size: 12px;
+        }
+
+        .tally-value {
+            font-weight: 500;
+            font-size: 22px;
+            margin-top: 0;
+            margin-bottom: .5rem;
+            line-height: 1;
+        }
+    }
+    
+    @media only screen and (max-width: 966px) and (min-width: 846px) {
+        .tally-title {
+            font-size: 12px;
+            display: block;
+        }
+
+        .icon {
+            display: block;
+        }
+
+        
+    }
+
+    @media only screen and (max-width: 846px)  {
+        .tally-title {
+            font-size: 14px;
+        }
+
+        .tally-div {
+            width: 100%;
+            height: 97px;
+            margin-bottom: 6px;
+        }
+
+        .map-div {
+            height: 330px;
+        }
+    }
+
+
+</style>
+
+{% endblock %}
+
+<script>
+    {% block jquery %}
+
+        var endpoint = '/dashboard/data'
+
+        var district1_labels = []
+        var district1_count = []
+
+        var district2_labels = []
+        var district2_count = []
+
+        var offense_labels = []
+        var offense_count = []
+
+        var sex_labels = []
+        var sex_count = []
+
+        var time_count = []
+
+        var severity_labels = []
+        var severity_count = []
+
+        var day_labels = []
+        var day_count = []
+
+        $.ajax({
+             method: "GET",
+             url: endpoint,
+             success: function(data){
+
+                district1_labels = data.district1_labels
+                district1_count = data.district1_count
+
+                district2_labels = data.district2_labels
+                district2_count = data.district2_count
+
+                offense_labels = data.offense_labels
+                offense_count = data.offense_count
+
+                sex_labels = data.sex_labels
+                sex_count = data.sex_count
+
+                time_count = data.time_count
+
+                severity_labels = data.severity_labels
+                severity_count = data.severity_count
+
+                day_labels = data.day_labels
+                day_count = data.day_count
+
+                setChart()
+    
+            },
+
+             error: function(error_data){
+                 console.log("Error")
+                 console.log(error_data)
+             }
+        })
+
+        function setChart(){
+            var line_date_forecast = document.getElementById('line_date_forecast'); //weekly forecasting
+            var line_time = document.getElementById('line_time'); //time
+            var ctx = document.getElementById('myChart'); //district
+            var ctx2 = document.getElementById('myChart2'); //district1
+            var ctx3 = document.getElementById('myChart3'); //district2
+            var pie_sex = document.getElementById('pie_sex'); //sex
+            var bar_offense = document.getElementById('bar_offense'); //offenses
+            var bar_severity = document.getElementById('bar_severity'); //severity
+            var line_day = document.getElementById('line_day'); //day
+
+            var line_date_forecast = new Chart(line_date_forecast, {
+                type: 'line',
+                data: {
+                    labels: [ 
+
+                    {%for i in datelist%}
+                    '{{i.Date}}',
+                    {%endfor%}
+
+                    ],
+                    datasets: [
+                        {
+                            label: 'No. of incidents',
+                            data: [
+                                    {%for j in reversed_datelist_values%}
+                                    {{j.Incidents}},
+                                    {%endfor%}
+                                    ],
+                            fill: false,
+                            borderColor: 'rgb(65,105,225)',
+                            tension: 0.1
+                        },
+                        {
+                            label: 'Forecasted',
+                            data: [,,,,,,,{%for k in reversed_datelist_values_forecast%}
+                                    {{k.Averages}},
+                                    {%endfor%}],
+                            fill: false,
+                            borderColor: '#4adede',
+                            tension: 0.1
+                        }
+                    ]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Weekly Forecasting'
+                        },
+                    },
+
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear',
+                            from: 1,
+                            to: 0,
+                            loop: false
+                        }
+                    },
+                    maintainAspectRatio: false,  
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Date',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }      
+                }
+            });
+            
+            var line_time = new Chart(line_time, {
+                type: 'line',
+                data: {
+                    labels: ["0:00:00", "2:00:00", "4:00:00", "6:00:00","8:00:00", "10:00:00", "12:00:00","14:00:00","16:00:00","18:00:00","20:00:00","22:00:00",],
+                    datasets: [{
+                        label: 'Yearly Hazardous Time',
+                        data: time_count,
+                        fill: false,
+                        borderColor: '#1CA7EC',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Incident Prone Time'
+                        }
+                    },
+
+                    animations: {
+                        tension: {
+                            duration: 1000,
+                            easing: 'linear',
+                            from: 1,
+                            to: 0,
+                            loop: false
+                        }
+                    },
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: '24-hr time',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }
+
+                }
+            });
+
+            var myChart = new Chart(ctx2, {
+                type: 'bar',
+                data: {
+                    labels: district1_labels,
+                    datasets: [{
+                        label: 'District 1',
+                        data: district1_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+        
+                options: {
+                    scaleShowValues: true,
+                    indexAxis: 'x',
+                    scales: {
+                        // x: {
+                        //     ticks: {
+                        //     color: "white"
+                        //     }
+                        // },
+                        // y: {
+                        //     ticks: {
+                        //     color: "white"
+                        //     }
+                        // }
+                    },
+                    animation: {
+                        duration: 1000,
+                        easing: 'linear'
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                               // color: 'white'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Incident Cases in Distict 1',
+                                font:{weight: 'bold'}
+                            }
+                        }
+                    },
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Barangay',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
+                },
+                
+            });
+
+            var myChart = new Chart(ctx3, {
+                type: 'bar',
+                data: {
+                    labels: district2_labels,
+                    datasets: [{
+                        label: 'District 2',
+                        data: district2_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true},
+                    },
+
+                    animation: {
+                        duration: 1000,
+                        easing: 'linear'
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                               // color: 'white'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Incident Cases in Distict 2',
+                                font:{weight: 'bold'}
+                            }
+                        }
+                    },
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Barangay',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    } 
+                },
+            });
+
+            var pie_sex = new Chart(pie_sex, {
+                type: 'doughnut',
+                data: {
+                    labels: sex_labels,
+                    datasets: [{
+                        label: 'Sex',
+                        data: sex_count,
+                        backgroundColor: [
+                        '#4adede',
+                        '#1f2f98',
+                        // '#787ff6',
+                        // '#7BD5F5',
+                        // '#1ca7ec',
+                        ],
+                        hoverOffset: 4
+                    }]
+                }, 
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Yearly Sex Distribution in Percentage'
+                        },
+                        datalabels: {
+                            color: '#ffffff',
+                            formatter: (value) => {
+                            return value + '%'
+                            }
+                        }
+                    },
+                    maintainAspectRatio: false,
+                    
+                }
+            });
+
+            
+
+            var bar_offense = new Chart(bar_offense, {
+                type: 'bar',
+                data: {
+                    labels: offense_labels,
+                    datasets: [{
+                        label: 'Yearly Crime/Offense',
+                        data: offense_count,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                               // color: 'white'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Crimes/Offenses Committed',
+                                font:{weight: 'bold'}
+                            }
+                        }
+                    },
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Offenses',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
+                }
+            });
+
+            var bar_severity = new Chart(bar_severity, {
+                type: 'bar',
+                data: {
+                    labels: severity_labels,
+                    datasets: [{
+                        label: 'Yearly Severity',
+                        data: severity_count,
+                        backgroundColor: [
+                            
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1,
+                        //fill: true, if line ang type
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {beginAtZero: true}
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                               // color: 'white'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Health Severity Status of the Involved Person(s)',
+                                font:{weight: 'bold'}
+                            }
+                        }
+                    },
+                    maintainAspectRatio: false, 
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Severity',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
+                }
+            });
+
+            var line_day = new Chart(line_day, {
+                type: 'line',
+                data: {
+                    labels: day_labels,
+                    datasets: [{
+                        label: 'Day',
+                        data: day_count,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend:{
+                            
+                        },
+                        title: {
+                            display: true,
+                            text: 'Day of the week',
+                        }
+                    },
+                    maintainAspectRatio: false, 
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    scales: {
+                        x: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Day',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    weight: 'bold',
+                                },
+                                padding: {top: 10, left: 0, right: 0, bottom: 0}
+                            }
+                        },
+
+                        y: {
+                            display: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Incidents',
+                                color: '#666',
+                                font: {
+                                    size: 12,
+                                    style: 'normal',
+                                    weight: 'bold',
+                                    lineHeight: 1.5
+                                },
+                                padding: {top: 30, left: 0, right: 0, bottom: 0}
+                            }
+                        }
+                    }  
+                }
+            });
+
+
+            
+        } //close function
+        
+    {% endblock %}
+</script>
+
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%} 
+                <!-- body (no need to paste anything here) -->
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("forecast-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("time-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("d1-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("d2-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("sex-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("offense-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("severity-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      var referenceElement = document.getElementById("day-tooltip");
+      var instance = new Tooltip(referenceElement, {
+        title: referenceElement.getAttribute('data-bs-placement'),
+        placement: "left",
+      });
+    });
+
+
+</script>
+
+    <div class="row" style="border:0; margin:0; padding:0;">
+        <!-- first half -->
+        <div class="col-sm-6">
+          <div class="">
+            <div class="card-body ">
+                <h5 class="card-title">{{ this_year}} Road Incident Cases</h5>
+                <div class="row">
+                    <div class="col-sm-4 tally-div">
+                      <div class="card tally1">
+                        <div class="card-body text-center">
+                          <p style="color: white;" class="tally-title"><i class="bi bi-calendar2-week me-2 icon"></i> Week {{week_num }}:</p>
+                          <p class="tally-value">{{ this_week }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-4 tally-div">
+                      <div class="card tally2">
+                        <div class="card-body text-center">
+                          <p style="color: white;" class="tally-title"><i class="bi bi-calendar-minus me-2 icon"></i>Yesterday:</p>
+                          <p class="tally-value">{{ yesterday_total }}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="col-sm-4 tally-div">
+                        <div class="card tally3">
+                          <div class="card-body text-center">
+                            <p style="color: white;" class="tally-title"> <i class="bi bi-calendar-check me-2 icon"></i>Today:</p>
+                            <p class="tally-value">{{ this_day }}</p>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <!-- <div class="card" style="height: 540px;">
+                    <div class="ratio ratio-4x3">
+                        <div id="map"  style="border-radius: 15px;"></div>
+                    </div>
+                </div> -->
+
+                <!-- <div class="card mb-4">
+                    <div class="ratio ratio-4x3">
+                        <div id="map"  style="border-radius: 15px;"></div>
+                    </div>
+                </div> -->
+
+                <div class="card mb-2 map-div" style="">
+                    <div class="mapouter" style="">
+                        <div id="map" style=""></div>
+                    </div>
+                </div>
+                <center>
+                <p class="map-desc"><i>*The red markers in the map indicate locations where incidents have happened this year.</i></p>
+                </center>
+            </div>
+        </div>
+
+       
+
+        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
+
+        <script type="text/javascript">
+
+            var locations = [
+        
+            {% for i in markers_json %}
+        
+            ['{{i.Address}}',{{i.Latitude}},{{i.Longitude}}],
+        
+            {% endfor %}
+        
+            ]
+            var img = new Image();
+            
+            const marker_url = '{% static 'image/marker.png' %}';
+    
+            
+    
+            var map = new google.maps.Map(document.getElementById('map'), {
+              zoom: 13,
+              center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
+              mapTypeId: google.maps.MapTypeId.ROADMAP,
+               
+            });
+        
+            var infowindow = new google.maps.InfoWindow();
+        
+            var marker, i;
+        
+            for (i = 0; i < locations.length; i++) {
+              marker = new google.maps.Marker({
+                position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                map: map,
+                icon: {
+                        url: marker_url,
+                        size: new google.maps.Size(36, 50),
+                        scaledSize: new google.maps.Size(25, 25),
+                        anchor: new google.maps.Point(0, 50)
+                    }
+              });
+        
+              google.maps.event.addListener(marker, 'click', (function(marker, i) {
+                return function() {
+                  infowindow.setContent(locations[i][0]);
+                  infowindow.open(map, marker);
+                }
+              })(marker, i));
+            }
+          </script>
+        
+
+
+
+        <!-- second half -->
+        <div class="col-sm-6">
+                <div class="card mb-4">
+                    <div class="card-body fwrapper" style="background-color: white;">
+                        <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="This chart shows the weekly forecasting of incidents. The blue line indicates the count of incidents for the past 7 days, while the light green line indicates the predicted number of incidents for the next 7 days." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                        <canvas id="line_date_forecast" height="200" class="chart"></canvas>
+                    </div>
+                </div>
+
+                <div class="card mb-4 wrapper">
+                    <div class="card-body" style="background-color: white;">
+                        <i class="bi bi-info-circle-fill"  id="time-tooltip" title="This chart illustrates this year's count of incidents based on the time the incidents were committed." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                        <canvas id="line_time" height="200" class="chart"></canvas>
+                    </div>
+                </div>
+          </div>
+    </div>
+
+      <div class="row" style="border:0; margin:0; padding:0;">
+        <div class="col-sm-6 mb-4">
+            <div class="card wrapper">
+                <div class="card-body pt-4" style="background-color:white;">
+                    <i class="bi bi-info-circle-fill"  id="d1-tooltip" title="This charts presents this year's count of incidents for each barangay in District 1." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="myChart2" height="135" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 mb-4">
+            <div class="card wrapper">
+                <div class="card-body pt-4" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="d2-tooltip" title="This charts shows this year's count of incidents for each barangay in District 2." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="myChart3" height="135" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+      </div>
+
+    
+      <div class="row" style="border:0; margin:0; padding:0;">
+        <div class="col-sm-4 mb-4">
+            <div class="card wrapper">
+                <div class="card-body" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="sex-tooltip" title="This doughnut charts shows the count of involved males and females for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="pie_sex" height="135" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-8 mb-4">
+            <div class="card wrapper">
+                <div class="card-body pt-4" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="offense-tooltip" title="This bar graph shows the count of offenses or the crimes committed for this year." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="bar_offense" height="135" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row" style="border:0; margin:0; padding:0;">
+        <div class="col-sm-6 mb-4">
+            <div class="card wrapper">
+                <div class="card-body pt-4" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="severity-tooltip" title="This bar graph shows this year's count of the involved persons' health severity when the incident happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="bar_severity" height="135" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 mb-4">
+            <div class="card wrapper">
+                <div class="card-body" style="background-color: white;">
+                    <i class="bi bi-info-circle-fill"  id="day-tooltip" title="This bar graph displays this year's count of incidents based on the day of the week it happened." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                    <canvas id="line_day" height="135" class="chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{% endblock content %}
+

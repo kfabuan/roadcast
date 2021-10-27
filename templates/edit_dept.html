@@ -1,0 +1,106 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} Add Department {% endblock %}
+
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' %} 
+                <!-- body (no need to paste anything here) -->
+	          {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+            
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+            	 window.location.href = '{% url 'error_page' %}';
+        	</script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+{% if messages %}
+     {% for message in messages %}
+     <p class="alert alert-danger">
+      <strong>{{message}}</strong>
+     </p>
+     {% endfor %}
+{% endif %}
+
+<div class="container">
+
+  <!-- Upper Section (Maayos spacing hehe) -->
+  <section style="height: 25px;"></section>
+
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Edit Department &nbsp;</h3>
+
+ <section style="height: 35px;"></section>
+
+  <!-- Main Content -->
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'update_dept' departments.id %}" class="row g-3">
+
+    {% csrf_token %}
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
+
+      <div class="col-md-12">
+        <label for="" class="form-label">Department Name</label>
+        <input type="text" name="Dept_Dept" class="form-control text-capitalize" value="{{ departments.Dept_Dept }}" equired>
+      </div>
+
+    
+    <section style="height: 15px;"></section>
+
+    <center>
+    <div class="col-12">
+      <button type="submit" name="submit" class="btn btn-primary">Update Department</button>
+    </div>
+    </center>
+  </form>
+
+  <section style="height: 60px;"></section>
+
+
+  <!-- Script -->
+    
+    <script>
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+    </script>
+
+  {% endblock %}
+  
+  {% block jquery %} 
+  
+  {% endblock %}

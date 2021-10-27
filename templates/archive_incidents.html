@@ -1,0 +1,352 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} Archive Incidents List {% endblock %}
+
+{% block design %}
+<style>
+    /* th, .table-header, .page-title {
+        color: #050087;
+    } */
+
+    table {
+        background-color: white;
+        border-radius: 15px !important;
+        box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
+    }
+
+    .input-group{
+        display: flex;
+        width:100%;
+    }
+
+    .rad_tl {
+      border-top-left-radius: 15px !important;
+    }
+
+    .rad_tr {
+      border-top-right-radius: 15px !important;
+    }
+
+    @media only screen and (max-width: 1300px){
+        .title-count {width: 100% !important;}
+    }
+
+</style>
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %} 
+                <!-- body (no need to paste anything here) -->
+            {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+        		    window.location.href = '{% url 'error_page' %}';  
+    		    </script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+{% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
+    
+<div class=""style="float: right;">
+    <form action = "" method="GET" class="row row-cols-lg-auto g-3 align-items-center mb-4 me-3" style="float: right;">
+        {% comment %} {% csrf_token %} {% endcomment %}
+        <div class="col-12">
+            <select class="form-select form-select-sm" id="inc_type" name="coltype" > 
+                <option value="Collision" selected>Collision type</option>
+                <option value="Bumped From Behind">Bumped From Behind</option>
+                <option value="Angle Collision">Angle Collision</option>
+                <option value="Clash">Clash</option>
+                <option value="Damage to Property">Damage to Property</option>
+                <option value="Head On">Head On</option>
+                <option value="Hit and Run">Hit and Run</option>
+                <option value="Hit Animals">Hit Animals</option>
+                <option value="Hit Object On Road">Hit Object On Road</option>
+                <option value="Hit Object Off Road">Hit Object Off Road</option>
+                <option value="Hit Parked Vehicle">Hit Parked Vehicle</option>
+                <option value="Hit Pedestrian">Hit Pedestrian</option>
+                <option value="Hit While Parked">Hit While Parked</option>
+                <option value="Multi Vehicle">Multi Vehicle</option>
+                <option value="Rear End">Rear End</option>
+                <option value="Self Accident">Self Accident</option>
+                <option value="Impact">Impact</option>
+                <option value="Sideswiped">Sideswiped</option>
+                <option value="Side Impact">Side Impact</option>
+                <option value="Right Angle">Right Angle</option>
+                <option value="Others">Others</option>
+            </select>
+            </div>
+            
+            
+            <div class="col-12">
+
+            <select class="form-select form-select-sm" id="barang" name="barangay">
+                <option value="0" selected>Barangay</option>
+                <option value="2">Bagong Ilog</option>
+                <option value="5">Bagong Katipunan</option>
+                <option value="3">Bambang</option>
+                <option value="27">Buting</option>
+                <option value="4">Caniogan</option>
+                <option value="6">Kalawaan</option>
+                <option value="7">Kapasigan</option>
+                <option value="8">Kapitolyo</option>
+                <option value="9">Malinao</option>
+                <option value="10">Oranbo</option>
+                <option value="11">Palatiw</option>
+                <option value="27">Pineda</option>
+                <option value="12">Sagad</option>
+                <option value="13">San Antonio</option>
+                <option value="14">San Joaquin</option>
+                <option value="15">San Jose</option>
+                <option value="16">San Nicolas</option>
+                <option value="29">Santa Cruz</option>
+                <option value="30">Santa Rosa</option>
+                <option value="17">Santo Tomas</option>
+                <option value="18">Sumilang</option>
+                <option value="1">Ugong</option>
+                <option value="19">Dela Paz</option>
+                <option value="20">Manggahan</option>
+                <option value="21">Maybunga</option>
+                <option value="22">Pinagbuhatan</option>
+                <option value="23">Rosario</option>
+                <option value="24">San Miguel</option>
+                <option value="26">Santolan</option>
+                <option value="25">Santa Lucia</option>
+            </select>
+            </div>
+
+            <div class="col-12">
+                <input type="date" class="form-select form-select-sm" id="from_date" name="from_date">
+            </div>
+
+            <div class="col-12">
+                <input type="date" class="form-select form-select-sm" id="to_date" value="" name="to_date"> 
+            </div>
+
+            <div class="col-12">
+                <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+            </div>
+    </form>
+</div>    
+
+<div class=" mb-4 mt-2">
+  
+    <div class="col-3 title-count">
+        <span class="me-2 fs-4 page-title"><a href="{% url 'view_incidents' %}" style="text-decoration: none; color: #1b5082">Archive Records</a> </span>
+
+        <!-- {% for a in all %}
+            {% ifequal a.id request.session.authorized_id %}
+                {% if a.Members_User.Member_Type == 'Admin' %}
+                <span class="badge bg-primary"> {{unread_count}} unread </span>
+
+                {% endif %}
+            {% endifequal %}
+        {% endfor %}
+
+        {% for a in all %}
+            {% ifequal a.id request.session.authorized_id %}
+                {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
+                + Add record
+                </button>
+                {% endif %}
+            {% endifequal %}
+        {% endfor %} -->
+    </div>
+    
+</div>
+  
+   
+    {% if pasig_incident_list %}
+       
+                <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+                    <thead class="table-primary">
+                    <tr>
+                        {% comment %} <th class="table-header"></th> {% endcomment %}
+                        <th class="table-header rad_tl">#</th>
+                        <th class="table-header">Incident Type</th>
+                        <th class="table-header">Barangay Committed</th>
+                        <th class="table-header">Date and Time Committed</th>
+                        {% for a in all %}
+                            {% ifequal a.id request.session.authorized_id %}
+                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                <th class="table-header">Suspect</th>
+                                <th class="table-header">Victim</th>
+                                {% endif %}
+                            {% endifequal %}
+                        {% endfor %}   
+                        <th class="table-header">Case Status</th>
+                        <th class="table-header rad_tr">Operation</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for incident in pasig_incident_list %}
+                        {% ifequal incident.read_status 'No' %}
+                     
+                            <tr class="fw-bold" style="background-color: #fafafa;"> 
+                                {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
+
+                                <td>{{incident.id}}</td>
+                                <td>{{incident.Incident_Type}}</td>
+                                <td>{{ incident.Barangay_id.Barangay }}</td>
+                                <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                {% for a in all %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                                        {% endif %}
+                                    {% endifequal %}
+                                {% endfor %}  
+                                <td>{{ incident.Case_Status }}</td>
+                                
+                                <td> 
+                                    <!-- Dropdown menu-->
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
+                                        More
+                                        </button>
+                                        
+                                        <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
+                                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                            <form action="{% url 'unarchiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
+                                                {%csrf_token%}
+                                                <li><button class="dropdown-item" type="submit" onclick="return confirm('Are you sure you want to unarchive this case?');">Unarchive case</button></li>
+                                                </form>
+                                            <li><hr class="dropdown-divider"></li>
+                                        
+                                            <form action="{% url 'processDeleteIncident' incident.id %}" method="post" enctype="multipart/form-data">
+                                            {%csrf_token%}
+                                            <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to delete this case?');">Delete case</button></li>
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </td> 
+                            </tr>
+
+                        {% else %}
+                            <tr class="text-muted">
+                                {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
+
+                                <td>{{incident.id}}</td>
+                                <td>{{incident.Incident_Type}}</td>
+                                <td>{{ incident.Barangay_id.Barangay }}</td>
+                                <td>{{ incident.Date }} - {{ incident.Time }}</td>
+                                {% for a in all %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                                        {% endif %}
+                                    {% endifequal %}
+                                {% endfor %}  
+                                <td>{{ incident.Case_Status }}</td>
+                                <td>
+                                    <!-- Dropdown menu-->
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
+                                        More
+                                        </button>
+                                        
+                                        <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
+                                            <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case</a></li>
+                                            <form action="{% url 'unarchiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
+                                                {%csrf_token%}
+                                                <li><button class="dropdown-item" type="submit" onclick="return confirm('Are you sure you want to unarchive this case?');">Unarchive case</button></li>
+                                                </form>
+                                            <li><hr class="dropdown-divider"></li>
+                                        
+                                            <form action="{% url 'processDeleteIncident' incident.id %}" method="post" enctype="multipart/form-data">
+                                            {%csrf_token%}
+                                            <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to delete this case?');">Delete case</button></li>
+                                            </form>
+                                        </ul>
+                                    </div>
+                                </td> 
+                            </tr>                            
+                        {% endifequal %}
+
+                    {% endfor %}
+                </tbody>
+            </table>
+       
+
+        <div class="row">
+            <div class="col-8">
+                <ul class="pagination">
+                    {% if pasig_incident_list.has_previous %}
+        
+                        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page= {{pasig_incident_list.previous_page_number}}">Previous</a></li>
+                    {% endif %}
+        
+                    {% if pasig_incident_list.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page={{pasig_incident_list.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page={{pasig_incident_list.paginator.num_pages}}">Last</a></li>
+                    {% endif %}
+                    </ul>
+            </div>
+
+            <div class="col-4">
+               <a href="{% url 'view_incidents' %}" style="float:right;" class="pe-3"> View main list</a>
+            </div>
+        </div>
+        
+        
+        <!-- if table has no data -->
+        {% else %}
+
+        <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+            <thead class="table-primary">
+                <tr>
+                    {% comment %} <th class="table-header"></th> {% endcomment %}
+                    <th class="table-header rad_tl">#</th>
+                    <th class="table-header">Incident Type</th>
+                    <th class="table-header">Barangay Committed</th>
+                    <th class="table-header">Date and Time Committed</th>
+                    <th class="table-header">Case Status</th>
+                    <th class="table-header rad_tr">Operation</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td colspan="8" style="text-align: center;" class="text-muted">
+                        <i>Nothing to show! No archived records for now.  <a href="{% url 'view_incidents' %}" class="pe-3"> View main list</a></i>
+                       
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% endif %}
+
+{% endblock %}

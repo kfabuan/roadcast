@@ -1,0 +1,165 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} Add Department {% endblock %}
+
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' %} 
+                <!-- body (no need to paste anything here) -->
+
+	          {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+                
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+            	 window.location.href = '{% url 'error_page' %}';
+        	</script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+{% if messages %}
+     {% for message in messages %}
+     <p class="alert alert-danger">
+      <strong>{{message}}</strong>
+     </p>
+     {% endfor %}
+{% endif %}
+
+<div class="container">
+
+  <!-- Upper Section (Maayos spacing hehe) -->
+  <section style="height: 25px;"></section>
+
+  <!-- To fix this pa hehe -->
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="float: right;">
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="location.href = '/members/add'">
+    <label class="btn btn-outline-primary" for="btnradio1">Members</label>
+    
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  onclick="location.href = '/departments/add'" checked> 
+    <label class="btn btn-outline-primary" for="btnradio2">Departments</label>
+  </div>
+    
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Add Department &nbsp;</h3>
+
+   <section style="height: 35px;"></section>
+
+  <!-- Main Content -->
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'duplicate' %}" class="row g-3">
+
+    {% csrf_token %}
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
+
+      <div class="col-md-12">
+        <label for="" class="form-label">Department Name</label>
+        <input type="text" name="Dept_Dept" id="dept" class="form-control text-capitalize" required>
+      </div>
+
+    
+    <section style="height: 15px;"></section>
+
+    <center>
+    <div class="col-12">
+      <button type="submit" name="submit"  class="btn btn-primary" onclick="myFunction()">Add Department</button>
+
+    <!-- <script>
+    function myFunction() {
+      message = document.getElementById("dept").value;
+      alert(message);
+    }
+    </script> -->
+
+    </div>
+    </center>
+  </form>
+
+  <section style="height: 60px;"></section>
+
+  <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">EXISTING DEPARTMENTS</label>
+
+  <section style="height: 10px;"></section>
+
+  <div class="table-responsive">
+  <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+    <thead>
+        <tr class="table-primary">
+          <th scope="col">No.</th>
+          <th scope="col">Department name</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for department in departments %}
+    <tr>
+      <th scope="row">{{ forloop.counter }}</th>
+      <td>{{ department.Dept_Dept }}</td>
+    </tr>
+    <tr>
+    {% empty %} 
+      <td colspan="2" style="text-align: center;">Nothing to show! No records have been added yet.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <ul class="pagination">
+    {% if departments.has_previous %}
+
+        <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+        <li class="page-item"><a class="page-link" href="?page= {{departments.previous_page_number}}">Previous</a></li>
+    {% endif %}
+
+    {% if departments.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{departments.next_page_number }}">Next</a></li>
+        <li class="page-item"><a class="page-link" href="?page={{departments.paginator.num_pages}}">Last</a></li>
+    {% endif %}
+    </ul>
+    
+</div>
+
+  <section style="height: 50px;"></section>
+  <!-- Script -->
+    
+    <script>
+        var today = new Date();
+        var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+    if ( window.history.replaceState ) {
+      window.history.replaceState( null, null, window.location.href );
+    }
+    </script>
+
+  {% endblock %}
+  
+  {% block jquery %} 
+  
+  {% endblock %}

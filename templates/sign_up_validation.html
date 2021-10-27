@@ -1,0 +1,61 @@
+
+{% extends 'nav_admin.html' %}
+{% load static %}
+{% block title %} Home {% endblock %}
+
+{% block design %}
+<style>
+   .top-text {
+        color: #3f48cc;
+   }
+</style>
+
+{% endblock %}
+
+{% block content %}
+<div class="content">
+    <div class="row mb-3">
+        <a class="btn btn-primary btn-sm col-1 mb-3" href="{% url 'notification' %}" role="button"> <i class="bi bi-arrow-left-circle" style="color: white"></i>&nbsp;Back</a>
+        <span class="col-1 top-text"><b>09/26/2021</b></span>
+        <span class="col-1 top-text"><b>15:21:00</b></span>
+        <span class="col-3 top-text"><b>Karen Faith Abuan</b></span>
+        <span class="col-3 top-text"><b>Sign Up Validation</b></span>
+
+    </div>
+    <div class="p-5 m-5" style="background-color: white;">
+        
+            <p class="text-end">Date and Time Signed Up: <b>06-26-2021 15:21:09</b></p> 
+            <p><b>Full Name:</b> Abuan, Karen Faith A.</p>
+            <div class="row mb-3">
+                <span class="col-8"><b>Address:</b> #999 Some St. Karangalang Village, Brgy. Sta. Lucia, Pasic City</span>
+                <span class="col-4"><b>Zip Code:</b> 1608 </span>
+
+            </div>
+            <div class="row mb-3">
+                <span class="col-4"><b>Birthday:</b> 08/30/99 </span>
+                <span class="col-4"><b>Age:</b> 21 </span>
+                <span class="col-4"><b>Sex:</b> Female </span>
+            </div>
+
+            <div class="row mb-3">
+                <span class="col-4"><b>Contact Number:</b> 09103709362 </span>
+                <span class="col-4"><b>Civil Status:</b> Signal Mum </span>
+
+            </div>
+
+            <p><b>Type of Valid ID:</b> TIN ID</p>
+
+            
+            <p><b>Uploaded Valid ID:</b></p>
+            <img src="{% static 'image/id_example.jpg' %}" class="rounded img-fluid" alt="...">
+       
+    </div>
+
+    <center>
+        <div class="d-grid d-md-block">
+            <a class="btn btn-outline-danger m-3 mb-5" href="{% url 'sign_up_validation' %}" role="button">Reject &nbsp;<i class="bi bi-x-circle-fill" ></i></a>
+            <a class="btn btn-outline-success m-3 mb-5" href="" role="button">Verify &nbsp; <i class="bi bi-check-circle-fill"></i></a>
+        </div>
+    </center>
+</div> <!--closing content div-->
+{% endblock %}

@@ -1,0 +1,177 @@
+{% extends 'nav_admin.html' %}
+
+{% block title %} Audit Trail {% endblock %}
+
+{% block design %}
+<style>
+     .table {
+        background-color: white;
+        border-radius: 15px !important;
+        box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);  
+    }
+
+    .rad_tl { border-top-left-radius: 15px !important; }
+    .rad_tr { border-top-right-radius: 15px !important; }
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' %} 
+                <!-- body (no need to paste anything here) -->
+
+	          {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+                
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+            	 window.location.href = '{% url 'error_page' %}';
+        	</script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+{% if searched %}
+<p class="alert alert-primary">
+    <strong>Showing the results for "{{ searched }}"</strong>
+</p>
+{% endif %}
+
+<div class="container">
+
+  <section style="height: 25px;"></section>
+
+  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="float: right;">
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="location.href = '/audit/members'" checked>
+    <label class="btn btn-outline-primary" for="btnradio1">Members</label>
+    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  onclick="location.href = '/audit/genpub'"> 
+    <label class="btn btn-outline-primary" for="btnradio2">General Public</label>
+  </div>
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Audit Trail
+  <section style="height: 35px;"></section>
+
+    <!-- Search bar -->
+    <form class="d-flex" method="POST">
+      {% csrf_token %}
+      <input class="form-control me-2" name="searched" type="search" placeholder="Search a user's email address" style="font-family: 'Roboto', sans-serif">
+      <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+    </form>
+  </div>
+
+  <section style="height: 20px;"></section>
+
+ <!-- Main Content -->
+ <div class="table-responsive-sm mb-5" style="height: 510px; overflow-y: scroll;"> 
+  <table class="table table-hover table-borderless" >
+    <thead>
+      <tr class="table-primary">
+        <th scope="col" class="rad_tl">User ID</th>
+        <th scope="col">Name</th>
+        <th scope="col">Email address</th>
+        <th scope="col">Role</th>
+        <th scope="col">Timestamp</th>
+        <th scope="col" class="rad_tr">Operation</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in audits %}
+        {% for mem in members %}
+          {%  if mem.Members_Email == log.username %}
+      <tr>
+        <th scope="row">{{ mem.id }}</th>
+        <td>{{ mem.Members_Fname }} {{ mem.Members_Lname }}</td>
+        <td>{{ log.username }}</td>
+        <td><span class="badge rounded-pill 
+          {% if mem.Members_User.Member_Type  == 'Admin'%} bg-custom4 
+          {% elif mem.Members_User.Member_Type  == 'Crime Statistician'%} bg-custom2 
+          {% elif mem.Members_User.Member_Type  == 'Investigator'%} bg-custom 
+          {% else %} bg-custom3  
+          {% endif %}">{{mem.Members_User}}</span></td>
+        <td class="text-muted">{{ log.date_logged_in }}</td>
+        <td><a href="{% url 'audit_members' log.id %}" style="text-decoration: none;">
+          <i class="fas fa-eye"></i>&nbsp; View</a></td>
+      </tr>
+      {% endif %}
+      {% endfor %}
+      {% empty %} 
+      <tr>
+        <td colspan="6" style="text-align: center;">Nothing to show! No records have been added yet.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+  <section style="height: 10px;"></section>
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav_btn').click(function(){
+        $('.mobile_nav_items').toggleClass('active');
+      });
+
+      $('#submit_form').click(function(){
+        var selected_offense = new Array();
+        var chk_tbl_offense = document.getElementById("tbl_offense");
+        var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+        for (var i=0; i<selchk.length; i++) {
+          if(selchk[i].checked){
+            selected_offense.push(selchk[i].value);
+          }
+        }
+        if(selected_offense.length>0){
+          console.log(selected_offense);
+         // document.getElementById('display_offense').innerHTML=selected_offense;
+         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+
+          alert(selected_offense);
+          alert(tryyyy)
+        }
+
+        var incident_date = document.getElementById("DateCommitted").value;
+        alert(incident_date);
+
+        });
+
+    });
+    </script>
+  
+    <script>
+      var today = new Date();
+      var time = today.getHours() + ":" + today.getMinutes();
+        document.getElementById("currentTime").value = time;
+    </script>
+  {% endblock %}
+
+{% block jquery %} 
+
+{% endblock %}
+
+
+

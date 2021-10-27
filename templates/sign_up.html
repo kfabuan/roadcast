@@ -1,0 +1,465 @@
+{% extends 'base_sign_up.html' %}
+{% block title %} Create an Account {% endblock %}
+{% block design %}
+<style>
+input[type=text]::placeholder,
+select:invalid,
+input[type=date]:invalid,
+input[type=password]::placeholder{
+    color: black;
+}
+
+</style>
+{% endblock %}
+{% block content %}
+
+<!-- Alert messages -->
+{% if messages %}
+     {% for message in messages %}
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% endif %}
+     {% endfor %}
+{% endif %}
+
+<!-- Form validation -->
+<script type="text/javascript">
+  function validate_form () {
+    var x = document.myform.gen_username.value;
+    var atposition = x.indexOf("@");
+    var dotposition = x.lastIndexOf(".");
+    var mobile = /^\d{11}$/;
+
+      if ( document.myform.gen_fname.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your first name." );
+          return false;
+      }
+      else if ( document.myform.gen_surname.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your last name." );
+          return false;
+      }
+      else if ( document.myform.gen_bday.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your birthday." );
+          return false;
+      }
+      else if ( document.myform.gen_sex.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your gender." );
+          return false;
+      }
+      else if ( document.myform.gen_contact_no.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your contact number." );
+          return false;
+      }
+      else if ( mobile.test(document.myform.gen_contact_no.value) == false ) {
+          alert ( "Oops! Can't submit form. Please enter a valid 11 digit contact number (e.g. 09XXXXXXXX)." );
+          return false;
+      }
+      else if ( document.myform.gen_region.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your region." );
+          return false;
+      }
+      else if ( document.myform.gen_province.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your province." );
+          return false;
+      }
+      else if ( document.myform.gen_city.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select your city." );
+          return false;
+      }
+      else if ( document.myform.gen_barangay.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your barangay." );
+          return false;
+      }
+      else if ( document.myform.gen_username.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your email address." );
+          return false;
+      }
+      else if (atposition<1 || dotposition<atposition+2 || dotposition+2>=x.length){
+        alert("Oops! Can't submit form. Please enter a valid email address (e.g. user@domain.com).");
+        return false;
+      }
+      else if ( document.myform.gen_pass.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your password." );
+          return false;
+      }
+      else if ( document.myform.gen_pass.value.length < 8) {
+          alert ( "Oops! Can't submit form. Password length must be atleast 8 characters." );
+          return false;
+      }
+      else if ( document.myform.gen_cpass.value == "" ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please re-enter your password." );
+          return false;
+      }
+      else if ( document.myform.gen_pass.value != document.myform.gen_cpass.value ) {
+          alert ( "Oops! Can't submit form. Please make sure your passwords match." );
+          return false;
+      }
+      else if ( document.myform.gen_valid_id.value == 0 ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a valid ID and submit a photo of it." );
+          return false;
+      }
+      else if ( document.myform.gen_upload_id.value == "" || document.myform.gen_upload_id.value == null ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please upload a photo of yourself holding any of the given valid IDs." );
+          return false;
+      }
+      else if ( document.myform.gen_qa.value == "None" || document.myform.gen_qa.value == null ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please select a security question from the given." );
+          return false;
+      }
+      else if ( document.myform.gen_qa_answer.value == "" || document.myform.gen_qa_answer.value == null ) {
+          alert ( "Oops! Can't submit form because a field is empty. Please enter your answer for the security question." );
+          return false;
+      }
+  }
+  </script>
+
+<div class="page-content">
+  <div class="form-v1-content">
+    <div class="wizard-form">
+          <form class="form-register" action="{% url 'duplicate_gen' %}" name="myform" onsubmit="return validate_form();" method="POST" enctype="multipart/form-data">
+
+            {% csrf_token %}
+
+            <div id="form-total">
+
+              <!-- SECTION 1 -->
+              <a href="{% url 'index' %}">
+              <i class="fas fa-times exit"></i>
+              </a>
+
+                <h2>
+                  <p class="step-icon"><span>01</span></p>
+                  <span class="step-text">Personal Details</span>
+                </h2>
+
+                <section>
+                <div class="inner">
+                <div class="wizard-header">
+                <h3 class="heading">Personal Details</h3>
+                <p>Hi, we're glad you're here! Do you already have an account? <a href="{% url 'login' %}" class="fw-bold text-primary">Log in </a>instead.</p>
+                </div>
+
+              <div class="row">
+                <div class="col">
+                  <input type="text" name="gen_fname" placeholder="First name" class="form-control custom-form text-capitalize"  >
+                </div>
+                <div class="col">
+                  <input type="text" name="gen_surname" placeholder="Last name" class="form-control custom-form text-capitalize"  >
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <input type="date" name="gen_bday" id="datefield" placeholder="Birthday" onfocus="(this.type='date')" onblur="(this.type='text')" class="form-control custom-form"  >
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <select id="sex" name="gen_sex" class="form-select"  >
+                    <option value="" selected="true" disabled="disabled">Sex</option>
+                    <option value="Female"> Female </option>
+                    <option value="Male"> Male </option>
+                    <option value="Other"> Other </option>
+                    </select>
+                </div>
+                <div class="col">
+                  <input type="text" name="gen_contact_no" placeholder="Contact number" class="form-control custom-form" >
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <select id="region" name="gen_region" class="form-select"  >
+                    <option value="" selected="true" disabled="disabled">Region</option>
+                    {% for reg in region %}
+                    <option value="{{ reg.id }}"> {{ reg.regDesc }} </option>
+                    {% endfor %}
+                    </select>
+                </div>
+              </div>
+
+              <div class="row">
+                  <div class="col">
+                    <select id="province" name="gen_province" class="form-select"  >
+                     <option value="" selected="true" disabled="disabled">Province</option>
+                     {% for pro in province %}
+                     <option value="{{ pro.id }}"> {{ pro.provDesc }} </option>
+                     {% endfor %}
+                      </select>
+                  </div>
+                  <div class="col">
+                  <select id="city" name="gen_city" class="form-select"  >
+                    <option value="" selected="true" disabled="disabled">City</option>
+                    {% for cit in city %}
+                     <option value="{{ cit.id }}"> {{ cit.citymunDesc }} </option>
+                     {% endfor %}
+                    </select>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <input type="text" name="gen_barangay" placeholder="Barangay" class="form-control custom-form text-capitalize"  >
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SECTION 2 -->
+                <h2>
+                  <p class="step-icon"><span>02</span></p>
+                  <span class="step-text">Account Details</span>
+                </h2>
+                <section>
+                    <div class="inner">
+                      <div class="wizard-header">
+                <h3 class="heading">Account Details</h3>
+                <p>Please enter a unique email and password. Make sure to not share your account details to anyone.</p>
+              </div>
+
+              <section style="height: 20px;"></section>
+
+              <div class="row">
+                <div class="col">
+                  <input type="text" name="gen_username" id="username" placeholder="Email address" class="form-control custom-form"  >
+                </div>
+              </div>
+
+              <div class="row">
+                <p class="password">Note: Email address must be unique and in a valid format (e.g. user@domain.com).</p>
+              </div>
+
+              <section style="height: 25px;"></section>
+
+              <div class="row">
+                <div class="col">
+                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form"  >
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col">
+                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" >
+                </div>
+              </div>
+
+              <div class="row">
+                <p class="password">Note: Passwords must be at least 8 characters long.</p>
+              </div>
+
+              <section style="height: 45.4px;"></section>
+
+                </div>
+                </section>
+
+                <!-- SECTION 3 -->
+                <h2>
+                  <p class="step-icon"><span>03</span></p>
+                  <span class="step-text">Verify Identity</span>
+                </h2>
+                <section>
+                    <div class="inner">
+                      <div class="wizard-header">
+                <h3 class="heading">Verify Identity</h3>
+                <p>Before we can build your account, we need to be certain that You are You. You only have to follow a few simple steps to help us provide a secure system together.</p>
+              </div>
+
+              <div class="row">
+                  <img src="static/image/selfie.png" class="img-fluid" alt="Upload Valid ID" style="margin-top: -20px;">
+              </div>
+
+              <div class="row">
+                <p class="password" style="margin-top: 15px;">Note: Roadcast will only be using your Identification Card (ID) for verification purposes.</p>
+              </div>
+
+              <section style="height: 2.8px;"></section>
+
+              </div>
+              </section>
+
+              <!-- SECTION 4 -->
+              <h2>
+                <p class="step-icon"><span>04</span></p>
+                <span class="step-text">Upload Valid ID</span>
+              </h2>
+              <section>
+                  <div class="inner">
+                    <div class="wizard-header">
+              <h3 class="heading">Upload Valid ID</h3>
+              <p>Upload a clear photo of yourself holding any of the valid IDs given below. Please make sure your ID is visible.</p>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <select id="Valid ID" name="gen_valid_id" class="form-select"  >
+                  <option value="" selected="true" disabled="disabled">Valid ID</option>
+                  <option value="UMID">UMID</option>
+                  <option value="Driver's License">Driver's License</option>
+                  <option value="PhilHealth ID">PhilHealth ID</option>
+                  <option value="SSS">SSS</option>
+                  <option value="Passport">Passport</option>
+                  <option value="Voters ID">Voters ID</option>
+                  <option value="Pag-IBIG ID">Pag-IBIG ID</option>
+                  <option value="Postal ID">Postal ID</option>
+                  <option value="PRC ID">PRC ID</option>
+                  <option value="National ID">National ID</option>
+                  </select>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col">
+                <div class="imgUp">
+                  <div class="imagePreview">
+                  <label class="btn btn-primary upload-img">
+                      Upload a photo
+                      <input type="file" name="gen_upload_id" class="uploadFile" accept="image/*" style="width: 0px; height: 0px; overflow: hidden;"  >
+                      </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <p class="password" style="margin-top: 15px;">Note: Failure to follow the instruction will result in account registration being denied.</p>
+            </div>
+
+            <section style="height: 17.4px;"></section>
+
+            </div>
+            </section>
+
+          <!-- SECTION 5 -->
+          <h2>
+            <p class="step-icon"><span>05</span></p>
+            <span class="step-text">Security Test</span>
+          </h2>
+          <section>
+          <div class="inner">
+                <div class="wizard-header">
+          <h3 class="heading">Security Test</h3>
+          <p>Last step for registration and you're done! We just need to make sure that you are a human.</p><br>
+        </div>
+
+        <div class="row"style= "margin-top: -20px;">
+        <div class="col">
+          <select id="gen_qa" name="gen_qa" class="form-select" required>
+            <option value="None" selected="true" disabled="disabled">Please select a security question</option>
+            <option value="Favorite Book">What is your favorite book?</option>
+            <option value="FavoriteColor">What is your favorite color?</option>
+            <option value="Favorite Place">What is your favorite place to visit?</option>
+            <option value="City">In what city were you born?</option>
+            <option value="Favorite Food">What was your favorite food as a child?</option>
+            <option value="First School">What is the name of your first school?</option>
+            <option value="Favorite Pet">What is the name of your favorite pet?</option>
+            <option value="Childhood nickname">What was your childhood nickname?</option>
+            <option value="Childhood Hero">Who was your childhood hero?</option>
+            <option value="First concert">What was the first concert you attended?</option>
+            </select>
+        </div>
+      </div>
+
+        <div class="row">
+          <div class="col">
+            <input type="text" name="gen_qa_answer" placeholder="Enter your answer" class="form-control custom-form text-capitalize" required>
+          </div>
+        </div>
+
+        <section style="height: 10px;"></section>
+
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault" required>
+          <label class="form-check-label" for="flexCheckDefault">
+            <p style="font-size: 15px;">By creating an account, you agree to the
+              <a href="{% url 'terms' %}" target="_blank" class="fw-bold text-primary">Terms of Use</a> and our
+              <a href="{% url 'terms' %}" target="_blank" class="fw-bold text-primary">Privacy Policy</a>.
+            </p>
+          </label>
+          </div>
+
+        <section style="height: 13px;"></section>
+
+        <!--<div class="row">-->
+        <!--  <center>-->
+        <!--     <script src="https://www.google.com/recaptcha/api.js" async defer></script>-->
+        <!--    <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>-->
+        <!--  </center>-->
+        <!--</div>-->
+<!--<script>-->
+
+<!--        var onloadCallback = function() {-->
+
+<!--            var myobj = document.getElementById("g-recaptcha");-->
+
+
+
+
+<!--            $('.g-recaptcha').html('');-->
+
+<!--            $('.g-recaptcha').each(function (i, captcha) {-->
+<!--                grecaptcha.render(captcha, {-->
+<!--                    'sitekey' : '6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy'-->
+<!--                });-->
+<!--            });-->
+
+<!--        };-->
+<!--    </script>-->
+<!--        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>-->
+
+<!--    <div class="row">-->
+<!--        <center>-->
+<!--    <div class="g-recaptcha"></div>-->
+<!--    </center>-->
+<!--    </div>-->
+
+
+        <section style="height: 30px;"></section>
+
+                <center>
+                <div class="submit-btn">
+                  <button class="btn btn-primary submit-form btn-lg" id="submit" type=“submit”>Create an Account</button>
+                </div>
+
+                </center>
+                </div>
+                </section>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+<!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+    </script>
+
+<!-- Maximum date is today -->
+    <script>
+    var today = new Date();
+    var dd = today.getDate();
+    var mm = today.getMonth() + 1;
+    var yyyy = today.getFullYear();
+
+    if (dd < 10) {
+      dd = '0' + dd;
+    }
+
+    if (mm < 10) {
+      mm = '0' + mm;
+    }
+
+    today = yyyy + '-' + mm + '-' + dd;
+    document.getElementById("datefield").setAttribute("max", today);
+    </script>
+
+{% endblock %}

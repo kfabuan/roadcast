@@ -1,0 +1,465 @@
+<!-- Settings for General Public -->
+{% extends 'nav_admin.html' %}
+{% block title %} Account Settings {% endblock %}
+{% load static %}
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%} 
+                <!-- body (no need to paste anything here) -->
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <!-- body (no need to paste anything here) -->
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+<!-- Alert messages -->
+{% if messages %}
+     {% for message in messages %}
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <strong>{{message}}</strong>
+     </p>
+     {% endif %}
+     {% endfor %}
+{% endif %}
+
+{% for b in pub %}
+{% ifequal b.id request.session.public_id %}
+
+<!-- Main content here - gen pub -->
+<div class="container">
+<div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
+<i class="fas fa-user-cog" style="font-size: 23px; margin-right: 10px;"></i>Account Settings &nbsp;</h3>
+
+<section style="height: 20px;"></section>
+
+<div class="row">
+    <div class="col-12 col-xl-8">
+
+        <form method="POST" id="myform" enctype="multipart/form-data" action="{% url 'change_account' b.id %}" class="row g-3">
+
+        {% csrf_token %} 
+
+        <div class="card card-body border-1 mb-4" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+
+            <h2 class="h5 mb-4">Account details
+            <button type="button" class="btn btn-primary" id="edit" style="border-radius: 50px; font-size: 11px; padding: 1px; width: 75px; margin-left: 5px; margin-top: -5px;">Edit details</button>
+            </h2>
+            
+                <div class="row">
+                    <div class="col-md-12">
+                        <div>
+                            <label class="labels">Email address</label>
+                            <input type="email" name="gen_username" placeholder="Email address" value="{{ b.gen_username }}" class="form-control custom-form" disabled required> 
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label class="labels">Password</label>
+                            <input type="password" name="gen_pass" id="password" placeholder="Password" value="{{ b.gen_pass }}" class="form-control custom-form" disabled required>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <div class="form-group">
+                            <label class="labels">Confirm Password</label>
+                            <input type="password" name="#" placeholder="Confirm password" class="form-control custom-form" oninput="check(this)" disabled required>
+                        </div>
+                    </div>
+                </div>
+                
+                <section style="height: 45px"></section>
+
+                <div class="mt-3">
+                    <button type="submit" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" disabled>Save changes</button>
+                </div>
+                <section style="height: 20px"></section>
+            </form>
+        </div>
+
+        <!-- Notifications -->
+        <div class="card card-body border-1 mb-4 mb-xl-0" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+            <h2 class="h5 mb-4">Alert & notifications</h2>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                    <div>
+                        <h3 class="h6 mb-1">Account Activity</h3>
+                        <p class="small pe-4">Get important account notifications such as the date and time you've logged in to Roadcast.</p>
+                    </div>
+                    <div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="user-notification-1" {% ifequal b.nf_acc_activity 1 %} checked {% endifequal %}>
+                            <label class="form-check-label" for="user-notification-1"></label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                    <div>
+                        <h3 class="h6 mb-1">New Incident Notifications</h3>
+                        <p class="small pe-4">Receive all incident notifications that have occured in Pasig city.</p>
+                    </div>
+                    <div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="user-notification-2" {% ifequal b.nf_new_incident 1 %} checked {% endifequal %}>
+                            <label class="form-check-label" for="user-notification-2"></label>
+                        </div>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center justify-content-between px-0">
+                    <div>
+                        <h3 class="h6 mb-1">Custom Incident Notifications</h3>
+                        <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city.</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
+                    </div>
+                    <div>
+                        <div class="form-check form-switch">
+                            <form action="{% url 'custom_alert' %}" method="post">
+                                {% csrf_token %}
+                                <select class="form-select form-select-sm" id="preferred_brgy" name="preferred_brgy" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
+                                    <option selected="true" disabled="disabled">Choose Barangay</option>
+                                    <option value="None">None</option>
+                                    {% for bg in barangay %}
+                                    <option value="{{ bg.Barangay }}"  {% ifequal bg.Barangay b.nf_brgy %} selected {% endifequal %}>{{ bg.Barangay }}</option>
+                                    {% endfor %}
+                                </select>
+                            </form>
+                        </div>                                            
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <!-- End of notifications -->
+    </div>
+
+    <!-- Mini profile -->
+    <div class="col-12 col-xl-4">
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card border-1 text-center p-0" style="border-color:#e6e6e762 ;padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                    <div class="profile-cover rounded-top" data-background="{% static 'image/city.gif' %}" alt="Profile cover"></div>
+                    <div class="card-body pb-5">
+                        <img src="/media/{{ b.gen_profile }}" class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" style="width: 160px; height: 160px; object-fit: cover;" alt="Profile picture">
+                        <h4 class="h3">{{ b.gen_fname }} {{ b.gen_surname }}</h4>
+                        <h5 class="fw-normal">{{ b.gen_username }}</h5>
+                        <p class="text-muted font-weight-light mb-4">General Public</p>
+                        
+                        <button type="button" class="btn btn-primary" onclick="location.href = '{% url 'user_profile' %}'" style="border-radius: 50px;">Go to Profile</button>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endifequal %}
+{% endfor %}
+
+
+{% for a in all %}
+{% ifequal a.id request.session.authorized_id %}
+
+<!-- Main content here - members -->
+<div class="container">
+    <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
+    <i class="fas fa-user-cog" style="font-size: 23px; margin-right: 10px;"></i>Account Settings &nbsp;</h3>
+    
+    <section style="height: 20px;"></section>
+    
+    <div class="row">
+        <div class="col-12 col-xl-8">
+
+            {% if a.Members_User.Member_Type == 'Admin' or  a.Members_User.Member_Type == 'Crime Statistician' %}
+
+            <form method="POST" id="myform" enctype="multipart/form-data" action="{% url 'change_account' a.id %}" class="row g-3">
+
+                {% csrf_token %} 
+        
+                <div class="card card-body border-1 mb-4" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+        
+                    <h2 class="h5 mb-4">Account details
+                    <button type="button" class="btn btn-primary" id="edit" style="border-radius: 50px; font-size: 11px; padding: 1px; width: 75px; margin-left: 5px; margin-top: -5px;">Edit details</button>
+                    </h2>
+                    
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <div>
+                                    <label class="labels">Email address</label>
+                                <input type="email" name="Members_Email" placeholder="Email address" value="{{ a.Members_Email }}" class="form-control custom-form" disabled required> 
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label class="labels">Username</label>
+                                <input type="text" name="Members_Username" placeholder="@Username" value="{{ a.Members_Username }}" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="labels">Password</label>
+                                <input type="password" name="Members_Password" placeholder="Password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="labels">Confirm Password</label>
+                                <input type="password" placeholder="Confirm password" value="" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                    </div>
+                        
+                        <section style="height: 50px"></section>
+        
+                        <div class="mt-3">
+                            <button type="submit" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" disabled>Save changes</button>
+                        </div>
+                    </form>
+                </div>
+
+            {% else %}
+            
+            <div class="card card-body border-1 mb-4" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                <h2 class="h5 mb-4">Account details</h2>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label class="labels">Email address</label>
+                                <input type="email" name="Members_Email" placeholder="Email address" value="{{ a.Members_Email }}" class="form-control custom-form" disabled required> 
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div>
+                                <label class="labels">Username</label>
+                                <input type="text" name="Members_Username" placeholder="@Username" value="{{ a.Members_Username }}" class="form-control custom-form" readonly required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="labels">Password</label>
+                                <input type="password" name="Members_Password" placeholder="Password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label class="labels">Confirm Password</label>
+                                <input type="password" placeholder="Confirm password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                            </div>
+                        </div>
+                    </div>
+                    <section style="height: 23px"></section>
+
+                    <div class="mt-3">
+                        <label class="text-muted" style="font-size: 14px;"><i class="fas fa-exclamation-circle" style="margin-right: 5px;"></i>
+                        Cannot change account details. You will have to contact the admin of your department.</label>
+                    </div>
+                    <section style="height: 40px"></section>
+                </div>
+
+            {% endif %}
+
+            <!-- Notifications -->
+            <div class="card card-body border-1 mb-4 mb-xl-0" style="border-color:#e6e6e762; padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                <h2 class="h5 mb-4">Alert & notifications</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                        <div>
+                            <h3 class="h6 mb-1">Account Activity</h3>
+                            <p class="small pe-4">Get important account notifications such as the date and time you've logged in to Roadcast.</p>
+                        </div>
+                        <div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="user-notification-1" {% ifequal a.nf_acc_activity 1 %} checked {% endifequal %}>
+                                <label class="form-check-label" for="user-notification-1"></label>
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item d-flex align-items-center justify-content-between px-0 border-bottom">
+                        <div>
+                            <h3 class="h6 mb-1">New Incident Notifications</h3>
+                            <p class="small pe-4">Receive all incident notifications that have occured in Pasig city.</p>
+                        </div>
+                        <div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="user-notification-2" {% ifequal a.nf_new_incident 1 %} checked {% endifequal %}>
+                                <label class="form-check-label" for="user-notification-2"></label>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center justify-content-between px-0">
+                        <div>
+                            <h3 class="h6 mb-1">Custom Incident Notifications</h3>
+                            <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city.</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
+                        </div>
+                        <div>
+                            <div class="form-check form-switch">
+                                <form action="{% url 'custom_alert' %}" method="post" id="form_custom">
+                                    {% csrf_token %}
+                                    <select class="form-select form-select-sm" id="preferred_brgy" name="preferred_brgy" aria-label=".form-select-sm example" style="margin-top: 5px; border-radius: 50px;">
+                                        <option selected="true" disabled="disabled">Choose Barangay</option>
+                                        <option value="None">None</option>
+                                        {% for bg in barangay %}
+                                        <option value="{{ bg.Barangay }}" {% ifequal bg.Barangay a.nf_brgy %} selected {% endifequal %}>{{ bg.Barangay }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </form>
+                            </div>                                            
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!-- End of notifications -->
+        </div>
+    
+        <!-- Mini profile -->
+        <div class="col-12 col-xl-4">
+            <div class="row">
+                <div class="col-12 mb-4">
+                    <div class="card border-1 text-center p-0" style="border-color:#e6e6e762 ;padding: 50px; border-radius: 20px; box-shadow: 0 0.5rem 1rem 0 rgba(0,0,0,0.1);">
+                        <div class="profile-cover rounded-top" data-background="{% static 'image/city.gif' %}" alt="Profile cover"></div>
+                        <div class="card-body pb-5">
+                            <img src="/media/{{ a.Members_Pic }}" class="avatar-xl rounded-circle mx-auto mt-n7 mb-4" style="width: 160px; height: 160px; object-fit: cover;" alt="Profile picture">
+                            <h4 class="h3">{{ a.Members_Fname }} {{ a.Members_Lname }}</h4>
+                            <h5 class="fw-normal">{{ a.Members_Email }}</h5>
+                            <p class="text-muted font-weight-light mb-4">{{ a.Members_User }}</p>
+                            
+                            <button type="button" class="btn btn-primary" onclick="location.href = '{% url 'user_profile' %}'" style="border-radius: 50px;">Go to Profile</button>
+                        </div>
+                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endifequal %}
+{% endfor %}
+
+<section style="height: 80px"></section>
+
+<!-- Edittable buttons -->
+<script>
+var el  = document.getElementById('edit');
+var frm = document.getElementById('myform');
+el.addEventListener('click', function(){
+    for(var i=0; i < frm.length; i++) {
+        frm.elements[i].disabled = false;
+    } 
+    frm.elements[1].focus();
+});
+</script>
+
+<!-- Password match -->
+<script>
+       function check(input) {
+        if (input.value != document.getElementById('password').value) {
+            input.setCustomValidity('Please make sure your passwords match.');
+        } else {
+            // input is valid -- reset the error message
+            input.setCustomValidity('');
+        }
+    }
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function(){
+        // login alerts
+        $('#user-notification-1').change(function(){
+            if (document.getElementById('user-notification-1').checked) {
+                if (confirm("You will now receive email notifications for your login activities!") == true) {
+                    this.checked = true;
+                    window.location.href = '{% url 'account_activity_on' %}';
+                }
+                else{
+                    this.checked = false;
+                    window.location.href = '{% url 'account_activity_off' %}';
+                }
+
+            } else {
+                if (confirm("Turn off notifications for your login activities?") == true) {
+                    this.checked = false;
+                    window.location.href = '{% url 'account_activity_off' %}';
+                }
+
+                else{
+                    this.checked = true;
+                    window.location.href = '{% url 'account_activity_on' %}';
+                }
+             }
+        });
+
+        // new incident alerts
+        $('#user-notification-2').change(function(){
+            if (document.getElementById('user-notification-2').checked) {
+                
+                if (confirm("You will now receive email notifications for new incidents in Pasig City!") == true) {
+                    this.checked = true;
+                    var form_custom = document.getElementById('preferred_brgy');
+                    form_custom.disabled = true;
+                    window.location.href = '{% url 'new_incident_alert_on' %}';
+                }
+                else{
+                    this.checked = false;
+                    window.location.href = '{% url 'new_incident_alert_off' %}';
+                }
+
+            } else {
+                if (confirm("Turn off notifications for new incident cases?") == true) {
+                    this.checked = false;
+                    window.location.href = '{% url 'new_incident_alert_off' %}';
+                }
+
+                else{
+                    this.checked = true;
+                    var form_custom = document.getElementById('preferred_brgy');
+                    form_custom.disabled = true;
+                    window.location.href = '{% url 'new_incident_alert_on' %}';
+                }
+             }
+        });
+
+        //disabled custom
+        if (document.getElementById('user-notification-2').checked) {
+            var form_custom = document.getElementById('preferred_brgy');
+            form_custom.disabled = true;
+        }
+        
+        // custom barangay alerts
+        $('#preferred_brgy').change(function(){
+            this.form.submit();
+        });
+
+
+
+
+    });
+</script>
+
+
+{% endblock %}

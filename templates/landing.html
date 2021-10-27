@@ -1,0 +1,115 @@
+{% extends 'base_landing.html' %}
+{% load static %}
+{% block title %} Home {% endblock %}
+{% block design %} {% endblock %}
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed on every template @ first part) -->
+{% for a in all %}
+{% for b in pub %}
+        {% if a.id == request.session.authorized_id or b.id == request.session.public_id %}
+        <script>
+            window.location.href = '{% url 'dashboard' %}'; //Go to login required  
+          </script>
+        {% else %}
+        <!-- Stay on page -->
+        {% endif %}
+{% endfor %}
+{% endfor %}
+
+<body id="page-top">
+ 
+  <!-- Header-->
+  <header class="masthead text-center text-white">
+      <div class="masthead-content">
+          <div class="container px-5">
+              <h1 class="masthead-heading mb-0">Welcome!</h1>
+              <h2 class="masthead-subheading mb-0">Know the happenings on the <span class="color-change">road</span>.</h2>
+              <a class="btn btn-primary btn-xl rounded-pill mt-5" href="{% url 'sign_up' %}">Get started</a>
+          </div>
+      </div>
+  </header>
+
+  <section style="height: 50px"></section>
+
+  <!-- Content section 1-->
+  <section id="scroll">
+      <div class="container px-5" data-aos="fade-up">
+          <div class="row gx-5 align-items-center">
+              <div class="col-lg-6 order-lg-2">
+                  <div class="p-5"><img class="img-fluid rounded-circle"  id="features" src="{% static 'image/pasig.jpg' %}" alt="Roadcast Feature 1"/></div>
+              </div>
+              <div class="col-lg-6 order-lg-1">
+                  <div class="p-5">
+                      <h2 class="display-4">Know the happenings in <span style="color: #007bff; font-weight: bold;">Pasig city</span></h2>
+                      <p>Have increased awareness of the road incidents happening in the city through the reports available. Roadcast 
+                        displays all existing and newly reported road incidents reports in Pasig city.  
+                    </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!-- Content section 2-->
+  <section>
+      <div class="container px-5" data-aos="fade-up">
+          <div class="row gx-5 align-items-center">
+              <div class="col-lg-6">
+                  <div class="p-5"><img class="img-fluid rounded-circle" id="features" src="{% static 'image/roadcast6.png' %}" alt="Roadcast Feature 2"/></div>
+              </div>
+              <div class="col-lg-6">
+                  <div class="p-5">
+                      <h2 class="display-4">Real time <span style="color: #007bff; font-weight: bold;">reports</span> and <span style="color: #007bff; font-weight: bold;">analytics</span></h2>
+                      <p>Get real-time insights about crash patterns and trends with just a few clicks. Roadcast not only provides analysis, 
+                          graphs, and charts of the road incidents, Roadcast forecasts safety related events before they happen. </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+  <!-- Content section 3-->
+  <section>
+      <div class="container px-5" data-aos="fade-up">
+          <div class="row gx-5 align-items-center">
+              <div class="col-lg-6 order-lg-2">
+                  <div class="p-5"><img class="img-fluid rounded-circle" id="features" src="{% static 'image/pnp3.jpg' %}" alt="Roadcast Feature 3"/></div>
+              </div>
+              <div class="col-lg-6 order-lg-1">
+                  <div class="p-5">
+                      <h2 class="display-4">Get in touch with the <span style="color: #007bff; font-weight: bold;">PNP</span></h2>
+                      <p>
+                        Be able to submit road incident reports that have occurred in the areas of Pasig city and have the 
+                        Pasig PNP Police respond to them. 
+                      </p>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </section>
+   <!-- Content section 4-->
+   <section>
+    <div class="container px-5" data-aos="fade-up">
+        <div class="row gx-5 align-items-center">
+            <div class="col-lg-6">
+                <div class="p-5"><img class="img-fluid rounded-circle" id="features" src="{% static 'image/roadcast5.png' %}" alt="Roadcast Feature 2"/></div>
+            </div>
+            <div class="col-lg-6">
+                <div class="p-5">
+                    <h2 class="display-4">Accessible to <span style="color: #007bff; font-weight: bold;">everyone</span></h2>
+                    <p>Roadcast is a free web application for viewing and managing road incidents in Pasig city. It can be 
+                        accessed by everyone with mobile devices or computers with internet connectivity.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+  <section style="height: 50px"></section>
+
+  <!-- Footer-->
+  <footer class="py-5 bg-black">
+      <div class="container px-5"><p class="m-0 text-center text-white small">Copyright &copy; Roadcast 2021</p></div>
+  </footer>
+
+
+{% endblock %}

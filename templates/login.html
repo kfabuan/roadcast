@@ -1,0 +1,109 @@
+{% extends 'base_signin.html' %}
+
+{% load static %}
+
+{% block title %} Login {% endblock %}
+
+{% block design %} {% endblock %}
+
+{% block content %}
+
+<div class="container">
+  
+  <!-- Alert messages -->
+{% if messages %}
+     {% for message in messages %}
+     {% if message.tags  == 'error' %}
+     <p class="alert alert-danger" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% else %}
+     <p class="alert alert-success" role="alert">
+      <b>{{message}}</b>
+     </p>
+     {% endif %}
+     {% endfor %}
+{% endif %}
+  
+
+  <div   class= "row px-3">
+    <div class ="col-lg-10 col-xl-9 card flex-row mx-auto px-0">
+      <div class="img-right d-none d-md-flex" style="width: 50%; background-repeat: no-repeat; background-size: auto 100%; background-position: center center; background-image: url(static/image/city.gif)"></div>
+
+        <div class="card-body" style="width: 55%;">
+
+        <div style="text-align: center;">
+           <a href="{% url 'index' %}"><img src="static/image/logo1.png" style="width: 35px; height: auto; margin-right: 8px;"><STRONG><label style="color: #1b5082;">ROAD</label><label style="color: #19B3D3;">CAST</label></STRONG></a>
+         </div>
+
+         <a href="{% url 'index' %}"><i class="btn close-btn fas fa-times"></i></a>
+
+         <h2 style="margin-top: 18px; text-align: center;">Hello!</h2>
+
+          <h4 style="margin-top: -2px; margin-bottom: 15px; font-size: 15px; text-align: center;">Log in to your account</h4>
+
+            <form method="POST" action="" class="form-box px-3">
+
+              {% csrf_token %}
+
+                  <div class="form-input" style="margin-top: 25px; ">
+                    <span><i class="fas fa-user-alt"></i></span>
+                    <input type="email" tabindex="1" name="username" placeholder="Email address" tabindex="10" class="form-control" style="background-color: transparent; outline: none; font-size: 14px; border: 1px solid #00000020;;" required>
+                  </div>
+
+                  <div class="form-input" style="margin-top: -5px;" >
+                      <span><i class="fa fa-key"> </i> </span>
+                      <input type="password" tabindex="2" name="password" placeholder="Password" class="form-control" style="background-color: transparent;  font-size: 14px; outline: none; border: 1px solid #00000020;;" required>
+                  </div>
+
+                  <div class="mb-3">
+                      <div class="custom-control custom-checkbox">
+                        <input tabindex="3" type="checkbox" class="custom-control-input" id="cb1" name="">
+                          <label class="custom-control-label" for="cb1" style="font-size: 14px;">
+                             Remember me </label>
+                      </div>
+                  </div>  
+
+                  <div class="mb-3">
+                    <button type="submit" id="btn-login" class="btn btn-primary btn-block">
+                      LOGIN
+                    </button>
+                  </div>
+
+                  <div class="text-right">
+                    <a href="{% url 'forgot_pass' %}" class="forget-link" style="font-size: 14px;">
+                      Forgot Password?
+                    </a>
+                  </div> 
+                  
+
+                  <hr class="my-4">
+                  
+                  <div class="text-center mb-2">
+                      Don't have an account?
+                  <a tabindex="5" href="{% url 'sign_up' %}" class="register-link">
+                      Register Here
+                  </a>
+                  </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+</form>
+<script type="text/javascript">
+  $(document).ready(function(){
+
+   
+    $('#btn-login').click(function(){
+      var chk_tbl_offense = document.getElementById("tbl_offense");
+      var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+    });
+
+  });
+
+{% endblock %}
