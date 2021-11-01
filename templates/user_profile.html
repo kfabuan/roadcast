@@ -1,39 +1,41 @@
 {% extends 'nav_admin.html' %}
 {% load static %}
-{% block design %}<link rel="stylesheet" href="{% static 'css/profile.css' %}">{% endblock %}
+{% block design %}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+
+<style>
+  .rounded-circle {
+    max-width: 100% !important; 
+    width: 200px; 
+    height: 200px; 
+    object-fit: cover;
+    background-position: center center !important;
+  }
+
+  @media screen and (max-width: 310px) {
+    .rounded-circle {
+      width: 180px;
+      height: 180px;
+    }
+    .text-center {
+      margin-top: -20px;
+    }
+  }
+
+  @media screen and (max-width: 270px) {
+    .rounded-circle {
+      width: 160px;
+      height: 160px;
+    }
+    .text-center {
+      margin-top: -25px;
+    }
+  }
+</style>
+
+{% endblock %}
 {% block title %} Profile {% endblock %}
 {% block content %}
-
-<!-- Login required and permission access of users (Should be placed after the opening block content) -->
-{% if request.session.authorized_id %}
-    {% for a in all %}
-        {% ifequal a.id request.session.authorized_id %}
-            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' or a.Members_User.Member_Type == 'Sub-representative' %} 
-                <!-- body (no need to paste anything here) -->
-            {% endif %}
-        {% endifequal %}
-    {% endfor %}
-
-{% elif request.session.public_id %}
-    {% if request.session.public_id %}
-        {% for b in pub %}
-            {% ifequal b.id request.session.public_id %} 
-                <!-- body (no need to paste anything here) -->
-            {% endifequal %}
-        {% endfor %}
-
-    {% else %}
-        <script>
-            window.location.href = '{% url 'login_required' %}';
-        </script>
-    {% endif %}
-    
-{% else %}
-    <script>
-        window.location.href = '{% url 'login_required' %}';  
-    </script>
-{% endif %}
-
 
 <!-- General public profile -------------------------------------------------------------->
 
@@ -62,7 +64,7 @@
             <div class="row justify-content-center">
               <div class="col-lg-3 order-lg-2">
                 <div class="card-profile-image">
-                    <img src="/media/{{ b.gen_profile }}" class="rounded-circle" alt="Profile picture" style="width: 200px; height: 200px; object-fit: cover;"> <!-- Profile picture of user goes here -->
+                    <img src="/media/{{ b.gen_profile }}" class="rounded-circle" alt="Profile picture"> <!-- Profile picture of user goes here -->
                 </div>
               </div>
             </div>
@@ -207,7 +209,7 @@
             <div class="row justify-content-center">
               <div class="col-lg-3 order-lg-2">
                 <div class="card-profile-image">
-                    <img src="/media/{{ a.Members_Pic }}" class="rounded-circle" alt="Profile picture" style="width: 200px; height: 200px; object-fit: cover;"> <!-- Profile picture of user goes here -->
+                    <img src="/media/{{ a.Members_Pic }}" class="rounded-circle" alt="Profile picture"> <!-- Profile picture of user goes here -->
                 </div>
               </div>
             </div>

@@ -41,7 +41,13 @@
         .l-navbar {
         background-color: rgb(27, 38, 49);
         }
-
+        .my-profile {
+            width: 40px;
+            height: 40px;
+            background-position: center center !important;
+            object-fit: cover !important;
+            border-radius: 50px;
+        }
         .header_toggle {
         color: rgb(27, 38, 49) !important;
         }
@@ -175,7 +181,7 @@
         <!-- Profile picture -->
         <div class="header_img"> 
             <a href="{% url 'user_profile'%}">
-                <img src="/media/{{ a.Members_Pic }}" alt="Profile">
+                <img src="/media/{{ a.Members_Pic }}" alt="Profile" class="my-profile">
             </a>
         </div>
     </header>
@@ -190,7 +196,7 @@
                     </a>
                 <div class="nav_list"> 
      
-    <!-- For admins -->
+                    <!-- For admins -->
                     {% if a.Members_User.Member_Type == 'Admin' %}
 
                     {% if request.get_full_path == '/profile/user' %}
@@ -206,76 +212,76 @@
 
 
                     {% if request.get_full_path == '/dashboard/' %}
-                    <a href="{% url 'dashboard' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-dashboard nav_icon'></i> 
+                    <a href="{% url 'dashboard' %}" class="nav_link active" style="margin-top: -10px;"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% else %}
-                    <a href="{% url 'dashboard' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-dashboard nav_icon'></i> 
+                    <a href="{% url 'dashboard' %}" class="nav_link" style="margin-top: -10px;"><i class='bx bxs-dashboard nav_icon'></i> 
                         <span class="nav_name">Dashboard</span></a> 
                     {% endif %}
 
                     {% if request.get_full_path == '/report/monthly' %}
-                    <a href="{% url 'monthly_report' %}" class="nav_link active" style="margin-top: -5px;"><i class='fas fa-table nav_icon'></i> 
+                    <a href="{% url 'monthly_report' %}" class="nav_link active" style="margin-top: -10px;"><i class='fas fa-table nav_icon'></i> 
                         <span class="nav_name">Monthly Reports</span></a>
                     {% else %}
-                    <a href="{% url 'monthly_report' %}" class="nav_link" style="margin-top: -5px;"><i class='fas fa-table nav_icon'></i> 
+                    <a href="{% url 'monthly_report' %}" class="nav_link" style="margin-top: -10px;"><i class='fas fa-table nav_icon'></i> 
                         <span class="nav_name">Monthly Reports</span></a>
                     {% endif %}
                     
                     {% if request.get_full_path == '/incidents/view' %}
-                    <a href="{% url 'view_incidents' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-report nav_icon'></i> 
+                    <a href="{% url 'view_incidents' %}" class="nav_link active" style="margin-top: -10px;"><i class='bx bxs-report nav_icon'></i> 
                         <span class="nav_name">Incident Reports</span></a> 
                     {% else %}   
-                    <a href="{% url 'view_incidents' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-report nav_icon'></i> 
+                    <a href="{% url 'view_incidents' %}" class="nav_link" style="margin-top: -10px;"><i class='bx bxs-report nav_icon'></i> 
                     <span class="nav_name">Incident Reports</span></a> 
                     {% endif %}
 
                     {% if request.get_full_path == '/unsolvedcases/' %}
-                    <a href="{% url 'unsolved_cases' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
+                    <a href="{% url 'unsolved_cases' %}" class="nav_link active" style="margin-top: -10px;"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
                         <span class="nav_name">Unsolved Cases</span></a>
                     {% else %}
-                    <a href="{% url 'unsolved_cases' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
+                    <a href="{% url 'unsolved_cases' %}" class="nav_link" style="margin-top: -10px;"><i class='bx bxs-briefcase-alt-2 nav_icon' ></i>
                         <span class="nav_name">Unsolved Cases</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/memberlist' %}
-                    <a href="{% url 'admin_list_members' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bxs-group nav_icon'></i> 
+                    <a href="{% url 'admin_list_members' %}" class="nav_link active" style="margin-top: -10px;"><i class='bx bxs-group nav_icon'></i> 
                         <span class="nav_name">Members</span></a>
                     {% else %}
-                    <a href="{% url 'admin_list_members' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bxs-group nav_icon'></i> 
+                    <a href="{% url 'admin_list_members' %}" class="nav_link" style="margin-top: -10px;"><i class='bx bxs-group nav_icon'></i> 
                         <span class="nav_name">Members</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/investigators' %}
-                    <a href="{% url 'admin_investigators' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bx-glasses-alt nav_icon'></i> 
+                    <a href="{% url 'admin_investigators' %}" class="nav_link active" style="margin-top: -10px;"><i class='bx bx-glasses-alt nav_icon'></i> 
                         <span class="nav_name">Investigators</span></a>
                     {% else %}
-                    <a href="{% url 'admin_investigators' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bx-glasses-alt nav_icon'></i> 
+                    <a href="{% url 'admin_investigators' %}" class="nav_link" style="margin-top: -10px;"><i class='bx bx-glasses-alt nav_icon'></i> 
                         <span class="nav_name">Investigators</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/notification' %}
-                    <a href="{% url 'notification' %}" class="nav_link active" style="margin-top: -5px;"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'notification' %}" class="nav_link active" style="margin-top: -10px;"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% else %}
-                    <a href="{% url 'notification' %}" class="nav_link" style="margin-top: -5px;"><i class='fas fa-bell nav_icon'></i>
+                    <a href="{% url 'notification' %}" class="nav_link" style="margin-top: -10px;"><i class='fas fa-bell nav_icon'></i>
                         <span class="mb-3 ms-1 position-fixed badge rounded-pill bg-danger" id="notif-count" style="font-size: 10px; float:left;"></span>
                         <span class="nav_name position-relative">Notifications</span></a>
                     {% endif %}
 
                     {% if request.get_full_path == '/audit/members' %}
-                    <a href="{% url 'admin_audit_members' %}" class="nav_link active" style="margin-top: -5px;"><i class='bx bx-history nav_icon' ></i> 
+                    <a href="{% url 'admin_audit_members' %}" class="nav_link active" style="margin-top: -10px;"><i class='bx bx-history nav_icon' ></i> 
                         <span class="nav_name">Audit Trail</span> </a> 
                     {% else %}
-                    <a href="{% url 'admin_audit_members' %}" class="nav_link" style="margin-top: -5px;"><i class='bx bx-history nav_icon' ></i> 
+                    <a href="{% url 'admin_audit_members' %}" class="nav_link" style="margin-top: -10px;"><i class='bx bx-history nav_icon' ></i> 
                         <span class="nav_name">Audit Trail</span> </a>  
                     {% endif %}
 
                     {% if request.get_full_path == '/public/settings' %}
-                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link active" style="margin-top: -5px;"><i class='fas fa-cogs '></i>
+                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link active" style="margin-top: -10px;"><i class='fas fa-cogs '></i>
                         <span class="nav_name">Settings</span></a> 
                     {% else %}
-                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link" style="margin-top: -5px;"><i class='fas fa-cogs '></i>
+                    <a href="{% url 'pub_notif_inbox' %}" class="nav_link" style="margin-top: -10px;"><i class='fas fa-cogs '></i>
                         <span class="nav_name">Settings</span></a> 
                     {% endif %}
 

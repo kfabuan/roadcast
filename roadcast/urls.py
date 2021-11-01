@@ -29,6 +29,7 @@ urlpatterns = [
 
     path('', views.index, name='index'),
     path('login', views.login, name='login'),
+    path('login/admin', views.admin_login, name='admin_login'),
     path('aboutus', views.about_us, name='about_us'),
     path('contactus', views.contact_us, name='contact_us'),
     path('contactno', views.contact_no, name='contact_no'),
@@ -150,5 +151,8 @@ urlpatterns = [
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
+if settings.ADMIN_ENABLED is True:
+    urlpatterns += [path('admin/', admin.site.urls),]
+    
 handler404 = "roadcast.views.no_page" #page not found
 handler500 = 'roadcast.views.server_error' #server error

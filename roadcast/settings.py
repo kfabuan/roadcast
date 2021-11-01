@@ -28,14 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*','www.roadcastpasig.live']
 
-TWILIO_ACCOUNT_SID = "ACca478597d1b7d00427724bed7d359cd5"
-TWILIO_AUTH_TOKEN = "4e20975f5a5fb9f0dd043375ffc587ed"
-TWILIO_NUMBER = "+13203473931"
-SMS_BROADCAST_TO_NUMBERS = [ 
-    "", # use the format +19735551234
-    "", 
-    "", 
-]
+ADMIN_ENABLED = True
 
 SMS_BACKEND = 'sms.backends.console.SmsBackend'
 

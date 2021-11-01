@@ -98,8 +98,10 @@
                 <section style="height: 45px"></section>
 
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" disabled>Save changes</button>
+                    <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
+                    <button type="submit" class="btn btn-primary" style="border-radius: 50px; float: right; margin-right: 5px;" disabled>Save changes</button>
                 </div>
+
                 <section style="height: 20px"></section>
             </form>
         </div>
@@ -237,8 +239,10 @@
                         <section style="height: 50px"></section>
         
                         <div class="mt-3">
-                            <button type="submit" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" disabled>Save changes</button>
+                            <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
+                            <button type="submit" class="btn btn-primary" style="border-radius: 50px; float: right; margin-right: 5px;" disabled>Save changes</button>
                         </div>
+        
                     </form>
                 </div>
 
@@ -374,6 +378,19 @@ el.addEventListener('click', function(){
     frm.elements[1].focus();
 });
 </script>
+
+<!-- Cancel button -->
+<script>
+    var el  = document.getElementById('cancel');
+    var frm = document.getElementById('myform');
+    el.addEventListener('click', function(){
+        for(var i=2; i < frm.length; i++) {
+            frm.elements[i].disabled = true;
+        } 
+        frm.elements[1].focus();
+    });
+    </script>
+
 
 <!-- Password match -->
 <script>

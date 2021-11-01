@@ -59,7 +59,58 @@ def index(request): #landing/home
 
     return render (request, 'landing.html', {"all": authorized, "pub": pub})
 
-#Jew
+#Admin login
+def admin_login(request):
+    if request.method == 'POST':
+        # try:
+        username = request.POST['username']
+        password = request.POST['password']
+        a = False
+        b = False
+
+        try:
+            members = Tbl_add_members.objects.get(Members_Email = username)
+            a = True
+        except:
+            a = False
+            print('none')
+        try:
+            public = tbl_genpub_users.objects.get(gen_username = username)
+            b= True
+        except:
+            b = False
+            print('none')
+
+
+        if a == True:
+            if (members.Members_Email == username) and (members.Members_Password == password) and (members.Members_User.Member_Type == 'Admin'):
+                submit = tbl_audit( username = username, password = password)
+                submit.save()
+                authorized_session = Tbl_add_members.objects.get(Members_Email=username, Members_Password = password)
+                request.session['authorized_id'] = authorized_session.id
+                return HttpResponseRedirect(reverse('dashboard'))
+            elif (members.Members_Email == username) and (members.Members_Password == password):
+                messages.warning(request, ("Oops! Only Admin accounts can login here."))
+                return HttpResponseRedirect(reverse('admin_login'))
+            else:
+                messages.error(request, ("Oops! Please check your email or password."))
+                return HttpResponseRedirect(reverse('admin_login'))
+
+        elif b == True:
+            if (public.gen_username == username) and (public.gen_pass == password):
+                messages.warning(request, ("Oops! Only Admin accounts can login here."))
+                return HttpResponseRedirect(reverse('admin_login'))
+            else:
+               messages.error(request, ("Oops! Please check your email or password."))
+               return HttpResponseRedirect(reverse('admin_login'))
+
+        else:
+            messages.error(request, ("Oops! Please check your email or password."))
+            return HttpResponseRedirect(reverse('admin_login'))
+    return render (request, 'admin_login.html')    
+
+
+#PNP members and general pub login
 def login(request):
     if request.method == 'POST':
         # try:
@@ -83,7 +134,11 @@ def login(request):
 
 
         if a == True:
-            if (members.Members_Email == username) and (members.Members_Password == password):
+            if (members.Members_Email == username) and (members.Members_Password == password) and (members.Members_User.Member_Type == 'Admin'):
+                messages.error(request, ("Oops! Please check your email or password."))
+                return HttpResponseRedirect(reverse('login'))
+
+            elif (members.Members_Email == username) and (members.Members_Password == password):
 
                 submit = tbl_audit( username = username, password = password)
                 submit.save()
@@ -91,23 +146,6 @@ def login(request):
                 authorized_session = Tbl_add_members.objects.get(Members_Email=username, Members_Password = password)
 
                 request.session['authorized_id'] = authorized_session.id
-
-                #login email alert
-                if (authorized_session.nf_acc_activity == True):
-                    firstname = authorized_session.Members_Fname
-                    logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
-                    logged_in_date = str(date.today())
-                    from_ = '' #roadcast main email in settings.py
-                    to_ = [authorized_session.Members_Email]
-
-                    send_mail (
-                        'Roadcast: Login Notification',
-                        render_to_string('login_alert.html',{
-                        'firstname' : firstname,
-                        "logged_in_date" : logged_in_date,
-                        "logged_in_time" : logged_in_time,
-                        }),
-                        from_, to_,)
 
                 return HttpResponseRedirect(reverse('dashboard'))
             else:
@@ -123,23 +161,6 @@ def login(request):
 
                         public_session = tbl_genpub_users.objects.get(gen_username=username, gen_pass= password)
                         request.session['public_id'] = public_session.id
-
-                        #login email alert
-                        if (public_session.nf_acc_activity == True):
-                            firstname = public_session.gen_fname
-                            logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
-                            logged_in_date = str(date.today())
-                            from_ = '' #roadcast main email in settings.py
-                            to_ = [public_session.gen_username]
-
-                            send_mail (
-                                'Roadcast: Login Notification',
-                                render_to_string('login_alert.html',{
-                                'firstname' : firstname,
-                                "logged_in_date" : logged_in_date,
-                                "logged_in_time" : logged_in_time,
-                                }),
-                                from_, to_,)
                         return HttpResponseRedirect(reverse('dashboard'))
 
                     elif not public.is_verified:
@@ -156,7 +177,7 @@ def login(request):
             messages.error(request, ("Oops! Please check your email or password."))
             return HttpResponseRedirect(reverse('login'))
     return render (request, 'login.html')
-
+       
 def deletesession(request):
     try:
         if request.session['public_id']:
@@ -274,11 +295,223 @@ def sign_up (request): #maybago
     province    = refprovince.objects.all()
     city        = refcitymun.objects.all()
 
+    province1= refprovince.objects.filter(regCode="01")
+    province2= refprovince.objects.filter(regCode="02")
+    province3= refprovince.objects.filter(regCode="03")
+    province4= refprovince.objects.filter(regCode="04")
+    province5= refprovince.objects.filter(regCode="05")
+    province6= refprovince.objects.filter(regCode="06")
+    province7= refprovince.objects.filter(regCode="07")
+    province8= refprovince.objects.filter(regCode="08")
+    province9= refprovince.objects.filter(regCode="09")
+    province10= refprovince.objects.filter(regCode="10")
+    province11= refprovince.objects.filter(regCode="11")
+    province12= refprovince.objects.filter(regCode="12")
+    province13= refprovince.objects.filter(regCode="13")
+    province14= refprovince.objects.filter(regCode="14")
+    province15= refprovince.objects.filter(regCode="15")
+    province16= refprovince.objects.filter(regCode="16")
+    province4b= refprovince.objects.filter(regCode="17")
+    city1= refcitymun.objects.filter(provCode="0128")
+    city2= refcitymun.objects.filter(provCode="0129")
+    city3= refcitymun.objects.filter(provCode="0133")
+    city4= refcitymun.objects.filter(provCode="0155")
+    city5= refcitymun.objects.filter(provCode="0209")
+    city6= refcitymun.objects.filter(provCode="0215")
+    city7= refcitymun.objects.filter(provCode="0231")
+    city8= refcitymun.objects.filter(provCode="0250")
+    city9= refcitymun.objects.filter(provCode="0257")
+    city10= refcitymun.objects.filter(provCode="0308")
+    city11= refcitymun.objects.filter(provCode="0314")
+    city12= refcitymun.objects.filter(provCode="0349")
+    city13= refcitymun.objects.filter(provCode="0354")
+    city14= refcitymun.objects.filter(provCode="0369")
+    city15= refcitymun.objects.filter(provCode="0371")
+    city16= refcitymun.objects.filter(provCode="0377")
+    city17= refcitymun.objects.filter(provCode="0410")
+    city18= refcitymun.objects.filter(provCode="0421")
+    city19= refcitymun.objects.filter(provCode="0434")
+    city20= refcitymun.objects.filter(provCode="0456")
+    city21= refcitymun.objects.filter(provCode="0458")
+    city22= refcitymun.objects.filter(provCode="1740")
+    city23= refcitymun.objects.filter(provCode="1751")
+    city24= refcitymun.objects.filter(provCode="1752")
+    city25= refcitymun.objects.filter(provCode="1753")
+    city26= refcitymun.objects.filter(provCode="1759")
+    city27= refcitymun.objects.filter(provCode="0505")
+    city28= refcitymun.objects.filter(provCode="0516")
+    city29= refcitymun.objects.filter(provCode="0517")
+    city30= refcitymun.objects.filter(provCode="0520")
+    city31= refcitymun.objects.filter(provCode="0541")
+    city32= refcitymun.objects.filter(provCode="0562")
+    city33= refcitymun.objects.filter(provCode="0604")
+    city34= refcitymun.objects.filter(provCode="0606")
+    city35= refcitymun.objects.filter(provCode="0619")
+    city36= refcitymun.objects.filter(provCode="0630")
+    city37= refcitymun.objects.filter(provCode="0645")
+    city38= refcitymun.objects.filter(provCode="0679")
+    city39= refcitymun.objects.filter(provCode="0712")
+    city40= refcitymun.objects.filter(provCode="0722")
+    city41= refcitymun.objects.filter(provCode="0746")
+    city42= refcitymun.objects.filter(provCode="0761")
+    city43= refcitymun.objects.filter(provCode="0826")
+    city44= refcitymun.objects.filter(provCode="0837")
+    city45= refcitymun.objects.filter(provCode="0848")
+    city46= refcitymun.objects.filter(provCode="0860")
+    city47= refcitymun.objects.filter(provCode="0864")
+    city48= refcitymun.objects.filter(provCode="0878")
+    city49= refcitymun.objects.filter(provCode="0972")
+    city50= refcitymun.objects.filter(provCode="0973")
+    city51= refcitymun.objects.filter(provCode="0983")
+    city52= refcitymun.objects.filter(provCode="0997")
+    city53= refcitymun.objects.filter(provCode="1013")
+    city54= refcitymun.objects.filter(provCode="1018")
+    city55= refcitymun.objects.filter(provCode="1035")
+    city56= refcitymun.objects.filter(provCode="1042")
+    city57= refcitymun.objects.filter(provCode="1043")
+    city58= refcitymun.objects.filter(provCode="1123")
+    city59= refcitymun.objects.filter(provCode="1124")
+    city60= refcitymun.objects.filter(provCode="1125")
+    city61= refcitymun.objects.filter(provCode="1182")
+    city62= refcitymun.objects.filter(provCode="1186")
+    city63= refcitymun.objects.filter(provCode="1247")
+    city64= refcitymun.objects.filter(provCode="1263")
+    city65= refcitymun.objects.filter(provCode="1265")
+    city66= refcitymun.objects.filter(provCode="1280")
+    city67= refcitymun.objects.filter(provCode="1298")
+    city68= refcitymun.objects.filter(provCode="1339")
+    city70= refcitymun.objects.filter(provCode="1374")
+    city71= refcitymun.objects.filter(provCode="1375")
+    city72= refcitymun.objects.filter(provCode="1376")
+    city73= refcitymun.objects.filter(provCode="1401")
+    city74= refcitymun.objects.filter(provCode="1411")
+    city75= refcitymun.objects.filter(provCode="1427")
+    city76= refcitymun.objects.filter(provCode="1432")
+    city77= refcitymun.objects.filter(provCode="1444")
+    city78= refcitymun.objects.filter(provCode="1481")
+    city79= refcitymun.objects.filter(provCode="1507")
+    city80= refcitymun.objects.filter(provCode="1536")
+    city81= refcitymun.objects.filter(provCode="1538")
+    city82= refcitymun.objects.filter(provCode="1566")
+    city83= refcitymun.objects.filter(provCode="1570")
+    city84= refcitymun.objects.filter(provCode="1602")
+    city85= refcitymun.objects.filter(provCode="1603")
+    city86= refcitymun.objects.filter(provCode="1667")
+    city87= refcitymun.objects.filter(provCode="1668")
+    city88= refcitymun.objects.filter(provCode="1685")
+    
+    
+    
     a = {
         'region':region,
         'province':province,
         'city':city,
+        'province1':province1,
+        'province2':province2,
+        'province3':province3,
+        'province4':province4,
+        'province5':province5,
+        'province6':province6,
+        'province7':province7,
+        'province8':province8,
+        'province9':province9,
+        'province10':province10,
+        'province11':province11,
+        'province12':province12,
+        'province13':province13,
+        'province14':province14,
+        'province15':province15,
+        'province16':province16,
+        'province4b':province4b,
+        'city1':city1,
+        'city2':city2,
+        'city3':city3,
+        'city4':city4,
+        'city5':city5,
+        'city6':city6,
+        'city7':city7,
+        'city8':city8,
+        'city9':city9,
+        'city10':city10,
+        'city11':city11,
+        'city12':city12,
+        'city13':city13,
+        'city14':city14,
+        'city15':city15,
+        'city16':city16,
+        'city17':city17,
+        'city18':city18,
+        'city19':city19,
+        'city20':city20,
+        'city21':city21,
+        'city22':city22,
+        'city23':city23,
+        'city24':city24,
+        'city25':city25,
+        'city26':city26,
+        'city27':city27,
+        'city28':city28,
+        'city29':city29,
+        'city30':city30,
+        'city31':city31,
+        'city32':city32,
+        'city33':city33,
+        'city34':city34,
+        'city35':city35,
+        'city36':city36,
+        'city37':city37,
+        'city38':city38,
+        'city39':city39,
+        'city40':city40,
+        'city41':city41,
+        'city42':city42,
+        'city43':city43,
+        'city44':city44,
+        'city45':city45,
+        'city46':city46,
+        'city47':city47,
+        'city48':city48,
+        'city49':city49,
+        'city50':city50,
+        'city51':city51,
+        'city52':city52,
+        'city53':city53,
+        'city54':city54,
+        'city55':city55,
+        'city56':city56,
+        'city57':city57,
+        'city58':city58,
+        'city59':city59,
+        'city60':city60,
+        'city61':city61,
+        'city62':city62,
+        'city63':city63,
+        'city64':city64,
+        'city65':city65,
+        'city66':city66,
+        'city67':city67,
+        'city68':city68,
+        'city70':city70,
+        'city71':city71,
+        'city72':city72,
+        'city73':city73,
+        'city74':city74,
+        'city75':city75,
+        'city76':city76,
+        'city77':city77,
+        'city78':city78,
+        'city79':city79,
+        'city80':city80,
+        'city81':city81,
+        'city82':city82,
+        'city83':city83,
+        'city84':city84,
+        'city85':city85,
+        'city86':city86,
+        'city87':city87,
+        'city88':city88
     }
+    
     return render (request, 'sign_up.html', a)
 
 def duplicate_gen (request): #Jew
@@ -334,21 +567,21 @@ def duplicate_gen (request): #Jew
             messages.error(request, ("Oops! That email address is already taken. Please use a different one."))
             return HttpResponseRedirect('signup')
 
-        # #Recaptcha validation
-        # recaptcha_response = request.POST.get('g-recaptcha-response')
-        # url = 'https://www.google.com/recaptcha/api/siteverify'
-        # values = {
-        #     'secret': "6LezEbYcAAAAAPs9xoE2PnJsb18ljq1oi1aWZ0Gp",
-        #     'response': recaptcha_response
-        # }
-        # data = urllib.parse.urlencode(values).encode()
-        # req =  urllib.request.Request(url, data=data)
-        # response = urllib.request.urlopen(req)
-        # result = json.loads(response.read().decode())
+        #Recaptcha validation
+        recaptcha_response = request.POST.get('g-recaptcha-response')
+        url = 'https://www.google.com/recaptcha/api/siteverify'
+        values = {
+            'secret': "6LezEbYcAAAAAPs9xoE2PnJsb18ljq1oi1aWZ0Gp",
+            'response': recaptcha_response
+        }
+        data = urllib.parse.urlencode(values).encode()
+        req =  urllib.request.Request(url, data=data)
+        response = urllib.request.urlopen(req)
+        result = json.loads(response.read().decode())
 
-        # if result['success'] == False:
-        #     messages.error(request, ('Oops! Invalid reCAPTCHA. Please try again.'))
-        #     return HttpResponseRedirect('signup')
+        if result['success'] == False:
+            messages.error(request, ('Oops! Invalid reCAPTCHA. Please try again.'))
+            return HttpResponseRedirect('signup')
 
         submit = tbl_genpub_users.objects.create(gen_surname = gen_surname,gen_fname = gen_fname, gen_sex = gen_sex, gen_bday=gen_bday, gen_region = gen_region, gen_province = gen_province, gen_city = gen_city,
         gen_barangay = gen_barangay, gen_contact_no = gen_contact_no, gen_username = gen_username, gen_pass = gen_pass, gen_valid_id = gen_valid_id,gen_upload_id=gen_upload_id, gen_profile = gen_profile, gen_qa = gen_qa, gen_qa_answer=gen_qa_answer )#,gen_upload_id=gen_upload_id
@@ -359,7 +592,7 @@ def duplicate_gen (request): #Jew
         return HttpResponseRedirect(reverse('login'))
 
     return render(request, 'sign_up.html', a)
-
+    
 #Email verification - Jew
 def send_action_email(public, request):
     current_site = get_current_site(request)

@@ -173,10 +173,570 @@ input[type=password]::placeholder{
                   <input type="text" name="gen_contact_no" placeholder="Contact number" class="form-control custom-form" >
                 </div>
               </div>
+              <script>
+                    function address(s1,s2){
+                      var s1 = document.getElementById(s1);
+                      var s2 = document.getElementById(s2);
+                      var test= document.getElementById("province").value;
+                      
+                      s2.innerHTML="";
+                      if (s1.value == 1){
+                        var optionArray = ["|Province", {% for prov1 in province1 %}
+                   "{{ prov1.id }}|{{ prov1.provDesc }}",
+                    {% endfor %}];
+                      }
+                      else if (s1.value == 2){
+                        var optionArray = ["|Province", {% for prov2 in province2 %}
+                   "{{ prov2.id }}|{{ prov2.provDesc }}",
+                    {% endfor %}];
+                      }
+                      else if (s1.value == 3){
+                        var optionArray = ["|Province", {% for prov3 in province3 %}
+                   "{{ prov3.id }}|{{ prov3.provDesc }}",
+                    {% endfor %}];
+                      }
+                      else if (s1.value == 4){
+                        var optionArray = ["|Province", {% for prov4 in province4 %}
+                   "{{ prov4.id }}|{{ prov4.provDesc }}",
+                    {% endfor %}];
+                      }
+                      else if (s1.value == 5){
+                        var optionArray = ["|Province", {% for prov4b in province4b %}
+                   "{{ prov4b.id }}|{{ prov4b.provDesc }}",
+                    {% endfor %}];
+                      }
+                      else if (s1.value == 6){
+                        var optionArray = ["|Province", {% for prov5 in province5 %}
+                   "{{ prov5.id }}|{{ prov5.provDesc }}",
+                    {% endfor %}];
+                      }
+                      else if (s1.value == 7){
+                        var optionArray = ["|Province", {% for prov6 in province6 %}
+                   "{{ prov6.id }}|{{ prov6.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 8){
+                        var optionArray = ["|Province", {% for prov7 in province7 %}
+                   "{{ prov7.id }}|{{ prov7.provDesc }}",
+                    {% endfor %}];
+                      }
+                    else if (s1.value == 9){
+                        var optionArray = ["|Province", {% for prov8 in province8 %}
+                   "{{ prov8.id }}|{{ prov8.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 10){
+                        var optionArray = ["|Province", {% for prov9 in province9 %}
+                   "{{ prov9.id }}|{{ prov9.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 11){
+                        var optionArray = ["|Province", {% for prov10 in province10 %}
+                   "{{ prov10.id }}|{{ prov10.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 12){
+                        var optionArray = ["|Province", {% for prov11 in province11 %}
+                   "{{ prov11.id }}|{{ prov11.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 13){
+                        var optionArray = ["|Province", {% for prov12 in province12 %}
+                   "{{ prov12.id }}|{{ prov12.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 14){
+                        var optionArray = ["|Province", {% for prov13 in province13 %}
+                   "{{ prov13.id }}|{{ prov13.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 15){
+                        var optionArray = ["|Province", {% for prov14 in province14 %}
+                   "{{ prov14.id }}|{{ prov14.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 16){
+                        var optionArray = ["|Province", {% for prov15 in province15 %}
+                   "{{ prov15.id }}|{{ prov15.provDesc }}",
+                    {% endfor %}];
+                    }
+                    else if (s1.value == 17){
+                        var optionArray = ["|Province", {% for prov16 in province16 %}
+                   "{{ prov16.id }}|{{ prov16.provDesc }}",
+                    {% endfor %}];
+                    }
+                      
+                      for (var option in optionArray){
+                        var pair = optionArray[option].split("|");
+                        var newOption= document.createElement("option");
+                        newOption.value=pair[0];
+                        newOption.innerHTML=pair[1];
+                        s2.options.add(newOption);
 
+                      }
+                      
+                    }
+                function address2(s1,s2){
+                    var s1 = document.getElementById(s1);
+                      var s2 = document.getElementById(s2);
+                      
+                      
+                      s2.innerHTML="";
+                      if (s1.value == 1){
+                        var optionArray = ["|City", {% for city1 in city1 %}
+                        "{{ city1.id }}|{{ city1.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                       else if (s1.value == 2){
+                        var optionArray = ["|City", {% for city2 in city2 %}
+                        "{{ city2.id }}|{{ city2.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 3){
+                        var optionArray = ["|City", {% for city3 in city3 %}
+                        "{{ city3.id }}|{{ city3.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 4){
+                        var optionArray = ["|City", {% for city4 in city4 %}
+                        "{{ city4.id }}|{{ city4.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 5){
+                        var optionArray = ["|City", {% for city5 in city5 %}
+                        "{{ city5.id }}|{{ city5.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 6){
+                        var optionArray = ["|City", {% for city6 in city6 %}
+                        "{{ city6.id }}|{{ city6.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 7){
+                        var optionArray = ["|City", {% for city7 in city7 %}
+                        "{{ city7.id }}|{{ city7.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 8){
+                        var optionArray = ["|City", {% for city8 in city8 %}
+                        "{{ city8.id }}|{{ city8.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 9){
+                        var optionArray = ["|City", {% for city9 in city9 %}
+                        "{{ city9.id }}|{{ city9.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 10){
+                        var optionArray = ["|City", {% for city10 in city10 %}
+                        "{{ city10.id }}|{{ city10.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 11){
+                        var optionArray = ["|City", {% for city11 in city11 %}
+                        "{{ city11.id }}|{{ city11.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 12){
+                        var optionArray = ["|City", {% for city12 in city12 %}
+                        "{{ city12.id }}|{{ city12.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 13){
+                        var optionArray = ["|City", {% for city13 in city13 %}
+                        "{{ city13.id }}|{{ city13.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 14){
+                        var optionArray = ["|City", {% for city14 in city14 %}
+                        "{{ city14.id }}|{{ city14.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 15){
+                        var optionArray = ["|City", {% for city15 in city15%}
+                        "{{ city15.id }}|{{ city15.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 16){
+                        var optionArray = ["|City", {% for city16 in city16 %}
+                        "{{ city16.id }}|{{ city16.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 17){
+                        var optionArray = ["|City", {% for city17 in city17 %}
+                        "{{ city17.id }}|{{ city17.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 18){
+                        var optionArray = ["|City", {% for city18 in city18 %}
+                        "{{ city18.id }}|{{ city18.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 19){
+                        var optionArray = ["|City", {% for city19 in city19 %}
+                        "{{ city19.id }}|{{ city19.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 20){
+                        var optionArray = ["|City", {% for city20 in city20 %}
+                        "{{ city20.id }}|{{ city20.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 21){
+                        var optionArray = ["|City", {% for city21 in city21 %}
+                        "{{ city21.id }}|{{ city21.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 22){
+                        var optionArray = ["|City", {% for city22 in city22 %}
+                        "{{ city22.id }}|{{ city22.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 23){
+                        var optionArray = ["|City", {% for city23 in city23 %}
+                        "{{ city23.id }}|{{ city23.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 24){
+                        var optionArray = ["|City", {% for city24 in city24 %}
+                        "{{ city24.id }}|{{ city24.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 25){
+                        var optionArray = ["|City", {% for city25 in city25 %}
+                        "{{ city25.id }}|{{ city25.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 26){
+                        var optionArray = ["|City", {% for city26 in city26 %}
+                        "{{ city26.id }}|{{ city26.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 27){
+                        var optionArray = ["|City", {% for city27 in city27 %}
+                        "{{ city27.id }}|{{ city27.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 28){
+                        var optionArray = ["|City", {% for city28 in city28 %}
+                        "{{ city28.id }}|{{ city28.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 29){
+                        var optionArray = ["|City", {% for city29 in city29 %}
+                        "{{ city29.id }}|{{ city29.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 30){
+                        var optionArray = ["|City", {% for city30 in city30 %}
+                        "{{ city30.id }}|{{ city30.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 31){
+                        var optionArray = ["|City", {% for city31 in city31 %}
+                        "{{ city31.id }}|{{ city31.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 32){
+                        var optionArray = ["|City", {% for city32 in city32 %}
+                        "{{ city32.id }}|{{ city32.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 33){
+                        var optionArray = ["|City", {% for city33 in city33 %}
+                        "{{ city33.id }}|{{ city33.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 34){
+                        var optionArray = ["|City", {% for city34 in city34 %}
+                        "{{ city34.id }}|{{ city34.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 35){
+                        var optionArray = ["|City", {% for city35 in city35 %}
+                        "{{ city35.id }}|{{ city35.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 36){
+                        var optionArray = ["|City", {% for city36 in city36 %}
+                        "{{ city36.id }}|{{ city36.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 37){
+                        var optionArray = ["|City", {% for city37 in city37 %}
+                        "{{ city37.id }}|{{ city37.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 38){
+                        var optionArray = ["|City", {% for city38 in city38 %}
+                        "{{ city38.id }}|{{ city38.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 39){
+                        var optionArray = ["|City", {% for city39 in city39 %}
+                        "{{ city39.id }}|{{ city39.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 40){
+                        var optionArray = ["|City", {% for city40 in city40 %}
+                        "{{ city40.id }}|{{ city40.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 41){
+                        var optionArray = ["|City", {% for city41 in city41 %}
+                        "{{ city41.id }}|{{ city41.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 42){
+                        var optionArray = ["|City", {% for city4 in city42 %}
+                        "{{ city42.id }}|{{ city42.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 43){
+                        var optionArray = ["|City", {% for city43 in city43 %}
+                        "{{ city43.id }}|{{ city43.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 44){
+                        var optionArray = ["|City", {% for city44 in city44 %}
+                        "{{ city44.id }}|{{ city44.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 45){
+                        var optionArray = ["|City", {% for city45 in city45 %}
+                        "{{ city45.id }}|{{ city45.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 46){
+                        var optionArray = ["|City", {% for city46 in city46 %}
+                        "{{ city46.id }}|{{ city46.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 47){
+                        var optionArray = ["|City", {% for city47 in city47 %}
+                        "{{ city47.id }}|{{ city47.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 48){
+                        var optionArray = ["|City", {% for city48 in city48 %}
+                        "{{ city48.id }}|{{ city48.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 49){
+                        var optionArray = ["|City", {% for city49 in city49 %}
+                        "{{ city49.id }}|{{ city49.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 50){
+                        var optionArray = ["|City", {% for city50 in city50 %}
+                        "{{ city50.id }}|{{ city50.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 51){
+                        var optionArray = ["|City", {% for city51 in city51 %}
+                        "{{ city51.id }}|{{ city51.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 52){
+                        var optionArray = ["|City", {% for city52 in city52 %}
+                        "{{ city52.id }}|{{ city52.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 53){
+                        var optionArray = ["|City", {% for city53 in city53 %}
+                        "{{ city53.id }}|{{ city53.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 54){
+                        var optionArray = ["|City", {% for city54 in city54 %}
+                        "{{ city54.id }}|{{ city54.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 55){
+                        var optionArray = ["|City", {% for city55 in city55 %}
+                        "{{ city55.id }}|{{ city55.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 56){
+                        var optionArray = ["|City", {% for city56 in city56 %}
+                        "{{ city56.id }}|{{ city56.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 57){
+                        var optionArray = ["|City", {% for city57 in city57 %}
+                        "{{ city57.id }}|{{ city57.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 58){
+                        var optionArray = ["|City", {% for city58 in city58 %}
+                        "{{ city58.id }}|{{ city58.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 59){
+                        var optionArray = ["|City", {% for city59 in city59 %}
+                        "{{ city59.id }}|{{ city59.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 60){
+                        var optionArray = ["|City", {% for city60 in city60 %}
+                        "{{ city60.id }}|{{ city60.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 61){
+                        var optionArray = ["|City", {% for city61 in city61 %}
+                        "{{ city61.id }}|{{ city61.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 62){
+                        var optionArray = ["|City", {% for city62 in city62 %}
+                        "{{ city62.id }}|{{ city62.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 63){
+                        var optionArray = ["|City", {% for city63 in city63 %}
+                        "{{ city63.id }}|{{ city63.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 64){
+                        var optionArray = ["|City", {% for city64 in city64 %}
+                        "{{ city64.id }}|{{ city64.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 65){
+                        var optionArray = ["|City", {% for city65 in city65 %}
+                        "{{ city65.id }}|{{ city65.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 66){
+                        var optionArray = ["|City", {% for city66 in city66 %}
+                        "{{ city66.id }}|{{ city66.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 67){
+                        var optionArray = ["|City", {% for city67 in city67 %}
+                        "{{ city67.id }}|{{ city67.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 68){
+                        var optionArray = ["|City", {% for city68 in city68 %}
+                        "{{ city68.id }}|{{ city68.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                       
+                        else if (s1.value == 70){
+                        var optionArray = ["|City", {% for city70 in city70 %}
+                        "{{ city70.id }}|{{ city70.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 71){
+                        var optionArray = ["|City", {% for city71 in city71 %}
+                        "{{ city71.id }}|{{ city71.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 72){
+                        var optionArray = ["|City", {% for city72 in city72 %}
+                        "{{ city72.id }}|{{ city72.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 73){
+                        var optionArray = ["|City", {% for city73 in city73 %}
+                        "{{ city73.id }}|{{ city73.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 74){
+                        var optionArray = ["|City", {% for city74 in city74 %}
+                        "{{ city74.id }}|{{ city74.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 75){
+                        var optionArray = ["|City", {% for city75 in city75 %}
+                        "{{ city75.id }}|{{ city75.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 76){
+                        var optionArray = ["|City", {% for city76 in city76 %}
+                        "{{ city76.id }}|{{ city76.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 77){
+                        var optionArray = ["|City", {% for city77 in city77 %}
+                        "{{ city77.id }}|{{ city77.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 78){
+                        var optionArray = ["|City", {% for city78 in city78 %}
+                        "{{ city78.id }}|{{ city78.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 79){
+                        var optionArray = ["|City", {% for city79 in city79 %}
+                        "{{ city79.id }}|{{ city79.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 80){
+                        var optionArray = ["|City", {% for city80 in city80 %}
+                        "{{ city80.id }}|{{ city80.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 81){
+                        var optionArray = ["|City", {% for city81 in city81 %}
+                        "{{ city81.id }}|{{ city81.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 82){
+                        var optionArray = ["|City", {% for city82 in city82 %}
+                        "{{ city82.id }}|{{ city82.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 83){
+                        var optionArray = ["|City", {% for city83 in city83 %}
+                        "{{ city83.id }}|{{ city83.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 84){
+                        var optionArray = ["|City", {% for city84 in city84 %}
+                        "{{ city84.id }}|{{ city84.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 85){
+                        var optionArray = ["|City", {% for city85 in city85 %}
+                        "{{ city85.id }}|{{ city85.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 86){
+                        var optionArray = ["|City", {% for city86 in city86 %}
+                        "{{ city86.id }}|{{ city86.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 87){
+                        var optionArray = ["|City", {% for city87 in city87 %}
+                        "{{ city87.id }}|{{ city87.citymunDesc }}",
+                          {% endfor %}];
+                        }
+                        else if (s1.value == 88){
+                        var optionArray = ["|City", {% for city88 in city88 %}
+                        "{{ city88.id }}|{{ city88.citymunDesc }}",
+                          {% endfor %}];
+                        }
+
+
+
+
+                        
+                        for (var option in optionArray){
+                        var pair = optionArray[option].split("|");
+                        var newOption= document.createElement("option");
+                        newOption.value=pair[0];
+                        newOption.innerHTML=pair[1];
+                        s2.options.add(newOption);
+
+                      }
+                      
+                    }
+              </script>
               <div class="row">
                 <div class="col">
-                  <select id="region" name="gen_region" class="form-select"  >
+                  <select id="region" name="gen_region" class="form-select" onchange=address("region","province") >
                     <option value="" selected="true" disabled="disabled">Region</option>
                     {% for reg in region %}
                     <option value="{{ reg.id }}"> {{ reg.regDesc }} </option>
@@ -187,19 +747,17 @@ input[type=password]::placeholder{
 
               <div class="row">
                   <div class="col">
-                    <select id="province" name="gen_province" class="form-select"  >
+                    <select id="province" name="gen_province" class="form-select" onchange=address2("province","city")>
                      <option value="" selected="true" disabled="disabled">Province</option>
-                     {% for pro in province %}
-                     <option value="{{ pro.id }}"> {{ pro.provDesc }} </option>
-                     {% endfor %}
+                      
+                     
+                     
                       </select>
                   </div>
                   <div class="col">
                   <select id="city" name="gen_city" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">City</option>
-                    {% for cit in city %}
-                     <option value="{{ cit.id }}"> {{ cit.citymunDesc }} </option>
-                     {% endfor %}
+                    
                     </select>
                 </div>
               </div>
@@ -385,22 +943,18 @@ input[type=password]::placeholder{
           </div>
 
         <section style="height: 13px;"></section>
+        <section style="height: 13px;"></section>
 
-        <!--<div class="row">-->
-        <!--  <center>-->
-        <!--     <script src="https://www.google.com/recaptcha/api.js" async defer></script>-->
-        <!--    <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>-->
-        <!--  </center>-->
-        <!--</div>-->
+        <div class="row">
+        <center>
+           <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+          <div class="g-recaptcha" data-sitekey="6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy"></div>
+        </center>
+       </div>
+
 <!--<script>-->
-
 <!--        var onloadCallback = function() {-->
-
 <!--            var myobj = document.getElementById("g-recaptcha");-->
-
-
-
-
 <!--            $('.g-recaptcha').html('');-->
 
 <!--            $('.g-recaptcha').each(function (i, captcha) {-->
@@ -408,11 +962,9 @@ input[type=password]::placeholder{
 <!--                    'sitekey' : '6LezEbYcAAAAAEjz-W1_waM-nfZukg5r30DCNEPy'-->
 <!--                });-->
 <!--            });-->
-
 <!--        };-->
 <!--    </script>-->
 <!--        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit" async defer></script>-->
-
 <!--    <div class="row">-->
 <!--        <center>-->
 <!--    <div class="g-recaptcha"></div>-->
