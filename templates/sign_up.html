@@ -878,12 +878,23 @@ input[type=password]::placeholder{
                   <div class="imagePreview">
                   <label class="btn btn-primary upload-img">
                       Upload a photo
-                      <input type="file" name="gen_upload_id" class="uploadFile" accept="image/*" style="width: 0px; height: 0px; overflow: hidden;"  >
+                      <input type="file" name="gen_upload_id" id="file" class="uploadFile" accept="image/*" style="width: 0px; height: 0px; overflow: hidden;"  >
                       </label>
                   </div>
                 </div>
               </div>
             </div>
+            
+            <script>
+              var uploadField = document.getElementById("file");
+              
+              uploadField.onchange = function() {
+                  if(this.files[0].size > 4194304){
+                     alert("File is too big. Please upload a file under 4MB.");
+                     this.value = "";
+                  };
+              };
+            </script>
 
             <div class="row">
               <p class="password" style="margin-top: 15px;">Note: Failure to follow the instruction will result in account registration being denied.</p>
@@ -987,6 +998,7 @@ input[type=password]::placeholder{
     </div>
   </div>
 </div>
+
 
 <!-- Prevent submitting again when reloaded -->
     <script>

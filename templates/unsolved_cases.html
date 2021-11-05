@@ -55,11 +55,27 @@
 {% endif %}
 
 <div class="container">
-
+   
   <section style="height: 25px;"></section>
   {% if messages %}{% for message in messages %}<p class="alert alert-success"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
-  <span class="fs-3 me-3" style="font-family: Roboto, sans-serif; color: #1b5082;">Urgency Level&nbsp; </span>
+  <!-- <span class="fs-3 me-3" style="font-family: Roboto, sans-serif; color: #1b5082;">Urgency Level&nbsp; </span>
+  <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
+    Remind Investigators
+    </button> -->
+    <div class="col-12">
+        <span class="me-2 fs-4 page-title"><a href="" style="text-decoration: none; color: #1b5082">Unsolved Cases</a> </span>
+
+        {% for a in all %}
+            {% ifequal a.id request.session.authorized_id %}
+                {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'notify_unsolved' %}'">
+                Remind Investigators
+                </button>
+                {% endif %}
+            {% endifequal %}
+        {% endfor %}
+    </div>
   <section style="height: 35px;"></section>
 
     <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
@@ -94,7 +110,7 @@
                     <tr>
                         <th scope="col" class="rad_tl">#</th>
                         <th scope="col">Incident Type</th>
-                        <th scope="col">Statistician/Encoder</th>
+                        <th scope="col">Investigator</th>
                         <th scope="col">Barangay Committed</th>
                         <th scope="col">Date and Time Added</th>
                         {% for a in all %}
@@ -115,24 +131,31 @@
               <tr>
                   <td> {{ forloop.counter }}</td>
                   <td>{{ unsolveds.Incident_Type }}</td>
-                  <td>{{ unsolveds.Investigator_id.Members_District}}</td>
-                  <td>{{ unsolveds.Barangay_id }}</td>
-                  <td>{{ unsolveds.Date }} - {{ unsolveds.Time }}</td>
-                  {% for a in all %}
-                      {% ifequal a.id request.session.authorized_id %}
-                          {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                          <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
-                          <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
-                          {% endif %}
-                      {% endifequal %}
-                  {% endfor %}  
-                  <td>{{ unsolveds.Case_Status }}</td>
                   <td>
+                  {% for inv in investigators_list %}
+                     {% ifequal unsolveds.Investigator_id inv.id %} 
+                        {{ inv.Members_Fname }} {{ inv.Members_Lname }} 
+                     {% endifequal %}
+                 {% endfor %}
+                </td>
+
+                <td>{{ unsolveds.Barangay_id }}</td>
+                <td>{{ unsolveds.Date }} - {{ unsolveds.Time }}</td>
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                        <td>{{unsolveds.Suspect_Fname}} {{unsolveds.Suspect_Lname}}</td>
+                        <td>{{unsolveds.Victim_Fname}} {{unsolveds.Victim_Lname}}</td>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}  
+                <td>{{ unsolveds.Case_Status }}</td>
+                <td>
                       <!-- Dropdown menu-->
                       <div class="btn-group">
                           <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
                             More
-                          </button>
+                          </button> 
                           
                           <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
                           
@@ -143,7 +166,7 @@
                               <form action="{% url 'archiving' unsolveds.id%}" method="post" enctype="multipart/form-data">
                                {%csrf_token%}
                               <li><button class="dropdown-item" type="submit" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this case?');">Archive case</button></li>
-                            </form>
+                              </form>
                             
                           </ul>
                          

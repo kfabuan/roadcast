@@ -259,7 +259,7 @@
                                         {% for a in all %}
                                             {% ifequal a.id request.session.authorized_id %}
                                                 {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                                                    <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                                    <li><a class="dropdown-item" href="{% url 'view_solved_cases_detail' incident.id %}">View case&nbsp;</a></li>
                                                     <li><hr class="dropdown-divider"></li>
                                         
                                                     <form action="{% url 'archiving_solved_cases' incident.id %}" method="post" enctype="multipart/form-data">
@@ -317,7 +317,7 @@
                                         {% for a in all %}
                                             {% ifequal a.id request.session.authorized_id %}
                                                 {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                                                    <li><a class="dropdown-item" href="{% url 'incident_detail_view' incident.id %}">View case&nbsp;</a></li>
+                                                    <li><a class="dropdown-item" href="{% url 'view_solved_cases_detail' incident.id %}">View case&nbsp;</a></li>
 
                                                     <li><hr class="dropdown-divider"></li>
                                         
@@ -328,9 +328,6 @@
                                                 {% endif %}
                                             {% endifequal %}
                                         {% endfor %}
-                                        
-                                        
-                                            
                                             
                                         </ul>
                                     </div>

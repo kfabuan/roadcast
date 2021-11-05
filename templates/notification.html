@@ -217,11 +217,7 @@
             {% endifequal %}
         {% endfor %}
 
-        <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-incident" id="pills-incident-tab" type="button" data-bs-toggle="pill" data-bs-target="#pills-incident" role="tab" aria-controls="pills-incident" aria-selected="false"><i class="bi bi-check-all"></i>&nbsp;
-                New Incident Incident</button>
-        </li>
-
+       
         <li class="nav-item " role="presentation">
             <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-archives" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-archives" type="button" role="tab" aria-controls="pills-archives" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;
                 Archives</button>
@@ -284,7 +280,7 @@
                                 {% endif %}
                                 
                                 {% if a.Members_User.Member_Type == 'Crime Statistician' %}
-                                    {% for report in public_reports_list %} 
+                                    {% for report in assigned_pasig_public_reports %} 
                                         <!-- for encoder: only assigned cases -->
                                         <tr class =" {% ifequal report.Read_by_encoder 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
                                             <!-- label -->
@@ -457,37 +453,7 @@
         
         </div>
 
-        <!-- tab for incident -->
-        <div class="tab-pane fade" id="pills-incident" role="tabpanel" aria-labelledby="pills-incident-tab">
-            <table class="table table-hover " style="background-color: white;">
-                <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Blotter Number</th>
-                    <th scope="col">Statistician/Encoder</th>
-                    <th scope="col">Barangay Committed</th>
-                    <th scope="col">Date and Time Added</th>
-                    <th scope="col">Case Status</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                    
-                    {% for incident in pasig_incident_list %}
-                    <tr>
-                      <td> {{ forloop.counter }}</td>
-                      <td>137403-202003-T-2020-03-0590</td>
-                      <td>Jheus Brian Lavilla</td>
-
-                      <td>{{ incident.62 }}</td>
-                      <td>{{ incident.5 }} - {{ incident.6 }}</td>
-                      <td>{{ incident.12 }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-              </table>
-        </div>
-
+   
         <!-- tab for archives -->
         <div class="tab-pane fade" id="pills-archives" role="tabpanel" aria-labelledby="pills-archives-tab">
            

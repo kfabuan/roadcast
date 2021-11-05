@@ -25,7 +25,7 @@ from.views import DashboardView, deletesession, notif_public_report_detail, user
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+  #  path('admin/', admin.site.urls),
 
     path('', views.index, name='index'),
     path('login', views.login, name='login'),
@@ -44,6 +44,8 @@ urlpatterns = [
 
     path('incidents/view', views.view_incidents, name='view_incidents'),
     path('incident/detail/<int:incident_id>/', views.encoder_view_incident_detail, name='incident_detail_view'),
+    path('incident/detail/solved/<int:incident_id>/', views.view_solved_cases_detail, name='view_solved_cases_detail'),
+
     path('incident/public/<int:incident_id>/', views.public_view_incident_detail, name='pub_incident_detail_view'),
     path('incident/edit/<int:incident_id>', views.processEditIncident, name="process_edit_incident"),
     path('incident/create/<int:gen_pub_report_id>', views.create_incident_report, name="create_incident_report"),
@@ -92,6 +94,7 @@ urlpatterns = [
     path('unsolvedcases/', views.unsolved_cases, name='unsolved_cases'),
     path('unsolvedcases/<int:incident_id>', views.archiving, name='archiving'),
     path('unsolvedcases/<int:incident_id>/unarchiving', views.unarchiving, name='unarchiving'),
+    path('unsolvedcases/alert', views.notify_unsolved, name='notify_unsolved'), 
 
     # path('audit', views.admin_audit_trail, name='admin_audit_trail'),
     path('memberlist', views.admin_list_members, name='admin_list_members'),

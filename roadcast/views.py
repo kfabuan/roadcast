@@ -1,6 +1,7 @@
 import json
 import urllib
 from django.core.checks.messages import INFO
+from django.db.models.fields import BLANK_CHOICE_DASH
 from django.shortcuts import render, get_object_or_404, reverse #get_object_or_404 & reverse for processEdit
 from .models import Tbl_add_members, Tbl_member_type, Tbl_pasig_incidents, Tbl_barangay, Tbl_district, Tbl_public_report, Tbl_substation, tbl_audit, tbl_genpub_users, Tbl_forecast, Tbl_public_report_response, Tbl_add_departments, Tbl_position
 from .models import refregion, refprovince, refcitymun
@@ -662,7 +663,7 @@ def notif_sign_up_validation (request, signup_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -716,7 +717,7 @@ def genpub_verified(request, pk=None):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -799,7 +800,7 @@ def genpub_rejected(request,pk):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -873,7 +874,7 @@ def DashboardView (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -1030,7 +1031,7 @@ def get_data(request, *args, **kwargs):
 
     for sex in sex_distinct:
         if sex == '':
-            sex = 'blank'
+            sex = 'Others'
             sex_labels.append(sex)
             x = sex_combined.count('')
             sex_count.append((x/sex_count_total)*100)
@@ -1060,6 +1061,7 @@ def get_data(request, *args, **kwargs):
     am12_am2 = Tbl_pasig_incidents.objects.filter(Time__gte = am12, Time__lt = am2, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     am2_am4 = Tbl_pasig_incidents.objects.filter(Time__gte = am2, Time__lt = am4, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     am4_am6 = Tbl_pasig_incidents.objects.filter(Time__gte = am4, Time__lt = am6, Date__year__gte = today.year, Date__year__lte = today.year,).count()
+    am6_am8 = Tbl_pasig_incidents.objects.filter(Time__gte = am6, Time__lt = am8, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     am8_am10 = Tbl_pasig_incidents.objects.filter(Time__gte = am8, Time__lt = am10, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     am10_pm12 = Tbl_pasig_incidents.objects.filter(Time__gte = am10, Time__lt = pm12, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     pm12_pm2 = Tbl_pasig_incidents.objects.filter(Time__gte = pm12, Time__lt = pm2, Date__year__gte = today.year, Date__year__lte = today.year,).count()
@@ -1069,7 +1071,7 @@ def get_data(request, *args, **kwargs):
     pm8_pm10 = Tbl_pasig_incidents.objects.filter(Time__gte = pm8, Time__lt = pm10, Date__year__gte = today.year, Date__year__lte = today.year,).count()
     pm10_am12 = Tbl_pasig_incidents.objects.filter(Time__gte = pm10, Time__lt = am12, Date__year__gte = today.year, Date__year__lte = today.year,).count()
 
-    time_count = [am12_am2, am2_am4,am4_am6, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
+    time_count = [am12_am2, am2_am4,am4_am6, am6_am8, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
 
     #SEVERITY
     suspect_severity = []
@@ -1161,7 +1163,7 @@ def view_archive_incidents (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -1244,7 +1246,7 @@ def view_incidents (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -1352,7 +1354,7 @@ def create_incident_report (request, gen_pub_report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -1556,7 +1558,7 @@ def add_incident (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -1633,9 +1635,29 @@ def processAddIncident(request): #Add using forms
         sus_drl_exp = None
 
     vic_type = request.POST.get('vic_type')
+    if vic_type:
+        vic_type = request.POST.get('vic_type')
+    else:
+        vic_type = None
+
     vic_fname = request.POST.get('vic_fname')
+    if vic_fname:
+        vic_fname = request.POST.get('vic_fname')
+    else:
+        vic_fname = ""
+
     vic_lname = request.POST.get('vic_lname')
+    if vic_lname:
+        vic_lname = request.POST.get('vic_lname')
+    else:
+        vic_lname = ""
+
     vic_severity = request.POST.get('vic_severity')
+    if vic_severity:
+        vic_severity = request.POST.get('vic_severity')
+    else:
+        vic_severity = None
+
     vic_age = request.POST.get('vic_age')
     if vic_age:
         vic_age = request.POST.get('vic_age')
@@ -1643,16 +1665,56 @@ def processAddIncident(request): #Add using forms
         vic_age = None
 
     vic_sex = request.POST.get('v_sex')
+    if vic_sex:
+        vic_sex = request.POST.get('vic_sex')
+    else:
+        vic_sex = None
+
     vic_civil_status = request.POST.get('vic_civil_status')
+    if vic_civil_status:
+        vic_civil_status = request.POST.get('vic_civil_status')
+    else:
+        vic_civil_status = None
+
     vic_add = request.POST.get('vic_add')
+    if vic_add:
+        vic_add = request.POST.get('vic_add')
+    else:
+        vic_add = ""
+
     vic_vehicle = request.POST.get('vic_vehicle')
+    if vic_vehicle:
+        vic_vehicle = request.POST.get('vic_vehicle')
+    else:
+        vic_vehicle = None
+
     vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+    if vic_vehicle_body_type:
+        vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+    else:
+        vic_vehicle_body_type = None
+
     vic_plate_no = request.POST.get('vic_plate_no')
+    if vic_plate_no:
+        vic_plate_no = request.POST.get('vic_plate_no')
+    else:
+        vic_plate_no = ""
+
     vic_reg_owner = request.POST.get('vic_reg_owner')
+    if vic_reg_owner:
+        vic_reg_owner = request.POST.get('vic_reg_owner')
+    else:
+        vic_reg_owner = ""
+
     vic_drl = request.POST.get('vic_drl')
+    if vic_drl:
+        vic_drl = request.POST.get('vic_drl')
+    else:
+        vic_drl = ""
+
     vic_drl_exp = request.POST.get('vic_drl_exp')
     if vic_drl_exp:
-        vic_drl_exp = request.POST.get('sus_drl_exp')
+        vic_drl_exp = request.POST.get('vic_drl_exp')
     else:
         vic_drl_exp = None
 
@@ -1824,6 +1886,7 @@ def processAddIncident(request): #Add using forms
                             }),
                             from_, to_,)
                     else: pass
+    
     return HttpResponseRedirect('/incidents/view')
 
 def upload_csv (request):
@@ -1848,7 +1911,7 @@ def upload_csv (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -2170,7 +2233,7 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -2202,144 +2265,265 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
          "pub": pub,
          'unread_notif_count': unread_notif_count,})
 
-def processEditIncident(request, incident_id):
-    incident_detail =  Tbl_pasig_incidents.objects.get(id=incident_id)
+def view_solved_cases_detail (request, incident_id):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+
+    except: pass
 
     try:
-        crime_offense = request.POST.get('display_offense')
-        date_committed = request.POST.get('DateCommitted') #name attribute of textbox
-        incident_time = request.POST.get('incidentTime')
-        day = request.POST.get('day_of_the_week')
-        col_type = request.POST.get('collision_type')
-        #no_of_person_involved = "1"
-        #light = "Day"
-        weather = request.POST.get('weather')
-        case_status = request.POST.get('case_status')
-        district = request.POST.get('district')
-        barangay = request.POST.get('barangay')
-        address = request.POST.get('place_committed')
-        along = request.POST.get('along')
-        corner = request.POST.get('corner')
-        latitude = request.POST.get('lat')
-        longitude = request.POST.get('lon')
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
-        surface_cond = request.POST.get('surface_condition')
-        surface_type = request.POST.get('surface_type')
-        road_repair = request.POST.get('road-repair')
-        hit_and_run = request.POST.get('hit-and-run')
-        road_char = request.POST.get('road_character')
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
-        sus_type = request.POST.get('sus_type')
-        sus_fname = request.POST.get('sus_fname')
-        sus_lname = request.POST.get('sus_lname')
-        sus_severity = request.POST.get('sus_severity')
-        sus_age = request.POST.get('sus_age')
-        sus_sex = request.POST.get('s_sex')
-        sus_civil_status = request.POST.get('sus_civil_status')
-        sus_add = request.POST.get('sus_add')
-        sus_vehicle = request.POST.get('sus_vehicle')
-        sus_vehicle_body_type = request.POST.get('sus_vehicle_body_type')
-        sus_plate_no = request.POST.get('sus_plate_no')
-        sus_reg_owner = request.POST.get('sus_reg_owner')
-        sus_drl = request.POST.get('sus_drl')
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+    except:
+        pass
+
+    try:
+        member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+        investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+        substation_list = Tbl_substation.objects.all()
+        brgy_list = Tbl_barangay.objects.all()
+        all_incidents = Tbl_pasig_incidents.objects.all()
+        pasig_incident_detail = Tbl_pasig_incidents.objects.get(id=incident_id)
+        pasig_incident_detail.read_status = "Yes"
+        pasig_incident_detail.save()
+
+
+    except Tbl_pasig_incidents.DoesNotExist:
+        raise Http404("Incident does not exist")
+
+    return render(request, 'encoder_solved_cases_detail.html',
+        {'pasig_incident_detail': pasig_incident_detail,
+         'all_incidents': all_incidents,
+         'investigators_list': investigators_list,
+         'substation_list': substation_list,
+         'brgy_list':brgy_list,
+         "all": authorized,
+         "pub": pub,
+         'unread_notif_count': unread_notif_count,})
+
+def processEditIncident(request, incident_id):
+    
+    crime_offense = request.POST.get('display_offense')
+    date_committed = request.POST.get('DateCommitted') #name attribute of textbox
+    incident_time = request.POST.get('incidentTime')
+    day = request.POST.get('day_of_the_week')
+    col_type = request.POST.get('collision_type')
+    #no_of_person_involved = "1"
+    #light = "Day"
+    weather = request.POST.get('weather')
+    case_status = request.POST.get('case_status')
+    district = request.POST.get('district')
+    barangay = request.POST.get('barangay')
+    address = request.POST.get('place_committed')
+    along = request.POST.get('along')
+    corner = request.POST.get('corner')
+    latitude = request.POST.get('lat')
+    longitude = request.POST.get('lon')
+
+    surface_cond = request.POST.get('surface_condition')
+    surface_type = request.POST.get('surface_type')
+    road_repair = request.POST.get('road-repair')
+    hit_and_run = request.POST.get('hit-and-run')
+    road_char = request.POST.get('road_character')
+
+    sus_type = request.POST.get('sus_type')
+    sus_fname = request.POST.get('sus_fname')
+    sus_lname = request.POST.get('sus_lname')
+    sus_severity = request.POST.get('sus_severity')
+    sus_age = request.POST.get('sus_age')
+    sus_sex = request.POST.get('s_sex')
+    sus_civil_status = request.POST.get('sus_civil_status')
+    sus_add = request.POST.get('sus_add')
+    sus_vehicle = request.POST.get('sus_vehicle')
+    sus_vehicle_body_type = request.POST.get('sus_vehicle_body_type')
+    sus_plate_no = request.POST.get('sus_plate_no')
+    sus_reg_owner = request.POST.get('sus_reg_owner')
+    sus_drl = request.POST.get('sus_drl')
+    sus_drl_exp = request.POST.get('sus_drl_exp')
+    if sus_drl_exp:
         sus_drl_exp = request.POST.get('sus_drl_exp')
-        if sus_drl_exp:
-            sus_drl_exp = request.POST.get('sus_drl_exp')
-        else:
-            sus_drl_exp = None
-
-        vic_type = request.POST.get('vic_type')
-        vic_fname = request.POST.get('vic_fname')
-        vic_lname = request.POST.get('vic_lname')
-        vic_severity = request.POST.get('vic_severity')
-        vic_age = request.POST.get('vic_age')
-        vic_sex = request.POST.get('v_sex')
-        vic_civil_status = request.POST.get('vic_civil_status')
-        vic_add = request.POST.get('vic_add')
-        vic_vehicle = request.POST.get('vic_vehicle')
-        vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
-        vic_plate_no = request.POST.get('vic_plate_no')
-        vic_reg_owner = request.POST.get('vic_reg_owner')
-        vic_drl = request.POST.get('vic_drl')
-        vic_drl_exp = request.POST.get('vic_drl_exp')
-        if vic_drl_exp:
-            vic_drl_exp = request.POST.get('sus_drl_exp')
-        else:
-            vic_drl_exp = None
-
-        narrative = request.POST.get('narrative')
-        # added_by = "Encoder"
-        inv_name = request.POST.get('inv_name')
-
-    except (KeyError, Tbl_pasig_incidents.DoesNotExist): #KeyError is partner nung get_object_or_404
-        return render(request, 'encoder_view_incident_detail.html', {
-            'detail':incident_detail,
-            'error_message': "Problem Updating Record.",
-            'unread_notif_count': unread_notif_count,
-        })
     else:
-        incident = Tbl_pasig_incidents.objects.get(id=incident_id) #kukunin yung row sa database na kapareha ng incident_id
-        incident.CrimeOffense=crime_offense
-        incident.Date=date_committed
-        incident.Time=incident_time
-        incident.Day = day
-        incident.Incident_Type=col_type
-        # incident.Number_of_Persons_Involved=no_of_person_involve
-        # incident.Light=light
-        incident.Weather=weather
-        incident.Case_Status=case_status
-        incident.District_id = district
-        incident.Barangay_id_id = barangay
-        incident.Address = address
-        incident.Along_Avenue = along
-        incident.Corner_Avenue = corner
-        incident.Latitude       = latitude
-        incident.Longitude     = longitude
+        sus_drl_exp = None
 
-        incident.Surface_Condition=surface_cond
-        incident.Surface_Type=surface_type
-        incident.Road_Repair = road_repair
-        incident.Hit_and_Run = hit_and_run
-        incident.Road_Character=road_char
+    vic_type = request.POST.get('vic_type')
+    if vic_type:
+        vic_type = request.POST.get('vic_type')
+    else:
+        vic_type = None
 
-        incident.Suspect_Type = sus_type
-        incident.Suspect_Fname=sus_fname
-        incident.Suspect_Lname=sus_lname
-        incident.Suspect_Severity=sus_severity
-        incident.Suspect_Age=sus_age
-        incident.Suspect_Sex=sus_sex
-        incident.Suspect_Civil_Status = sus_civil_status
-        incident.Suspect_Address=sus_add
-        incident.Suspect_Vehicle=sus_vehicle
-        incident.Suspect_Vehicle_Body_Type=sus_vehicle_body_type
-        incident.Suspect_Plate_No=sus_plate_no
-        incident.Suspect_Reg_Owner=sus_reg_owner
-        incident.Suspect_Drl_No=sus_drl
-        incident.Suspect_Drl_Exp=sus_drl_exp
+    vic_fname = request.POST.get('vic_fname')
+    if vic_fname:
+        vic_fname = request.POST.get('vic_fname')
+    else:
+        vic_fname = ""
 
-        incident.Victim_Type = vic_type
-        incident.Victim_Fname=vic_fname
-        incident.Victim_Lname=vic_lname
-        incident.Victim_Severity=vic_severity
-        incident.Victim_Age=vic_age
-        incident.Victim_Sex=vic_sex
-        incident.Victim_Civil_Status = vic_civil_status
-        incident.Victim_Address=vic_add
-        incident.Victim_Vehicle=vic_vehicle
-        incident.Victim_Vehicle_Body_Type=vic_vehicle_body_type
-        incident.Victim_Plate_No=vic_plate_no
-        incident.Victim_Reg_Owner=vic_reg_owner
-        incident.Victim_Drl_No=vic_drl
-        incident.Victim_Drl_Exp=vic_drl_exp
+    vic_lname = request.POST.get('vic_lname')
+    if vic_lname:
+        vic_lname = request.POST.get('vic_lname')
+    else:
+        vic_lname = ""
+
+    vic_severity = request.POST.get('vic_severity')
+    if vic_severity:
+        vic_severity = request.POST.get('vic_severity')
+    else:
+        vic_severity = None
+
+    vic_age = request.POST.get('vic_age')
+    if vic_age:
+        vic_age = request.POST.get('vic_age')
+    else:
+        vic_age = None
+
+    vic_sex = request.POST.get('v_sex')
+    if vic_sex:
+        vic_sex = request.POST.get('vic_sex')
+    else:
+        vic_sex = None
+
+    vic_civil_status = request.POST.get('vic_civil_status')
+    if vic_civil_status:
+        vic_civil_status = request.POST.get('vic_civil_status')
+    else:
+        vic_civil_status = None
+
+    vic_add = request.POST.get('vic_add')
+    if vic_add:
+        vic_add = request.POST.get('vic_add')
+    else:
+        vic_add = ""
+
+    vic_vehicle = request.POST.get('vic_vehicle')
+    if vic_vehicle:
+        vic_vehicle = request.POST.get('vic_vehicle')
+    else:
+        vic_vehicle = ""
+
+    vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+    if vic_vehicle_body_type:
+        vic_vehicle_body_type = request.POST.get('vic_vehicle_body_type')
+    else:
+        vic_vehicle_body_type = None
+
+    vic_plate_no = request.POST.get('vic_plate_no')
+    if vic_plate_no:
+        vic_plate_no = request.POST.get('vic_plate_no')
+    else:
+        vic_plate_no = ""
+
+    vic_reg_owner = request.POST.get('vic_reg_owner')
+    if vic_reg_owner:
+        vic_reg_owner = request.POST.get('vic_reg_owner')
+    else:
+        vic_reg_owner = ""
+
+    vic_drl = request.POST.get('vic_drl')
+    if vic_drl:
+        vic_drl = request.POST.get('vic_drl')
+    else:
+        vic_drl = ""
+
+    vic_drl_exp = request.POST.get('vic_drl_exp')
+    if vic_drl_exp:
+        vic_drl_exp = request.POST.get('vic_drl_exp')
+    else:
+        vic_drl_exp = None
+
+    narrative = request.POST.get('narrative')
+    # added_by = "Encoder"
+    inv_name = request.POST.get('inv_name')
+
+    # except (KeyError, Tbl_pasig_incidents.DoesNotExist): #KeyError is partner nung get_object_or_404
+    #     return render(request, 'encoder_view_incident_detail.html', {
+    #         'detail':incident_detail,
+    #         'error_message': "Problem Updating Record.",
+    #         'unread_notif_count': unread_notif_count,
+    #     })
+    
+    incident = Tbl_pasig_incidents.objects.get(id=incident_id) #kukunin yung row sa database na kapareha ng incident_id
+    incident.CrimeOffense=crime_offense
+    incident.Date=date_committed
+    incident.Time=incident_time
+    incident.Day = day
+    incident.Incident_Type=col_type
+    # incident.Number_of_Persons_Involved=no_of_person_involve
+    # incident.Light=light
+    incident.Weather=weather
+    incident.Case_Status=case_status
+    incident.District_id = district
+    incident.Barangay_id_id = barangay
+    incident.Address = address
+    incident.Along_Avenue = along
+    incident.Corner_Avenue = corner
+    incident.Latitude       = latitude
+    incident.Longitude     = longitude
+
+    incident.Surface_Condition=surface_cond
+    incident.Surface_Type=surface_type
+    incident.Road_Repair = road_repair
+    incident.Hit_and_Run = hit_and_run
+    incident.Road_Character=road_char
+
+    incident.Suspect_Type = sus_type
+    incident.Suspect_Fname=sus_fname
+    incident.Suspect_Lname=sus_lname
+    incident.Suspect_Severity=sus_severity
+    incident.Suspect_Age=sus_age
+    incident.Suspect_Sex=sus_sex
+    incident.Suspect_Civil_Status = sus_civil_status
+    incident.Suspect_Address=sus_add
+    incident.Suspect_Vehicle=sus_vehicle
+    incident.Suspect_Vehicle_Body_Type=sus_vehicle_body_type
+    incident.Suspect_Plate_No=sus_plate_no
+    incident.Suspect_Reg_Owner=sus_reg_owner
+    incident.Suspect_Drl_No=sus_drl
+    incident.Suspect_Drl_Exp=sus_drl_exp
+
+    incident.Victim_Type = vic_type
+    incident.Victim_Fname=vic_fname
+    incident.Victim_Lname=vic_lname
+    incident.Victim_Severity=vic_severity
+    incident.Victim_Age=vic_age
+    incident.Victim_Sex=vic_sex
+    incident.Victim_Civil_Status = vic_civil_status
+    incident.Victim_Address=vic_add
+    incident.Victim_Vehicle=vic_vehicle
+    incident.Victim_Vehicle_Body_Type=vic_vehicle_body_type
+    incident.Victim_Plate_No=vic_plate_no
+    incident.Victim_Reg_Owner=vic_reg_owner
+    incident.Victim_Drl_No=vic_drl
+    incident.Victim_Drl_Exp=vic_drl_exp
 
 
-        incident.Narrative=narrative
-        incident.Investigator_id=inv_name
-        # incident.added_by=added_by
+    incident.Narrative=narrative
+    incident.Investigator_id=inv_name
+    # incident.added_by=added_by
 
-        incident.save()  #may changes or wala sa profile pic, save parin
-        messages.success(request, "Your data has been saved!")
-        return HttpResponseRedirect(reverse('incident_detail_view', args=(incident_id, )))
+    incident.save()  #may changes or wala sa profile pic, save parin
+    messages.success(request, "Your data has been saved!")
+    return HttpResponseRedirect(reverse('incident_detail_view', args=(incident_id, )))
 
 #public and subrep view incidents
 def public_view_incident_detail(request, incident_id): #pag view lang ng edit page, pas sinubmit form, YUNG def processEdit mag hahandle
@@ -2367,7 +2551,7 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -2440,7 +2624,7 @@ def monthly_report (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -2554,8 +2738,6 @@ def monthly_report (request):
             x = sex_combined.count(sex)
             sex_count.append(x)
 
-    #Time Plot
-    # time(hour = 0, minute = 0, second = 0)
     am12 = datetime.time(0, 0, 0)
     am2  = datetime.time(2, 0, 0)
     am4  = datetime.time(4, 0, 0)
@@ -2570,9 +2752,11 @@ def monthly_report (request):
     pm10 = datetime.time(22, 0, 0)
 
 
+
     am12_am2 = Tbl_pasig_incidents.objects.filter(Time__gte = am12, Time__lt = am2, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     am2_am4 = Tbl_pasig_incidents.objects.filter(Time__gte = am2, Time__lt = am4, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     am4_am6 = Tbl_pasig_incidents.objects.filter(Time__gte = am4, Time__lt = am6, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
+    am6_am8 = Tbl_pasig_incidents.objects.filter(Time__gte = am6, Time__lt = am8, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     am8_am10 = Tbl_pasig_incidents.objects.filter(Time__gte = am8, Time__lt = am10, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     am10_pm12 = Tbl_pasig_incidents.objects.filter(Time__gte = am10, Time__lt = pm12, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     pm12_pm2 = Tbl_pasig_incidents.objects.filter(Time__gte = pm12, Time__lt = pm2, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
@@ -2582,7 +2766,7 @@ def monthly_report (request):
     pm8_pm10 = Tbl_pasig_incidents.objects.filter(Time__gte = pm8, Time__lt = pm10, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
     pm10_am12 = Tbl_pasig_incidents.objects.filter(Time__gte = pm10, Time__lt = am12, Date__year__gte = year, Date__year__lte = year, Date__month__gte=month,Date__month__lte=month,).count()
 
-    time_count = [am12_am2, am2_am4,am4_am6, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
+    time_count = [am12_am2, am2_am4,am4_am6, am6_am8, am8_am10, am10_pm12, pm12_pm2, pm2_pm4, pm4_pm6, pm6_pm8, pm8_pm10, pm10_am12]
 
     # VEHICLE STATS - monthly
     suspect_vehicles = []
@@ -2866,7 +3050,7 @@ def notification (request):
 
     #for encoder
     assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
-    not_yet_recorded_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+    not_yet_recorded_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
 
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
@@ -2888,7 +3072,7 @@ def notification (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -2904,6 +3088,8 @@ def notification (request):
     if request.method   == "POST":
         searched        = request.POST['searched']
         pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+
         try:
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
@@ -2941,6 +3127,7 @@ def notification (request):
 
     else:
         pasig_public_reports = Tbl_public_report.objects.all().order_by('-id')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
 
         try:
             if request.session['authorized_id']:
@@ -3002,7 +3189,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3123,7 +3310,7 @@ def sub_notification (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3196,7 +3383,7 @@ def sub_notification_detail (request, report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3272,7 +3459,7 @@ def public_inbox (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3288,7 +3475,7 @@ def public_inbox (request):
     try:
         if request.session['public_id']:
             pub_id = request.session['public_id']
-            pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id) #list ng reports nya
+            pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id).order_by('-id') #list ng reports nya
             pub_info = tbl_genpub_users.objects.get(id=pub_id)
 
             admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id')
@@ -3344,7 +3531,7 @@ def public_inbox_detail (request, report_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3437,6 +3624,36 @@ def unarchiving (request, incident_id):
     except Tbl_pasig_incidents.DoesNotExist:
         raise Http404("Incident does not exist")
 
+def notify_unsolved (request):
+    member_type=Tbl_member_type.objects.get(Member_Type="Investigator")
+    investigators_list=Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+
+    inv_email = []
+    unsolveds_cases_list=Tbl_pasig_incidents.objects.filter(Case_Status="Unsolved")
+    
+    for unsolveds in unsolveds_cases_list:
+        for inv in investigators_list:
+            if (unsolveds.Investigator_id == inv.id):
+                unsolved_count = Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved")&Q(Investigator_id=inv.id)).count()
+                Fname = inv.Members_Fname 
+                Lname = inv.Members_Lname
+
+                from_ = '' #roadcast main email in settings.py
+                to_ = [inv.Members_Email]
+            
+                send_mail (
+                    'Roadcast: Unsolved Cases Reminder',
+                    render_to_string('unsolved_cases_alert.html',{
+                        'unsolved_count':unsolved_count,
+                        'Fname':Fname,
+                        'Lname':Lname
+                    }),
+                    from_, to_,)
+
+    messages.success(request, ("Reminders successfully sent!"))
+    return HttpResponseRedirect('/unsolvedcases/')
+    
+   
 
 def unsolved_cases (request):
     #Sessions
@@ -3463,7 +3680,7 @@ def unsolved_cases (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3472,7 +3689,7 @@ def unsolved_cases (request):
         pass
 
     member_type=Tbl_member_type.objects.get(Member_Type="Investigator")
-    investigator_list=Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+    investigators_list=Tbl_add_members.objects.filter(Members_User_id=member_type.id)
     level1_range=date.today()-timedelta(31)
     level2_range_gte=date.today()-timedelta(186)
     level2_range_lte=date.today()-timedelta(31)
@@ -3489,7 +3706,7 @@ def unsolved_cases (request):
     archive=Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved") & Q(archive="Yes"))
 
     data = {
-        "investigator_list":investigator_list,
+        "investigators_list":investigators_list,
         "unsolveds_cases_list":unsolveds_cases_list,
         "level1":level1,
         "level2":level2,
@@ -3536,7 +3753,7 @@ def submit_report (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3794,7 +4011,7 @@ def pub_notif_inbox (request): #Account settings
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3895,7 +4112,7 @@ def add_members (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -3992,7 +4209,7 @@ def add_dept (request):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4075,7 +4292,7 @@ def view_members(request, member_id): #Show specific profile of members
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4111,7 +4328,7 @@ def edit_members(request, member_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4227,7 +4444,7 @@ def edit_dept(request, dept_id):
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4297,7 +4514,7 @@ def user_profile(request): #Profile of users
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4478,7 +4695,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4531,7 +4748,7 @@ def admin_investigators(request): #Show list of investigators
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4573,7 +4790,7 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4617,7 +4834,7 @@ def admin_audit_members(request): #List of audit for members
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4661,7 +4878,7 @@ def audit_members(request, audit_id): #Specific view for members
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4700,7 +4917,7 @@ def admin_audit_genpub(request): #List of audit for gen pub
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):
@@ -4746,7 +4963,7 @@ def audit_genpub(request, audit_id): #Specific view for gen pub
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
 
             if (auth_row.Members_User_id == 2):
-                unread_notif_count = Tbl_public_report.objects.filter(Report_Created="No").count()
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
                # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
 
             if (auth_row.Members_User_id == 3):

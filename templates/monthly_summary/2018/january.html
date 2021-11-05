@@ -255,7 +255,7 @@
 
                   <div class="card mb-3">
                     <div class="card-body tabular">
-                      <table class="table table-sm table-hover">
+                      <table class="table table-sm table-hover" id="district1">
                         <thead class="table-primary">
                           <tr>
                             <th scope="col" class="rad_tl b-no-border">District 1</th>
@@ -281,7 +281,7 @@
 
                   <div class="card mb-3">
                     <div class="card-body tabular">
-                      <table class="table table-sm table-hover">
+                      <table class="table table-sm table-hover" id="district2">
                         <thead class="table-primary ">
                           <tr>
                             <th scope="col" class="rad_tl b-no-border">District 2</th>
@@ -307,10 +307,10 @@
 
                   <div class="card mb-3">
                     <div class="card-body tabular">
-                      <table class="table table-sm table-hover">
+                      <table class="table table-sm table-hover" id="days-of-the-week">
                         <thead class="table-primary ">
                           <tr>
-                            <th scope="col" class="rad_tl b-no-border">Day of the week</th>
+                            <th scope="col" class="rad_tl b-no-border" >Day of the week</th>
                             <th scope="col" class="rad_tr b-no-border">Count</th>
                           </tr>
                         </thead>
@@ -337,7 +337,7 @@
 
                   <div class="card mb-3">
                       <div class="card-body tabular">
-                        <table class="table table-sm table-hover">
+                        <table class="table table-sm table-hover" id="male-age">
                           <thead class="table-primary ">
                             <tr>
                               <th scope="col" class="rad_tl b-no-border">Male Age</th>
@@ -377,7 +377,7 @@
                  
                   <div class="card mb-3">
                     <div class="card-body tabular">
-                      <table class="table table-sm table-hover">
+                      <table class="table table-sm table-hover" id="female-age">
                         <thead class="table-primary ">
                           <tr>
                             <th scope="col" class="rad_tl b-no-border">Female Age</th>
@@ -417,7 +417,7 @@
 
                   <div class="card mb-3">
                     <div class="card-body tabular">
-                      <table class="table table-sm table-hover">
+                      <table class="table table-sm table-hover" id="offenses">
                         <thead class="table-primary ">
                         <tr>
                           <th scope="col" class="rad_tl b-no-border">Offenses</th>
@@ -443,7 +443,7 @@
 
                 <div class="card mb-3">
                   <div class="card-body tabular">
-                    <table class="table table-sm table-hover">
+                    <table class="table table-sm table-hover" id="vehicles">
                       <thead class="table-primary ">
                           <tr>
                             <th scope="col" class="rad_tl b-no-border">Vehicles</th>
@@ -468,7 +468,7 @@
 
                 <div class="card mb-3">
                   <div class="card-body tabular">
-                    <table class="table table-sm table-hover">
+                    <table class="table table-sm table-hover" id="severity">
                       <thead class="table-primary ">
                           <tr>
                             <th scope="col" class="rad_tl b-no-border">Severity</th>
@@ -790,7 +790,7 @@ $(document).ready(function(){
   </script>
   <script>
   var my_month= document.getElementById("select-month").innerText;
- 
+  py
   $('#downloadPdf').click(function(event) {
   // get size of report page
   var reportPageHeight = $('#pills-profile').innerHeight();
@@ -815,7 +815,7 @@ $(document).ready(function(){
   var pdfctx = $(pdfCanvas)[0].getContext('2d');
   var pdfctxX = 20;
   var pdfctxY = 50;
-  var buffer = 50;
+  var buffer = 20;
   var pdfctx2 = $(pdfCanvas2)[0].getContext('2d');
   var pdfctxX2 = 30;
   var pdfctxY2 = -850;
@@ -824,8 +824,10 @@ $(document).ready(function(){
   // for each chart.js chart
   $("canvas").each(function(index) {
     // get the chart height/width
-    var canvasHeight = $(this).innerHeight();
-    var canvasWidth = $(this).innerWidth();
+    var canvasHeight = 230;
+    var canvasWidth = 420;
+    /*var canvasHeight = $(this).innerHeight();
+    var canvasWidth = $(this).innerWidth();*/
 
     
     // draw the chart into the new canvas
@@ -834,40 +836,242 @@ $(document).ready(function(){
     pdfctxX += canvasWidth + buffer;
     
     // our report page is in a grid pattern so replicate that in the new canvas
-    if (index % 2 === 1) {
-      pdfctxX = 0;
+    if (index % 3 === 1) {
+      pdfctxX = 20;
       pdfctxY += canvasHeight + buffer;
 
     }
   });
-  // 2nd page
-  $("canvas").each(function(index) {
-    // get the chart height/width
-    var canvasHeight2 = $(this).innerHeight();
-    var canvasWidth2 = $(this).innerWidth();
-
-    
-    // draw the chart into the new canvas
-    pdfctx2.drawImage($(this)[0], pdfctxX2, pdfctxY2, canvasWidth2, canvasHeight2);
-    
-    pdfctxX2 += canvasWidth2 + buffer2;
-    
-    // our report page is in a grid pattern so replicate that in the new canvas
-    if (index % 2 === 1) {
-      pdfctxX2 = 0;
-      pdfctxY2 += canvasHeight2 + buffer2;
-
-    }
-  });
- 
+  // Table pdf
+  
+  
   // create new pdf and add our new canvas as an image
    
   var pdf = new jsPDF('l', 'pt', "legal");
   pdf.text(310,20,my_month + " Summarize Statistics");
   pdf.addImage($(pdfCanvas)[0], 'PNG', 0, 0);
-  
-  pdf.addPage('l','pt','legal');
-  pdf.addImage($(pdfCanvas2)[0], 'PNG', 0, 0);
+  var doc = new jsPDF('p', 'pt', "legal");
+    doc.setLineWidth(2);  
+    doc.text(100,30,my_month + " Summarize Statistics"); 
+   
+    doc.autoTable({  
+        html: '#district1',  
+        startY: 70,  
+        margin: 70,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+             
+        },  
+        styles: {  
+            minCellHeight: 20,
+             
+        }  
+    })  
+    doc.autoTable({  
+        html: '#district2',  
+        startY: 70,  
+        margin: 350,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 25,
+             
+        }  
+    })  
+    doc.autoTable({  
+        html: '#days-of-the-week',  
+        startY: doc.lastAutoTable.finalY + 20,  
+        margin: 350,
+        pageBreak: 'avoid',
+       
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 27.5,
+             
+        }  
+    })  
+   doc.setFontSize(9);
+  doc.setTextColor(40);
+  doc.setFontStyle('normal');
+  doc.text( '©  PNP Pasig Police Headquarters',
+            doc.internal.pageSize.width / 2,
+            doc.internal.pageSize.height - 20,
+            null, null, "center" );
+
+   doc.addPage('p','pt','legal');
+    
+  doc.setFontSize(16);
+  doc.text(100,30,my_month + " Summarize Statistics"); 
+
+
+   doc.autoTable({  
+        html: '#male-age',  
+        startY: 70,  
+        margin: 70,
+      
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 30,
+             
+        }  
+    })  
+    doc.autoTable({  
+        html: '#female-age',  
+        startY: 70 ,  
+        margin: 350,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 30,
+             
+        }  
+    })  
+    doc.autoTable({  
+        html: '#vehicles',  
+        startY: doc.lastAutoTable.finalY+20 ,  
+        margin: 70,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 20,
+             
+        }  
+    }) 
+    doc.autoTable({  
+        html: '#offenses',  
+        startY: 270 ,  
+        margin: 350,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 20,
+             
+        }  
+    }) 
+    doc.autoTable({  
+        html: '#severity',  
+        startY: doc.lastAutoTable.finalY+20 ,  
+        margin: 350,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 20,
+             
+        }  
+    }) 
+     doc.setFontSize(9);
+  doc.setTextColor(40);
+  doc.setFontStyle('normal');
+  doc.text( '©  PNP Pasig Police Headquarters',
+            doc.internal.pageSize.width / 2,
+            doc.internal.pageSize.height - 20,
+            null, null, "center" );
+    /*doc.autoTable({  
+        html: '#male-age',  
+        startY: doc.lastAutoTable.finalY + 20,  
+        margin: 70,
+      
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 30,
+             
+        }  
+    })  
+    doc.autoTable({  
+        html: '#female-age',  
+        startY: 616 ,  
+        margin: 220,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 100,  
+            },  
+            1: {  
+                cellWidth: 100,  
+            },  
+            
+        },  
+        styles: {  
+            minCellHeight: 30,
+             
+        }  
+    })  
+   */
+    
+    
   // download the pdf
   // Add footer
   pdf.setFontSize(9);
@@ -878,7 +1082,8 @@ $(document).ready(function(){
             pdf.internal.pageSize.height - 20,
             null, null, "center" );
 
-  pdf.save('report.pdf');
+  pdf.save('report-charts.pdf');
+  doc.save ('report-tabular.pdf')
 });
   </script>
 
