@@ -1,7 +1,8 @@
 {% extends 'nav_admin.html' %}
-
 {% block title %} Add Department {% endblock %}
+{% block design %}
 
+{% endblock %}
 {% block content %}
 
 <!-- Login required and permission access of users (Should be placed after the opening block content) -->
@@ -77,8 +78,8 @@
     <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
 
       <div class="col-md-12">
-        <label for="" class="form-label">Department Name</label>
-        <input type="text" name="Dept_Dept" id="dept" class="form-control text-capitalize" required>
+        <label for="" class="form-label">Department Name<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <input type="text" name="Dept_Dept" id="dept" class="form-control text-capitalize" required style="border-radius: 50px; height: 45px;">
       </div>
 
     
@@ -86,7 +87,8 @@
 
     <center>
     <div class="col-12">
-      <button type="submit" name="submit"  class="btn btn-primary" onclick="myFunction()">Add Department</button>
+      <button type="submit" name="submit"  class="btn btn-primary" onclick="myFunction()" style="border-radius: 50px;">Add Department</button>
+      <button type="button" class="btn btn-outline-danger" onclick="location.href = '/departmentlist'" style="border-radius: 50px;">Cancel</button>
 
     <!-- <script>
     function myFunction() {
@@ -106,7 +108,7 @@
   <section style="height: 10px;"></section>
 
   <div class="table-responsive">
-  <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+  <table class="table table-hover table-borderless" style="font-family: 'Roboto', sans-serif; font-size: 15px; background-color: white;">
     <thead>
         <tr class="table-primary">
           <th scope="col">No.</th>

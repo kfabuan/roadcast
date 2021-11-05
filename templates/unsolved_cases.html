@@ -129,13 +129,13 @@
               <tbody>
               {% for unsolveds in level1 %}
               <tr>
-                  <td> {{ forloop.counter }}</td>
-                  <td>{{ unsolveds.Incident_Type }}</td>
-                  <td>
-                  {% for inv in investigators_list %}
-                     {% ifequal unsolveds.Investigator_id inv.id %} 
-                        {{ inv.Members_Fname }} {{ inv.Members_Lname }} 
-                     {% endifequal %}
+                <td> {{ forloop.counter }}</td>
+                <td>{{ unsolveds.Incident_Type }}</td>
+                <td>
+                {% for inv in investigators_list %}
+                    {% ifequal unsolveds.Investigator_id inv.id %} 
+                    {{ inv.Members_Fname }} {{ inv.Members_Lname }} 
+                    {% endifequal %}
                  {% endfor %}
                 </td>
 
@@ -212,7 +212,13 @@
             <tr>
                 <td> {{ forloop.counter }}</td>
                 <td>{{ unsolved.Incident_Type }}</td>
-                <td>{{ unsolved.Investigator_id}}</td>
+                <td>
+                    {% for inv in investigators_list %}
+                        {% ifequal unsolved.Investigator_id inv.id %} 
+                        {{ inv.Members_Fname }} {{ inv.Members_Lname }} 
+                        {% endifequal %}
+                     {% endfor %}
+                </td>
                 <td>{{ unsolved.Barangay_id }}</td>
                 <td>{{ unsolved.Date }} - {{ unsolved.Time }}</td>
                 {% for a in all %}
@@ -281,7 +287,13 @@
             <tr>
                 <td> {{ forloop.counter }}</td>
                 <td>{{ unsolved_3.Incident_Type }}</td>
-                <td>{{ unsolved_3.Investigator_id.Members_District}}</td>
+                <td>
+                    {% for inv in investigators_list %}
+                        {% ifequal unsolved_3.Investigator_id inv.id %} 
+                        {{ inv.Members_Fname }} {{ inv.Members_Lname }} 
+                        {% endifequal %}
+                     {% endfor %}
+                </td>
                 <td>{{ unsolved_3.Barangay_id }}</td>
                 <td>{{ unsolved_3.Date }} - {{ unsolved_3.Time }}</td>
                 {% for a in all %}
@@ -349,7 +361,13 @@
             <tr>
                 <td> {{ forloop.counter }}</td>
                 <td>{{ unsolved_4.Incident_Type }}</td>
-                <td>{{ unsolved_4.Investigator_id.Members_District}}</td>
+                <td>
+                    {% for inv in investigators_list %}
+                        {% ifequal unsolved_4.Investigator_id inv.id %} 
+                            {{ inv.Members_Fname }} {{ inv.Members_Lname }} 
+                        {% endifequal %}
+                    {% endfor %}
+                </td>
                 <td>{{ unsolved_4.Barangay_id }}</td>
                 <td>{{ unsolved_4.Date }} - {{ unsolved_4.Time }}</td>
                 {% for a in all %}

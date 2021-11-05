@@ -69,8 +69,8 @@
     <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
 
       <div class="col-md-6">
-        <label for="" class="form-label">Department</label>
-        <select name="Members_Dept" class="form-select" required style="background-color: #e8f0fe;">
+        <label for="" class="form-label">Department<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <select name="Members_Dept" class="form-select" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
           <option disabled="disabled">Select a department</option>
           <option selected selected="true" value="{{ members.Members_Dept.id }}">{{ members.Members_Dept }}</option>
           {% for department in departments %}
@@ -82,8 +82,8 @@
       </div>
 
       <div class="col-md-6" style="margin-top: 9px;">
-        <label for="" class="col-sm-2 col-form-label">Substation</label>
-        <select class="form-select" name="Members_Substation" required style="background-color: #e8f0fe;">
+        <label for="" class="col-sm-2 col-form-label">Substation<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <select class="form-select" name="Members_Substation" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
             <option disabled="disabled">Select a substation</option>
             <option selected selected="true" value="{{ members.Members_Substation.id }}">{{ members.Members_Substation }}</option>
             {% for substation in substations %}
@@ -94,9 +94,9 @@
         </select>
       </div>
 
-        <div class="col-md-6">
+        <div class="col-md-12">
         <label for="" class="col-sm-2 col-form-label">District</label>
-        <input class="form-control" name="Members_District" type="text" value="Pasig" readonly>
+        <input class="form-control" name="Members_District" type="text" value="Pasig" readonly style="border-radius: 50px; height: 45px;">
       </div>
 
 
@@ -104,8 +104,8 @@
       <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PERSONAL DETAILS</label>
 
       <div class="col-md-6">
-        <label for="" class="col-sm-2 col-form-label">Member Type</label>
-        <select class="form-select" name="Members_User" required style="background-color: #e8f0fe;">
+        <label for="" class="col-sm-2 col-form-label">Member Type<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <select class="form-select" name="Members_User" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
             <option disabled="disabled">Select a type</option>
             <option selected selected="true" value="{{ members.Members_User.id}}">{{ members.Members_User}}</option>
             {% for membertype in membertypes %}
@@ -117,8 +117,8 @@
       </div>
 
       <div class="col-md-6">
-        <label for="" class="col-sm-2 col-form-label">Position</label>
-        <select class="form-select" name="Members_Position" required style="background-color: #e8f0fe;">
+        <label for="" class="col-sm-2 col-form-label">Position<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <select class="form-select" name="Members_Position" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
           <option disabled="disabled">Select a position</option>
           <option selected selected="true"  value="{{ members.Members_Position.id }}">{{ members.Members_Position }}</option>  
             {% for position in positions %}
@@ -130,48 +130,48 @@
       </div>
 
       <div class="col-md-6">
-        <label for="" class="form-label">First name</label>
-        <input type="text" name="Members_Fname" class="form-control text-capitalize" value="{{ members.Members_Fname }}" required style="background-color: #e8f0fe;">
+        <label for="" class="form-label">First name<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <input type="text" name="Members_Fname" class="form-control text-capitalize" value="{{ members.Members_Fname }}" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
       </div>
 
       <div class="col-md-6">
-        <label for="" class="form-label">Last name</label>
-        <input type="text" name="Members_Lname" class="form-control text-capitalize " value="{{ members.Members_Lname }}" required style="background-color: #e8f0fe;">
+        <label for="" class="form-label">Last name<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <input type="text" name="Members_Lname" class="form-control text-capitalize " value="{{ members.Members_Lname }}" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
       </div>
 
       <section style="height: 15px;"></section>
       <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">ACCOUNT DETAILS</label>
       
       <div class="col-md-6">
-        <label for="" class="form-label">Username</label>
+        <label for="" class="form-label">Username<span style="color: #dc3545; font-weight: bold;">*</span></label>
         <div class="input-group mb-3">
-        <span class="input-group-text" id="basic-addon1">@</span>
-        <input type="text" name="Members_Username" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{ members.Members_Username }}" required style="background-color: #e8f0fe;" required>
+        <span class="input-group-text" id="basic-addon1"style="border-radius: 20px 0 0 20px; height: 45px;">@</span>
+        <input type="text" name="Members_Username" class="form-control" aria-label="Username" aria-describedby="basic-addon1" value="{{ members.Members_Username }}" required style="background-color: #e8f0fe; border-radius: 0 20px 20px 0; height: 45px;" required>
         </div>
       </div>
 
     <div class="col-md-6">
-      <label for="" class="form-label">Email</label>
-      <input type="email" name="Members_Email" class="form-control" value="{{ members.Members_Email }}" required style="background-color: #e8f0fe;">
+      <label for="" class="form-label">Email<span style="color: #dc3545; font-weight: bold;">*</span></label>
+      <input type="email" name="Members_Email" class="form-control" value="{{ members.Members_Email }}" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
     </div>
 
     <div class="col-md-6">
-      <label for="" class="form-label">Password</label>
-      <input type="password" minlength="8" name="Members_Password" class="form-control" id="password" value="{{ members.Members_Password }}" required style="background-color: #e8f0fe;">
+      <label for="" class="form-label">Password<span style="color: #dc3545; font-weight: bold;">*</span></label>
+      <input type="password" minlength="8" name="Members_Password" class="form-control" id="password" value="{{ members.Members_Password }}" required style="background-color: #e8f0fe; border-radius: 50px; height: 45px;">
     </div>
 
     <div class="col-md-6">
-      <label for="" class="form-label">Confirm Password</label>
-      <input type="password" minlength="8" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required>
+      <label for="" class="form-label">Confirm Password<span style="color: #dc3545; font-weight: bold;">*</span></label>
+      <input type="password" minlength="8" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required style="border-radius: 50px; height: 45px;">
     </div>
 
     <section style="height: 10px;"></section>
 
-    <div class="card" style="width: 20rem;">
+    <div class="card" style="width: 20rem; padding-top: 20px;">
       <a href="/media/{{ members.Members_Pic }}" target="_blank"><img src="/media/{{ members.Members_Pic }}" alt="Profile Picture" class="card-img-top img-fluid" style="width: 20rem; height: 5rem; object-fit: cover;" ></a>
       <div class="card-body">
-        <label for="formFile" class="form-label">Upload a profile picture</label>
-        <input class="form-control" name="Members_Pic" type="file" id="formFile" accept="image/*">
+        <label for="formFile" class="form-label">Upload a profile picture<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <input class="form-control" name="Members_Pic" type="file" id="formFile" accept="image/*" style="border-radius: 50px;">
       </div>
     </div>
 
@@ -187,7 +187,8 @@
 
     <center>
     <div class="col-12">
-      <button type="submit" name="button" class="btn btn-primary">Update details</button>
+      <button type="submit" name="button" class="btn btn-primary" style="border-radius: 50px;">Update details</button>
+      <button type="button" class="btn btn-outline-danger" onclick="location.href = '/memberlist'" style="border-radius: 50px;">Cancel</button>
     </div>
     </center>
   </form>
@@ -218,6 +219,17 @@
         }
       }
       </script>
+
+      <script>
+      var uploadField = document.getElementById("formFile");
+
+      uploadField.onchange = function() {
+          if(this.files[0].size > 4194304){
+            alert("File is too big. Please upload files under 4MB");
+            this.value = "";
+          };
+      };
+    </script>
 
   {% endblock %}
   

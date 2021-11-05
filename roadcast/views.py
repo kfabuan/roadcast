@@ -3629,26 +3629,57 @@ def notify_unsolved (request):
     investigators_list=Tbl_add_members.objects.filter(Members_User_id=member_type.id)
 
     inv_email = []
-    unsolveds_cases_list=Tbl_pasig_incidents.objects.filter(Case_Status="Unsolved")
+    unsolveds_cases_list = Tbl_pasig_incidents.objects.filter(Case_Status="Unsolved")
     
+    # for unsolveds in unsolveds_cases_list:
+    #     for inv in investigators_list:
+    #         if (unsolveds.Investigator_id == inv.id):
+    #             unsolved_count = Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved")&Q(Investigator_id=inv.id)).count()
+                
+                # Fname = inv.Members_Fname 
+                # Lname = inv.Members_Lname
+
+                # from_ = '' #roadcast main email in settings.py
+                # to_ = [inv.Members_Email]
+            
+                # send_mail (
+                #     'Roadcast: Unsolved Cases Reminder',
+                #     render_to_string('unsolved_cases_alert.html',{
+                #         'unsolved_count':unsolved_count,
+                #         'Fname':Fname,
+                #         'Lname':Lname
+                #     }),
+                #     from_, to_,)
+    inv_email = []
+    inv_fname = []
+    inv_lname = []
+    inv_count = []
     for unsolveds in unsolveds_cases_list:
         for inv in investigators_list:
             if (unsolveds.Investigator_id == inv.id):
-                unsolved_count = Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved")&Q(Investigator_id=inv.id)).count()
-                Fname = inv.Members_Fname 
-                Lname = inv.Members_Lname
+                inv_email.append(inv.Members_Email)
+              
 
-                from_ = '' #roadcast main email in settings.py
-                to_ = [inv.Members_Email]
-            
-                send_mail (
-                    'Roadcast: Unsolved Cases Reminder',
-                    render_to_string('unsolved_cases_alert.html',{
-                        'unsolved_count':unsolved_count,
-                        'Fname':Fname,
-                        'Lname':Lname
-                    }),
-                    from_, to_,)
+    inv_email_distinct = set(inv_email)
+    
+   
+    for inv in inv_email_distinct:
+        unsolved_count = Tbl_pasig_incidents.objects.filter(Q(Case_Status="Unsolved")&Q(Investigator_id__Members_Email=inv)).count()
+        inv_count.append(unsolved_count)
+    
+    u_data = zip(inv_email_distinct, inv_count)
+
+    from_ = '' #roadcast main email in settings.py
+    
+    for inv, count in u_data:
+        send_mail (
+        'Roadcast: Unsolved Cases Reminder',
+        render_to_string('unsolved_cases_alert.html',{
+            'unsolved_count':count,
+            'Fname':inv,
+           
+        }),
+        from_, [inv],)
 
     messages.success(request, ("Reminders successfully sent!"))
     return HttpResponseRedirect('/unsolvedcases/')
@@ -3716,6 +3747,7 @@ def unsolved_cases (request):
         "all": authorized,
         "pub": pub,
         'unread_notif_count': unread_notif_count,
+
     }
     return render (request, 'unsolved_cases.html', data)
 

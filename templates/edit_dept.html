@@ -67,8 +67,8 @@
     <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">DEPARTMENT DETAILS</label>
 
       <div class="col-md-12">
-        <label for="" class="form-label">Department Name</label>
-        <input type="text" name="Dept_Dept" class="form-control text-capitalize" value="{{ departments.Dept_Dept }}" equired>
+        <label for="" class="form-label">Department Name<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <input type="text" name="Dept_Dept" class="form-control text-capitalize" value="{{ departments.Dept_Dept }}" required style="border-radius: 50px; height: 45px;">
       </div>
 
     
@@ -76,7 +76,8 @@
 
     <center>
     <div class="col-12">
-      <button type="submit" name="submit" class="btn btn-primary">Update Department</button>
+      <button type="submit" name="submit" class="btn btn-primary" style="border-radius: 50px;">Update Department</button>
+      <button type="button" class="btn btn-outline-danger" onclick="location.href = '/departmentlist'" style="border-radius: 50px;">Cancel</button>
     </div>
     </center>
   </form>
