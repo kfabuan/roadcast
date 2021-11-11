@@ -469,6 +469,7 @@ class Tbl_public_report(models.Model):
     Read_Status             = models.CharField(max_length=200, verbose_name='Read by Admin', blank=True)
     Read_by_subrep          = models.CharField(default='No', max_length=200, verbose_name='Read by Subrep', blank=True)
     Read_by_encoder         = models.CharField(default='No', max_length=200, verbose_name='Read by Encoder', blank=True)
+    Read_by_inv             = models.CharField(default='No', max_length=200, verbose_name='Read by Investigator', blank=True)
 
     Report_Status           = models.CharField(max_length=200, verbose_name='Report Status', default="Unsolved", blank=True)
     Assigned_Investigator   = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign

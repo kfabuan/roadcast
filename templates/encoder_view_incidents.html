@@ -308,7 +308,7 @@
                                         
                                         {% for a in all %}
                                             {% ifequal a.id request.session.authorized_id %}
-                                                {% if a.Members_User.Member_Type == 'Sub-representative' %}
+                                                {% if a.Members_User.Member_Type == 'Sub-representative' or a.Members_User.Member_Type == 'Investigator' %}
                                                     <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' incident.id %}">View case&nbsp;</a></li>
                                                 {% endif %}
                                             {% endifequal %}

@@ -116,7 +116,7 @@
 {% if request.session.authorized_id %}
     {% for a in all %}
         {% ifequal a.id request.session.authorized_id %}
-            {% if a.Members_User.Member_Type == 'Sub-representative' %} 
+            {% if a.Members_User.Member_Type == 'Sub-representative' or a.Members_User.Member_Type == 'Investigator' %} 
                 <!-- body (no need to paste anything here) -->
             {% else %}
                 <script>
@@ -168,38 +168,75 @@
     <div class="table-responsive mt-3">
         <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
             <tbody>
-
-                {% for fwd in fwd_reports %}
-                <!-- row -->
-                <tr class =" {% ifequal fwd.Read_by_subrep 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                    <!-- label -->
-                    <td class="pl-3"  style="width: 3%;">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="cst1" />
-                            <label class="custom-control-label" for="cst1">&nbsp;</label>
-                        </div>
-                    </td>
-                    <!-- star -->
-                    <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
-                    <td style="width: 15%;">
-                        <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
-                    </td>
-                    <!-- Message -->
-                    <td class="text-truncate" style="width: 58%;">
-                        <a class="link text-decoration-none" href="{% url 'sub_notification_detail' fwd.id %}">
-                            <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
-                            <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
-                            <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                            <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
-                        </a>
-                    </td>
-                    <!-- Attachment -->
-                    <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
-                    <!-- Time -->
-                    <td  style="width: 16%;"class="{% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
-                </tr>
-
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Sub-representative' %}
+                            {% for fwd in fwd_reports %}
+                            <!-- row -->
+                            <tr class =" {% ifequal fwd.Read_by_subrep 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                                <!-- label -->
+                                <td class="pl-3"  style="width: 3%;">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="cst1" />
+                                        <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <!-- star -->
+                                <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                                <td style="width: 15%;">
+                                    <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
+                                </td>
+                                <!-- Message -->
+                                <td class="text-truncate" style="width: 58%;">
+                                    <a class="link text-decoration-none" href="{% url 'sub_notification_detail' fwd.id %}">
+                                        <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
+                                        <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
+                                        <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                        <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
+                                    </a>
+                                </td>
+                                <!-- Attachment -->
+                                <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                                <!-- Time -->
+                                <td  style="width: 16%;"class="{% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            {% for fwd in inv_assigned %}
+                            <!-- row -->
+                            <tr class =" {% ifequal fwd.Read_by_inv 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                                <!-- label -->
+                                <td class="pl-3"  style="width: 3%;">
+                                    <div class="custom-control custom-checkbox">
+                                        <input type="checkbox" class="custom-control-input" id="cst1" />
+                                        <label class="custom-control-label" for="cst1">&nbsp;</label>
+                                    </div>
+                                </td>
+                                <!-- star -->
+                                <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                                <td style="width: 15%;">
+                                    <span class="mb-0 {% ifequal fwd.Read_by_inv 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
+                                </td>
+                                <!-- Message -->
+                                <td class="text-truncate" style="width: 58%;">
+                                    <a class="link text-decoration-none" href="{% url 'sub_notification_detail' fwd.id %}">
+                                        <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
+                                        <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
+                                        <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                        <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
+                                    </a>
+                                </td>
+                                <!-- Attachment -->
+                                <td  style="width: 5%;"><i class="fa fa-paperclip text-muted" style="float: right;"></i></td>
+                                <!-- Time -->
+                                <td  style="width: 16%;"class="{% ifequal fwd.Read_by_inv 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                    {% endifequal %}
                 {% endfor %}
+
+                
             </tbody>
         </table>
     </div> <!--Close Mail-->

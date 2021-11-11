@@ -149,7 +149,7 @@
 {% if request.session.authorized_id %}
     {% for a in all %}
         {% ifequal a.id request.session.authorized_id %}
-            {% if a.Members_User.Member_Type == 'Sub-representative' %} 
+            {% if a.Members_User.Member_Type == 'Sub-representative' or a.Members_User.Member_Type == 'Investigator' %} 
                 <!-- body (no need to paste anything here) -->
 
             {% else %}

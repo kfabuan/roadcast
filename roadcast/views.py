@@ -668,6 +668,9 @@ def notif_sign_up_validation (request, signup_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -722,6 +725,9 @@ def genpub_verified(request, pk=None):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -805,6 +811,9 @@ def genpub_rejected(request,pk):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
     unread_sign_up_validation = tbl_genpub_users.objects.get(id=pk) #kukunin id ng mga nag signup
@@ -879,6 +888,9 @@ def DashboardView (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -1168,6 +1180,9 @@ def view_archive_incidents (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -1251,6 +1266,9 @@ def view_incidents (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -1359,6 +1377,9 @@ def create_incident_report (request, gen_pub_report_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -1563,6 +1584,9 @@ def add_incident (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -1916,6 +1940,9 @@ def upload_csv (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -2238,6 +2265,9 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -2296,6 +2326,9 @@ def view_solved_cases_detail (request, incident_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -2556,6 +2589,9 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -2629,6 +2665,9 @@ def monthly_report (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -3077,6 +3116,9 @@ def notification (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -3194,6 +3236,9 @@ def notif_public_report_detail (request, gen_pub_report_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -3315,6 +3360,10 @@ def sub_notification (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+            
     except:
         pass
 
@@ -3325,10 +3374,8 @@ def sub_notification (request):
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
                 subrep_row = Tbl_add_members.objects.get(id=auth_id)
-                #fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)
                 fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
-
-
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
         except:
             pass
 
@@ -3336,6 +3383,7 @@ def sub_notification (request):
             'searched': searched,
             "unread_notif_count":unread_notif_count,
             "fwd_reports": fwd_reports,
+            "inv_assigned":inv_assigned,
             "all": authorized,
             "pub": pub,
         }
@@ -3345,13 +3393,14 @@ def sub_notification (request):
                 auth_id = request.session['authorized_id']
                 subrep_row = Tbl_add_members.objects.get(id=auth_id)
                 fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).order_by('-id')
-
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).order_by('-id')
         except:
             pass
 
         context    = {
             "unread_notif_count":unread_notif_count,
             "fwd_reports": fwd_reports,
+            "inv_assigned":inv_assigned,
             "all": authorized,
             "pub": pub,
         }
@@ -3388,27 +3437,39 @@ def sub_notification_detail (request, report_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
 
     detail = None
     fwd_reports = None
+    inv_assigned = None
     try:
         if request.session['authorized_id']:
             detail = Tbl_public_report.objects.get(id=report_id)
-            detail.Read_by_subrep = 'Yes'
-            detail.save()
+            if (auth_row.Members_User_id == 3):
+                detail.Read_by_subrep = 'Yes'
+                detail.save()
+            
+            if (auth_row.Members_User_id == 4):
+                detail.Read_by_inv = 'Yes'
+                detail.save()
 
             auth_id = request.session['authorized_id']
             subrep_row = Tbl_add_members.objects.get(id=auth_id)
             fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id)
+            inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).order_by('-id')
+
     except:
         pass
 
     context    = {
         "unread_notif_count":unread_notif_count,
         "fwd_reports": fwd_reports,
+        "inv_assigned":inv_assigned,
         "detail": detail,
         "all": authorized,
         "pub": pub,
@@ -3464,6 +3525,9 @@ def public_inbox (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -3536,6 +3600,9 @@ def public_inbox_detail (request, report_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -3716,6 +3783,9 @@ def unsolved_cases (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -3790,6 +3860,9 @@ def submit_report (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4048,6 +4121,9 @@ def pub_notif_inbox (request): #Account settings
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4149,6 +4225,9 @@ def add_members (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4246,6 +4325,9 @@ def add_dept (request):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4329,6 +4411,9 @@ def view_members(request, member_id): #Show specific profile of members
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4365,6 +4450,9 @@ def edit_members(request, member_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4481,6 +4569,9 @@ def edit_dept(request, dept_id):
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4551,6 +4642,9 @@ def user_profile(request): #Profile of users
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4593,6 +4687,9 @@ def edit_profile(request, prof_id): #Edit user profile details
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4732,6 +4829,9 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4785,6 +4885,9 @@ def admin_investigators(request): #Show list of investigators
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
     members           = Tbl_add_members.objects.all().order_by('-id')
@@ -4827,6 +4930,9 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4871,6 +4977,9 @@ def admin_audit_members(request): #List of audit for members
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4915,6 +5024,9 @@ def audit_members(request, audit_id): #Specific view for members
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -4954,6 +5066,9 @@ def admin_audit_genpub(request): #List of audit for gen pub
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
@@ -5000,6 +5115,9 @@ def audit_genpub(request, audit_id): #Specific view for gen pub
 
             if (auth_row.Members_User_id == 3):
                 unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
     except:
         pass
 
