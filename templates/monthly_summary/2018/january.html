@@ -82,6 +82,12 @@
       } 
     }
 
+    @media screen and (max-width: 1300px) {
+        #downloadPdf{
+            display:none;
+        }
+     }
+
 
 
   </style>
@@ -790,7 +796,7 @@ $(document).ready(function(){
   </script>
   <script>
   var my_month= document.getElementById("select-month").innerText;
-  py
+  
   $('#downloadPdf').click(function(event) {
   // get size of report page
   var reportPageHeight = $('#pills-profile').innerHeight();

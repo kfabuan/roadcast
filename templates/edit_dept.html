@@ -24,8 +24,8 @@
         {% for b in pub %}
             {% ifequal b.id request.session.public_id %} 
                 <script>
-            	 window.location.href = '{% url 'error_page' %}';
-        	</script>
+                    window.location.href = '{% url 'error_page' %}';
+                </script>
             {% endifequal %}
         {% endfor %}
 

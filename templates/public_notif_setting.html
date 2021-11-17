@@ -74,12 +74,16 @@
             
                 <div class="row">
                     <div class="col-md-12">
+                        <section style="height: 10px"></section>
                         <div>
                             <label class="labels">Email address</label>
                             <input type="email" name="gen_username" placeholder="Email address" value="{{ b.gen_username }}" class="form-control custom-form" disabled required> 
                         </div>
                     </div>
                 </div>
+
+                <section style="height: 20px"></section>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
@@ -87,6 +91,7 @@
                             <input type="password" name="gen_pass" id="password" placeholder="Password" value="{{ b.gen_pass }}" class="form-control custom-form" disabled required>
                         </div>
                     </div>
+
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="labels">Confirm Password</label>
@@ -95,14 +100,14 @@
                     </div>
                 </div>
                 
-                <section style="height: 45px"></section>
+                <section style="height: 25px"></section>
 
                 <div class="mt-3">
                     <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
                     <button type="submit" class="btn btn-primary" style="border-radius: 50px; float: right; margin-right: 5px;" disabled>Save changes</button>
                 </div>
 
-                <section style="height: 20px"></section>
+                <section style="height: 10px"></section>
             </form>
         </div>
 
@@ -137,7 +142,7 @@
                 <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                     <div>
                         <h3 class="h6 mb-1">Custom Incident Notifications</h3>
-                        <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city.</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
+                        <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city. <br>(<i>Note:</i> please turn off "New Incident Notifications" first.)</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
                     </div>
                     <div>
                         <div class="form-check form-switch">
@@ -207,6 +212,8 @@
                     <button type="button" class="btn btn-primary" id="edit" style="border-radius: 50px; font-size: 11px; padding: 1px; width: 75px; margin-left: 5px; margin-top: -5px;">Edit details</button>
                     </h2>
                     
+                    <section style="height: 10px"></section>
+                    
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <div>
@@ -214,6 +221,7 @@
                                 <input type="email" name="Members_Email" placeholder="Email address" value="{{ a.Members_Email }}" class="form-control custom-form" disabled required> 
                             </div>
                         </div>
+
                         <div class="col-md-6 mb-3">
                             <div>
                                 <label class="labels">Username</label>
@@ -221,6 +229,9 @@
                             </div>
                         </div>
                     </div>
+
+                    <section style="height: 20px"></section>
+
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
@@ -228,6 +239,7 @@
                                 <input type="password" name="Members_Password" placeholder="Password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
                             </div>
                         </div>
+
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label class="labels">Confirm Password</label>
@@ -236,13 +248,12 @@
                         </div>
                     </div>
                         
-                        <section style="height: 50px"></section>
+                        <section style="height: 20px"></section>
         
                         <div class="mt-3">
                             <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
                             <button type="submit" class="btn btn-primary" style="border-radius: 50px; float: right; margin-right: 5px;" disabled>Save changes</button>
                         </div>
-        
                     </form>
                 </div>
 
@@ -321,7 +332,7 @@
                     <li class="list-group-item d-flex align-items-center justify-content-between px-0">
                         <div>
                             <h3 class="h6 mb-1">Custom Incident Notifications</h3>
-                            <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city.</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
+                            <p class="small pe-4">Get notifications based on your preferred barangay location in Pasig city. <br>(<i>Note:</i> please turn off "New Incident Notifications" first.)</p> <!-- (<i>Note:</i> locations available are only limited to the barangays in Pasig city). -->
                         </div>
                         <div>
                             <div class="form-check form-switch">
@@ -471,12 +482,7 @@ el.addEventListener('click', function(){
         $('#preferred_brgy').change(function(){
             this.form.submit();
         });
-
-
-
-
     });
 </script>
-
 
 {% endblock %}

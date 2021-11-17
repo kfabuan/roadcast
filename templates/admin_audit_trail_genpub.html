@@ -12,6 +12,7 @@
 
     .rad_tl { border-top-left-radius: 15px !important; }
     .rad_tr { border-top-right-radius: 15px !important; }
+    th { cursor: pointer; }
 
 </style>
 {% endblock %}
@@ -78,8 +79,11 @@
     <!-- Search bar -->
     <form class="d-flex" method="POST">
       {% csrf_token %}
-      <input class="form-control me-2" name="searched" type="search" placeholder="Search a user's email address" style="font-family: 'Roboto', sans-serif">
-      <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+      <div class="input-group mb-3 mt-3">
+          <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+          <input class="form-control me-2" name="searched" type="search" placeholder="Search a user's email address" style="font-family: 'Roboto', sans-serif">
+          <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+      </div>
     </form>
   </div>
 
@@ -88,14 +92,14 @@
 
   <!-- Main Content -->
   <div class="table-responsive-sm" style="height: 510px; overflow-y: scroll;"> 
-    <table class="table table-hover table-borderless" >
+    <table id="tbl_1" class="table table-hover table-borderless" >
       <thead>
         <tr class="table-primary">
-          <th scope="col" class="rad_tl">User ID</th>
-          <th scope="col">Name</th>
-          <th scope="col">Email address</th>
-          <th scope="col">Role</th>
-          <th scope="col">Timestamp</th>
+          <th onclick="sortTable(0)" scope="col" class="rad_tl">User ID</th>
+          <th onclick="sortTable(0)" scope="col">Name <i class="fas fa-sort mt-1 ms-2"></i></th>
+          <th onclick="sortTable(1)" scope="col">Email address <i class="fas fa-sort mt-1 ms-2"></i></th>
+          <th onclick="sortTable(2)" scope="col">Role <i class="fas fa-sort mt-1 ms-2"></i></th>
+          <th onclick="sortTable(3)" scope="col">Timestamp <i class="fas fa-sort mt-1 ms-2"></i></th>
           <th scope="col" class="rad_tr">Operation</th>
         </tr>
       </thead>
@@ -129,39 +133,49 @@
 
   <section style="height: 10px;"></section>
 
-  <script type="text/javascript">
-    $(document).ready(function(){
-      $('.nav_btn').click(function(){
-        $('.mobile_nav_items').toggleClass('active');
-      });
-
-      $('#submit_form').click(function(){
-        var selected_offense = new Array();
-        var chk_tbl_offense = document.getElementById("tbl_offense");
-        var selchk = chk_tbl_offense.getElementsByTagName("input");
-
-        for (var i=0; i<selchk.length; i++) {
-          if(selchk[i].checked){
-            selected_offense.push(selchk[i].value);
+  <script>
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("tbl_1");
+      switching = true;
+      dir = "asc"; 
+      
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch= true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
           }
         }
-        if(selected_offense.length>0){
-          console.log(selected_offense);
-         // document.getElementById('display_offense').innerHTML=selected_offense;
-         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
-
-          alert(selected_offense);
-          alert(tryyyy)
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;      
+        } else {
+          
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
         }
+      }
+    }
+</script>
 
-        var incident_date = document.getElementById("DateCommitted").value;
-        alert(incident_date);
-
-        });
-
-    });
-    </script>
-  
     <script>
       var today = new Date();
       var time = today.getHours() + ":" + today.getMinutes();

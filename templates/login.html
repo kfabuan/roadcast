@@ -6,6 +6,12 @@
 
 {% block design %}
 <style>
+  .view-pass {
+    position: absolute;
+    margin-left: 290px;
+    cursor: pointer;
+    color: #0D6EFD;
+  }
 
   .color-change {
       animation: color_change 2s infinite alternate-reverse;
@@ -65,7 +71,7 @@
     display: block;
   }
 
-    @media only screen and (max-width: 600px){
+  @media only screen and (max-width: 600px){
       #loading {
         width: 400px;
         height: 270px;
@@ -93,6 +99,152 @@
         height: 190px;
       }
     }
+
+  @media only screen and (max-width: 1200px){
+    .view-pass {
+      position: absolute;
+      margin-left: 260px;
+    }
+  }
+  @media only screen and (max-width: 992px){
+    .view-pass {
+      position: absolute;
+      margin-left: 220px;
+    }
+  }
+  @media only screen and (max-width: 770px){
+    .view-pass {
+      position: absolute;
+      margin-left: 360px;
+    }
+  }
+  @media only screen and (max-width: 575px){
+    .view-pass {
+      position: absolute;
+      margin-left: 370px;
+    }
+  }
+  @media only screen and (max-width: 546px){
+    .view-pass {
+      position: absolute;
+      margin-left: 340px;
+    }
+  }
+  @media only screen and (max-width: 511px){
+    .view-pass {
+      position: absolute;
+      margin-left: 330px;
+    }
+  }
+  @media only screen and (max-width: 506px){
+    .view-pass {
+      position: absolute;
+      margin-left: 320px;
+    }
+  }
+  @media only screen and (max-width: 500px){
+    .view-pass {
+      position: absolute;
+      margin-left: 310px;
+    }
+  }
+  @media only screen and (max-width: 482px){
+    .view-pass {
+      position: absolute;
+      margin-left: 300px;
+    }
+  }
+  @media only screen and (max-width: 472px){
+    .view-pass {
+      position: absolute;
+      margin-left: 290px;
+    }
+  }
+  @media only screen and (max-width: 453px){
+    .view-pass {
+      position: absolute;
+      margin-left: 270px;
+    }
+  }
+  @media only screen and (max-width: 442px){
+    .view-pass {
+      position: absolute;
+      margin-left: 250px;
+    }
+  }
+  @media only screen and (max-width: 422px){
+    .view-pass {
+      position: absolute;
+      margin-left: 240px;
+    }
+  }
+  
+  @media only screen and (max-width: 418px){
+    .view-pass {
+      position: absolute;
+      margin-left: 245px;
+    }
+  }
+  @media only screen and (max-width: 415px){
+    .view-pass {
+      position: absolute;
+      margin-left: 240px;
+    }
+  }
+  @media only screen and (max-width: 408px){
+    .view-pass {
+      position: absolute;
+      margin-left: 230px;
+    }
+  }
+  @media only screen and (max-width: 391px){
+    .view-pass {
+      position: absolute;
+      margin-left: 220px;
+    }
+  }
+  @media only screen and (max-width: 376px){
+    .view-pass {
+      position: absolute;
+      margin-left: 200px;
+    }
+  }
+  @media only screen and (max-width: 383px){
+    .view-pass {
+      position: absolute;
+      margin-left: 200px;
+    }
+  }
+  @media only screen and (max-width: 361px){
+    .view-pass {
+      position: absolute;
+      margin-left: 190px;
+    }
+  }
+  @media only screen and (max-width: 355px){
+    .view-pass {
+      position: absolute;
+      margin-left: 170px;
+    }
+  }
+  @media only screen and (max-width: 330px){
+    .view-pass {
+      position: absolute;
+      margin-left: 145px;
+    }
+  }
+  @media only screen and (max-width: 300px){
+    .view-pass {
+      position: absolute;
+      margin-left: 120px;
+    }
+  }
+  @media only screen and (max-width: 290px){
+    .view-pass {
+      position: absolute;
+      margin-left: 100px;
+    }
+  }
 </style>
   
   
@@ -144,8 +296,9 @@
                   </div>
 
                   <div class="form-input" style="margin-top: -5px;" >
-                      <span><i class="fa fa-key"> </i> </span>
-                      <input type="password" tabindex="2" name="password" placeholder="Password" class="form-control" style="background-color: transparent;  font-size: 14px; outline: none; border: 1px solid #00000020;;" required>
+                      <span><i class="fa fa-key"></i></span>
+                      <input type="password" id="password" tabindex="2" name="password" placeholder="Password" class="form-control" style="background-color: transparent;  font-size: 14px; outline: none; border: 1px solid #00000020;;" required>
+                      <span><i class="bi bi-eye-slash view-pass" id="togglePassword"></i></span>
                   </div>
 
                   <div class="mb-3">
@@ -193,6 +346,19 @@
       
     </div>
 </center>
+
+<script>
+  const togglePassword = document.querySelector('#togglePassword');
+  const password = document.querySelector('#password');
+
+  togglePassword.addEventListener('click', function (e) {
+    // toggle the type attribute
+    const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+    password.setAttribute('type', type);
+    // toggle the eye / eye slash icon
+    this.classList.toggle('bi-eye');
+});
+</script>
 
 
 <script type="text/javascript">

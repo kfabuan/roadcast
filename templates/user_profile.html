@@ -197,6 +197,9 @@
 <!-- Members --------------------------------------------------------------------------------------->
 {% for a in all %}
   {% ifequal a.id request.session.authorized_id %}
+
+  <!-- for investigator -->
+    {% if a.Members_User.Member_Type == 'Investigator' %}
   <div class="row" >
     <img src="{% static 'image/city.gif'%}" class="img-fluid cover-bg" alt="Background Cover">
 </div>
@@ -246,6 +249,67 @@
             </div>
             </div>
           </div>
+
+          <section style="height: 90px"></section>
+
+          <!-- Assigned cases -->
+          <div class="card table-responsive" style="margin-top: -60px;">
+              <table class="table table-hover table-borderless" style="font-family: 'Roboto', sans-serif; font-size: 15px; background-color: white;">
+              <thead class="table-primary">
+                <th colspan="7" style="text-align: center;">Cases Assigned</th>
+              </thead>
+              <thead class="table-secondary">
+                <th scope="col" class="rad_tl">Incident ID</th>
+                <th>Incident Type</th>
+                <th>Barangay Comitted</th>
+                <th>Date and Time</th>
+                <th>Case Status</th>
+                <th>Operation</th>
+              </thead>
+              <tbody>
+              {% for case in cases %}
+                <tr>
+                  <th scope="row">{{ case.id }}</th>
+                  <td>{{ case.Incident_Type }}</td>
+                  <td>{{ case.Barangay_id.Barangay }}</td>
+                  <td>{{ case.Date }} - {{ case.Time }}</td>
+                  <td>{{ case.Case_Status }}</td>
+                  <td> 
+                    <!-- Dropdown menu-->
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
+                        More
+                      </button>
+                      <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
+                        <li><a class="dropdown-item" href="{% url 'gen_incident_detail_view' case.id %}">View case</a></li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+                {% empty %} 
+              <tr>
+                <td colspan="8" style="text-align: center;">Nothing to show! No cases have been assigned yet.</td>
+              </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+            </div>
+            
+            <div class="row">
+              <div class="col-8">
+                  <ul class="pagination">
+                      {% if cases.has_previous %}
+                          <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                          <li class="page-item"><a class="page-link" href="?page= {{cases.previous_page_number}}">Previous</a></li>
+                      {% endif %}
+            
+                      {% if cases.has_next %}
+                          <li class="page-item"><a class="page-link" href="?page={{cases.next_page_number }}">Next</a></li>
+                          <li class="page-item"><a class="page-link" href="?page={{cases.paginator.num_pages}}">Last</a></li>
+                      {% endif %}
+                      </ul>
+              </div>
+            </div>
         </div>
 
         <!-- Details (right) -->
@@ -281,7 +345,7 @@
                               {% endif %}">{{a.Members_User}}</span>&nbsp;
                   <span class="badge badge-pill badge-secondary custom_ic3">{{a.Members_Position}}</span>&nbsp;
                   <span class="badge badge-pill badge-secondary custom_ic2">{{a.Members_Substation}}</span>&nbsp;
-                  <span class="badge badge-pill custom_ic1">{{a.Members_District}}</span>
+                  <span class="badge badge-pill custom_ic1">{{a.Members_District}} District</span>
                 </span>
                 <section style="height: 20px;"></section>
               </li>
@@ -312,6 +376,127 @@
         </div>
       </div>
     </div>
+
+    
+
+    <!-- For admin, crime, and subrep -->
+    {% else %}
+    <div class="row" >
+      <img src="{% static 'image/city.gif'%}" class="img-fluid cover-bg" alt="Background Cover">
+  </div>
+  
+  <div class="container profile-det">
+      <div class="row">
+          <!-- Profile (left) -->
+          <div class="col-xl-8 card-layout">
+            <div class="card card-profile">
+              <div class="row justify-content-center">
+                <div class="col-lg-3 order-lg-2">
+                  <div class="card-profile-image">
+                      <img src="/media/{{ a.Members_Pic }}" class="rounded-circle" alt="Profile picture"> <!-- Profile picture of user goes here -->
+                  </div>
+                </div>
+              </div>
+              
+              <div class="card-header bg-light text-center border-0 pt-8 pt-md-4 pb-0 pb-md-4" style="border-radius:20px 20px 0px 0px;">
+                <div class="d-flex justify-content-between">
+                  <!-- For header ng card -->
+                  <span></span>
+                </div>
+              </div>
+              <!-- Stats goes here -->
+              <div class="card-body pt-0 pt-md-4">
+                <div class="row">
+                  <div class="col">
+                    <div class="card-profile-stats d-flex justify-content-center mt-md-5">
+                      <div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+  
+                <!-- Profile details goes here -->
+                <div class="text-center">
+                  <h3>
+                    {{a.Members_Fname}} {{a.Members_Lname}}, {{a.Members_Position}}
+                  </h3>
+                  <div class="h5 font-weight-300">
+                    <span class="text-muted font-weight-light"><i>@{{a.Members_Username}}</i></span>
+                  </div>
+                  <div class="h5 font-weight-300">
+                    {{a.Members_Email}}
+                  </div>
+              <section style="height: 25px;"></section>
+              </div>
+              </div>
+            </div>
+          </div>
+  
+          <!-- Details (right) -->
+          <div class="col-xl-4 details-prof card-layout" >
+              <div class="card" style="border-radius:50px 50px 0px 0px; padding-left: 10px;">
+              <div class="card-header bg-light" style="border-radius:20px 20px 0px 0px;">
+                  <h5 class="right-panel">About me</h5>
+              </div>
+              <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                  <section style="height: 10px;"></section>
+                  <span class="h5 mt-4">
+                    <i class="fas fa-building prof_icons"></i>Department Details
+                    <section style="height: 5px;"></section>
+                  </span>
+                  <span class="text-muted">
+                    {{a.Members_Dept}}
+                  </span>
+                  <section style="height: 10px;"></section>
+                </li>
+                <li class="list-group-item">
+                  <section style="height: 10px;"></section>
+                  <span class="h5 mt-4">
+                    <i class="fas fa-info-circle prof_icons"></i>Other information
+                    <section style="height: 5px;"></section>
+                  </span>
+                  <span>
+                    <span class="badge rounded-pill 
+                                {% if a.Members_User.Member_Type  == 'Admin'%} bg-custom4 
+                                {% elif a.Members_User.Member_Type  == 'Crime Statistician'%} bg-custom2 
+                                {% elif a.Members_User.Member_Type  == 'Investigator'%} bg-custom 
+                                {% else %} bg-custom3  
+                                {% endif %}">{{a.Members_User}}</span>&nbsp;
+                    <span class="badge badge-pill badge-secondary custom_ic3">{{a.Members_Position}}</span>&nbsp;
+                    <span class="badge badge-pill badge-secondary custom_ic2">{{a.Members_Substation}}</span>&nbsp;
+                    <span class="badge badge-pill custom_ic1">{{a.Members_District}} District</span>
+                  </span>
+                  <section style="height: 20px;"></section>
+                </li>
+                <li class="list-group-item">
+                  <section style="height: 10px;"></section>
+                  <span class="h5 mt-4">
+                    <i class="fas fa-calendar-check prof_icons"></i>Joined date
+                  </span>
+                  <section style="height: 5px;"></section>
+                  <span class="text-muted">
+                    {{ a.Date_Added }}
+                  </span>
+                  <section style="height: 10px;"></section>
+                </li> 
+                <li class="list-group-item" style="border-radius: 0px 0px 20px 20px;">
+                  <section style="height: 10px;"></section>
+                  <span class="h5 mt-4">
+                    <i class="fas fa-calendar-minus prof_icons"></i>Last edit
+                  </span>
+                  <section style="height: 5px;"></section>
+                  <span class="text-muted">
+                    {{ a.Date_Edit }}
+                  </span>
+                  <section style="height: 10px;"></section>
+                </li> 
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
     {% endifequal %}
   {% endfor %}
 {% endblock %}

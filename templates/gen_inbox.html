@@ -111,7 +111,17 @@
 {% endblock %}
 
 {% block content %}
-
+<script>
+$(document).ready(function(){
+    $('button[data-bs-toggle="pill"]').on('show.bs.tab', function(e) {
+        localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+    var activeTab = localStorage.getItem('activeTab');
+    if(activeTab){
+        $('#pills-tab button[href="' + activeTab + '"]').tab('show');
+    }
+});
+</script>
 <!-- Login required and permission access of users (Should be placed after the opening block content) -->
 {% if request.session.authorized_id %}
     {% for a in all %}
@@ -144,19 +154,31 @@
     </script>
 {% endif %}
 
-    <div class="top-content">
-
-        <p id='date'>
-        <i class="fas fa-calendar-day" id="date-today-icon"></i>
-        <b id="date-today">Today: </b><span id="ct6"></span>
-        </p>
-      </div>
+{% if searched %}
+<p class="alert alert-primary">
+    <strong>Showing the results for "{{ searched }}"</strong>
+</p>
+{% endif %}
 
 <div class="container"> 
     <div class="row">
         <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
             <li class="nav-item " role="presentation">
-                <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-admin-replies" id="pills-admin-replies-tab" data-bs-toggle="pill" data-bs-target="#pills-admin-replies" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-envelope-fill"></i>&nbsp; Main Inbox</button>
+                <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-admin-replies" id="pills-admin-replies-tab" data-bs-toggle="pill" data-bs-target="#pills-admin-replies" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-envelope-fill"></i>&nbsp; 
+                    Main Inbox
+
+                    {% for a in pub %}
+                        {% ifequal a.id request.session.public_id %}
+                            
+                                {% if unread_notif_count > 0 %}
+                                    ({{ unread_notif_count }})
+                                {% else %}
+                                    (0)
+                                {% endif %}
+                    
+                        {% endifequal %}
+                    {% endfor %}
+                </button>
             </li>
             
             <li class="nav-item " role="presentation">
@@ -169,6 +191,17 @@
     <div class="tab-content row" id="pills-tabContent">
         <!-- tab for admin replies -->
         <div class="tab-pane fade show active " id="pills-admin-replies" role="tabpanel" aria-labelledby="pills-admin-replies">
+
+            <!-- Search bar -->
+            <form class="d-flex" method="POST">
+                {% csrf_token %}
+                <div class="input-group input-group-sm mb-3 mt-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                    <input class="form-control me-2" name="searched" type="search" placeholder="Search for a barangay or message" style="font-family: 'Roboto', sans-serif">
+                    <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                </div>
+            </form>
+
             {% if admin_replies %}
             <!-- Main inbox-->
             <div class="table-responsive mt-3">
@@ -215,6 +248,19 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <ul class="pagination">
+            {% if admin_replies.has_previous %}
+
+                <li class="page-item"><a class="page-link" href="?page6=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page6= {{admin_replies.previous_page_number}}">Previous</a></li>
+            {% endif %}
+
+            {% if admin_replies.has_next %}
+                <li class="page-item"><a class="page-link" href="?page6={{admin_replies.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page6={{admin_replies.paginator.num_pages}}">Last</a></li>
+            {% endif %}
+
+            </ul>
             </div> <!--Close Main Inbox-->
             {% else %}
             <center>
@@ -228,6 +274,16 @@
        
         <!-- tab for report history  -->
         <div class="tab-pane fade" id="pills-past-reports" role="tabpanel" aria-labelledby="pills-past-reports">
+            <!-- Search bar -->
+            <form class="d-flex" method="POST">
+                {% csrf_token %}
+                <div class="input-group input-group-sm mb-3 mt-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                    <input class="form-control me-2" name="searched" type="search" placeholder="Search for a location, barangay, narrative, or a case status" style="font-family: 'Roboto', sans-serif">
+                    <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                </div>
+            </form>
+
             {% if pub_inbox %}
             <!-- History mail list-->
             <div class="table-responsive mt-3">
@@ -268,6 +324,19 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <ul class="pagination">
+            {% if pub_inbox.has_previous %}
+
+                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page= {{pub_inbox.previous_page_number}}">Previous</a></li>
+            {% endif %}
+
+            {% if pub_inbox.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{pub_inbox.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{pub_inbox.paginator.num_pages}}">Last</a></li>
+            {% endif %}
+
+            </ul>
             </div> <!--Close Mail-->
             {% else %}
             <center>

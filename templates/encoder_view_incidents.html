@@ -14,6 +14,12 @@
         box-shadow: 0 0.5rem 1rem 0 rgba(167, 167, 167, 0.164);
     }
 
+    th { cursor: pointer; }
+    .fa-sort { 
+        /* color: #bdbdbd;  */
+        /* float: right; */
+    }
+
     .input-group{
         display: flex;
         width:100%;
@@ -171,9 +177,9 @@
             {% for a in all %}
                 {% ifequal a.id request.session.authorized_id %}
                     {% if a.Members_User.Member_Type == 'Crime Statistician' %}
-                    <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
+                    <!-- <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_incident' %}'">
                     + Add record
-                    </button>
+                    </button> -->
                     {% endif %}
                 {% endifequal %}
             {% endfor %}
@@ -191,19 +197,19 @@
     {% if pasig_incident_list %}
         <div class="table-responsive">
             <!-- <table class="table table-bordered table-striped table-hover text-center"> -->
-                <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+                <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
                     <thead class="table-primary">
                     <tr>
                         {% comment %} <th class="table-header"></th> {% endcomment %}
-                        <th class="table-header rad_tl">#</th>
-                        <th class="table-header">Incident Type</th>
-                        <th class="table-header">Barangay Committed</th>
-                        <th class="table-header">Date and Time Committed</th>
+                        <th class="table-header rad_tl" onclick="sortTable(0)"># </th>
+                        <th class="table-header" onclick="sortTable(1)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+                        <th class="table-header" onclick="sortTable(2)">Barangay Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
+                        <th class="table-header" onclick="sortTable(3)">Date and Time Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
                         {% for a in all %}
                             {% ifequal a.id request.session.authorized_id %}
                                 {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                                <th class="table-header">Suspect</th>
-                                <th class="table-header">Victim</th>
+                                <th class="table-header" onclick="sortTable(4)">Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+                                <th class="table-header" onclick="sortTable(5)">Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
                                 {% endif %}
                             {% endifequal %}
                         {% endfor %}   
@@ -392,5 +398,50 @@
         </table>
 
         {% endif %}
+
+                
+<script>
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("tbl_1");
+      switching = true;
+      dir = "asc"; 
+      
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              //if so, mark as a switch and break the loop:
+              shouldSwitch= true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;      
+        } else {
+          
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+</script>
 
 {% endblock %}

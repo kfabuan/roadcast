@@ -348,6 +348,43 @@
 {% endblock %}
 
 {% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %} 
+                <!-- body (no need to paste anything here) -->
+            {% else %}
+                <script>
+                    window.location.href = '{% url 'error_page' %}';  
+                </script>
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+                <script>
+        		    window.location.href = '{% url 'error_page' %}';  
+    		    </script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
 <section style="height: 10px;"></section>
 
     {% if messages %}
@@ -378,15 +415,21 @@
                                 <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
                                     <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
                                         <div class="row">
-                                            <div class="col-2 img-col"><img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img"></div>
+                                            <div class="col-2 img-col">
+                                                {% ifequal report.User_ID_id NULL %} 
+                                                    <img src="/media/{{ report.Admin_Sender.Members_Pic}}" class="rounded-circle user-img">
+                                                {% else %} 
+                                                    <img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img">
+                                                {% endifequal %}
+                                            </div>
                                             <div class="col-6 c_name hide-col">
                                                 <p class="r_name text-muted text-truncate">
-                                                    {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
-        
-                                                    <!-- {% ifequal report.Read_Status 'No' %}
-                                                    <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
-                                                    {% endifequal %} -->
-                                                    </p>
+                                                    {% ifequal report.User_ID_id NULL %}      
+                                                        {{ report.Admin_Sender.Members_Fname }} {{ report.Admin_Sender.Members_Lname }} 
+                                                    {% else %}
+                                                        {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }} 
+                                                    {% endifequal %}
+                                                </p>
                                             </div>
                                             <div class="col-4 hide-col">
                                                 <span class="r_date text-truncate">{{ report.Reported_Date }}</span>
@@ -447,15 +490,21 @@
                                 <a href="{% url 'notif_public_report_detail' report.id %}" style="text-decoration: none;">
                                     <li class="list-group-item message-item {% ifequal report.id detail.id %} active-msg {% endifequal %}" style="{% ifequal report.Read_Status 'No' %} background-color:azure; {% else %}{% endifequal %}">
                                         <div class="row">
-                                            <div class="col-2 img-col"><img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img"></div>
+                                            <div class="col-2 img-col">
+                                                {% ifequal report.User_ID_id NULL %} 
+                                                    <img src="/media/{{ report.Admin_Sender.Members_Pic}}" class="rounded-circle user-img">
+                                                {% else %} 
+                                                    <img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img">
+                                                {% endifequal %}
+                                            </div>
                                             <div class="col-6 c_name hide-col">
                                                 <p class="r_name text-muted text-truncate">
-                                                    {{ report.User_ID.gen_fname}}  {{ report.User_ID.gen_surname}}
-        
-                                                    <!-- {% ifequal report.Read_Status 'No' %}
-                                                    <span class="badge position-relative top-0 bg-primary border-light rounded-circle ms-2" style="padding: 4px;"> </span>
-                                                    {% endifequal %} -->
-                                                    </p>
+                                                    {% ifequal report.User_ID_id NULL %}      
+                                                        {{ report.Admin_Sender.Members_Fname }} {{ report.Admin_Sender.Members_Lname }} 
+                                                    {% else %}
+                                                        {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }} 
+                                                    {% endifequal %}
+                                                </p>
                                             </div>
                                             <div class="col-4 hide-col">
                                                 <span class="r_date text-truncate">{{ report.Reported_Date }}</span>
@@ -505,13 +554,25 @@
                         <div class="row b-header-row">
                             <div class="col-1 pe-3" style="background-color: white;">
                                 <div class="btn btn-light position-relative p-0 rounded-circle">
-                                    <div><img src="/media/{{detail.User_ID.gen_profile}}" class="rounded-circle b-user-img"></div>
+                                    <div>
+                                        {% ifequal detail.User_ID_id NULL %} 
+                                            <img src="/media/{{ detail.Admin_Sender.Members_Pic}}" class="rounded-circle b-user-img">
+                                        {% else %} 
+                                            <img src="/media/{{ detail.User_ID.gen_profile}}" class="rounded-circle b-user-img">  
+                                        {% endifequal %}
+                                    </div>
                                     <!-- <span class="position-absolute bg-success border border-light rounded-circle" style="bottom: 0; right:4px; padding:7px;"></span> -->
                                 </div>
                             </div>
 
                             <div class="col-8 ms-4"  style="background-color: white; display: block; margin: auto;">
-                                <p class="b-name pt-2">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</p>
+                                <p class="b-name pt-2">
+                                    {% ifequal detail.User_ID_id NULL %}      
+                                        {{ detail.Admin_Sender.Members_Fname }} {{ detail.Admin_Sender.Members_Lname }} 
+                                    {% else %}
+                                        {{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }} 
+                                    {% endifequal %}  
+                                </p>
                                 <!-- <p class="text-muted" style="font:small;"> Active Now</p> -->
                             </div>
 
@@ -657,8 +718,14 @@
 
                                 <div class="row" style="min-height: 40px; width: 100%;">
                                     {% ifequal reply.Sender_Type 'Admin' %}
+
+                                    {% for a_ in all %}
+                                        {% ifequal reply.Sender a_.id %}
+                                            <div class="col-1"><img src="/media/{{ a_.Members_Pic }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
+
+                                        {% endifequal %}
+                                    {% endfor %}
                                                                          
-                                    <div class="col-1"><img src="/media/{{ auth_info.Members_Pic }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle"></div>
                                     <div class="col-11 row convo-deets">
                                         <b>{{ auth_info.Members_Fname }} {{ auth_info.Members_Lname }}</b> <br>
                                                                          
@@ -700,11 +767,22 @@
 
                                 {% if request.session.authorized_id %}
                                     <input type="text" name="sender_id" id="sender_id" value="{{request.session.authorized_id}}" hidden>
-                                    <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
+
+                                    {% ifequal detail.User_ID_id NULL %} 
+                                        <input type="text" name="receiver_id" id="receiver_id" value="{{detail.Admin_Sender.id}}" hidden>
+                                    {% else %} 
+                                        <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
+                                    {% endifequal %}
                                 {% endif %}
 
                                 <div class="input-group div-reply">
-                                    <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">
+
+                                    {% ifequal detail.User_ID_id NULL %} 
+                                        <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.Admin_Sender.Members_Fname }}'s message" style="">   
+                                    {% else %} 
+                                        <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style="">
+                                    {% endifequal %}
+                                    <!-- <input type="text" name="admin_reply" class="form-control p-3 txt-reply" placeholder="Reply to {{ detail.User_ID }}'s message" style=""> -->
                                     <button class="btn btn-reply" type="submit">
                                         <i class="fas fa-paper-plane pe-2" style="color: #1b5082; font-size: large;" ></i>
                                     </button>
@@ -721,13 +799,31 @@
             <!--profile preview-->
             <div class="card col-2 p-0 profile-card" style="border-radius: 0px 20px 20px 0px;"> <!--tr tl br bl-->
                 <div class="">
-                    <img src="/media/{{detail.User_ID.gen_profile}}" class="card-img-top p-0" alt="..." style="border-radius: 20px 20px 0px 0px; !important">
-                    <!-- <img src="/media/incident_images/police.jpg" class="" alt="..." style="width:60%; z-index:3; position:relative; top:-20%;left:20%;"> -->
+                    {% ifequal detail.User_ID_id NULL %} 
+                       <img src="/media/{{detail.Admin_Sender.Members_Pic}}" class="card-img-top p-0" alt="..." style="border-radius: 20px 20px 0px 0px; !important">
+                    {% else %} 
+                        <img src="/media/{{detail.User_ID.gen_profile}}" class="card-img-top p-0" alt="..." style="border-radius: 20px 20px 0px 0px; !important">
+                    {% endifequal %}
+
                     <center>
                     <div class="card-body">
-                      <span class="mx-auto fw-bold text-uppercase">{{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }}</span>
-                      <!-- <span class="badge rounded-pill bg-success ms-2" style="padding: 5px;"> </span> -->
-                      <p class="card-text p-email">{{ detail.User_ID.gen_username }}</p>
+                      <span class="mx-auto fw-bold text-uppercase">
+                        {% ifequal detail.User_ID_id NULL %}      
+                            {{ detail.Admin_Sender.Members_Fname }} {{ detail.Admin_Sender.Members_Lname }} 
+                        {% else %}
+                            {{ detail.User_ID.gen_fname }} {{ detail.User_ID.gen_surname }} 
+                        {% endifequal %}
+                      </span>
+                      <p class="card-text p-email">
+
+                        {% ifequal detail.User_ID_id NULL %}      
+                            {{ detail.Admin_Sender.Members_Position.Position }}  
+                        {% else %}
+                            {{ detail.User_ID.gen_username }}
+                        {% endifequal %}
+                          
+                      </p>
+
                     </div>
                     </center>           
                 </div>
@@ -735,17 +831,39 @@
                 <ul class="list-group user-details" >
                     <li class="list-group-item" style="border-style: none;">
                         <p class="ps-2" style="margin-bottom: 0 !important; margin-top: 0 !important; text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Mobile Number: </p>
-                        <p class="ms-2 p-0 p-deets" > {{ detail.User_ID.gen_contact_no }}</p>
+                        <p class="ms-2 p-0 p-deets"> 
+                            
+                            {% ifequal detail.User_ID_id NULL %} 
+                                <!-- {{ a_.Members_Position.Position }} -->
+                                N/A
+                            {% else %} 
+                               {{ detail.User_ID.gen_contact_no }}
+                            {% endifequal %}
+                        </p>
                     </li>
 
                     <li class="list-group-item" style="border-style: none;">
                         <p class="ps-2" style="margin-bottom: 0 !important; margin-top: 0 !important;text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Address: </p>
-                        <p class="ms-2 p-0 text-wrap p-deets">{{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}</p>
+                        <p class="ms-2 p-0 text-wrap p-deets">
+                            {% ifequal detail.User_ID_id NULL %} 
+                                <!-- {{ a_.Members_Position.Position }} -->
+                                N/A
+                            {% else %} 
+                                {{ detail.User_ID.gen_barangay }}, {{ detail.User_ID.gen_city }}   
+                            {% endifequal %}
+                            
+                        </p>
                     </li>
 
                     <li class="list-group-item" style="border-style: none;">
                         <p class="ps-2" style="margin-bottom: 0 !important; margin-top: 0 !important;text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">Email Address: </p>
-                        <p class="ms-2 p-0 p-deets"> {{ detail.User_ID.gen_username }}</p>
+                        <p class="ms-2 p-0 p-deets"> 
+                            {% ifequal detail.User_ID_id NULL %} 
+                                {{ detail.Admin_Sender.Members_Email }}
+                            {% else %} 
+                                {{ detail.User_ID.gen_username }}   
+                            {% endifequal %}
+                        </p>
                     </li>
 
                   </ul>

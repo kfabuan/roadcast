@@ -45,14 +45,14 @@ class Tbl_add_departments(models.Model):
 class Tbl_substation(models.Model):
     SUBSTATION = (
         ('PNP-Pasig', 'PNP-Pasig'),
-        ('Substation 1', 'Substation 1'),
-        ('Substation 2', 'Substation 2'),
-        ('Substation 3', 'Substation 3'),
-        ('Substation 4', 'Substation 4'),
-        ('Substation 5', 'Substation 5'),
-        ('Substation 6', 'Substation 6'),
-        ('Substation 7', 'Substation 7'),
-        ('Substation 8', 'Substation 8')
+        ('Substation 1 - San Antonio', 'Substation 1 - San Antonio'),
+        ('Substation 2 - Caniogan', 'Substation 2 - Caniogan'),
+        ('Substation 3 - Malinao', 'Substation 3 - Malinao'),
+        ('Substation 4 - San Joaquin', 'Substation 4 - San Joaquin'),
+        ('Substation 5 - Pinagbuhatan', 'Substation 5 - Pinagbuhatan'),
+        ('Substation 6 - San Miguel', 'Substation 6 - San Miguel'),
+        ('Substation 7 - Santa Lucia', 'Substation 7 - Santa Lucia'),
+        ('Substation 8 - Manggahan', 'Substation 8 - Manggahan')
     )
     Substation          = models.CharField(max_length=200, verbose_name='Substation', blank=True, choices=SUBSTATION)
     def __str__(self):
@@ -461,10 +461,12 @@ class Tbl_public_report(models.Model):
     Reported_Along       = models.CharField(max_length=200, verbose_name='Along', blank=True)
     Reported_Corner      = models.CharField(max_length=200, verbose_name='Corner', blank=True)
     Reported_Narrative   = models.CharField(max_length=800, verbose_name='Narrative', blank=True)
-    Reported_Image_Proof = models.ImageField(upload_to=image_path_incident_report,verbose_name='Proof of Incident', blank=True)
+    Reported_Image_Proof = models.ImageField(upload_to=image_path_incident_report,verbose_name='Proof of Incident', blank=True, null=True)
     Reported_Date        = models.DateField(auto_now_add=True, verbose_name='Date Reported', blank=True)
     Reported_Time        = models.TimeField(auto_now_add=True, verbose_name='Time Reported', blank=True)
 
+    # Admin_Sender = models.IntegerField(verbose_name='Admin Sender', blank=True, null=True)
+    Admin_Sender = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
     Recipient               = models.CharField(max_length=200, verbose_name='Recipient', blank=True)
     Read_Status             = models.CharField(max_length=200, verbose_name='Read by Admin', blank=True)
     Read_by_subrep          = models.CharField(default='No', max_length=200, verbose_name='Read by Subrep', blank=True)
@@ -472,7 +474,7 @@ class Tbl_public_report(models.Model):
     Read_by_inv             = models.CharField(default='No', max_length=200, verbose_name='Read by Investigator', blank=True)
 
     Report_Status           = models.CharField(max_length=200, verbose_name='Report Status', default="Unsolved", blank=True)
-    Assigned_Investigator   = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL) #foreign
+    Assigned_Investigator   = models.ForeignKey(Tbl_add_members, null=True, on_delete=models.SET_NULL, related_name="Inv") #foreign
     Substation              = models.ForeignKey(Tbl_substation, null=True, on_delete=models.SET_NULL, related_name='Substation_id') #foreign
     Report_Created = models.CharField(default='No', max_length=200, verbose_name='Report Created', blank=True)
 
@@ -485,7 +487,7 @@ class Tbl_public_report(models.Model):
 #Admin Responses to General Public
 class Tbl_public_report_response (models.Model):
     Response_id     = models.AutoField(primary_key=True)
-    Report          = models.ForeignKey(Tbl_public_report,null=True, on_delete=models.SET_NULL, related_name='Report_id') #foreign
+    Report          = models.ForeignKey(Tbl_public_report,null=True, on_delete=models.CASCADE, related_name='Report_id') #foreign
     Sender_Type     = models.CharField(max_length=200, verbose_name='Sender Type', blank=True, null=True)
     Sender          = models.IntegerField( null=True, verbose_name ='Sender', blank=True)
     Receiver        = models.IntegerField(null=True, verbose_name='Receiver', blank = True) 

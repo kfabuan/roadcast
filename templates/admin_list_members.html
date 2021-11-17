@@ -11,7 +11,8 @@
 
     .rad_tl { border-top-left-radius: 15px !important; }
     .rad_tr { border-top-right-radius: 15px !important; }
-    
+    th { cursor: pointer; }
+
     /* Bagong dagdag - 10-26-2021 */
     @media screen and (max-width: 550px) {
       .btn-outline-primary {
@@ -122,14 +123,14 @@
   <!-- Main Content -->
 
   <div class="table-responsive"> 
-    <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+    <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
     <thead class="table-primary">
-      <th scope="col" class="rad_tl">No.</th>
-      <th>Photo</th>
-      <th>Name</th>
-      <th>Member Type</th>
-      <th>Department</th>
-      <th>Substation</th>
+      <th scope="col" class="rad_tl" onclick="sortTable(0)">No.</th>
+      <th >Photo</th>
+      <th onclick="sortTable(1)">Name <i class="fas fa-sort mt-1 ms-2"></i></th>
+      <th onclick="sortTable(2)">Member Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+      <th onclick="sortTable(3)">Department <i class="fas fa-sort mt-1 ms-2"></i></th>
+      <th onclick="sortTable(4)">Substation <i class="fas fa-sort mt-1 ms-2"></i></th>
       <th class="rad_tr">Operation</th>
     </thead>
     <tbody>
@@ -166,10 +167,10 @@
         </div>
       </td>
       </tr>
-      <tr>
-      {% empty %} 
+      <!-- <tr>
+     empty tag
       <td colspan="8" style="text-align: center;">Nothing to show! No records have been added yet.</td>
-    </tr>
+    </tr> -->
     {% endfor %}
     </tbody>
   </table>
@@ -185,9 +186,53 @@
         <li class="page-item"><a class="page-link" href="?page={{members.next_page_number }}">Next</a></li>
         <li class="page-item"><a class="page-link" href="?page={{members.paginator.num_pages}}">Last</a></li>
     {% endif %}
-    </ul>
+  </ul>
 
   <section style="height: 50px;"></section>
+
+  <script>
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("tbl_1");
+      switching = true;
+      dir = "asc"; 
+      
+      while (switching) {
+        switching = false;
+        rows = table.rows;
+        for (i = 1; i < (rows.length - 1); i++) {
+          shouldSwitch = false;
+          
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              //if so, mark as a switch and break the loop:
+              shouldSwitch= true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount ++;      
+        } else {
+          
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+</script>
 
   <script type="text/javascript">
     $(document).ready(function(){

@@ -1,0 +1,93 @@
+City,UnitStation,CrimeOffense,Week,Date,Time,Day,Incident_Type,Number_of_Persons_Involved,Light,Weather,Case_Status,District_id,Barangay,Address,Along,Corner,Latitude,Longitude,Surface_Condition,Surface_Type,Road_Repair,Hit_and_Run,Road_Character,Suspect_Type,Suspect_Fname,Suspect_Lname,Suspect_Severity,Suspect_Age,Suspect_Sex,Suspect_Civil_Status,Suspect_Address,Suspect_Vehicle,Suspect_Vehicle_Body_Type,Suspect_Plate_No,Suspect_Reg_Owner,Suspect_Drl_No,Suspect_Drl_Exp,Victim_Type,Victim_Fname,Victim_Lname,Victim_Severity,Victim_Age,Victim_Sex,Victim_Civil_Status,Victim_Address,Victim_Vehicle,Victim_Vehicle_Body_Type,Victim_Plate_No,Victim_Reg_Owner,Victim_Drl_No,Victim_Drl_Exp,Narrative,Investigator_id,date_added,added_by,archive,read_status
+Pasig,PNP-Pasig,"""Damage to Property""",,01/09/2021,8:55:00,Friday,Bumped From Behind,2,Day,Fair,Solved,2,Maybunga,"""F. Legaspi St., Brgy. Maybunga, Pasig City""",,,14.57537898,121.0917664,Dry,Asphalt,No,No,Straight/Flat,Driver,Jomari,Rodriguez,Unharmed,31,Male,Single,"""B1 L1 P2G PEACH ST., GREENWOODS EXEC. VILL., CAINTA RIZAL""",TOYOTA VIOS,SEDAN,ZPH 430,Jomari Rodriguez,N03-14-028922/PROFESSIONAL   ,10/01/2025,Driver,Issiah,Aragon,Unharmed,20,Male,Single,"""545 J P Rizal St., Lamuan Malanday""",Chevrolet Optra,Sedan,ZAZ 736,Issiah Aragon,N02-14-027230 / NON-PROFESSIONAL,09/07/2027,"""RIRI-DTP-PI
+T.  D.  P.  O.:08:55 AM JULY 01, 2020 WEDNESDAY ALONG F. LEGASPI ST., BRGY. MAYBUNGA, PASIG CITY
+
+COLLISION TYPE: BUMPED FROM BEHIND
+WEATHER       : FAIR/ CLEAR          LIGHT         : DAYTIME 
+ROAD CHARACTER: STRAIGHT/FLAT        SURFACE COND. : DRY
+SURFACE TYPE  : ASPHALT              ROAD CLASS    : CITY
+ROAD REPAIR   : NO                   HIT AND RUN   : NO
+
+VEHICLE INVOLVED:
+
+VEHICLE 1 : CHEVROLET OPTRA  BODY TYPE: SEDAN          PLATE NO.: ZAZ 736
+REG. OWNER: JALDWIN FRANCISCO SABLAY                  YEAR MODEL: 2005
+ADDRESS   : 545 J P RIZAL ST., LAMUAN MALANDAY, MARIKINA  GENDER: MALE
+DRIVER  1 : DAVE OFAMEN RAMONES    AGE: 39 Y/O            
+ADDRESS   : NO. 26 STA. MARIA SUBD. SANTOLAN, PASIG CITY
+DRL NO.   : N02-14-027230 / NON-PROFESSIONAL  
+
+VEHICLE 2 : BICYCLE, CLASSIC JAPANESE BICYCLE, COLOR PINK, DRIVEN BY ISSIAH ARAGON, MALE, 20, WORKING STUDENT AND RESIDENCE OF ROAD RUNNER ST., FLOODWAY SAN JUAN CAINTA, RIZAL   
+
+NARRATIVE DESCRIPTION OF ACCIDENT:
+INITIAL INVESTIGATION REVEALS THAT PRIOR TO THE INCIDENT, IT APPEARS THAT V1 AND V2 WERE TRAVERSING ALONG F. LEGASPI ST., BRGY. MAYBUNGA, PASIG CITY. UPON REACHING THE PLACE OF ACCIDENT, WHEN V1 AND V2 SIDESWIPED EACH OTHER. AS A RESULT, THEREOF, V2 DAMAGE TO HIS FRONT WHEEL PORTION OF HIS BICYCLE, LIKEWISE V1 ALSO DAMAGE TO HIS FRONT LEFT BUMPER PORTION WITH UNDETERMINED AMOUNT. SAID ACCIDENT WERE ONE (1) INJURED PERSON SUSTAINED INJURY AND IMMEDIATELY BROUGHT BY V1 DRIVER TO PGH PASIG CITY FOR MEDICAL ATTENTION AS OF THIS WRITING.
+
+STATUS OF THE CASE: FOR ISSUANCE OF POLICE REPORT.""",8,09/07/2021,Servidad,No,No
+Pasig,PNP-Pasig,"""Damage to Property,Physical Injury""",40,27/09/2021,6:50:00,Monday,Side Impact,2,Day,Fair,Solved,2,Pinagbuhatan,"""ALONG MASIKAP ST BRGY SANTOLAN PASIG CITY""",,,14.60966776,121.0871392,Dry,Asphalt,No,No,Straight/Flat,Driver,Lorenzo,La Madrid,Unharmed,33,Male,Single,"""Unit B Remedios Bldg. 55 Roces Avenue, 1103""",HONDA CIVIC,Sedan,FILE NO.: 1303-00000153425,Lorenzo La Madrid,N01-17-008870 / NON-PROFESSIONAL   ,04/04/2025,Driver,John,Artates,Unharmed,43,Male,Single,"""418 Kaimito St., Napico, Manggahan, Pasig City""",FORD RANGER,Pick-Up,ZAZ 760,John Artates,C10-15-023067 / PROFESSIONAL,04/10/2027,"""T.  D.  P.  O.:
+TIME:  11:45 pm
+DATE:  March 04, 2019
+DAY:   Monday
+PLACE: Along Amang Rodriguez corner, Marcos Hi-way Brgy. Santolan, Pasig City.
+
+COLLISION TYPE: Side/swipe
+WEATHER       : Fair                          LIGHT         :Night
+ROAD CHARACTER: Straight                      SURFACE COND. :Dry
+SURFACE TYPE  : Asphalt                       ROAD CLASS    :City
+ROAD REPAIR   : No                            HIT and RUN   :No
+
+VEHICLE INVOLVED:
+VEHICLE 1:  Yamaha mio BODY TYPE: Motorcycle             MV NO.: 1303-0426538
+REG. OWNER: Berlizza Gallego y Cruz                      YEAR MODEL: 2016
+DRIVER  1:  Daniel Gallego y Cruz     AGE: 21 y/o        GENDER: Male
+ADDRESS:    296 shoe ave conception Uno Marikina City
+DRL No.:    N01-16-000370
+
+VEHICLE 2:  Nissan Sentra  BODY TYPE: Sedan              PLATE NO.: UVC673
+REG. OWNER: Goldcars Transport corp                      YEAR MODEL: 2009
+DRIVER  2:  John Artates    AGE: 43 y/o              GENDER: Male
+ADDRESS:    San Carlos city
+DRL No.:    F06-08-000660 OVR No 0678456
+
+PASSENGER OF V1 Back ride
+1. Glenda D. Peromingan, female, 20 years old is residing at samba Homes Antipolo city.
+NARRATIVE DESCRIPTION OF ACCIDENT:
+
+            Initial investigation reveals that prior to the incident; it appears that both vehicles were traversing along Amang roadriguez Brgy Santolan Pasig City. From south heading towards north (general direction of Marcos hi-way). Wherein V1 is in the right of V2 and V1 is in the inner right most lane while V2 is in the second lane. Upon reaching at certain point of accident as alleged. Both vehicles are in the process of executing/performing right turn at this juncture, the front left side part portion of V1 and the front bumper and fender part portion of V2 accidentally collided against each other. As result thereof, D1 and the aforementioned passenger sustained injuries and proceed to hospital for medical check-up and both vehicles incurred undetermined amount of damages.
+
+STATUS OF THE CASE:FOR ISSUANCE OF POLICE REPORT/AMICABLE SETTELED""
+",16,17/11/2021,Servidad,No,No
+Pasig,PNP-Pasig,"""Damage to Property,Physical Injury""",40,28/09/2021,10:30:00,Tuesday,Sideswiped,2,Day,Fair,Solved,1,San Miguel,"""ALONG C5 ROAD COR  PASIG BLVD BRGY BAGONG ILOG PASIG CITY""",,,14.58969593,121.0795712,Dry,Asphalt,No,No,Straight/Flat,Driver,Antonio,Constacio,Unharmed,41,Female,Single,"""89 D. Tuazon Street""",Toyota Vios,Sedan,ZPH 430,Antonio Constacio,N01-17-008870 / NON-PROFESSIONAL   ,05/04/2025,Driver,Marc,Cortes,Unharmed,19,Male,Single,"""B1 L1 P2G Peach St., Greenwoods Exec. Vill., Cainta Rizal""",SUZUKI SWIFT,Hatchback,UD-4967,Marc Cortes,C10-15-023067 / PROFESSIONAL,05/10/2027,"""TYPE OF INCIDENT:
+Reckless Imprudence Resulting in Damage to Property (RIRI/DTP) DATE/TIME OF INCIDENT:
+March 05, 2019/ 1930H
+DATE/TIME OF RECORDED:
+     March 05, 2019/ 2130H   PLACE OF INCIDENT:
+Along Ortigas Ave Ext eastbound Jenny’s Brgy Rosario Pasig City
+ENTER IN DETAIL THE NARRATIVE OF THE INCIDENT OR EVENT ANSWERING THE WHO, WHAT, WHEN, WHERE, WHY AND HOW OF REPORTING.
+COLLISION TYPE     : SIDESWIPED WEATHER                     : FAIR
+LIGHT                        : NIGHT SURFACE CONDITION : DRY
+ROAD CHARACTER: STRAIGHT/FLAT  SURFACE TYPE            : ASPHALT
+MAIN CAUSE            : HUMAN ERROR ROAD CLASS                : NATIONAL
+
+TYPE OF VEH1 :HONDA CIVIC SEDAN PLATE NO: UJQ-271 MODEL: 2013 
+DRIVER:MA. ALVI  REDADA y SISON   AGE:    38 years old GENDER: Female
+ADDRESS:416 MAIA Bldg Mirea Res Brgy Santolan Pasig City 
+LICENSE TYPE : N25-11-019430/Non-Prof EXPIRATION:  2022-08-01
+REG. OWNER: Jenel N Redada
+ADDRESS:  140 Capetown St Green Park Village Brgy Manggahan Pasig City
+
+TYPE OF VEH2: DAEWOO RRCG TRUCK BUS PLATE : AAU-7300 MODEL: 2014
+DRIVER: JOEL BADILLA y ONATO AGE:     36 years old GENDER: Male
+ADDRESS: Santan St Boso Boso San Jose Antipolo City
+LICENSE TYPE: D19-12-003705/Prof EXPIRATION: 2023-07-06
+REG. OWNER: RRCG Transport System Co Inc
+ADDRESS: KM 18 Ortigas Ave Ext Cainta Rizal
+
+NARRATIVE DESCRIPTION OF ACCIDENT:
+                  
+ Initial investigation disclosed that prior to the incidents both vehicles travelling the same direction from west to east of Ortigas Ave Ext Jenny’s Brgy Rosario Pasig City whereas veh1 at the right of veh2. When upon reaching to the place of accident as alleged the left side front door panel portion of veh1 and the right side front bumper portion of veh2 accidentally collided to each other. As a result thereof both vehicles incurred damages without injury to any person. X-x-x-x—x-x-x                   
+                                               
+
+STATUS OF THE CASE:  FOR ISSUANCE OF POLICE REPORT
+
+(DETAILS OF THE NARRATIVE SHALL BE THE BASIS IN THE ENTRY OF RECORD IN THE POLICE BLOTTER)""
+",16,17/11/2021,Servidad,No,No

@@ -149,7 +149,17 @@
     <strong>Showing the results for "{{ searched }}"</strong>
 </p>
 {% endif %}
-
+<script>
+$(document).ready(function(){
+    $('button[data-bs-toggle="pill"]').on('show.bs.tab', function(e) {
+        localStorage.setItem('activeTab', $(e.target).attr('href'));
+    });
+    var activeTab = localStorage.getItem('activeTab');
+    if(activeTab){
+        $('#pills-tab button[href="' + activeTab + '"]').tab('show');
+    }
+});
+</script>
 <div class="container"> 
 
     <div class="row">
@@ -157,7 +167,7 @@
 
 
         <li class="nav-item " role="presentation">
-            <button class="active btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;
+            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-report" id="pills-public-report-tab" data-bs-toggle="pill" data-bs-target="#pills-public-report" type="button" role="tab" aria-controls="pills-home" aria-selected="true"><i class="bi bi-journal-richtext"></i>&nbsp;
                 General Public's Report
 
                 {% for a in all %}
@@ -165,8 +175,10 @@
                         {% if a.Members_User.Member_Type == 'Admin' %}
                             {% if public_report_count > 0 %}
                                 ({{ public_report_count }})
+                            {% else %}
+                                (0)
                             {% endif %}
-                            {% endif %}
+                        {% endif %}
                     {% endifequal %}
                 {% endfor %}
 
@@ -176,7 +188,7 @@
                             {% if not_yet_recorded_count > 0 %}
                                 ({{ not_yet_recorded_count }})
                             {% endif %}
-                            {% endif %}
+                        {% endif %}
                     {% endifequal %}
                 {% endfor %}
 
@@ -188,7 +200,7 @@
             {% ifequal a.id request.session.authorized_id %}
                 {% if a.Members_User.Member_Type == 'Admin' %}
                 <li class="nav-item " role="presentation">
-                    <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-all-replies" id="pills-public-all-replies-tab" data-bs-toggle="pill" data-bs-target="#pills-public-all-replies" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-person-check-fill"></i>&nbsp;
+                    <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-public-all-replies" id="pills-public-all-replies-tab" data-bs-toggle="pill" data-bs-target="#pills-public-all-replies" type="button" role="tab" aria-controls="pills-profile" aria-selected="false"><i class="bi bi-inboxes"></i></i>&nbsp;
                         All replies
 
                         {% if public_replies_count > 0 %}
@@ -213,16 +225,17 @@
                     
                     </button>
                 </li>
+
+                <a class="btn btn-outline-primary btn-sm" href="{% url 'submit_report_admin' %}" target="_blank" role="button"><i class="bi bi-plus-circle"></i> &nbsp;Add a Report</a>
+               
                 {% endif %}
             {% endifequal %}
         {% endfor %}
 
        
-        <li class="nav-item " role="presentation">
-            <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" href="#pills-archives" id="pills-profile-tab" data-bs-toggle="pill" data-bs-target="#pills-archives" type="button" role="tab" aria-controls="pills-archives" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;
-                Archives</button>
-        </li>
+        
         </div>
+        
     </ul>
       <div class="tab-content row" id="pills-tabContent">
         <!-- tab for public report -->
@@ -231,10 +244,13 @@
             <!-- Search bar -->
             <form class="d-flex" method="POST">
                 {% csrf_token %}
-                <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
-                <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                <div class="input-group input-group-sm mb-3 mt-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                    <input class="form-control me-2" name="searched" type="search" placeholder="Search for a name, barangay, narrative, or month (MM)" style="font-family: 'Roboto', sans-serif">
+                    <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                </div>
             </form>
-        
+            
             <div style="" class="visually-hidden">
                 <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Read &nbsp;<i class="fas fa-envelope msg-icon"></i></a>
                 <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Unread &nbsp;<i class="fas fa-envelope-open msg-icon"></i></a>
@@ -260,7 +276,13 @@
                                             <!-- star -->
                                             <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
                                             <td style="width: 15%;">
-                                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }}</span>
+                                                <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> 
+                                                    {% ifequal report.User_ID_id NULL %} 
+                                                        {{ report.Admin_Sender.Members_Fname }} {{ report.Admin_Sender.Members_Lname }} 
+                                                    {% else %} 
+                                                        {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }} 
+                                                    {% endifequal %} 
+                                                </span>
                                             </td>
                                             <!-- Message -->
                                             <td class="text-truncate" style="width: 58%;">
@@ -281,6 +303,7 @@
                                 
                                 {% if a.Members_User.Member_Type == 'Crime Statistician' %}
                                     {% for report in assigned_pasig_public_reports %} 
+                                    
                                         <!-- for encoder: only assigned cases -->
                                         <tr class =" {% ifequal report.Read_by_encoder 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
                                             <!-- label -->
@@ -293,7 +316,13 @@
                                             <!-- star -->
                                             <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
                                             <td style="width: 15%;">
-                                                <span class="mb-0 {% ifequal report.Read_by_encoder 'Yes' %} text-muted {% endifequal %}"> {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }}</span>
+                                                <span class="mb-0 {% ifequal report.Read_by_encoder 'Yes' %} text-muted {% endifequal %}">
+                                                {% ifequal report.User_ID_id NULL %} 
+                                                    {{ report.Admin_Sender.Members_Fname }} {{ report.Admin_Sender.Members_Lname }} 
+                                                {% else %} 
+                                                    {{ report.User_ID.gen_fname }} {{ report.User_ID.gen_surname }} 
+                                                {% endifequal %} 
+                                                </span>
                                             </td>
                                             <!-- Message -->
                                             <td class="text-truncate" style="width: 58%;">
@@ -301,8 +330,7 @@
                                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
                                                     {% ifequal report.Report_Created 'Yes' %}
-                                                    <span class="badge rounded-pill text-white font-medium bg-custom me-2"> Recorded </span>
-
+                                                        <span class="badge rounded-pill text-white font-medium bg-custom me-2"> Recorded </span>
                                                     {% endifequal %}
                                                     <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
                                                 </a>
@@ -317,10 +345,65 @@
                                    
                             {% endifequal %}
                         {% endfor %}
-
-
                     </tbody>
                 </table>
+
+            {% if request.session.authorized_id %}
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Admin' %} 
+                        <ul class="pagination">
+                            {% if public_reports_list.has_previous %}
+    
+                                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                                <li class="page-item"><a class="page-link" href="?page= {{public_reports_list.previous_page_number}}">Previous</a></li>
+                            {% endif %}
+    
+                            {% if public_reports_list.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page={{public_reports_list.next_page_number }}">Next</a></li>
+                                <li class="page-item"><a class="page-link" href="?page={{public_reports_list.paginator.num_pages}}">Last</a></li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}
+            {% endif %}
+
+            {% if request.session.authorized_id %}
+                {% for a in all %}
+                    {% ifequal a.id request.session.authorized_id %}
+                        {% if a.Members_User.Member_Type == 'Crime Statistician' %} 
+                        <ul class="pagination">
+                            {% if assigned_pasig_public_reports.has_previous %}
+    
+                                <li class="page-item"><a class="page-link" href="?page8=1">First</a></li>
+                                <li class="page-item"><a class="page-link" href="?page8= {{assigned_pasig_public_reports.previous_page_number}}">Previous</a></li>
+                            {% endif %}
+    
+                            {% if assigned_pasig_public_reports.has_next %}
+                                <li class="page-item"><a class="page-link" href="?page8={{assigned_pasig_public_reports.next_page_number }}">Next</a></li>
+                                <li class="page-item"><a class="page-link" href="?page8={{assigned_pasig_public_reports.paginator.num_pages}}">Last</a></li>
+                            {% endif %}
+                        </ul>
+                        {% endif %}
+                    {% endifequal %}
+                {% endfor %}
+            {% endif %}
+                
+<!--                 
+                <ul class="pagination">
+            {% if public_reports_list.has_previous %}
+
+                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page= {{public_reports_list.previous_page_number}}">Previous</a></li>
+            {% endif %}
+
+            {% if public_reports_list.has_next %}
+                <li class="page-item"><a class="page-link" href="?page={{public_reports_list.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page={{public_reports_list.paginator.num_pages}}">Last</a></li>
+            {% endif %}
+
+            </ul> -->
             </div> <!--Close Mail-->
         
         </div>
@@ -331,8 +414,11 @@
             <!-- Search bar -->
             <form class="d-flex" method="POST">
                 {% csrf_token %}
-                <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
-                <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                <div class="input-group input-group-sm mb-3 mt-3">
+                    <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+                    <input class="form-control me-2" name="searched" type="search" placeholder="Search for a name, barangay, narrative, or month (MM)" style="font-family: 'Roboto', sans-serif">
+                    <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                </div>
             </form>
         
             <div style="" class="visually-hidden">
@@ -357,11 +443,24 @@
                             <!-- star -->
                             <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
                             <td style="width: 15%;">
-                                {% for info in pub %}
-                                    {% ifequal reply.Sender info.id %}
-                                        <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">From: {{ info.gen_fname }} {{ info.gen_surname }}</span>
-                                    {% endifequal %}
-                                {% endfor %}
+                                {% ifequal reply.Sender_Type 'Public' %}
+                                    {% for info in pub %}
+                                        {% ifequal reply.Sender info.id %}
+                                            <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">
+                                                From: {{ info.gen_fname }} {{ info.gen_surname }}
+                                            </span>
+                                        {% endifequal %} 
+                                    {% endfor %}
+                                {% else %}    
+                                    {% for a_ in all %}
+                                        {% ifequal reply.Sender a_.id %}
+                                            <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">
+                                                From: {{ a_.Members_Fname }} {{ a_.Members_Lname }}
+                                            </span>
+                                        {% endifequal %} 
+                                    {% endfor %}
+                                {% endifequal %}
+                                
                             </td>
                             <!-- Message -->
                             <td class="text-truncate" style="width: 58%;">
@@ -372,8 +471,11 @@
                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ prev.Reported_District }}</span>
                                     <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
                                     <span class=" text-dark">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
+                                
                                     {% endifequal %}
+
                                 {% endfor %}
+                                <!-- {{ reply.Response }} -->
                                 </a>
                             </td>
                             <!-- Attachment -->
@@ -385,6 +487,19 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                 <ul class="pagination">
+                    {% if public_replies.has_previous %}
+
+                        <li class="page-item"><a class="page-link" href="?page3=1">First</a></li>
+                        <li class="page-item"><a class="page-link" href="?page3= {{public_replies.previous_page_number}}">Previous</a></li>
+                    {% endif %}
+
+                    {% if public_replies.has_next %}
+                        <li class="page-item"><a class="page-link" href="?page3={{public_replies.next_page_number }}">Next</a></li>
+                        <li class="page-item"><a class="page-link" href="?page3={{public_replies.paginator.num_pages}}">Last</a></li>
+                    {% endif %}
+
+                </ul>
             </div> <!--Close Main Inbox-->
             {% else %}
             <center>
@@ -396,14 +511,18 @@
             {% endif %}
         
         </div>
-        <!-- tab for public verification -->
+        <!-- tab for public verification --> 
         <div class="tab-pane fade" id="pills-public-verification" role="tabpanel" aria-labelledby="pills-profile-tab">
-            <form action="">
+            <!-- Search bar -->
+            <form class="d-flex" method="POST">
+                {% csrf_token %}
                 <div class="input-group input-group-sm mb-3 mt-3">
                     <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search Report" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-sm ">
-                  </div>
+                    <input class="form-control me-2" name="searched" type="search" placeholder="Search for a name" style="font-family: 'Roboto', sans-serif">
+                    <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+                </div>
             </form>
+
             <div class="visually-hidden">
                 <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Read &nbsp;<i class="fas fa-envelope msg-icon"></i></a>
                 <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Unread &nbsp;<i class="fas fa-envelope-open msg-icon"></i></a>
@@ -449,6 +568,19 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <ul class="pagination">
+            {% if sign_up_validation.has_previous %}
+
+                <li class="page-item"><a class="page-link" href="?page2=1">First</a></li>
+                <li class="page-item"><a class="page-link" href="?page2= {{sign_up_validation.previous_page_number}}">Previous</a></li>
+            {% endif %}
+
+            {% if sign_up_validation.has_next %}
+                <li class="page-item"><a class="page-link" href="?page2={{sign_up_validation.next_page_number }}">Next</a></li>
+                <li class="page-item"><a class="page-link" href="?page2={{sign_up_validation.paginator.num_pages}}">Last</a></li>
+            {% endif %}
+
+            </ul>
             </div> <!--Close Mail-->
         
         </div>

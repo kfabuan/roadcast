@@ -1,6 +1,16 @@
 {% extends 'nav_admin.html' %}
 {% load static %}
-{% block design %}<link rel="stylesheet" href="{% static 'css/member_prof.css' %}">{% endblock %}
+{% block design %}
+<link rel="stylesheet" href="{% static 'css/member_prof.css' %}">
+
+<style>
+   .view-pass {
+    cursor: pointer;
+    color: #1b5082;
+  }
+</style>
+
+{% endblock %}
 {% block title %} Member Profile {% endblock %}
 
 {% block content %}
@@ -132,7 +142,8 @@
                           <h6 class="mb-0">Password</h6>
                         </div>
                         <div class="col-sm-9 text-secondary">
-                          {{members.Members_Password }}
+                          <input type="password" id="password" class="text-secondary view-pass" value="{{members.Members_Password }}" style="border: none; outline: none; background-color: transparent;" readonly>
+                          <i class="bi bi-eye-slash view-pass" id="togglePassword"></i>
                         </div>
                       </div>
 
@@ -162,4 +173,17 @@
             </div>
         </div>
         <section style="height: 50px;"></section>
+
+        <script>
+          const togglePassword = document.querySelector('#togglePassword');
+          const password = document.querySelector('#password');
+        
+          togglePassword.addEventListener('click', function (e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // toggle the eye / eye slash icon
+            this.classList.toggle('bi-eye');
+        });
+        </script>
 {% endblock %}

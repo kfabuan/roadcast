@@ -657,7 +657,7 @@ def notif_sign_up_validation (request, signup_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -714,7 +714,7 @@ def genpub_verified(request, pk=None):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -800,7 +800,7 @@ def genpub_rejected(request,pk):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -877,7 +877,7 @@ def DashboardView (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -1169,7 +1169,7 @@ def view_archive_incidents (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -1255,7 +1255,7 @@ def view_incidents (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -1323,7 +1323,10 @@ def view_incidents (request):
             if request.session['public_id']:
                 searched = request.POST['searched']
 
-                incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Case_Status__icontains = searched)).order_by('-id')
+                incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
+                paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
+                page_number = request.GET.get('page') #ganto talaga
+                incident_model = paginator.get_page(page_number) #ito ren, except sa var name
 
                 context = {
                     'searched': searched,
@@ -1338,7 +1341,11 @@ def view_incidents (request):
 
         except:
             searched = request.POST['searched']
-            incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Case_Status__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).order_by('-id')
+            incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
+            
+            paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
+            page_number = request.GET.get('page') #ganto talaga
+            incident_model = paginator.get_page(page_number) #ito ren, except sa var name
 
             context = {
                 'searched': searched,
@@ -1366,7 +1373,7 @@ def create_incident_report (request, gen_pub_report_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -1573,7 +1580,7 @@ def add_incident (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -1929,7 +1936,7 @@ def upload_csv (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -1963,13 +1970,18 @@ def upload_csv (request):
         messages.error(request, 'Error: This is not a CSV file.')
 
     brgy_list = Tbl_barangay.objects.all()
-    data_set = csv_file.read().decode('UTF-8')
+    data_set = csv_file.read().decode('latin-1')
 
     # setup a stream which is when we loop through each line we are able to handle a data in a stream
     io_string = io.StringIO(data_set)
     next(io_string)
 
-    for column in csv.reader(io_string, delimiter='|'):
+    for column in csv.reader(io_string, delimiter=','):
+        if column[3]:
+            Week = column[3]
+        else:
+            Week = None
+
         if column[13]:
             for brgy in brgy_list:
                 if brgy.Barangay == column[13]:
@@ -2020,7 +2032,7 @@ def upload_csv (request):
             City=column[0],
             UnitStation=column[1],
             CrimeOffense=column[2][1:-1],
-            Week=column[3],
+            Week=Week,
             Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
             Time=column[5],
             Day=column[6],
@@ -2107,6 +2119,11 @@ def processCSV (request):
             next(io_string)
 
             for column in csv.reader(io_string, delimiter=','):
+                if column[3]:
+                    Week = column[3]
+                else:
+                    Week = None
+
                 if column[13]:
                     for brgy in brgy_list:
                         if brgy.Barangay == column[13]:
@@ -2139,12 +2156,12 @@ def processCSV (request):
                 else:
                     date_added = None
 
-                _, created = Tbl_pasig_incidents.objects.get_or_create(
+                _, created = Tbl_pasig_incidents.objects.update_or_create(
 
                     City=column[0],
                     UnitStation=column[1],
                     CrimeOffense=column[2],
-                    Week=column[3],
+                    Week=Week,
                     Date= column[4][6:] + "-" + column[4][3:5] + "-" + column[4][:2],
                     Time=column[5],
                     Day=column[6],
@@ -2254,7 +2271,7 @@ def encoder_view_incident_detail(request, incident_id): #pag view lang ng edit p
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -2315,7 +2332,7 @@ def view_solved_cases_detail (request, incident_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -2578,7 +2595,7 @@ def public_view_incident_detail(request, incident_id): #pag view lang ng edit pa
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -2654,7 +2671,7 @@ def monthly_report (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3091,6 +3108,10 @@ def notification (request):
     assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
     not_yet_recorded_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
 
+    #for admin
+    public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+    public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+
     #notif count
     unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
     try:
@@ -3105,7 +3126,7 @@ def notification (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3123,19 +3144,16 @@ def notification (request):
         pass
 
 
-    public_replies = None
-    public_report_count = None
-    public_replies_count = None
-
     if request.method   == "POST":
         searched        = request.POST['searched']
-        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
-        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).order_by('-Reported_Date')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Assigned_Investigator__isnull=False)).order_by('-Reported_Date')
+        sign_up_validation = tbl_genpub_users.objects.filter(Q(gen_fname__icontains = searched)|Q(gen_surname__icontains = searched)).order_by('-id')
 
         try:
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
-                public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                public_replies = Tbl_public_report_response.objects.filter(Q(Response__icontains = searched) |Q(Report_id__Reported_Brgy_id__Barangay__icontains = searched) | Q(Report_id__User_ID__gen_fname__icontains = searched) | Q(Report_id__User_ID__gen_surname__icontains = searched) | Q(Report_id__Reported_Date__icontains = searched)| Q(Report_id__Admin_Sender_id__Members_Fname__icontains = searched)).order_by('-Response_id')
 
         except: pass
 
@@ -3147,7 +3165,7 @@ def notification (request):
 
         except: pass
 
-
+        
         data = {
 
             'searched': searched,
@@ -3174,7 +3192,9 @@ def notification (request):
         try:
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
-                public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                # public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                public_replies = Tbl_public_report_response.objects.order_by('-Response_id')
+
 
         except: pass
 
@@ -3185,7 +3205,24 @@ def notification (request):
                 public_replies_count = None
 
         except: pass
+     
+        
+        paginator = Paginator(pasig_public_reports, 10)
+        page_number = request.GET.get('page')
+        pasig_public_reports = paginator.get_page(page_number)
 
+        paginator2 = Paginator(sign_up_validation, 10)
+        page_number2 = request.GET.get('page2')
+        sign_up_validation = paginator2.get_page(page_number2)
+       
+        paginator3 = Paginator(public_replies, 10)
+        page_number3 = request.GET.get('page3')
+        public_replies = paginator3.get_page(page_number3)
+
+        paginator8 = Paginator(assigned_pasig_public_reports, 10)
+        page_number8 = request.GET.get('page8')
+        assigned_pasig_public_reports = paginator8.get_page(page_number8)
+        
         data = {
             'not_yet_recorded_count':not_yet_recorded_count,
             'pasig_incident_list': pasig_incident_list,
@@ -3225,7 +3262,7 @@ def notif_public_report_detail (request, gen_pub_report_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3260,6 +3297,9 @@ def notif_public_report_detail (request, gen_pub_report_id):
     unread_public_report.Read_by_encoder = "Yes"
     unread_public_report.save()
 
+    auth_info = None
+    pub_info = None
+    replies = None
     try:
         if request.session['authorized_id']:
             auth_id = request.session['authorized_id']
@@ -3268,7 +3308,8 @@ def notif_public_report_detail (request, gen_pub_report_id):
             received_replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Receiver=auth_id)).order_by('Response_id')
             received_replies.update(Read_Status = "Yes")
 
-            replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Sender=auth_id)|Q(Receiver=auth_id)).order_by('Response_id')
+            # replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).filter(Q(Sender=auth_id)|Q(Receiver=auth_id)).order_by('Response_id')
+            replies = Tbl_public_report_response.objects.filter(Q(Report_id=gen_pub_report_id)).order_by('Response_id')
 
             pub_info = tbl_genpub_users.objects.all()
     except:
@@ -3349,7 +3390,7 @@ def sub_notification (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3374,8 +3415,8 @@ def sub_notification (request):
             if request.session['authorized_id']:
                 auth_id = request.session['authorized_id']
                 subrep_row = Tbl_add_members.objects.get(id=auth_id)
-                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
-                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
+                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)|Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)|Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).order_by('-id')
         except:
             pass
 
@@ -3396,7 +3437,13 @@ def sub_notification (request):
                 inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).order_by('-id')
         except:
             pass
+        paginator = Paginator(fwd_reports, 10)
+        page_number = request.GET.get('page')
+        fwd_reports = paginator.get_page(page_number)
 
+        paginator2 = Paginator(inv_assigned, 10)
+        page_number2 = request.GET.get('page2')
+        inv_assigned = paginator2.get_page(page_number2)
         context    = {
             "unread_notif_count":unread_notif_count,
             "fwd_reports": fwd_reports,
@@ -3426,7 +3473,7 @@ def sub_notification_detail (request, report_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3514,7 +3561,7 @@ def public_inbox (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3531,43 +3578,99 @@ def public_inbox (request):
     except:
         pass
 
-    pub_inbox = None
-    pub_info = None
-    admin_replies = None
-    admin_info = None
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        pub_inbox = None
+        pub_info = None
+        admin_replies = None
+        admin_info = None
 
-    try:
-        if request.session['public_id']:
-            pub_id = request.session['public_id']
-            pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id).order_by('-id') #list ng reports nya
-            pub_info = tbl_genpub_users.objects.get(id=pub_id)
+        try:
+            if request.session['public_id']:
+                pub_id = request.session['public_id']
+                pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id).filter(Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)).order_by('-id') #list ng reports nya
+                pub_info = tbl_genpub_users.objects.get(id=pub_id)
 
-            admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id')
-            admin_info = Tbl_add_members.objects.all()
-    except:
-        pass
+                admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).filter(Q(Response__icontains = searched)|Q(Report_id__Reported_Brgy_id__Barangay__icontains = searched)).order_by('-Response_id')
+                admin_info = Tbl_add_members.objects.all()
+        except:
+            pass
 
-    try:
-        if request.session['authorized_id']:
-            context    = {
+        try:
+            if request.session['authorized_id']:
+                context    = {
+                "all": authorized,
+                "pub": pub,
+            }
+            return render(request, '403.html', context)
+        except: pass
+
+        # paginator = Paginator(pub_inbox, 10)
+        # page_number = request.GET.get('page')
+        # pub_inbox = paginator.get_page(page_number)
+
+        # paginator6 = Paginator(admin_replies, 10)
+        # page_number6 = request.GET.get('page6')
+        # admin_replies = paginator6.get_page(page_number6)
+
+        context    = {
+            'searched': searched,
             "all": authorized,
             "pub": pub,
+            "unread_notif_count":unread_notif_count,
+
+            "pub_inbox":pub_inbox,
+            "pub_info":pub_info,
+            "admin_replies":admin_replies,
+            "admin_info":admin_info,
         }
-        return render(request, '403.html', context)
-    except: pass
+        return render (request, 'gen_inbox.html', context)
 
-    context    = {
-        "all": authorized,
-        "pub": pub,
-        "unread_notif_count":unread_notif_count,
+    else:
 
-        "pub_inbox":pub_inbox,
-        "pub_info":pub_info,
-        "admin_replies":admin_replies,
-        "admin_info":admin_info,
+        pub_inbox = None
+        pub_info = None
+        admin_replies = None
+        admin_info = None
 
-    }
-    return render (request, 'gen_inbox.html', context)
+        try:
+            if request.session['public_id']:
+                pub_id = request.session['public_id']
+                pub_inbox = Tbl_public_report.objects.filter(User_ID=pub_id).order_by('-id') #list ng reports nya
+                pub_info = tbl_genpub_users.objects.get(id=pub_id)
+
+                admin_replies = Tbl_public_report_response.objects.filter(Receiver=pub_id).order_by('-Response_id')
+                admin_info = Tbl_add_members.objects.all()
+        except:
+            pass
+
+        try:
+            if request.session['authorized_id']:
+                context    = {
+                "all": authorized,
+                "pub": pub,
+            }
+            return render(request, '403.html', context)
+        except: pass
+        paginator = Paginator(pub_inbox, 10)
+        page_number = request.GET.get('page')
+        pub_inbox = paginator.get_page(page_number)
+
+        paginator6 = Paginator(admin_replies, 10)
+        page_number6 = request.GET.get('page6')
+        admin_replies = paginator6.get_page(page_number6)
+        context    = {
+            "all": authorized,
+            "pub": pub,
+            "unread_notif_count":unread_notif_count,
+
+            "pub_inbox":pub_inbox,
+            "pub_info":pub_info,
+            "admin_replies":admin_replies,
+            "admin_info":admin_info,
+
+        }
+        return render (request, 'gen_inbox.html', context)
 
 #inbox
 def public_inbox_detail (request, report_id):
@@ -3589,7 +3692,7 @@ def public_inbox_detail (request, report_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3772,7 +3875,7 @@ def unsolved_cases (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3829,6 +3932,152 @@ def processDeleteUnsolved (request, incident_id):
 def logout (request):
     return render (request, 'logout.html')
 
+#ADMIN
+def submit_report_admin (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+    except:
+        pass
+
+    try:
+        if request.session['public_id']:
+            context    = {
+            "all": authorized,
+            "pub": pub,
+        }
+        return render(request, '403.html', context)
+    except: pass
+
+    # try:
+    if request.session['authorized_id']:
+        if request.method == "GET":
+            context    = {
+                "all": authorized,
+                "pub": pub,
+                "unread_notif_count":unread_notif_count
+            }
+            return render (request, 'submit_report_admin.html', context) #Load view
+
+        #if form is submitted
+        else:
+            user_id = request.POST.get('user_id')
+            city = request.POST.get('city')
+            barangay = request.POST.get('Barangay')
+            district = request.POST.get('district')
+            address = request.POST.get('address')
+            along = request.POST.get('along')
+            corner = request.POST.get('corner')
+            latitude = request.POST.get('lat')
+            longitude = request.POST.get('lon')
+            narrative = request.POST.get('narrative')
+
+            if request.FILES.get('image'):
+                image_proof = request.FILES.get('image')
+            else:
+                image_proof = None
+
+            incident_report = Tbl_public_report.objects.create(
+                            # User_ID_id = None,
+                            Reported_City=city,
+                            Reported_Brgy_id=barangay,
+                            Reported_District=district,
+                            Reported_Location=address,
+                            Reported_Along=along,
+                            Reported_Corner=corner,
+                            Reported_Latitude = latitude,
+                            Reported_Longitude = longitude,
+                            Reported_Narrative = narrative,
+                            Reported_Image_Proof = image_proof,
+                            Report_Status = 'Unsolved',
+                            Read_Status='No',
+                            Recipient = 'Admin',
+                            Admin_Sender_id = user_id
+                            )
+
+            incident_report.save()
+
+            auth_all = Tbl_add_members.objects.all()
+            a_row = Tbl_add_members.objects.get(id=user_id)
+            brgy_list  = Tbl_barangay.objects.all()
+
+            for a in auth_all:
+                if (a.Members_User_id == 1):
+                    for x in brgy_list:
+                        if(x.id == int(barangay)):
+                            barangay_ = x.Barangay
+
+                            time = datetime.datetime.now().strftime('%H:%M:%S')
+                            incident_date = str(date.today())
+                            loc = address
+                            from_ = '' #roadcast main email in settings.py
+                            to_ = [a.Members_Email]
+                            reporter_fname = a_row.Members_Fname
+                            reporter_lname = a_row.Members_Lname
+                            reporter_email = a_row.Members_Email
+
+                            send_mail (
+                                'Roadcast: New Reported Incident in Brgy. ' + barangay_,
+                                render_to_string('new_gen_report_alert.html',{
+                                'barangay' : barangay_,
+                                'loc':loc,
+                                "time" : time,
+                                "incident_date" : incident_date,
+                                'reporter_fname': reporter_fname,
+                                'reporter_lname': reporter_lname,
+                                'reporter_email': reporter_email
+                                }),
+                                from_, to_,)
+
+            context = {
+                'success_message':"Your report has been submitted!",
+                "all": authorized,
+                "pub": pub,
+                "unread_notif_count":unread_notif_count,
+            }
+
+            return render (request, 'submit_report_admin.html', context) #Submitted
+
+    # except: pass
+
+    # context  = {
+    #         "all": authorized,
+    #         "pub": pub,
+    #         "unread_notif_count":unread_notif_count,
+    #         'success_message':"Your report has been submitted huh!",
+    #     }
+    # return render (request, 'submit_report_admin.html', context) #May error
+
 #PUBLIC
 def submit_report (request):
     #Sessions
@@ -3849,7 +4098,7 @@ def submit_report (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -3875,100 +4124,101 @@ def submit_report (request):
         return render(request, '403.html', context)
     except: pass
 
-    try:
-        if request.session['public_id']:
-            if request.method == "GET":
-                context    = {
-                    "all": authorized,
-                    "pub": pub,
-                    "unread_notif_count":unread_notif_count
-                }
-                return render (request, 'submit_report.html', context) #Load view
+    # try:
+    if request.session['public_id']:
+        if request.method == "GET":
+            context    = {
+                "all": authorized,
+                "pub": pub,
+                "unread_notif_count":unread_notif_count
+            }
+            return render (request, 'submit_report.html', context) #Load view
 
-            #if form is submitted
-            else:
-                user_id = request.POST.get('user_id')
-                city = request.POST.get('city')
-                barangay = request.POST.get('Barangay')
-                district = request.POST.get('district')
-                address = request.POST.get('address')
-                along = request.POST.get('along')
-                corner = request.POST.get('corner')
-                latitude = request.POST.get('lat')
-                longitude = request.POST.get('lon')
-                narrative = request.POST.get('narrative')
+        #if form is submitted
+        else:
+            user_id = request.POST.get('user_id')
+            city = request.POST.get('city')
+            barangay = request.POST.get('Barangay')
+            district = request.POST.get('district')
+            address = request.POST.get('address')
+            along = request.POST.get('along')
+            corner = request.POST.get('corner')
+            latitude = request.POST.get('lat')
+            longitude = request.POST.get('lon')
+            narrative = request.POST.get('narrative')
 
-                if request.FILES.get('image'):
-                    image_proof = request.FILES.get('image')
+            if request.FILES.get('image'):
+                image_proof = request.FILES.get('image')
 
-                incident_report = Tbl_public_report.objects.create(
-                                User_ID_id = user_id,
-                                Reported_City=city,
-                                Reported_Brgy_id=barangay,
-                                Reported_District=district,
-                                Reported_Location=address,
-                                Reported_Along=along,
-                                Reported_Corner=corner,
-                                Reported_Latitude = latitude,
-                                Reported_Longitude = longitude,
-                                Reported_Narrative = narrative,
-                                Reported_Image_Proof = image_proof,
-                                Report_Status = 'Unsolved',
-                                Read_Status='No',
-                                Recipient = 'Admin',
-                                )
+            incident_report = Tbl_public_report.objects.create(
+                            User_ID_id = user_id,
+                            Reported_City=city,
+                            Reported_Brgy_id=barangay,
+                            Reported_District=district,
+                            Reported_Location=address,
+                            Reported_Along=along,
+                            Reported_Corner=corner,
+                            Reported_Latitude = latitude,
+                            Reported_Longitude = longitude,
+                            Reported_Narrative = narrative,
+                            Reported_Image_Proof = image_proof,
+                            Report_Status = 'Unsolved',
+                            Read_Status='No',
+                            Recipient = 'Admin',
+                            )
 
-                incident_report.save()
+            incident_report.save()
 
-                auth_all = Tbl_add_members.objects.all()
-                pub_row = tbl_genpub_users.objects.get(id=user_id)
-                brgy_list  = Tbl_barangay.objects.all()
+            auth_all = Tbl_add_members.objects.all()
+            pub_row = tbl_genpub_users.objects.get(id=user_id)
+            brgy_list  = Tbl_barangay.objects.all()
 
-                for a in auth_all:
-                    if (a.Members_User_id == 1):
-                        for x in brgy_list:
-                            if(x.id == int(barangay)):
-                                barangay_ = x.Barangay
+            for a in auth_all:
+                if (a.Members_User_id == 1):
+                    for x in brgy_list:
+                        if(x.id == int(barangay)):
+                            barangay_ = x.Barangay
 
-                                time = datetime.datetime.now().strftime('%H:%M:%S')
-                                incident_date = str(date.today())
-                                loc = address
-                                from_ = '' #roadcast main email in settings.py
-                                to_ = [a.Members_Email]
-                                reporter_fname = pub_row.gen_fname
-                                reporter_lname = pub_row.gen_surname
-                                reporter_email = pub_row.gen_username
+                            time = datetime.datetime.now().strftime('%H:%M:%S')
+                            incident_date = str(date.today())
+                            loc = address
+                            from_ = '' #roadcast main email in settings.py
+                            to_ = [a.Members_Email]
+                            reporter_fname = pub_row.gen_fname
+                            reporter_lname = pub_row.gen_surname
+                            reporter_email = pub_row.gen_username
 
-                                send_mail (
-                                    'Roadcast: New Reported Incident in Brgy. ' + barangay_,
-                                    render_to_string('new_gen_report_alert.html',{
-                                    'barangay' : barangay_,
-                                    'loc':loc,
-                                    "time" : time,
-                                    "incident_date" : incident_date,
-                                    'reporter_fname': reporter_fname,
-                                    'reporter_lname': reporter_lname,
-                                    'reporter_email': reporter_email
-                                    }),
-                                    from_, to_,)
+                            send_mail (
+                                'Roadcast: New Reported Incident in Brgy. ' + barangay_,
+                                render_to_string('new_gen_report_alert.html',{
+                                'barangay' : barangay_,
+                                'loc':loc,
+                                "time" : time,
+                                "incident_date" : incident_date,
+                                'reporter_fname': reporter_fname,
+                                'reporter_lname': reporter_lname,
+                                'reporter_email': reporter_email
+                                }),
+                                from_, to_,)
 
-                context = {
-                    'success_message':"Your report has been submitted!",
-                    "all": authorized,
-                    "pub": pub,
-                    "unread_notif_count":unread_notif_count,
-                }
+            context = {
+                'success_message':"Your report has been submitted!",
+                "all": authorized,
+                "pub": pub,
+                "unread_notif_count":unread_notif_count,
+            }
 
-                return render (request, 'submit_report.html', context) #Submitted
+            return render (request, 'submit_report.html', context) #Submitted
 
-    except: pass
+    # except: pass
 
-    context  = {
-            "all": authorized,
-            "pub": pub,
-            "unread_notif_count":unread_notif_count
-        }
-    return render (request, 'submit_report.html', context) #May error
+    # context  = {
+    #         "all": authorized,
+    #         "pub": pub,
+    #         "unread_notif_count":unread_notif_count
+    #     }
+    # return render (request, 'submit_report.html', context) #May error
+
 
 #Alerts/Notifs
 def account_activity_on (request):
@@ -4110,7 +4360,7 @@ def pub_notif_inbox (request): #Account settings
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4214,7 +4464,7 @@ def add_members (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4314,7 +4564,7 @@ def add_dept (request):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4400,7 +4650,7 @@ def view_members(request, member_id): #Show specific profile of members
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4439,7 +4689,7 @@ def edit_members(request, member_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4558,7 +4808,7 @@ def edit_dept(request, dept_id):
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4610,6 +4860,7 @@ def delete_dept(request, dept_id):
     messages.success(request, ("Department successfully deleted."))
     return HttpResponseRedirect(reverse('admin_list_departments'))
 
+
 def user_profile(request): #Profile of users
     #Sessions
     authorized = Tbl_add_members.objects.all()
@@ -4631,7 +4882,7 @@ def user_profile(request): #Profile of users
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4648,14 +4899,34 @@ def user_profile(request): #Profile of users
     except:
         pass
 
+    try:
+        members_id       = request.session['authorized_id']
+        investigator     = Tbl_add_members.objects.get(id = members_id)
 
+        members          = Tbl_add_members.objects.get(Members_Lname=investigator.Members_Lname)
+        cases            = Tbl_pasig_incidents.objects.filter(Investigator_id = members.id).order_by('-Date')
+
+        paginator = Paginator(cases, 6)
+        page_number = request.GET.get('page')
+        cases = paginator.get_page(page_number)
+
+        context    = {
+        "all": authorized,
+        "pub": pub,
+        'unread_notif_count': unread_notif_count,
+        'cases': cases,
+        }
+        return render(request, 'user_profile.html', context)
+
+    except:
+        pass
+    
     context    = {
         "all": authorized,
         "pub": pub,
         'unread_notif_count': unread_notif_count,
     }
     return render(request, 'user_profile.html', context)
-
 
 def edit_profile(request, prof_id): #Edit user profile details
     #Sessions
@@ -4677,7 +4948,7 @@ def edit_profile(request, prof_id): #Edit user profile details
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4818,7 +5089,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4839,7 +5110,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
 
     if request.method == "POST":
         searched      = request.POST['searched']
-        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched).order_by('-id')
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Dept_id__Dept_Dept__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Substation_id__Substation__icontains = searched).order_by('-id')
 
         paginator = Paginator(members, 10)
         page_number = request.GET.get('page')
@@ -4847,7 +5118,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
 
         return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
-        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_tbl_add_members ORDER BY id DESC')
+        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_tbl_add_members ORDER BY Members_Fname ASC')
 
         paginator = Paginator(members, 10)
         page_number = request.GET.get('page')
@@ -4874,7 +5145,7 @@ def admin_investigators(request): #Show list of investigators
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4919,7 +5190,7 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -4937,14 +5208,13 @@ def admin_view_investigators(request, member_id): #Viewing specific investigator
         pass
 
     members          = Tbl_add_members.objects.get(id = member_id)
-    cases            = Tbl_pasig_incidents.objects.filter(Q(Investigator_id = members.id))
+    cases            = Tbl_pasig_incidents.objects.filter(Q(Investigator_id = members.id)).order_by('-Date')
 
     paginator = Paginator(cases, 5)
     page_number = request.GET.get('page')
     cases = paginator.get_page(page_number)
 
     return render (request, 'admin_view_investigators.html', {'members': members, 'all':authorized, "pub": pub, 'unread_notif_count': unread_notif_count, 'cases': cases})
-
 
 #Audit trail
 def admin_audit_members(request): #List of audit for members
@@ -4966,7 +5236,7 @@ def admin_audit_members(request): #List of audit for members
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -5013,7 +5283,7 @@ def audit_members(request, audit_id): #Specific view for members
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -5055,7 +5325,7 @@ def admin_audit_genpub(request): #List of audit for gen pub
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
@@ -5104,7 +5374,7 @@ def audit_genpub(request, audit_id): #Specific view for gen pub
             auth_row = Tbl_add_members.objects.get(id=auth_id)
             if (auth_row.Members_User_id == 1):
                 public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
-                public_replies_count = Tbl_public_report_response.objects.filter(Q(Receiver=auth_id)&Q(Read_Status='No')).count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
                 unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
                 #total
                 unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup

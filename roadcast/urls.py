@@ -64,6 +64,9 @@ urlpatterns = [
 
 
     path('report/submit', views.submit_report, name='submit_report'),
+    path('report/submit/admin', views.submit_report_admin, name='submit_report_admin'),
+
+
     path('report/monthly', views.monthly_report, name='monthly_report'),
     path('report/monthly/data', views.get_monthly_data, name='monthly_data'),
     path('report/monthly/generate', views.get_monthly_generate, name='monthly_generate'),

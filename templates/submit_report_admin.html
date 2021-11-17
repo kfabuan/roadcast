@@ -1,0 +1,220 @@
+{% extends 'nav_admin.html' %}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI"></script>
+
+{% block title %} Submit Report {% endblock %}
+
+{% block content %}
+
+<!-- Login required and permission access of users (Should be placed after the opening block content) -->
+{% if request.session.authorized_id %}
+    {% for a in all %}
+        {% ifequal a.id request.session.authorized_id %}
+            {% if a.Members_User.Member_Type == 'Admin'  %} 
+              <!-- body (no need to paste anything here) -->
+	          {% else %}
+              <script>
+                  window.location.href = '{% url 'error_page' %}';  
+              </script>
+            {% endif %}
+        {% endifequal %}
+    {% endfor %}
+
+{% elif request.session.public_id %}
+    {% if request.session.public_id %}
+        {% for b in pub %}
+            {% ifequal b.id request.session.public_id %} 
+            <script>
+                window.location.href = '{% url 'error_page' %}';
+            </script>
+            {% endifequal %}
+        {% endfor %}
+
+    {% else %}
+        <script>
+            window.location.href = '{% url 'login_required' %}';
+        </script>
+    {% endif %}
+    
+{% else %}
+    <script>
+        window.location.href = '{% url 'login_required' %}';  
+    </script>
+{% endif %}
+
+<div class="container">
+
+  <!-- uncomment the script below for autocomplete field! :) -->
+  <!-- <script>
+    function initMap() {
+       
+        var options = {
+          types :['(cities)'],
+          componentRestrictions: {country: 'ph'}
+        };
+
+        var input = document.getElementById('address');
+        var autocomplete = new google.maps.places.Autocomplete(input, options);
+
+        autocomplete.addListener('place_changed', function() {
+            infowindow.close();
+            marker.setVisible(false);
+            
+            var place = autocomplete.getPlace();
+            if (!place.geometry) {
+                window.alert("Autocomplete's returned place contains no geometry");
+                return;
+            }
+      
+            var address = '';
+            if (place.address_components) {
+                address = [
+                  (place.address_components[0] && place.address_components[0].short_name || ''),
+                  (place.address_components[1] && place.address_components[1].short_name || ''),
+                  (place.address_components[2] && place.address_components[2].short_name || '')
+                ].join(' ');
+            }
+        
+            infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+            infowindow.open(map, marker);
+          
+            // Location details
+           
+            document.getElementById('lat').value = autocomplete.lat();
+            document.getElementById('lon').value = autocomplete.lng();
+        });
+    }
+    </script> -->
+    
+  <!-- Upper Section (Maayos spacing hehe) -->
+  <section style="height: 25px;"></section>
+
+  {% if success_message %}<p class="alert alert-success"><strong>{{ success_message|safe }}</strong> </p>{% endif %}
+  {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
+  {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
+
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report &nbsp;</h3>
+
+  <section style="height: 30px;"></section>
+   
+
+  <!-- Main Content -->
+
+  <form method="POST" enctype="multipart/form-data" action="{% url 'submit_report_admin' %}" class="row g-3">
+
+    {% csrf_token %}
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PLACE COMMITTED INFORMATION</label>
+
+      <div class="col-md-6">
+        <label for="" class="form-label">City</label>
+        <input type="text" name="city" value="Pasig" class="form-control" readonly>
+      </div>
+
+       <div class="col-md-6">
+        <label for="" class="form-label">District</label>
+        <input type="text" id="district" name="district" value="" class="form-control" readonly>
+      </div>
+
+      <div class="col-md-12" style="margin-top: 9px;">
+        <label for="" class="col-sm-2 col-form-label">Barangay</label>
+
+        <select name="Barangay" id="Barangay" class="form-select form-control" onchange="selectdistrict(event)" required>
+            <option value="">Choose a barangay</option>
+            <option value="2">Bagong Ilog</option>
+            <option value="5">Bagong Katipunan</option>
+            <option value="3">Bambang</option>
+            <option value="27">Buting</option>
+            <option value="4">Caniogan</option>
+            <option value="6">Kalawaan</option>
+            <option value="7">Kapasigan</option>
+            <option value="8">Kapitolyo</option>
+            <option value="9">Malinao</option>
+            <option value="10">Oranbo</option>
+            <option value="11">Palatiw</option>
+            <option value="28">Pineda</option>
+            <option value="12">Sagad</option>
+            <option value="13">San Antonio</option>
+            <option value="14">San Joaquin</option>
+            <option value="15">San Jose</option>
+            <option value="16">San Nicolas</option>
+            <option value="29">Santa Cruz</option>
+            <option value="30">Santa Rosa</option>
+            <option value="17">Santo Tomas</option>
+            <option value="18">Sumilang</option>
+            <option value="1">Ugong</option>
+            <option value="19">Dela Paz</option>
+            <option value="20">Manggahan</option>
+            <option value="21">Maybunga</option>
+            <option value="22">Pinagbuhatan</option>
+            <option value="23">Rosario</option>
+            <option value="24">San Miguel</option>
+            <option value="26">Santolan</option>
+            <option value="25">Santa Lucia</option>
+          </select>
+      </div>
+
+      <script>
+        function selectdistrict(e){
+
+          if (e.target.value == "19"||e.target.value == "20"||e.target.value == "21"||e.target.value == "22"||e.target.value == "23"
+          ||e.target.value == "24"||e.target.value == "26"||e.target.value == "25"){
+            var barangay = document.getElementById('district').value="2";
+          }
+          else{
+            var barangay = document.getElementById('district').value="1";
+          }
+        }
+      </script>
+
+    <div class="col-md-12">
+        <label for="" class="form-label" required>Address</label>
+        <input type="text" name ="address" id="address" class="form-control" required>
+    </div>
+
+    <div class="col-md-6">
+        <label for="" class="form-label">Along</label>
+        <input type="text" id="along" name="along" class="form-control">
+    </div>
+
+    <div class="col-md-6">
+        <label for="" class="form-label">Corner</label>
+        <input type="text" id="corner"name="corner" class="form-control">
+    </div>
+
+     <input type="text" id="lat" name="lat" value="" class="form-control" hidden>
+    <input type="text" id="lon" name="lon" value="" class="form-control" hidden>
+
+    <input type="number" id="user_id" name="user_id" value="{{ request.session.authorized_id }}" class="form-control" hidden>
+
+    <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">NARRATIVE DESCRIPTION OF THE INCIDENT</label>
+
+    <textarea class="form-control" name="narrative" placeholder="A brief description of what happened or its details. . ." style="height: 100px" required></textarea> 
+
+
+    <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PROOF OF INCIDENT</label>
+    <input type="file" class="form-control" name="image" id="image" accept="image/*" data-max-file-size="2M" > 
+    <section style="height: 15px;"></section>
+  
+    <center><button class="btn btn-success mb-5" id="submit_form" type="submit" value="">Submit Incident Report</button></center>
+</form>
+
+
+
+
+    <!-- Prevent submitting again when reloaded -->
+    <script>
+      if ( window.history.replaceState ) {
+        window.history.replaceState( null, null, window.location.href );
+      }
+      </script>
+
+<script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script>
+
+    
+{% endblock %}
+  {% block jquery %} 
+  
+  {% endblock %}

@@ -12,6 +12,7 @@
     .rad_tl { border-top-left-radius: 15px !important; }
     .rad_tr { border-top-right-radius: 15px !important; }
 
+    th { cursor: pointer; }
 </style>
 {% endblock %}
 
@@ -105,21 +106,21 @@
           
         <!-- tab for level 1-->
         <div class="tab-pane fade show active" id="pills-level-1" role="tabpanel" aria-labelledby="pills-level-1-tab">
-            <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+            <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
                 <thead class="table-primary">
                     <tr>
-                        <th scope="col" class="rad_tl">#</th>
-                        <th scope="col">Incident Type</th>
-                        <th scope="col">Investigator</th>
-                        <th scope="col">Barangay Committed</th>
-                        <th scope="col">Date and Time Added</th>
+                        <th scope="col" class="rad_tl" onclick="sortTable(0)">#</th>
+                        <th scope="col" onclick="sortTable(1)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+                        <th scope="col" onclick="sortTable(2)">Investigator <i class="fas fa-sort mt-1 ms-2"></i></th>
+                        <th scope="col" onclick="sortTable(3)">Barangay Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
+                        <th scope="col" onclick="sortTable(4)">Date and Time Added <i class="fas fa-sort mt-1 ms-2"></i></th>
                         {% for a in all %}
-                            {% ifequal a.id request.session.authorized_id %}
-                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                                <th class="table-header">Suspect</th>
-                                <th class="table-header">Victim</th>
-                                {% endif %}
-                            {% endifequal %}
+                                    {% ifequal a.id request.session.authorized_id %}
+                                        {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                                        <th class="table-header" onclick="sortTable(5)" >Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+                                        <th class="table-header" onclick="sortTable(6)" >Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
+                                        {% endif %}
+                                    {% endifequal %}
                         {% endfor %}   
                         <th scope="col">Case Status</th>
                         <th scope="col" class="rad_tr">Operation</th>
@@ -127,6 +128,7 @@
                 </thead>
 
               <tbody>
+              {% if level1 %}
               {% for unsolveds in level1 %}
               <tr>
                 <td> {{ forloop.counter }}</td>
@@ -173,41 +175,102 @@
                       </div>
                     </td>
                 </tr>
+                {% endfor %}
 
+                {% else %} 
                 <tr>
-                    {% empty %} 
                     <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No level 1 unsolved cases for now.</i></td>
                 </tr>
-              {% endfor %}
+                {% endif %}
               </tbody>
           </table>
+
+         
+<script>
+    function sortTable(n) {
+      var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+      table = document.getElementById("tbl_1");
+      switching = true;
+      //Set the sorting direction to ascending:
+      dir = "asc"; 
+      /*Make a loop that will continue until
+      no switching has been done:*/
+      while (switching) {
+        //start by saying: no switching is done:
+        switching = false;
+        rows = table.rows;
+        /*Loop through all table rows (except the
+        first, which contains table headers):*/
+        for (i = 1; i < (rows.length - 1); i++) {
+          //start by saying there should be no switching:
+          shouldSwitch = false;
+          /*Get the two elements you want to compare,
+          one from current row and one from the next:*/
+          x = rows[i].getElementsByTagName("TD")[n];
+          y = rows[i + 1].getElementsByTagName("TD")[n];
+          /*check if the two rows should switch place,
+          based on the direction, asc or desc:*/
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              //if so, mark as a switch and break the loop:
+              shouldSwitch= true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              //if so, mark as a switch and break the loop:
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+        if (shouldSwitch) {
+          /*If a switch has been marked, make the switch
+          and mark that a switch has been done:*/
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          //Each time a switch is done, increase this count by 1:
+          switchcount ++;      
+        } else {
+          /*If no switching has been done AND the direction is "asc",
+          set the direction to "desc" and run the while loop again.*/
+          if (switchcount == 0 && dir == "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+</script>
+          
         </div>
 
         <!-- tab for level 2 -->
         <div class="tab-pane fade" id="pills-level-2" role="tabpanel" aria-labelledby="pills-level-2-tab">
 
-          <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+          <table id="tbl_2" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col" class="rad_tl">#</th>
-                    <th scope="col">Incident Type</th>
-                    <th scope="col">Statistician/Encoder</th>
-                    <th scope="col">Barangay Committed</th>
-                    <th scope="col">Date and Time Added</th>
+                    <th scope="col" class="rad_tl" onclick="sortTable2(0)">#</th>
+                    <th scope="col" onclick="sortTable2(1)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable2(2)">Investigator <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable2(3)">Barangay Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable2(4)">Date and Time Added <i class="fas fa-sort mt-1 ms-2"></i></th>
                     {% for a in all %}
-                            {% ifequal a.id request.session.authorized_id %}
-                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                                <th class="table-header">Suspect</th>
-                                <th class="table-header">Victim</th>
-                                {% endif %}
-                            {% endifequal %}
-                        {% endfor %}   
+                        {% ifequal a.id request.session.authorized_id %}
+                            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                            <th class="table-header" onclick="sortTable2(5)" >Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+                            <th class="table-header" onclick="sortTable2(6)" >Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
                     <th scope="col">Case Status</th>
                     <th scope="col" class="rad_tr">Operation</th>
                 </tr>
             </thead>
 
             <tbody>
+            {% if level2 %}
             {% for unsolved in level2 %}
             <tr>
                 <td> {{ forloop.counter }}</td>
@@ -248,41 +311,86 @@
                     </div>
                   </td>
               </tr>
+              {% endfor %}
 
+              {% else %} 
               <tr>
-                  {% empty %} 
                   <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No level 2 unsolved cases for now.</i></td>
               </tr>
-              {% endfor %}
+              {% endif %}
               </tbody>
           </table>
         </div>
 
+        <script>
+            function sortTable2(n) {
+              var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+              table = document.getElementById("tbl_2");
+              switching = true;
+              dir = "asc"; 
+              
+              while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                  shouldSwitch = false;
+                  
+                  x = rows[i].getElementsByTagName("TD")[n];
+                  y = rows[i + 1].getElementsByTagName("TD")[n];
+                  
+                  if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                      shouldSwitch= true;
+                      break;
+                    }
+                  } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                      shouldSwitch = true;
+                      break;
+                    }
+                  }
+                }
+                if (shouldSwitch) {
+                  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                  switching = true;
+                  switchcount ++;      
+                } else {
+                  
+                  if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                  }
+                }
+              }
+            }
+        </script>
+        
         <!-- tab for level 3 -->
         <div class="tab-pane fade" id="pills-level-3" role="tabpanel" aria-labelledby="pills-level-3-tab">
 
-          <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+          <table id="tbl_3" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col" class="rad_tl">#</th>
-                    <th scope="col">Incident Type</th>
-                    <th scope="col">Statistician/Encoder</th>
-                    <th scope="col">Barangay Committed</th>
-                    <th scope="col">Date and Time Added</th>
+                    <th scope="col" class="rad_tl" onclick="sortTable3(0)">#</th>
+                    <th scope="col" onclick="sortTable3(1)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable3(2)">Investigator <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable3(3)">Barangay Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable3(4)">Date and Time Added <i class="fas fa-sort mt-1 ms-2"></i></th>
                     {% for a in all %}
-                            {% ifequal a.id request.session.authorized_id %}
-                                {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                                <th class="table-header">Suspect</th>
-                                <th class="table-header">Victim</th>
-                                {% endif %}
-                            {% endifequal %}
-                        {% endfor %}   
+                        {% ifequal a.id request.session.authorized_id %}
+                            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
+                            <th class="table-header" onclick="sortTable3(5)" >Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+                            <th class="table-header" onclick="sortTable3(6)" >Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
+                            {% endif %}
+                        {% endifequal %}
+                    {% endfor %}
                     <th scope="col">Case Status</th>
                     <th scope="col" class="rad_tr">Operation</th>
                 </tr>
             </thead>
 
             <tbody>
+            {% if level3 %}
             {% for unsolved_3 in level3 %}
             <tr>
                 <td> {{ forloop.counter }}</td>
@@ -323,31 +431,76 @@
                     </div>
                   </td>
               </tr>
+              {% endfor %}
 
+              {% else %} 
               <tr>
-                  {% empty %} 
                   <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No level 3 unsolved cases for now.</i></td>
               </tr>
-              {% endfor %}
+              {% endif %}
               </tbody>
           </table>
         </div>
+
+        <script>
+            function sortTable3(n) {
+              var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+              table = document.getElementById("tbl_3");
+              switching = true;
+              dir = "asc"; 
+              
+              while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                  shouldSwitch = false;
+                  
+                  x = rows[i].getElementsByTagName("TD")[n];
+                  y = rows[i + 1].getElementsByTagName("TD")[n];
+                  
+                  if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                      shouldSwitch= true;
+                      break;
+                    }
+                  } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                      shouldSwitch = true;
+                      break;
+                    }
+                  }
+                }
+                if (shouldSwitch) {
+                  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                  switching = true;
+                  switchcount ++;      
+                } else {
+                  
+                  if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                  }
+                }
+              }
+            }
+        </script>
+        
         <!-- tab for level 4 -->
         <div class="tab-pane fade" id="pills-level-4" role="tabpanel" aria-labelledby="pills-level-3-tab">
 
-          <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+          <table id="tbl_4" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col" class="rad_tl">#</th>
-                    <th scope="col">Incident Type</th>
-                    <th scope="col">Statistician/Encoder</th>
-                    <th scope="col">Barangay Committed</th>
-                    <th scope="col">Date and Time Added</th>
+                    <th scope="col" class="rad_tl" onclick="sortTable4(0)">#</th>
+                    <th scope="col" onclick="sortTable4(1)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable4(2)">Investigator <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable4(3)">Barangay Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable4(4)">Date and Time Added <i class="fas fa-sort mt-1 ms-2"></i></th>
                     {% for a in all %}
                         {% ifequal a.id request.session.authorized_id %}
                             {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                            <th class="table-header">Suspect</th>
-                            <th class="table-header">Victim</th>
+                            <th class="table-header" onclick="sortTable4(5)" >Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+                            <th class="table-header" onclick="sortTable4(6)" >Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
                             {% endif %}
                         {% endifequal %}
                     {% endfor %}   
@@ -357,6 +510,7 @@
             </thead>
 
             <tbody>
+            {% if level4 %}
             {% for unsolved_4 in level4 %}
             <tr>
                 <td> {{ forloop.counter }}</td>
@@ -398,30 +552,74 @@
                     </div>
                   </td>
               </tr>
-
+              {% endfor %}
+              {% else %}
               <tr>
-                  {% empty %} 
                   <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No level 4 unsolved cases for now.</i></td>
               </tr>
-              {% endfor %}
+              {% endif %} 
               </tbody>
           </table>
         </div>
+
+        <script>
+            function sortTable4(n) {
+              var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+              table = document.getElementById("tbl_4");
+              switching = true;
+              dir = "asc"; 
+              
+              while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                  shouldSwitch = false;
+                  
+                  x = rows[i].getElementsByTagName("TD")[n];
+                  y = rows[i + 1].getElementsByTagName("TD")[n];
+                  
+                  if (dir == "asc") {
+                    if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                      shouldSwitch= true;
+                      break;
+                    }
+                  } else if (dir == "desc") {
+                    if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                      shouldSwitch = true;
+                      break;
+                    }
+                  }
+                }
+                if (shouldSwitch) {
+                  rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                  switching = true;
+                  switchcount ++;      
+                } else {
+                  
+                  if (switchcount == 0 && dir == "asc") {
+                    dir = "desc";
+                    switching = true;
+                  }
+                }
+              }
+            }
+        </script>
+        
         <!-- tab for archives -->
         <div class="tab-pane fade" id="pills-level-5" role="tabpanel" aria-labelledby="pills-level-5-tab">
-          <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+          <table id="tbl_5" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
             <thead class="table-primary">
                 <tr>
-                    <th scope="col" class="rad_tl">#</th>
-                    <th scope="col">Incident Type</th>
-                    <th scope="col">Statistician/Encoder</th>
-                    <th scope="col">Barangay Committed</th>
-                    <th scope="col">Date and Time Added</th>
+                    <th scope="col" class="rad_tl" onclick="sortTable5(0)">#</th>
+                    <th scope="col" onclick="sortTable5(1)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable5(2)">Investigator <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable5(3)">Barangay Committed <i class="fas fa-sort mt-1 ms-2"></i></th>
+                    <th scope="col" onclick="sortTable5(4)">Date and Time Added <i class="fas fa-sort mt-1 ms-2"></i></th>
                     {% for a in all %}
                         {% ifequal a.id request.session.authorized_id %}
                             {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                            <th class="table-header">Suspect</th>
-                            <th class="table-header">Victim</th>
+                            <th class="table-header" onclick="sortTable5(5)" >Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+                            <th class="table-header" onclick="sortTable5(6)" >Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
                             {% endif %}
                         {% endifequal %}
                     {% endfor %}
@@ -431,6 +629,7 @@
             </thead>
 
             <tbody>
+            {% if archive %}
             {% for archive in archive %}
             <tr>
                 <td> {{ forloop.counter }}</td>
@@ -465,16 +664,62 @@
                   </td>
               </tr>
 
-              <tr>
-                  {% empty %} 
-                  <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No unsolved archived records for now.</i></td>
-              </tr>
               {% endfor %}
+
+              {% else %} 
+              <tr>
+                  <td colspan="8" style="text-align: center;" class="text-muted"> <i>Nothing to show! No unsolved archived cases for now.</i></td>
+              </tr>
+              {% endif %}
               </tbody>
           </table>
         </div>
 
       </div>
+
+      <script>
+        function sortTable5(n) {
+          var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+          table = document.getElementById("tbl_5");
+          switching = true;
+          dir = "asc"; 
+          
+          while (switching) {
+            switching = false;
+            rows = table.rows;
+            for (i = 1; i < (rows.length - 1); i++) {
+              shouldSwitch = false;
+              
+              x = rows[i].getElementsByTagName("TD")[n];
+              y = rows[i + 1].getElementsByTagName("TD")[n];
+              
+              if (dir == "asc") {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                  shouldSwitch= true;
+                  break;
+                }
+              } else if (dir == "desc") {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                  shouldSwitch = true;
+                  break;
+                }
+              }
+            }
+            if (shouldSwitch) {
+              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+              switching = true;
+              switchcount ++;      
+            } else {
+              
+              if (switchcount == 0 && dir == "asc") {
+                dir = "desc";
+                switching = true;
+              }
+            }
+          }
+        }
+    </script>
+    
       <section style="height: 25px;"></section>
 
 </div>

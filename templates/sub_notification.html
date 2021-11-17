@@ -1,6 +1,6 @@
 {% extends 'nav_admin.html' %}
 {% block title %} Forwarded Reports {% endblock %}
-
+{% load static%}
 {% block design %}
 <style>
     th {
@@ -160,17 +160,22 @@
     <!-- Search bar -->
     <form class="d-flex" method="POST">
         {% csrf_token %}
-        <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
-        <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+        <div class="input-group input-group-sm mb-3 mt-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+            <input class="form-control me-2" name="searched" type="search" placeholder="Search for a name, barangay, narrative, or month (MM)" style="font-family: 'Roboto', sans-serif">
+            <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+        </div>
     </form>
 
     <!-- Mail list-->
     <div class="table-responsive mt-3">
         <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
             <tbody>
+            {% if fwd_reports or inv_assigned %}
                 {% for a in all %}
                     {% ifequal a.id request.session.authorized_id %}
                         {% if a.Members_User.Member_Type == 'Sub-representative' %}
+                            
                             {% for fwd in fwd_reports %}
                             <!-- row -->
                             <tr class =" {% ifequal fwd.Read_by_subrep 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
@@ -184,7 +189,16 @@
                                 <!-- star -->
                                 <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
                                 <td style="width: 15%;">
-                                    <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
+                                    <span class="mb-0 {% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}">
+                                        {% ifequal fwd.User_ID_id NULL %} 
+                                            {{ fwd.Admin_Sender.Members_Fname }} {{ fwd.Admin_Sender.Members_Lname }} 
+                                        {% else %} 
+                                            {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }} 
+                                        {% endifequal %}  
+
+                                        <!-- {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }} -->
+                                    
+                                    </span>
                                 </td>
                                 <!-- Message -->
                                 <td class="text-truncate" style="width: 58%;">
@@ -192,6 +206,9 @@
                                         <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
                                         <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
                                         <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                        {% ifequal fwd.Report_Created 'Yes' %}
+                                            <span class="badge rounded-pill text-white font-medium bg-custom me-2"> Recorded </span>
+                                        {% endifequal %}
                                         <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
                                     </a>
                                 </td>
@@ -201,6 +218,7 @@
                                 <td  style="width: 16%;"class="{% ifequal fwd.Read_by_subrep 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ fwd.Reported_Date }} {{ fwd.Reported_Time }}</p></td>
                             </tr>
                             {% endfor %}
+                            
                         {% else %}
                             {% for fwd in inv_assigned %}
                             <!-- row -->
@@ -215,7 +233,12 @@
                                 <!-- star -->
                                 <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
                                 <td style="width: 15%;">
-                                    <span class="mb-0 {% ifequal fwd.Read_by_inv 'Yes' %} text-muted {% endifequal %}"> {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }}</span>
+                                    <span class="mb-0 {% ifequal fwd.Read_by_inv 'Yes' %} text-muted {% endifequal %}"> 
+                                        {% ifequal fwd.User_ID_id NULL %} 
+                                            {{ fwd.Admin_Sender.Members_Fname }} {{ fwd.Admin_Sender.Members_Lname }} 
+                                        {% else %} 
+                                            {{ fwd.User_ID.gen_fname }} {{ fwd.User_ID.gen_surname }} 
+                                        {% endifequal %}  
                                 </td>
                                 <!-- Message -->
                                 <td class="text-truncate" style="width: 58%;">
@@ -223,6 +246,9 @@
                                         <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ fwd.Reported_City }}</span>
                                         <span class="badge rounded-pill text-white font-medium {% ifequal fwd.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ fwd.Reported_District }}</span>
                                         <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
+                                        {% ifequal fwd.Report_Created 'Yes' %}
+                                            <span class="badge rounded-pill text-white font-medium bg-custom me-2"> Recorded </span>
+                                        {% endifequal %}
                                         <span class=" text-dark">{{ fwd.Reported_Brgy.Barangay }}: {{ fwd.Reported_Narrative }}</span>
                                     </a>
                                 </td>
@@ -236,9 +262,61 @@
                     {% endifequal %}
                 {% endfor %}
 
-                
+                {% else %}
+            <center>
+                <div class="pt-5">
+                    <img src="{% static 'image/no_data1.png' %}" class="img-1 img-fluid">
+                    <p class="no-msg"><i>You have no messages at the moment!</i></p>
+                </div>
+            </center>
+            {% endif %}
             </tbody>
         </table>
+
+        {% if request.session.authorized_id %}
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Sub-representative' %} 
+                    <ul class="pagination">
+                        {% if fwd_reports.has_previous %}
+
+                            <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page= {{fwd_reports.previous_page_number}}">Previous</a></li>
+                        {% endif %}
+
+                        {% if fwd_reports.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{fwd_reports.next_page_number }}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{fwd_reports.paginator.num_pages}}">Last</a></li>
+                        {% endif %}
+                    </ul>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
+        {% endif %}
+
+        {% if request.session.authorized_id %}
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Investigator' %} 
+                    <ul class="pagination">
+                        {% if inv_assigned.has_previous %}
+            
+                            <li class="page-item"><a class="page-link" href="?page2=1">First</a></li>
+                            <li class="page-item"><a class="page-link" href="?page2= {{inv_assigned.previous_page_number}}">Previous</a></li>
+                        {% endif %}
+            
+                        {% if inv_assigned.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page2={{inv_assigned.next_page_number }}">Next</a></li>
+                            <li class="page-item"><a class="page-link" href="?page2={{inv_assigned.paginator.num_pages}}">Last</a></li>
+                        {% endif %}
+            
+                    </ul>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
+        {% endif %}
+
+               
     </div> <!--Close Mail-->
   </div> <!--closing container div-->
 {% endblock %}
