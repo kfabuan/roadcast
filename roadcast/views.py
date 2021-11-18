@@ -897,8 +897,8 @@ def DashboardView (request):
 
     #FOR CHARTS FORECASTING
     datelist= Tbl_forecast.objects.all().order_by("-Date")[:14]
-    datelist_values= Tbl_forecast.objects.all().order_by("-Date")[:14][6:]
-    datelist_values_forecast= Tbl_forecast.objects.all().order_by("-Date")[:7]
+    datelist_values= Tbl_forecast.objects.all().order_by("-Date")[:14][7:]
+    datelist_values_forecast= Tbl_forecast.objects.all().order_by("-Date")[:8]
     reversed_datelist=reversed(datelist)
     reversed_datelist_values=reversed(datelist_values)
     reversed_datelist_values_forecast=reversed(datelist_values_forecast)
@@ -907,6 +907,7 @@ def DashboardView (request):
 
     # FOR FORECASTING
     # today = date.today()
+
     try:
         earliest_day= Tbl_pasig_incidents.objects.exclude(Q(Date__isnull=True)).order_by("Date")[0].Date
     
@@ -915,13 +916,13 @@ def DashboardView (request):
 
 
     a_week= date(2019,1,1)
-    test=date.today() + timedelta(7)
+    test=date.today() + timedelta(8)
 
     end_date=date(2019,2,28)+ timedelta(7)
     limit = Tbl_forecast.objects.all().count()
     start_i=0
     end_i=7
-    i_day=6
+    i_day=7
     count=0
     for insert_date in daterange(earliest_day,test):
 
@@ -1327,7 +1328,7 @@ def view_incidents (request):
             if request.session['public_id']:
                 searched = request.POST['searched']
 
-                incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
+                incident_model     = Tbl_pasig_incidents.objects.filter(Q(CrimeOffense__icontains = searched)|Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
                 paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
                 page_number = request.GET.get('page') #ganto talaga
                 incident_model = paginator.get_page(page_number) #ito ren, except sa var name
@@ -1345,7 +1346,7 @@ def view_incidents (request):
 
         except:
             searched = request.POST['searched']
-            incident_model     = Tbl_pasig_incidents.objects.filter(Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
+            incident_model     = Tbl_pasig_incidents.objects.filter(Q(CrimeOffense__icontains = searched)|Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
             
             paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
             page_number = request.GET.get('page') #ganto talaga

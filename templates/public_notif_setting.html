@@ -118,19 +118,25 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="labels">Password</label>
-                            <input type="password" name="gen_pass" id="password" placeholder="Password" value="{{ b.gen_pass }}" class="form-control custom-form" disabled required>
+                            <div class="input-group mb-3">
+                            <input type="password" name="gen_pass" minlength="8" id="password" placeholder="Password" value="{{ b.gen_pass }}" class="form-control custom-form" disabled required>
+                            <i class="bi bi-eye-slash view-pass btn btn-outline-secondary" id="togglePassword"></i>
+                            </div>
                         </div>
                     </div>
 
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="labels">Confirm Password</label>
-                            <input type="password" name="gen_cpass" placeholder="Confirm password" class="form-control custom-form" oninput="check(this)" disabled required>
+                            <div class="input-group mb-3">
+                            <input type="password" name="gen_cpass" minlength="8" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" oninput="check(this)" disabled required>
+                            <i class="bi bi-eye-slash view-pass btn btn-outline-secondary" id="togglePassword2"></i>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
-                <section style="height: 25px"></section>
+                <section style="height: 5px"></section>
 
                 <div class="mt-3">
                     <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
@@ -266,26 +272,30 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label class="labels">Password</label>
-                                <input type="password" name="Members_Password" placeholder="Password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                                <div class="input-group mb-3">
+                                <input type="password" minlength="8" id="password" name="Members_Password" placeholder="Password" value="{{ a.Members_Password }}" class="form-control custom-form" disabled required>
+                                <i class="bi bi-eye-slash view-pass btn btn-outline-secondary" id="togglePassword"></i>
+                                </div>
                             </div>
                         </div>
 
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label class="labels">Confirm Password</label>
-                                <input type="password" name="Confirm_Pass" placeholder="Confirm password" value="" class="form-control custom-form" disabled required>
+                                <div class="input-group mb-3">
+                                <input type="password" minlength="8" id="confirm_password" name="Confirm_Pass" placeholder="Confirm password" value="" class="form-control custom-form" disabled required>
+                                <i class="bi bi-eye-slash view-pass btn btn-outline-secondary" id="togglePassword2"></i>
+                                </div>
                             </div>
                         </div>
                     </div>
-                        
-                        <section style="height: 20px"></section>
-        
-                        <div class="mt-3">
-                            <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
-                            <button type="submit" class="btn btn-primary" style="border-radius: 50px; float: right; margin-right: 5px;" disabled>Save changes</button>
-                        </div>
-                    </form>
-                </div>
+                    
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-outline-primary" style="border-radius: 50px; float: right;" id="cancel" disabled>Cancel</button> <!-- onClick="window.location.href='{% url 'pub_notif_inbox' %}';" -->
+                        <button type="submit" class="btn btn-primary" style="border-radius: 50px; float: right; margin-right: 5px;" disabled>Save changes</button>
+                    </div>
+                </form>
+            </div>
 
             {% else %}
             
@@ -408,6 +418,32 @@
 
 <section style="height: 80px"></section>
 
+    <!-- Toggle passwords-->
+    <script>
+      const togglePassword = document.querySelector('#togglePassword');
+      const password = document.querySelector('#password');
+    
+      togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // toggle the eye / eye slash icon
+        this.classList.toggle('bi-eye');
+    });
+    </script>
+     <script>
+      const togglePassword2 = document.querySelector('#togglePassword2');
+      const password2 = document.querySelector('#confirm_password');
+    
+      togglePassword2.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+        password2.setAttribute('type', type);
+        // toggle the eye / eye slash icon
+        this.classList.toggle('bi-eye');
+    });
+    </script>
+
 <!-- Edittable buttons -->
 <script>
 var el  = document.getElementById('edit');
@@ -434,7 +470,7 @@ el.addEventListener('click', function(){
 
 
 <!-- Password match -->
-<script>
+<!-- <script>
        function check(input) {
         if (input.value != document.getElementById('password').value) {
             input.setCustomValidity('Please make sure your passwords match.');
@@ -443,7 +479,7 @@ el.addEventListener('click', function(){
             input.setCustomValidity('');
         }
     }
-</script>
+</script> -->
 
 <script type="text/javascript">
     $(document).ready(function(){
@@ -514,5 +550,6 @@ el.addEventListener('click', function(){
         });
     });
 </script>
+
 
 {% endblock %}

@@ -10,6 +10,9 @@
       display: none;
     }
   }
+  .view-pass {
+    padding-top: 8px;
+  }
 </style>
 {% endblock %}
 
@@ -199,14 +202,30 @@
       <input type="email" name="Members_Email" class="form-control" required style="border-radius: 50px; height: 45px;">
     </div>
 
-    <div class="col-md-6">
+    <!-- <div class="col-md-6">
       <label for="" class="form-label">Password<span style="color: #dc3545; font-weight: bold;">*</span></label>
       <input type="password" minlength="8" name="Members_Password" id="password" class="form-control" required style="border-radius: 50px; height: 45px;">
+    </div> -->
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Password<span style="color: #dc3545; font-weight: bold;">*</span></label>
+      <div class="input-group mb-3">
+      <input type="password" minlength="8" name="Members_Password" id="password" class="form-control" required style="border-radius: 20px 0 0 20px; height: 45px;">
+      <i class="bi bi-eye-slash view-pass btn btn-outline-secondary" id="togglePassword" style="border-radius: 0 20px 20px 0; height: 45px;"></i>
+      </div>
     </div>
+    
+    <!-- <div class="col-md-6">
+      <label for="" class="form-label">Confirm Password<span style="color: #dc3545; font-weight: bold;">*</span></label>
+      <input type="password" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required style="border-radius: 50px; height: 45px;">
+    </div> -->
 
     <div class="col-md-6">
       <label for="" class="form-label">Confirm Password<span style="color: #dc3545; font-weight: bold;">*</span></label>
-      <input type="password" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required style="border-radius: 50px; height: 45px;">
+      <div class="input-group mb-3">
+        <input type="password" name="Confirm_Pass" class="form-control" id="confirm_password" oninput="check(this)" required style="border-radius: 20px 0 0 20px; height: 45px;">
+        <i class="bi bi-eye-slash view-pass btn btn-outline-secondary" id="togglePassword2" style="border-radius: 0 20px 20px 0; height: 45px;"></i>
+      </div>
     </div>
 
     <div class="col-md-3">
@@ -232,6 +251,33 @@
 
   <section style="height: 35px;"></section>
 
+  <!-- Toggle passwords-->
+  <script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+  
+    togglePassword.addEventListener('click', function (e) {
+      // toggle the type attribute
+      const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+      password.setAttribute('type', type);
+      // toggle the eye / eye slash icon
+      this.classList.toggle('bi-eye');
+  });
+  </script>
+   <script>
+    const togglePassword2 = document.querySelector('#togglePassword2');
+    const password2 = document.querySelector('#confirm_password');
+  
+    togglePassword2.addEventListener('click', function (e) {
+      // toggle the type attribute
+      const type = password2.getAttribute('type') === 'password' ? 'text' : 'password';
+      password2.setAttribute('type', type);
+      // toggle the eye / eye slash icon
+      this.classList.toggle('bi-eye');
+  });
+  </script>
+
+
   <!-- Script -->
     <script>
         var today = new Date();
@@ -246,7 +292,7 @@
       }
       </script>
 
-      <script>
+      <!-- <script>
         function check(input) {
         if (input.value != document.getElementById('password').value) {
             input.setCustomValidity('Please make sure your passwords match.');
@@ -255,7 +301,7 @@
             input.setCustomValidity('');
         }
       }
-      </script>
+      </script> -->
 
       <script>
       var uploadField = document.getElementById("formFile");
