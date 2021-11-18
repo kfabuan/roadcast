@@ -35,6 +35,7 @@ input[type=password]::placeholder{
     var atposition = x.indexOf("@");
     var dotposition = x.lastIndexOf(".");
     var mobile = /^\d{11}$/;
+    var strong_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
       if ( document.myform.gen_fname.value == "" ) {
           alert ( "Oops! Can't submit form because a field is empty. Please enter your first name." );
@@ -90,6 +91,10 @@ input[type=password]::placeholder{
       }
       else if ( document.myform.gen_pass.value.length < 8) {
           alert ( "Oops! Can't submit form. Password length must be atleast 8 characters." );
+          return false;
+      }
+      else if ( strong_pass.test(document.myform.gen_pass.value.value) == false ) {
+          alert ( "Oops! Can't submit form. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
           return false;
       }
       else if ( document.myform.gen_cpass.value == "" ) {
@@ -809,9 +814,8 @@ input[type=password]::placeholder{
               </div>
 
               <div class="row">
-                <p class="password">Note: Passwords must be at least 8 characters long.</p>
+                  <p class="password">Note: Must contain at least one number, one uppercase and lowercase letter, and at least 8 or more characters.</p>              
               </div>
-
               <section style="height: 45.4px;"></section>
 
                 </div>

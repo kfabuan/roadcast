@@ -4,6 +4,36 @@
 {% load static %}
 {% block content %}
 
+<!-- Form validation for members -->
+<script type="text/javascript">
+    function validate_form () {
+  
+      var strong_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  
+        if ( strong_pass.test(document.Forms.Members_Password.value) == false || document.Forms.Members_Password.value != document.Forms.Confirm_Pass.value) {
+            alert ( "Oops! Please make sure your passwords match. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
+            return false;
+        }
+        else if ( strong_pass.test(document.Forms.gen_pass.value) == false || document.Forms.gen_pass.value != document.Forms.gen_cpass.value ) {
+            alert ( "Oops! Please make sure your passwords match. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
+            return false;
+        }
+      }
+</script>
+
+<!-- Form validation for gen pub -->
+<script type="text/javascript">
+    function validate_gen () {
+  
+      var strong_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  
+        if ( strong_pass.test(document.My_Forms.gen_pass.value) == false || document.My_Forms.gen_pass.value != document.My_Forms.gen_cpass.value ) {
+            alert ( "Oops! Please make sure your passwords match. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
+            return false;
+        }
+      }
+</script>
+
 <!-- Login required and permission access of users (Should be placed after the opening block content) -->
 {% if request.session.authorized_id %}
     {% for a in all %}
@@ -62,7 +92,7 @@
 <div class="row">
     <div class="col-12 col-xl-8">
 
-        <form method="POST" id="myform" enctype="multipart/form-data" action="{% url 'change_account' b.id %}" class="row g-3">
+        <form method="POST" id="myform" name="My_Forms" onsubmit="return validate_gen();" enctype="multipart/form-data" action="{% url 'change_account' b.id %}" class="row g-3">
 
         {% csrf_token %} 
 
@@ -95,7 +125,7 @@
                     <div class="col-md-6 mb-3">
                         <div class="form-group">
                             <label class="labels">Confirm Password</label>
-                            <input type="password" name="#" placeholder="Confirm password" class="form-control custom-form" oninput="check(this)" disabled required>
+                            <input type="password" name="gen_cpass" placeholder="Confirm password" class="form-control custom-form" oninput="check(this)" disabled required>
                         </div>
                     </div>
                 </div>
@@ -202,7 +232,7 @@
 
             {% if a.Members_User.Member_Type == 'Admin' or  a.Members_User.Member_Type == 'Crime Statistician' %}
 
-            <form method="POST" id="myform" enctype="multipart/form-data" action="{% url 'change_account' a.id %}" class="row g-3">
+            <form method="POST" name="Forms" onsubmit="return validate_form();" id="myform" enctype="multipart/form-data" action="{% url 'change_account' a.id %}" class="row g-3">
 
                 {% csrf_token %} 
         
@@ -243,7 +273,7 @@
                         <div class="col-md-6 mb-3">
                             <div class="form-group">
                                 <label class="labels">Confirm Password</label>
-                                <input type="password" placeholder="Confirm password" value="" class="form-control custom-form" disabled required>
+                                <input type="password" name="Confirm_Pass" placeholder="Confirm password" value="" class="form-control custom-form" disabled required>
                             </div>
                         </div>
                     </div>

@@ -175,8 +175,6 @@ $(document).ready(function(){
                         {% if a.Members_User.Member_Type == 'Admin' %}
                             {% if public_report_count > 0 %}
                                 ({{ public_report_count }})
-                            {% else %}
-                                (0)
                             {% endif %}
                         {% endif %}
                     {% endifequal %}

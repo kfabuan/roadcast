@@ -907,8 +907,12 @@ def DashboardView (request):
 
     # FOR FORECASTING
     # today = date.today()
+    try:
+        earliest_day= Tbl_pasig_incidents.objects.exclude(Q(Date__isnull=True)).order_by("Date")[0].Date
+    
+    except: 
+        return HttpResponseRedirect(reverse('monthly_report'))
 
-    earliest_day= Tbl_pasig_incidents.objects.exclude(Q(Date__isnull=True)).order_by("Date")[0].Date
 
     a_week= date(2019,1,1)
     test=date.today() + timedelta(7)
@@ -2779,6 +2783,7 @@ def monthly_report (request):
 
     sex_combined = list(chain(suspect_sex, victim_sex))
     sex_distinct = set(sex_combined)
+    sex_count_total = len(sex_combined)
     sex_labels = []
     sex_count = []
 
@@ -2787,12 +2792,12 @@ def monthly_report (request):
             sex = 'blank'
             sex_labels.append(sex)
             x = sex_combined.count('')
-            sex_count.append(x)
+            sex_count.append((x/sex_count_total)*100)
 
         else:
             sex_labels.append(sex)
             x = sex_combined.count(sex)
-            sex_count.append(x)
+            sex_count.append((x/sex_count_total)*100)
 
     am12 = datetime.time(0, 0, 0)
     am2  = datetime.time(2, 0, 0)

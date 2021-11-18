@@ -51,6 +51,19 @@
      {% endfor %}
 {% endif %}
 
+<!-- Form validation -->
+<script type="text/javascript">
+  function validate_form () {
+
+    var strong_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+    if ( strong_pass.test(document.myform.Members_Password.value) == false || document.myform.Members_Password.value != document.myform.Confirm_Pass.value) {
+            alert ( "Oops! Please make sure your passwords match. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
+            return false;
+        }
+    }
+  </script>
+
 <div class="container">
 
   <!-- Upper Section -->
@@ -62,7 +75,7 @@
 
   <!-- Main Content -->
 
-  <form method="POST" enctype="multipart/form-data" action="{% url 'update_members' members.id %}" class="row g-3">
+  <form method="POST" enctype="multipart/form-data" name="myform" onsubmit="return validate_form();" action="{% url 'update_members' members.id %}" class="row g-3">
 
     {% csrf_token %}
 

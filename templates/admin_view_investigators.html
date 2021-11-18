@@ -11,6 +11,7 @@
 
     .rad_tl { border-top-left-radius: 15px !important; }
     .rad_tr { border-top-right-radius: 15px !important; }
+    th { cursor: pointer; }
 
    .view-pass {
     cursor: pointer;
@@ -173,17 +174,18 @@
 
 
 <div class="table-responsive"> 
-  <table class="table table-hover table-borderless" style="font-family: 'Roboto', sans-serif; font-size: 15px; background-color: white;">
+  <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto', sans-serif; font-size: 15px; background-color: white;">
   <thead class="table-primary">
     <th scope="col" class="rad_tl">Incident ID</th>
-    <th>Incident Type</th>
-    <th>Barangay Comitted</th>
-    <th>Date and Time</th>
-    <th>Suspect</th>
-    <th>Victim</th>
+    <th onclick="sortTable(0)">Incident Type <i class="fas fa-sort mt-1 ms-2"></i></th>
+    <th onclick="sortTable(1)">Barangay Comitted <i class="fas fa-sort mt-1 ms-2"></i></th>
+    <th onclick="sortTable(2)">Date and Time <i class="fas fa-sort mt-1 ms-2"></i></th>
+    <th onclick="sortTable(3)">Suspect <i class="fas fa-sort mt-1 ms-2"></i></th>
+    <th onclick="sortTable(4)">Victim <i class="fas fa-sort mt-1 ms-2"></i></th>
     <th>Case Status</th>
   </thead>
   <tbody>
+  {% if cases %}
   {% for case in cases %}
     <tr>
       <th scope="row">{{ case.id }}</th>
@@ -194,10 +196,14 @@
       <td>{{case.Victim_Fname}} {{case.Victim_Lname}}</td>
       <td>{{ case.Case_Status }}</td>
     </tr>
-    {% empty %} 
-    <td colspan="8" style="text-align: center;">Nothing to show! No records have been added yet.</td>
-  </tr>
   {% endfor %}
+
+  {% else %}
+    <tr>
+      <td colspan="8" style="text-align: center;">Nothing to show! No records have been added yet.</td>
+    </tr>
+  {% endif %}
+
   </tbody>
 </table>
 
@@ -220,6 +226,48 @@
 </div>
 
 <section style="height: 50px;"></section>
+<script>
+  function sortTable(n) {
+    var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+    table = document.getElementById("tbl_1");
+    switching = true;
+    dir = "asc"; 
+    
+    while (switching) {
+      switching = false;
+      rows = table.rows;
+      for (i = 1; i < (rows.length - 1); i++) {
+        shouldSwitch = false;
+        
+        x = rows[i].getElementsByTagName("TD")[n];
+        y = rows[i + 1].getElementsByTagName("TD")[n];
+        
+        if (dir == "asc") {
+          if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+            shouldSwitch= true;
+            break;
+          }
+        } else if (dir == "desc") {
+          if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+            shouldSwitch = true;
+            break;
+          }
+        }
+      }
+      if (shouldSwitch) {
+        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+        switching = true;
+        switchcount ++;      
+      } else {
+        
+        if (switchcount == 0 && dir == "asc") {
+          dir = "desc";
+          switching = true;
+        }
+      }
+    }
+  }
+</script>
 
 <script>
   const togglePassword = document.querySelector('#togglePassword');

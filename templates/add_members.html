@@ -56,6 +56,10 @@
 <!-- Form validation -->
 <script type="text/javascript">
   function validate_form () {
+
+    var strong_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+
       if ( document.myform.Members_Dept.value == "None" ) {
           alert ( "Oops! Can't submit form because a field is empty. Please select a department name.");
           return false;
@@ -69,6 +73,10 @@
       }
       else if ( document.myform.Members_Position.value == "None" ) {
           alert ( "Oops! Can't submit form because a field is empty. Please select a position." );
+          return false;
+      }
+      else if ( strong_pass.test(document.myform.Members_Password.value) == false || document.myform.Members_Password.value != document.myform.Confirm_Pass.value) {
+          alert ( "Oops! Please make sure your passwords match. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
           return false;
       }
     }
