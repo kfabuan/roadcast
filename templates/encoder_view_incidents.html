@@ -188,10 +188,13 @@
     </div>
   
     <!-- Search bar -->
-    <form class="d-flex mb-3" method="POST">
+    <form class="d-flex" method="POST">
         {% csrf_token %}
-        <input class="form-control me-2" name="searched" type="search" placeholder="Search a report" style="font-family: 'Roboto', sans-serif">
-        <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+        <div class="input-group mb-3 mt-3">
+            <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+            <input class="form-control me-2" name="searched" type="search" placeholder="Search for a barangay, incident type, or offenses" style="font-family: 'Roboto', sans-serif">
+            <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+        </div>
     </form>
 
     {% if pasig_incident_list %}
@@ -223,9 +226,7 @@
                         {% ifequal incident.read_status 'No' %}
                      
                             <tr class="fw-bold" style="background-color: #fafafa;"> 
-                                {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
-
-                                <td>{{incident.id}}</td>
+                                <td>{{forloop.counter}}</td>
                                 <td>{{incident.Incident_Type}}</td>
                                 <td>{{ incident.Barangay_id.Barangay }}</td>
                                 <td>{{ incident.Date }} - {{ incident.Time }}</td>
@@ -282,9 +283,7 @@
 
                         {% else %}
                             <tr class="text-muted">
-                                {% comment %} <td> {{forloop.counter}}</td> {% endcomment %}
-
-                                <td>{{incident.id}}</td>
+                                <td>{{forloop.counter}}</td>
                                 <td>{{incident.Incident_Type}}</td>
                                 <td>{{ incident.Barangay_id.Barangay }}</td>
                                 <td>{{ incident.Date }} - {{ incident.Time }}</td>

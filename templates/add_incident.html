@@ -430,7 +430,6 @@ function initMap() {
                                             <option value="Angle Collision">Angle Collision</option>
                                             <option value="Bumped From Behind">Bumped From Behind</option>
                                             <option value="Clash">Clash</option>
-                                            <option value="Damage to Property">Damage to Property</option>
                                             <option value="Head On">Head On</option>
                                             <option value="Hit and Run">Hit and Run</option>
                                             <option value="Hit Animals">Hit Animals</option>
@@ -564,6 +563,7 @@ function initMap() {
                         
                         </div>
                     </div> <!-- incident's detail card closing-->
+
                     <div class="card">
                         <div class="card-header">
                             <label class="label-blue"><i class="bi bi-geo-alt-fill"></i> Location Details</label>
@@ -697,7 +697,7 @@ function initMap() {
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select name="sus_civil_status" id="sus_civil_status" class="form-select form-select-sm" placeholder="Civil Status" required>
+                                        <select name="sus_civil_status" id="sus_civil_status" class="form-select form-select-sm" placeholder="Civil Status">
                                             <option value=""></option>
                                             <option value="Single">Single</option>
                                             <option value="Married">Married</option>
@@ -705,7 +705,7 @@ function initMap() {
                                             <option value="Separated">Separated</option>
                                             <option value="Divorced">Divorced</option>
                                         </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Civil Status <span class="asterisk">*</span></label>
+                                        <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
                                     </div>
                                 </div>
                                 <div class="col-md">
@@ -722,8 +722,8 @@ function initMap() {
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="text" name="sus_drl" class="form-control form-control-sm" required>
-                                <label for="" style="font-size: small;" class="text-muted">Driver's License <span class="asterisk">*</span></label>
+                                <input type="text" name="sus_drl" class="form-control form-control-sm">
+                                <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
                             </div>
 
                             <div class="row g-2 mb-3">
@@ -735,7 +735,7 @@ function initMap() {
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select class="form-select-sm form-select" name="sus_vehicle_body_type" required>
+                                        <select class="form-select-sm form-select" id="sus_vehicle_body_type" name="sus_vehicle_body_type" required>
                                             <option value=""></option>
                                                 <option value="Armored Car">Armored Car</option>
                                                 <option value="Alto">Alto</option>
@@ -749,7 +749,6 @@ function initMap() {
                                                 <option value="Hatchback">Hatchback</option>
                                                 <option value="Motorcycle">Motorcycle</option>
                                                 <option value="MTC/MC">MTC/MC</option>
-                                                <option value="Object">Object</option>
                                                 <option value="Pedicab">Pedicab</option>
                                                 <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
                                                 <option value="PUJ - Public Utility Jeep">PUJ - Public Utility Jeep</option>
@@ -798,7 +797,7 @@ function initMap() {
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="text" name="sus_plate_no" class="form-control form-control-smd" required>
+                                        <input type="text" id="sus_plate_no" name="sus_plate_no" class="form-control form-control-smd" required>
                                         <label for="" style="font-size: small;" class="text-muted">Plate Number <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
@@ -899,8 +898,8 @@ function initMap() {
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="text" name="vic_drl" id="vic_drl" class="form-control form-control-sm" required>
-                                <label for="" style="font-size: small;" class="text-muted">Driver's License <span class="asterisk">*</span></label>
+                                <input type="text" name="vic_drl" id="vic_drl" class="form-control form-control-sm">
+                                <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
                             </div>
 
                             <div class="row g-2 mb-3">
@@ -926,7 +925,6 @@ function initMap() {
                                                 <option value="Hatchback">Hatchback</option>
                                                 <option value="Motorcycle">Motorcycle</option>
                                                 <option value="MTC/MC">MTC/MC</option>
-                                                <option value="Object">Object</option>
                                                 <option value="Pedicab">Pedicab</option>
                                                 <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
                                                 <option value="PUJ - Public Utility Jeep">PUJ - Public Utility Jeep</option>
@@ -1220,6 +1218,26 @@ function initMap() {
                 vic_severity.disabled = false;
             }
             
+          });
+
+          sus_plate_no = document.getElementById('sus_plate_no');
+          vic_plate_no = document.getElementById('vic_plate_no');
+          $('#sus_vehicle_body_type').change(function(){
+            if(this.value == "Bicycle" | this.value =="Electric Bike" | this.value =="Pedicab" | this.value =="Cart" | this.value =="Unidentified" | this.value =="Others") {
+                sus_plate_no.disabled = true;
+            }
+            else {
+                sus_plate_no.disabled = false;
+            }
+          });
+
+          $('#vic_vehicle_body_type').change(function(){
+            if(this.value == "Bicycle" | this.value =="Electric Bike" | this.value =="Pedicab" | this.value =="Cart" | this.value =="Unidentified" | this.value =="Others") {
+                vic_plate_no.disabled = true;
+            }
+            else {
+                vic_plate_no.disabled = false;
+            }
           });
 
           Date.prototype.getWeek = function (dowOffset) {

@@ -692,16 +692,16 @@ function initMap() {
                                         <option value="Separated" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
                                         <option value="Divorced" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
                                     </select>
-                                    <label for="" style="font-size: small;" class="text-muted">Civil Status <span class="asterisk">*</span></label>
+                                    <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <select class="form-select form-select-sm" id="sus_type" name="sus_type">
+                                    <select class="form-select form-select-sm" id="sus_type" name="sus_type" required>
                                         <option value=""></option>
                                         <option value="Driver" {% ifequal pasig_incident_detail.Suspect_Type 'Driver' %} selected {% endifequal %}>Driver</option>
                                         <option value="Passenger" {% ifequal pasig_incident_detail.Suspect_Type 'Passenger' %} selected {% endifequal %}>Passenger</option>
-                                        <option value="Pedestrian" {% ifequal pasig_incident_detail.Suspect_Type 'Driver' %} selected {% endifequal %}>Pedestrian</option>
+                                        <option value="Pedestrian" {% ifequal pasig_incident_detail.Suspect_Type 'Pedestrian' %} selected {% endifequal %}>Pedestrian</option>
                                     </select>
                                     <label for="" style="font-size: small;" class="text-muted">Suspect Type <span class="asterisk">*</span></label>
                                 </div>
@@ -710,19 +710,19 @@ function initMap() {
 
                         <div class="form-floating mb-3">
                             <input type="text" name="sus_drl" class="form-control form-control-sm" value="{{pasig_incident_detail.Suspect_Drl_No}}">
-                            <label for="" style="font-size: small;" class="text-muted">Driver's License <span class="asterisk">*</span></label>
+                            <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
                         </div>
 
                         <div class="row g-2 mb-3">
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <input type="text" name="sus_vehicle" class="form-control" value="{{pasig_incident_detail.Suspect_Vehicle}}">
+                                    <input type="text" name="sus_vehicle" class="form-control" value="{{pasig_incident_detail.Suspect_Vehicle}}" required>
                                     <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model <span class="asterisk">*</span></label>
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <select class="form-select-sm form-select" name="sus_vehicle_body_type">
+                                    <select class="form-select-sm form-select" name="sus_vehicle_body_type" id="sus_vehicle_body_type" required>
                                         <option value=""></option>
                                         <option value="Armored Car" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Armored Car' %} selected {% endifequal %}>Armored Car</option>
                                         <option value="Alto" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Alto' %} selected {% endifequal %}>Alto</option>
@@ -736,7 +736,6 @@ function initMap() {
                                         <option value="Hatchback"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Hatchback' %} selected {% endifequal %}>Hatchback</option>
                                         <option value="Motorcycle"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Motorcycle' %} selected {% endifequal %}>Motorcycle</option>
                                         <option value="MTC/MC"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'MTC/MC' %} selected {% endifequal %}>MTC/MC</option>
-                                        <option value="Object"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Object' %} selected {% endifequal %}>Object</option>
                                         <option value="Pedicab"{% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'Pedicab' %} selected {% endifequal %}>Pedicab</option>
                                         <option value="PUJ - Public Utility Jeep" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUJ - Public Utility Jeep' %} selected {% endifequal %}>PUJ - Public Utility Jeep</option>
                                         <option value="PUV- Public Utility Vehicle" {% ifequal pasig_incident_detail.Suspect_Vehicle_Body_Type 'PUV- Public Utility Vehicle' %} selected {% endifequal %}>PUV- Public Utility Vehicle</option>
@@ -766,7 +765,7 @@ function initMap() {
 
                         <div class="form-floating">
                             <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-smd" value="{{pasig_incident_detail.Suspect_Reg_Owner}}">
-                            <label for="" style="font-size: small;" class="text-muted">Registered Owner <span class="asterisk">*</span></label>
+                            <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
                         </div>
 
                         <div class="form-check mb-3 ms-1 mt-1">
@@ -780,19 +779,19 @@ function initMap() {
                             <div class="col-md">
                                 <div class="form-floating">
                                     <input type="date" name="sus_drl_exp" class="form-control form-control-sm" value="{{pasig_incident_detail.Suspect_Drl_Exp|date:'Y-m-d'}}">
-                                    <label for="" style="font-size: small;" class="text-muted">Expiration Date <span class="asterisk">*</span></label>
+                                    <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <input type="text" name="sus_plate_no" class="form-control form-control-smd" value="{{pasig_incident_detail.Suspect_Plate_No}}">
+                                    <input type="text" name="sus_plate_no" id="sus_plate_no" class="form-control form-control-smd" value="{{pasig_incident_detail.Suspect_Plate_No}}" required>
                                     <label for="" style="font-size: small;" class="text-muted">Plate Number <span class="asterisk">*</span></label>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="form-floating mb-3">
-                            <select name="sus_severity" class="form-select form-select-sm">
+                            <select name="sus_severity" class="form-select form-select-sm" required>
                                 <option value=""></option>
                                 <option value="Unharmed" {% ifequal pasig_incident_detail.Suspect_Severity 'Unharmed' %} selected {% endifequal %}>Unharmed</option>
                                 <option value="Harmed"{% ifequal pasig_incident_detail.Suspect_Severity 'Harmed' %} selected {% endifequal %}>Harmed</option>
@@ -828,19 +827,19 @@ function initMap() {
                     <div class="card-body">
                                             
                         <div class="form-floating mb-3">
-                            <input type="text" name="vic_fname" id="vic_fname" class="form-control form-control-sm" placeholder="First Name" value="{{pasig_incident_detail.Victim_Fname}}">
+                            <input type="text" name="vic_fname" id="vic_fname" class="form-control form-control-sm" placeholder="First Name" value="{{pasig_incident_detail.Victim_Fname}}" required>
                             <label for="" style="font-size: small;" class="text-muted">First Name <span class="asterisk">*</span></label>
                         </div>
                     
                         <div class="form-floating mb-3">
-                            <input type="text" name="vic_lname" id="vic_lname" class="form-control form-control-sm" placeholder="Last Name" value="{{pasig_incident_detail.Victim_Lname}}">
+                            <input type="text" name="vic_lname" id="vic_lname" class="form-control form-control-sm" placeholder="Last Name" value="{{pasig_incident_detail.Victim_Lname}}" required>
                             <label for="" style="font-size: small;" class="text-muted">Last Name <span class="asterisk">*</span></label>
                         </div>
                             
                         <div class="row g-2 mb-3">
                             <div class="col-6">
                                 <div class="form-floating">
-                                    <select class="form-select form-select-sm" id="v_sex" name="v_sex">
+                                    <select class="form-select form-select-sm" id="v_sex" name="v_sex" required>
                                         <option value=""></option>
                                         <option value="Male" {% ifequal pasig_incident_detail.Victim_Sex 'Male' %} selected {% endifequal %}>Male</option>
                                         <option value="Female" {% ifequal pasig_incident_detail.Victim_Sex 'Female' %} selected {% endifequal %}>Female</option>
@@ -850,14 +849,14 @@ function initMap() {
                             </div>
                             <div class="col-6">
                                 <div class="form-floating">
-                                    <input type="number" name="vic_age" id="vic_age" class="form-control form-control-sm" placeholder="Age" value="{{pasig_incident_detail.Victim_Age}}">
+                                    <input type="number" name="vic_age" id="vic_age" class="form-control form-control-sm" placeholder="Age" value="{{pasig_incident_detail.Victim_Age}}" required>
                                     <label for="" style="font-size: small;" class="text-muted">Age <span class="asterisk">*</span></label>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="form-floating mb-3">
-                            <input type="text" name="vic_add" id="vic_add" class="form-control form-control-sm" placeholder="Address" value="{{pasig_incident_detail.Victim_Address}}">
+                            <input type="text" name="vic_add" id="vic_add" class="form-control form-control-sm" placeholder="Address" value="{{pasig_incident_detail.Victim_Address}}" required>
                             <label for="" style="font-size:small;" class="text-muted">Address <span class="asterisk">*</span></label>
                         </div>
 
@@ -872,12 +871,12 @@ function initMap() {
                                         <option value="Separated" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
                                         <option value="Divorced" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
                                     </select>
-                                    <label for="" style="font-size: small;" class="text-muted">Civil Status <span class="asterisk">*</span></label>
+                                    <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <select class="form-select form-select-sm" id="vic_type" name="vic_type">
+                                    <select class="form-select form-select-sm" id="vic_type" name="vic_type" required>
                                         <option value=""></option>
                                         <option value="Driver" {% ifequal pasig_incident_detail.Victim_Type 'Driver' %} selected {% endifequal %}>Driver</option>
                                         <option value="Passenger" {% ifequal pasig_incident_detail.Victim_Type 'Passenger' %} selected {% endifequal %}>Passenger</option>
@@ -890,19 +889,19 @@ function initMap() {
 
                         <div class="form-floating mb-3">
                             <input type="text" name="vic_drl" id="vic_drl" class="form-control form-control-sm" value="{{pasig_incident_detail.Victim_Drl_No}}">
-                            <label for="" style="font-size: small;" class="text-muted">Driver's License <span class="asterisk">*</span></label>
+                            <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
                         </div>
 
                         <div class="row g-2 mb-3">
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <input type="text" name="vic_vehicle" id="vic_vehicle" class="form-control" value="{{pasig_incident_detail.Victim_Vehicle}}">
+                                    <input type="text" name="vic_vehicle" id="vic_vehicle" class="form-control" value="{{pasig_incident_detail.Victim_Vehicle}}" required>
                                     <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model <span class="asterisk">*</span></label>
                                 </div>
                             </div>
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <select class="form-select-sm form-select" name="vic_vehicle_body_type" id="vic_vehicle_body_type">
+                                    <select class="form-select-sm form-select" name="vic_vehicle_body_type" id="vic_vehicle_body_type" required>
                                         <option value=""></option>
                                         <option value="Armored Car" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Armored Car' %} selected {% endifequal %}>Armored Car</option>
                                         <option value="Alto" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Alto' %} selected {% endifequal %}>Alto</option>
@@ -916,7 +915,6 @@ function initMap() {
                                         <option value="Hatchback"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Hatchback' %} selected {% endifequal %}>Hatchback</option>
                                         <option value="Motorcycle"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Motorcycle' %} selected {% endifequal %}>Motorcycle</option>
                                         <option value="MTC/MC"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'MTC/MC' %} selected {% endifequal %}>MTC/MC</option>
-                                        <option value="Object"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Object' %} selected {% endifequal %}>Object</option>
                                         <option value="Pedicab"{% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'Pedicab' %} selected {% endifequal %}>Pedicab</option>
                                         <option value="PUJ - Public Utility Jeep" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUJ - Public Utility Jeep' %} selected {% endifequal %}>PUJ - Public Utility Jeep</option>
                                         <option value="PUV- Public Utility Vehicle" {% ifequal pasig_incident_detail.Victim_Vehicle_Body_Type 'PUV- Public Utility Vehicle' %} selected {% endifequal %}>PUV- Public Utility Vehicle</option>
@@ -964,14 +962,14 @@ function initMap() {
                             </div>
                             <div class="col-md">
                                 <div class="form-floating">
-                                    <input type="text" name="vic_plate_no" id="vic_plate_no" class="form-control form-control-smd" value="{{pasig_incident_detail.Victim_Plate_No}}">
+                                    <input type="text" name="vic_plate_no" id="vic_plate_no" class="form-control form-control-smd" value="{{pasig_incident_detail.Victim_Plate_No}}" required>
                                     <label for="" style="font-size: small;" class="text-muted">Plate Number <span class="asterisk">*</span></label>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="form-floating mb-3">
-                            <select name="vic_severity" id="vic_severity" class="form-select form-select-sm">
+                            <select name="vic_severity" id="vic_severity" class="form-select form-select-sm" required>
                                 <option value=""></option>
                                 <option value="Unharmed" {% ifequal pasig_incident_detail.Victim_Severity 'Unharmed' %} selected {% endifequal %}>Unharmed</option>
                                 <option value="Harmed"{% ifequal pasig_incident_detail.Victim_Severity 'Harmed' %} selected {% endifequal %}>Harmed</option>
@@ -1271,8 +1269,43 @@ function initMap() {
                 vic_plate_no.disabled = false;
                 vic_severity.disabled = false;
             }
+          });
+          sus_vehicle_body_type = document.getElementById('sus_vehicle_body_type');
+          vic_vehicle_body_type = document.getElementById('vic_vehicle_body_type');
+
+            if(sus_vehicle_body_type.value == "Bicycle" | sus_vehicle_body_type.value =="Electric Bike" | sus_vehicle_body_type.value =="Pedicab" | sus_vehicle_body_type.value =="Cart" | sus_vehicle_body_type.value =="Unidentified" | sus_vehicle_body_type.value =="Others") {
+                sus_plate_no.disabled = true;
+            }
+            else {
+                sus_plate_no.disabled = false;
+            }
+
+            if(vic_vehicle_body_type.value == "Bicycle" | vic_vehicle_body_type.value =="Electric Bike" | vic_vehicle_body_type.value =="Pedicab" | vic_vehicle_body_type.value =="Cart" | vic_vehicle_body_type.value =="Unidentified" | vic_vehicle_body_type.value =="Others") {
+                vic_plate_no.disabled = true;
+            }
+            else {
+                vic_plate_no.disabled = false;
+            }
 
 
+          sus_plate_no = document.getElementById('sus_plate_no');
+          vic_plate_no = document.getElementById('vic_plate_no');
+          $('#sus_vehicle_body_type').change(function(){
+            if(this.value == "Bicycle" | this.value =="Electric Bike" | this.value =="Pedicab" | this.value =="Cart" | this.value =="Unidentified" | this.value =="Others") {
+                sus_plate_no.disabled = true;
+            }
+            else {
+                sus_plate_no.disabled = false;
+            }
+          });
+
+          $('#vic_vehicle_body_type').change(function(){
+            if(this.value == "Bicycle" | this.value =="Electric Bike" | this.value =="Pedicab" | this.value =="Cart" | this.value =="Unidentified" | this.value =="Others") {
+                vic_plate_no.disabled = true;
+            }
+            else {
+                vic_plate_no.disabled = false;
+            }
           });
     
           $('#DateCommitted').change(function(){

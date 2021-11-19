@@ -133,6 +133,11 @@
             font-weight: normal;
         }
 
+        .asterisk {
+            color: red;
+            font-weight: bold;
+        }
+
 
         @media only screen and (max-width: 3101px) and (min-width: 2600px){
             .container {margin-left: 590px; }
@@ -427,7 +432,6 @@ function initMap() {
                                             <option value="Angle Collision">Angle Collision</option>
                                             <option value="Bumped From Behind">Bumped From Behind</option>
                                             <option value="Clash">Clash</option>
-                                            <option value="Damage to Property">Damage to Property</option>
                                             <option value="Head On">Head On</option>
                                             <option value="Hit and Run">Hit and Run</option>
                                             <option value="Hit Animals">Hit Animals</option>
@@ -445,7 +449,7 @@ function initMap() {
                                             <option value="Right Angle">Right Angle</option>
                                             <option value="Others">Others</option>
                                         </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Collision Type</label>
+                                        <label for="" style="font-size: small;" class="text-muted">Collision Type <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
@@ -497,7 +501,7 @@ function initMap() {
                                             <option value="Solved">Solved</option>
                                             <option value="Unsolved">Unsolved</option>
                                         </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Case Status</label>
+                                        <label for="" style="font-size: small;" class="text-muted">Case Status <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
@@ -527,11 +531,11 @@ function initMap() {
     
     
                                 <div class="col-12" style="background-color: none; display: grid !important;">
-                                    <div class="btn-group checkbox-group" role="">
-                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck2" value="Physical Injury" autocomplete="off" >
+                                    <div class="btn-group" role="">
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck2" value="Physical Injury" autocomplete="off">
                                         <label class="btn btn-outline-primary chk_offense" for="btncheck2">Physical Injury</label>
                                         
-                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck3" value="Self Accident" autocomplete="off" >
+                                        <input type="checkbox" class="btn-check chk_offense_input" id="btncheck3" value="Self Accident" autocomplete="off">
                                         <label class="btn btn-outline-primary chk_offense" for="btncheck3">Self Accident</label>
                                     </div>
         
@@ -545,9 +549,9 @@ function initMap() {
                                         <input type="checkbox" class="btn-check chk_offense_input" id="btncheck1" value="Damage to Property" autocomplete="off">
                                         <label class="btn btn-outline-primary chk_offense" for="btncheck1">Damage to Property</label>
                                     </div> 
-                                    <input type="text" id="display_offense" name ="display_offense" class="form-field"required hidden>
+                                    <input type="text" id="display_offense" name ="display_offense" class="form-field"hidden required >
                                 </div>
-                                
+
                                 <script type="text/javascript">
                                     $(document).ready(function(){
                                          $('#btn-create').click(function(){
@@ -556,11 +560,12 @@ function initMap() {
                                             }
                                         });
                                     });
-                                
                                 </script>
+                                
                         
                         </div>
-                    </div> <!-- inicdent's detail card closing-->
+                    </div> <!-- incident's detail card closing-->
+                    
                     <div class="card">
                         <div class="card-header">
                             <label class="label-blue"><i class="bi bi-geo-alt-fill"></i> Location Details</label>
@@ -573,7 +578,7 @@ function initMap() {
                                     <input type="text" name="city" value="" placeholder ="Pasig City"class="form-control form-control-sm" readonly>
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" id="district" name="district" value="{{pasig_incident_detail.Reported_District}}" placeholder="District"class="form-control form-control-sm" readonly>
+                                    <input type="text" id="district" name="district" value="" placeholder="District"class="form-control form-control-sm" readonly>
                                 </div>
                             </div>
                         
@@ -581,10 +586,10 @@ function initMap() {
                                 <select name="barangay" id="barangay" class="form-select form-select-sm" onchange="selectdistrict(event)" required>
                                     <option value=""></option>
                                     {% for brgy in brgy_list %}
-                                        <option value="{{brgy.id}}" {% ifequal pasig_incident_detail.Reported_Brgy_id brgy.id %} selected {% endifequal %}>{{brgy.Barangay}} </option>
+                                        <option value="{{brgy.id}}">{{brgy.Barangay}} </option>
                                     {% endfor %}
                                 </select>                            
-                                <label for="" style="font-size: small;" class="text-muted">Barangay</label>
+                                <label for="" style="font-size: small;" class="text-muted">Barangay <span class="asterisk">*</span></label>
                             </div>
 
                             <script>
@@ -604,32 +609,32 @@ function initMap() {
 
                             <div class="form-floating mb-3">
                                 <input type="text" name="place_committed" id="place_committed" class="form-control form-control-sm" required>
-                                <label for="" style="font-size: small;" class="text-muted">Place Committed</label>
+                                <label for="" style="font-size: small;" class="text-muted">Place Committed <span class="asterisk">*</span></label>
                             </div>
 
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
-                                    <input type="text" name="along" value="{{pasig_incident_detail.Reported_Along}}" placeholder="Along" class="form-control form-control-sm">
+                                    <input type="text" name="along" value="" placeholder="Along" class="form-control form-control-sm">
                                 </div>
                                 <div class="col-6">
-                                    <input type="text" id="corner" name="corner" value="{{pasig_incident_detail.Reported_Corner}}" placeholder="Corner" class="form-control form-control-sm">
+                                    <input type="text" id="corner" name="corner" value="" placeholder="Corner" class="form-control form-control-sm">
                                 </div>
                             </div>
 
                             <div class="row g-2">
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="date" id="DateCommitted" name="DateCommitted" class="form-control-sm form-control" value="{{pasig_incident_detail.Reported_Date|date:'Y-m-d'}}"required>                                        
-                                        <label for="" style="font-size: small;" class="text-muted">Date Committed</label>
+                                        <input type="date" id="DateCommitted" name="DateCommitted" class="form-control-sm form-control" required>                                        
+                                        <label for="" style="font-size: small;" class="text-muted">Date Committed <span class="asterisk">*</span></label>
                                         <input type="text" name="day_of_the_week" id="day_of_the_week" class="form-field" hidden>
-                                        <input type="text" name="week" id="week" class="form-field" hidden>
+                                        <input type="text" name="week" id="week" class="form-field"  hidden>
                                     </div>
                                 </div>
                             
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="time" id="incidentTime" name="incidentTime" class="form-control-sm form-control text-nowrap overflow-hidden"value="{{ pasig_incident_detail.Reported_Time|date:'H:i' }}" required>                                        
-                                        <label for="" style="font-size: small;" class="text-muted">Time Committed</label>
+                                        <input type="time" id="currentTime" name="currentTime" class="form-control-sm form-control text-nowrap overflow-hidden" required>                                        
+                                        <label for="" style="font-size: small;" class="text-muted">Time Committed <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
@@ -647,206 +652,202 @@ function initMap() {
                 </div>
             </div> <!--left side cards-->
 
-                <!--middle side cards -->
-                <div class="col-sm-4 mt-3">
-                    <div class="card">
-                        <div class="card-header">
-                            <label class="label-blue"><i class="bi bi-person-fill"></i> Suspect's Details</label>
-                            <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+              <!--middle side cards -->
+              <div class="col-sm-4 mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        <label class="label-blue"><i class="bi bi-person-fill"></i> Suspect's Details</label>
+                        <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" name="sus_fname" id="sus_fname" class="form-control form-control-sm" placeholder="First Name" required>
+                            <label for="" style="font-size: small;" class="text-muted">First Name <span class="asterisk">*</span></label>
                         </div>
-                        <div class="card-body">
-                            
-                            <div class="form-floating mb-3">
-                                <input type="text" name="sus_fname" id="sus_fname" class="form-control form-control-sm" placeholder="First Name" required>
-                                <label for="" style="font-size: small;" class="text-muted">First Name</label>
-                            </div>
-                        
-                        
-                            <div class="form-floating mb-3">
-                                <input type="text" name="sus_lname" id="sus_lname" class="form-control form-control-sm" placeholder="Last Name" required>
-                                <label for="" style="font-size: small;" class="text-muted">Last Name</label>
-                            </div>
+                    
+                    
+                        <div class="form-floating mb-3">
+                            <input type="text" name="sus_lname" id="sus_lname" class="form-control form-control-sm" placeholder="Last Name" required>
+                            <label for="" style="font-size: small;" class="text-muted">Last Name <span class="asterisk">*</span></label>
+                        </div>
 
-                            <div class="row g-2 mb-3">
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <select class="form-select form-select-sm" id="s_sex" name="s_sex" required>
-                                            <option value=""></option>
-                                            <option value="Male">Male</option>
-                                            <option value="Female">Female</option>
-                                        </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Sex</label>
-                                    </div>
-                                </div>
-                                <div class="col-6">
-                                    <div class="form-floating">
-                                        <input type="number" name="sus_age" class="form-control form-control-sm" placeholder="Age" required>
-                                        <label for="" style="font-size: small;" class="text-muted">Age</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-floating mb-3">
-                                <input type="text" name="sus_add" class="form-control form-control-sm" placeholder="Address" required>
-                                <label for="" style="font-size:small;" class="text-muted">Address</label>
-                            </div>
-
-                            <div class="row g-2 mb-3">
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <select name="sus_civil_status" id="sus_civil_status" class="form-select form-select-sm" placeholder="Civil Status" required>
-                                            <option value=""></option>
-                                            <option value="Single">Single</option>
-                                            <option value="Married">Married</option>
-                                            <option value="Widowed">Widowed</option>
-                                            <option value="Separated">Separated</option>
-                                            <option value="Divorced">Divorced</option>
-                                        </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <select class="form-select form-select-sm" id="sus_type" name="sus_type">
-                                            <option value=""></option>
-                                            <option value="Driver">Driver</option>
-                                            <option value="Passenger">Passenger</option>
-                                            <option value="Pedestrian">Pedestrian</option>
-                                        </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Suspect Type</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-floating mb-3">
-                                <input type="text" name="sus_drl" class="form-control form-control-sm" required>
-                                <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
-                            </div>
-
-                            <div class="row g-2 mb-3">
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <input type="text" name="sus_vehicle" class="form-control" required>
-                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model</label>
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <select class="form-select-sm form-select" name="sus_vehicle_body_type">
-                                            <option value=""></option>
-                                                <option value="Armored Car">Armored Car</option>
-                                                <option value="Alto">Alto</option>
-                                                <option value="Bicycle">Bicycle</option>
-                                                <option value="Private Bus">Private Bus</option>
-                                                <option value="PUB - Public Utility Bus">PUB - Public Utility Bus</option>
-                                                <option value="Cab Chassis ">Cab Chassis </option>
-                                                <option value="Coupe">Coupe</option>
-                                                <option value="Electric Bike">Electric Bike</option>
-                                                <option value="Jitney">Jitney</option>
-                                                <option value="Hatchback">Hatchback</option>
-                                                <option value="Motorcycle">Motorcycle</option>
-                                                <option value="MTC/MC">MTC/MC</option>
-                                                <option value="Object">Object</option>
-                                                <option value="Pedicab">Pedicab</option>
-                                                <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
-                                                <option value="PUJ - Public Utility Jeep">PUJ - Public Utility Jeep</option>
-                                                <option value="PUV- Public Utility Vehicle">PUV- Public Utility Vehicle</option>
-                                                <option value="Sedan">Sedan</option>
-                                                <option value="S-CUV">S-CUV</option>
-                                                <option value="Shuttle">Shuttle</option>
-                                                <option value="SUV">SUV</option>
-                                                <option value="Tricycle">Tricycle</option>
-                                                <option value="Train">Train</option>
-                                                <option value="Truck">Truck</option>
-                                                <option value="Trailer">Trailer</option>
-                                                <option value="Unidentified">Unidentified</option>
-                                                <option value="Pick-Up">Pick-Up</option>
-                                                <option value="Minivan">Minivan</option>
-                                                <option value="Van">Van</option>
-                                                <option value="Wagon">Wagon</option>
-                                                <option value="Cart">Cart</option>
-                                                <option value="Unidentified">Unidentified</option>
-                                                <option value="Modern Jeepney">Modern Jeepney</option>
-                                                <option value="Others">Others</option>
-                                            </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Body Type</label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-floating">
-                                <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-sm">
-                                <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
-                            </div>
-
-                            <div class="form-check mb-3 ms-1 mt-1">
-                                <input class="form-check-input" type="checkbox" value="" id="same_as_sus_name">
-                                <label class="form-check-label text-muted" for="same_as_sus_name" for="" style="font-size: small;">
-                                  Same as suspect's name
-                                </label>
-                            </div>
-
-                            <div class="row g-2 mb-3">
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <input type="date" name="sus_drl_exp" class="form-control form-control-sm">
-                                        <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
-                                    </div>
-                                </div>
-                                <div class="col-md">
-                                    <div class="form-floating">
-                                        <input type="text" name="sus_plate_no" class="form-control form-control-sm" required>
-                                        <label for="" style="font-size: small;" class="text-muted">Plate Number</label>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div class="form-floating mb-3">
-                                <select name="sus_severity" class="form-select form-select-sm" required>
-                                    <option value=""></option>
-                                    <option value="Unharmed">Unharmed</option>
-                                    <option value="Harmed">Harmed</option>
-                                    <option value="Injured">Injured</option>
-                                    <option value="Self Accident">Self Accident</option>
-                                    <option value="Deceased">Deceased</option>
-                                    <option value="Identified">Identified</option>
-                                    <option value="Not Interested to Report">Not Interested to Report</option>
-                                    <option value="Arrested">Arrested</option>
-                                    <option value="Escaped">Escaped</option>
-                                    <option value="Unidentified">Unidentified</option>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <select class="form-select form-select-sm" id="s_sex" name="s_sex" required>
+                                        <option value=""></option>
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
                                     </select>
-                                <label for="" style="font-size: small;" class="text-muted">Severity Status</label>
+                                    <label for="" style="font-size: small;" class="text-muted">Sex <span class="asterisk">*</span></label>
+                                </div>
                             </div>
-
-                            
-
-                            <div class="form-floating mb-3">
-                                
-                                <label for="" style="font-size: small;" class="text-muted"></label>
+                            <div class="col-6">
+                                <div class="form-floating">
+                                    <input type="number" name="sus_age" class="form-control form-control-sm" placeholder="Age" required>
+                                    <label for="" style="font-size: small;" class="text-muted">Age <span class="asterisk">*</span></label>
+                                </div>
                             </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <input type="text" name="sus_add" class="form-control form-control-sm" placeholder="Address" required>
+                            <label for="" style="font-size:small;" class="text-muted">Address <span class="asterisk">*</span></label>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <select name="sus_civil_status" id="sus_civil_status" class="form-select form-select-sm" placeholder="Civil Status">
+                                        <option value=""></option>
+                                        <option value="Single">Single</option>
+                                        <option value="Married">Married</option>
+                                        <option value="Widowed">Widowed</option>
+                                        <option value="Separated">Separated</option>
+                                        <option value="Divorced">Divorced</option>
+                                    </select>
+                                    <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <select class="form-select form-select-sm" id="sus_type" name="sus_type" required>
+                                        <option value=""></option>
+                                        <option value="Driver">Driver</option>
+                                        <option value="Passenger">Passenger</option>
+                                        <option value="Pedestrian">Pedestrian</option>
+                                    </select>
+                                    <label for="" style="font-size: small;" class="text-muted">Suspect Type <span class="asterisk">*</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="text" name="sus_drl" class="form-control form-control-sm">
+                            <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input type="text" name="sus_vehicle" class="form-control" required>
+                                    <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model <span class="asterisk">*</span></label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <select class="form-select-sm form-select" id="sus_vehicle_body_type" name="sus_vehicle_body_type" required>
+                                        <option value=""></option>
+                                            <option value="Armored Car">Armored Car</option>
+                                            <option value="Alto">Alto</option>
+                                            <option value="Bicycle">Bicycle</option>
+                                            <option value="Private Bus">Private Bus</option>
+                                            <option value="PUB - Public Utility Bus">PUB - Public Utility Bus</option>
+                                            <option value="Cab Chassis ">Cab Chassis </option>
+                                            <option value="Coupe">Coupe</option>
+                                            <option value="Electric Bike">Electric Bike</option>
+                                            <option value="Jitney">Jitney</option>
+                                            <option value="Hatchback">Hatchback</option>
+                                            <option value="Motorcycle">Motorcycle</option>
+                                            <option value="MTC/MC">MTC/MC</option>
+                                            <option value="Pedicab">Pedicab</option>
+                                            <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
+                                            <option value="PUJ - Public Utility Jeep">PUJ - Public Utility Jeep</option>
+                                            <option value="PUV- Public Utility Vehicle">PUV- Public Utility Vehicle</option>
+                                            <option value="Sedan">Sedan</option>
+                                            <option value="S-CUV">S-CUV</option>
+                                            <option value="Shuttle">Shuttle</option>
+                                            <option value="SUV">SUV</option>
+                                            <option value="Tricycle">Tricycle</option>
+                                            <option value="Train">Train</option>
+                                            <option value="Truck">Truck</option>
+                                            <option value="Trailer">Trailer</option>
+                                            <option value="Unidentified">Unidentified</option>
+                                            <option value="Pick-Up">Pick-Up</option>
+                                            <option value="Minivan">Minivan</option>
+                                            <option value="Van">Van</option>
+                                            <option value="Wagon">Wagon</option>
+                                            <option value="Cart">Cart</option>
+                                            <option value="Unidentified">Unidentified</option>
+                                            <option value="Modern Jeepney">Modern Jeepney</option>
+                                            <option value="Others">Others</option>
+                                        </select>
+                                    <label for="" style="font-size: small;" class="text-muted">Vehicle Body Type <span class="asterisk">*</span></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating">
+                            <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-sm">
+                            <label for="" style="font-size: small;" class="text-muted">Registered Owner </label>
+                        </div>
+
+                        <div class="form-check mb-3 ms-1 mt-1">
+                            <input class="form-check-input" type="checkbox" value="" id="same_as_sus_name">
+                            <label class="form-check-label text-muted" for="same_as_sus_name" for="" style="font-size: small;">
+                              Same as suspect's name
+                            </label>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input type="date" name="sus_drl_exp" class="form-control form-control-sm">
+                                    <label for="" style="font-size: small;" class="text-muted">Expiration Date </label>
+                                </div>
+                            </div>
+                            <div class="col-md">
+                                <div class="form-floating">
+                                    <input type="text" id="sus_plate_no" name="sus_plate_no" class="form-control form-control-smd" required>
+                                    <label for="" style="font-size: small;" class="text-muted">Plate Number <span class="asterisk">*</span></label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-floating mb-3">
+                            <select name="sus_severity" class="form-select form-select-sm" required>
+                                <option value=""></option>
+                                <option value="Unharmed">Unharmed</option>
+                                <option value="Harmed">Harmed</option>
+                                <option value="Injured">Injured</option>
+                                <option value="Self Accident">Self Accident</option>
+                                <option value="Deceased">Deceased</option>
+                                <option value="Identified">Identified</option>
+                                <option value="Not Interested to Report">Not Interested to Report</option>
+                                <option value="Arrested">Arrested</option>
+                                <option value="Escaped">Escaped</option>
+                                <option value="Unidentified">Unidentified</option>
+                                </select>
+                            <label for="" style="font-size: small;" class="text-muted">Severity Status <span class="asterisk">*</span></label>
+                        </div>
+                    
+                        <div class="form-floating mb-3">
+                            <label for="" style="font-size: small;" class="text-muted"></label>
                         </div>
                     </div>
-                </div> <!--middle cards -->
+                </div>
+            </div> <!--middle cards -->
 
-                <!--right side cards -->
-                <div class="col-sm-4 mt-3">
+                 <!--right side cards -->
+                 <div class="col-sm-4 mt-3">
                     <div class="card">
                         <div class="card-header">
                             <label class="label-blue"><i class="bi bi-person-fill"></i> Victim's Details</label>
                             <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
                         </div>
                         <div class="card-body">
-                                               
+                          
                             <div class="form-floating mb-3">
                                 <input type="text" name="vic_fname" id="vic_fname" class="form-control form-control-sm" placeholder="First Name" required>
-                                <label for="" style="font-size: small;" class="text-muted">First Name</label>
+                                <label for="" style="font-size: small;" class="text-muted">First Name <span class="asterisk">*</span></label>
                             </div>
                         
                             <div class="form-floating mb-3">
                                 <input type="text" name="vic_lname" id="vic_lname" class="form-control form-control-sm" placeholder="Last Name" required>
-                                <label for="" style="font-size: small;" class="text-muted">Last Name</label>
+                                <label for="" style="font-size: small;" class="text-muted">Last Name <span class="asterisk">*</span></label>
                             </div>
-                                
+            
                             <div class="row g-2 mb-3">
                                 <div class="col-6">
                                     <div class="form-floating">
@@ -855,26 +856,26 @@ function initMap() {
                                             <option value="Male">Male</option>
                                             <option value="Female">Female</option>
                                         </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Sex</label>
+                                        <label for="" style="font-size: small;" class="text-muted">Sex <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                                 <div class="col-6">
                                     <div class="form-floating">
-                                        <input type="number" name="vic_age" class="form-control form-control-sm" placeholder="Age" required>
-                                        <label for="" style="font-size: small;" class="text-muted">Age</label>
+                                        <input type="number" name="vic_age" id="vic_age" class="form-control form-control-sm" placeholder="Age" required>
+                                        <label for="" style="font-size: small;" class="text-muted">Age <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="form-floating mb-3">
-                                <input type="text" name="vic_add" class="form-control form-control-sm" placeholder="Address" required>
-                                <label for="" style="font-size:small;" class="text-muted">Address</label>
+                                <input type="text" name="vic_add" id="vic_add" class="form-control form-control-sm" placeholder="Address" required>
+                                <label for="" style="font-size:small;" class="text-muted">Address <span class="asterisk">*</span></label>
                             </div>
 
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select name="vic_civil_status" id="vic_civil_status" class="form-select form-select-sm" placeholder="Civil Status" required>
+                                        <select name="vic_civil_status" id="vic_civil_status" class="form-select form-select-sm" placeholder="Civil Status">
                                             <option value=""></option>
                                             <option value="Single">Single</option>
                                             <option value="Married">Married</option>
@@ -893,26 +894,26 @@ function initMap() {
                                             <option value="Passenger">Passenger</option>
                                             <option value="Pedestrian">Pedestrian</option>
                                         </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Victim Type</label>
+                                        <label for="" style="font-size: small;" class="text-muted">Victim Type <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-floating mb-3">
-                                <input type="text" name="vic_drl" class="form-control form-control-sm" required>
+                                <input type="text" name="vic_drl" id="vic_drl" class="form-control form-control-sm">
                                 <label for="" style="font-size: small;" class="text-muted">Driver's License</label>
                             </div>
 
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="text" name="vic_vehicle" class="form-control" required>
-                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model</label>
+                                        <input type="text" name="vic_vehicle" id="vic_vehicle" class="form-control" required>
+                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Brand/Model <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <select class="form-select-sm form-select" name="vic_vehicle_body_type" required>
+                                        <select class="form-select-sm form-select" name="vic_vehicle_body_type" id="vic_vehicle_body_type" required>
                                             <option value=""></option>
                                                 <option value="Armored Car">Armored Car</option>
                                                 <option value="Alto">Alto</option>
@@ -926,7 +927,6 @@ function initMap() {
                                                 <option value="Hatchback">Hatchback</option>
                                                 <option value="Motorcycle">Motorcycle</option>
                                                 <option value="MTC/MC">MTC/MC</option>
-                                                <option value="Object">Object</option>
                                                 <option value="Pedicab">Pedicab</option>
                                                 <option value="PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)">PUJ/PUB/PUV - (Public Utility Bus/Public Utility Jeep/Public Utility Vehicle)</option>
                                                 <option value="PUJ - Public Utility Jeep">PUJ - Public Utility Jeep</option>
@@ -949,13 +949,13 @@ function initMap() {
                                                 <option value="Modern Jeepney">Modern Jeepney</option>
                                                 <option value="Others">Others</option>
                                             </select>
-                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Body Type</label>
+                                        <label for="" style="font-size: small;" class="text-muted">Vehicle Body Type <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
 
                             <div class="form-floating">
-                                <input type="text" name="vic_reg_owner"id="vic_reg_owner" class="form-control form-control-smd">
+                                <input type="text" name="vic_reg_owner" id="vic_reg_owner" class="form-control form-control-smd">
                                 <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
                             </div>
 
@@ -969,20 +969,20 @@ function initMap() {
                             <div class="row g-2 mb-3">
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="date" name="vic_drl_exp" class="form-control form-control-sm">
+                                        <input type="date" name="vic_drl_exp" id="vic_drl_exp" class="form-control form-control-sm">
                                         <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                     </div>
                                 </div>
                                 <div class="col-md">
                                     <div class="form-floating">
-                                        <input type="text" name="vic_plate_no" class="form-control form-control-sm" required>
-                                        <label for="" style="font-size: small;" class="text-muted">Plate Number</label>
+                                        <input type="text" name="vic_plate_no" id="vic_plate_no" class="form-control form-control-sm" required>
+                                        <label for="" style="font-size: small;" class="text-muted">Plate Number <span class="asterisk">*</span></label>
                                     </div>
                                 </div>
                             </div>
                             
                             <div class="form-floating mb-3">
-                                <select name="vic_severity" class="form-select form-select-sm" required>
+                                <select name="vic_severity" id="vic_severity" class="form-select form-select-sm" required>
                                     <option value=""></option>
                                     <option value="Unharmed">Unharmed</option>
                                     <option value="Harmed">Harmed</option>
@@ -995,11 +995,11 @@ function initMap() {
                                     <option value="Escaped">Escaped</option>
                                     <option value="Unidentified">Unidentified</option>
                                     </select>
-                                <label for="" style="font-size: small;" class="text-muted">Severity Status</label>
+                                <label for="" style="font-size: small;" class="text-muted">Severity Status <span class="asterisk">*</span></label>
                             </div>
                         </div>
                     </div>
-
+               
                 </div> <!--right side cards -->
 
         </div> <!-- row -->
@@ -1019,7 +1019,7 @@ function initMap() {
             <div class="col-sm-8">
                 <div class="card mb-3" style="height:auto; min-height: 280px;">
                     <div class="card-header">
-                        <label class="label-blue">  <i class="bi bi-text-left"></i> &nbsp;Narrative</label>
+                        <label class="label-blue">  <i class="bi bi-text-left"></i> &nbsp;Narrative <span class="asterisk">*</span></label>
                         <i class="bi bi-question-circle" style="color: #d3d3d3; float: right;"></i>
                     </div>
                     <div class="card-body">
@@ -1078,24 +1078,169 @@ function initMap() {
 
           });
 
+          vic_fname = document.getElementById('vic_fname');
+            vic_lname = document.getElementById('vic_lname');
+            v_sex = document.getElementById('v_sex');
+            vic_age = document.getElementById('vic_age');
+            vic_add = document.getElementById('vic_add');
+            vic_civil_status = document.getElementById('vic_civil_status');
+            vic_type = document.getElementById('vic_type');
+            vic_drl = document.getElementById('vic_drl');
+            vic_vehicle = document.getElementById('vic_vehicle');
+            vic_vehicle_body_type = document.getElementById('vic_vehicle_body_type');
+            vic_reg_owner = document.getElementById('vic_reg_owner');
+            same_as_vic_name = document.getElementById('same_as_vic_name');
+            vic_drl_exp = document.getElementById('vic_drl_exp');
+            vic_plate_no = document.getElementById('vic_plate_no');
+            vic_severity = document.getElementById('vic_severity');
+
           $('.chk_offense_input').change(function(){
             var selected_offense = new Array();
             var selchk = document.getElementsByClassName("chk_offense_input")
-    
+
             for (var i=0; i<selchk.length; i++) {
               if(selchk[i].checked){
-                selected_offense.push(selchk[i].value);
+                selected_offense.push(selchk[i].value);               
               }
             }
 
             if(selected_offense.length>0){
-              document.getElementById('display_offense').value=selected_offense; 
+                document.getElementById('display_offense').value=selected_offense; 
             }
 
             else {
                 document.getElementById('display_offense').value=null;
             }
 
+            if(selected_offense.includes("Self Accident") == true) {
+                vic_fname.disabled = true;
+                vic_lname.disabled = true;
+                v_sex.disabled = true;
+                vic_age.disabled = true;
+                vic_add.disabled = true;
+                vic_civil_status.disabled = true;
+                vic_type.disabled = true;
+                vic_type.disabled = true;
+                vic_drl.disabled = true;
+                vic_vehicle.disabled = true;
+                vic_vehicle_body_type.disabled = true;
+                vic_reg_owner.disabled = true;
+                same_as_vic_name.disabled = true;
+                vic_drl_exp.disabled = true;
+                vic_drl_exp.disabled = true;
+                vic_plate_no.disabled = true;
+                vic_severity.disabled = true;
+            }
+            
+            if(selected_offense.includes("Self Accident") == false) {
+                vic_fname.disabled = false;
+                vic_lname.disabled = false;
+                v_sex.disabled = false;
+                vic_age.disabled = false;
+                vic_add.disabled = false;
+                vic_civil_status.disabled = false;
+                vic_type.disabled = false;
+                vic_type.disabled = false;
+                vic_drl.disabled = false;
+                vic_vehicle.disabled = false;
+                vic_vehicle_body_type.disabled = false;
+                vic_reg_owner.disabled = false;
+                same_as_vic_name.disabled = false;
+                vic_drl_exp.disabled = false;
+                vic_drl_exp.disabled = false;
+                vic_plate_no.disabled = false;
+                vic_severity.disabled = false;
+            }
+
+          });
+
+          $('#collision_type').change(function(){
+              if(this.value == "Self Accident") {
+                document.getElementById('btncheck3').checked = true;
+
+                var selected_offense = new Array();
+                var selchk = document.getElementsByClassName("chk_offense_input")
+
+                for (var i=0; i<selchk.length; i++) {
+                    if(selchk[i].checked){
+                        selected_offense.push(selchk[i].value);               
+                    }
+                }
+                document.getElementById('display_offense').value=selected_offense; 
+
+
+                vic_fname.disabled = true;
+                vic_lname.disabled = true;
+                v_sex.disabled = true;
+                vic_age.disabled = true;
+                vic_add.disabled = true;
+                vic_civil_status.disabled = true;
+                vic_type.disabled = true;
+                vic_type.disabled = true;
+                vic_drl.disabled = true;
+                vic_vehicle.disabled = true;
+                vic_vehicle_body_type.disabled = true;
+                vic_reg_owner.disabled = true;
+                same_as_vic_name.disabled = true;
+                vic_drl_exp.disabled = true;
+                vic_drl_exp.disabled = true;
+                vic_plate_no.disabled = true;
+                vic_severity.disabled = true;
+              }
+
+              else{
+                document.getElementById('btncheck3').checked = false;
+               
+                var selected_offense = new Array();
+                var selchk = document.getElementsByClassName("chk_offense_input")
+
+                for (var i=0; i<selchk.length; i++) {
+                    if(selchk[i].checked){
+                        selected_offense.push(selchk[i].value);               
+                    }
+                }
+
+                document.getElementById('display_offense').value=selected_offense; 
+
+                vic_fname.disabled = false;
+                vic_lname.disabled = false;
+                v_sex.disabled = false;
+                vic_age.disabled = false;
+                vic_add.disabled = false;
+                vic_civil_status.disabled = false;
+                vic_type.disabled = false;
+                vic_type.disabled = false;
+                vic_drl.disabled = false;
+                vic_vehicle.disabled = false;
+                vic_vehicle_body_type.disabled = false;
+                vic_reg_owner.disabled = false;
+                same_as_vic_name.disabled = false;
+                vic_drl_exp.disabled = false;
+                vic_drl_exp.disabled = false;
+                vic_plate_no.disabled = false;
+                vic_severity.disabled = false;
+            }
+            
+          });
+
+          sus_plate_no = document.getElementById('sus_plate_no');
+          vic_plate_no = document.getElementById('vic_plate_no');
+          $('#sus_vehicle_body_type').change(function(){
+            if(this.value == "Bicycle" | this.value =="Electric Bike" | this.value =="Pedicab" | this.value =="Cart" | this.value =="Unidentified" | this.value =="Others") {
+                sus_plate_no.disabled = true;
+            }
+            else {
+                sus_plate_no.disabled = false;
+            }
+          });
+
+          $('#vic_vehicle_body_type').change(function(){
+            if(this.value == "Bicycle" | this.value =="Electric Bike" | this.value =="Pedicab" | this.value =="Cart" | this.value =="Unidentified" | this.value =="Others") {
+                vic_plate_no.disabled = true;
+            }
+            else {
+                vic_plate_no.disabled = false;
+            }
           });
 
           Date.prototype.getWeek = function (dowOffset) {

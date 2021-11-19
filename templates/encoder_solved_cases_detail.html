@@ -692,7 +692,7 @@ function initMap() {
                                         <option value="Separated" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
                                         <option value="Divorced" {% ifequal pasig_incident_detail.Suspect_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
                                     </select>
-                                    <label for="" style="font-size: small;" class="text-muted">Civil Status <span class="asterisk">*</span></label>
+                                    <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
                                 </div>
                             </div>
                             <div class="col-md">
@@ -766,7 +766,7 @@ function initMap() {
 
                         <div class="form-floating">
                             <input type="text" name="sus_reg_owner" id="sus_reg_owner" class="form-control form-control-smd" value="{{pasig_incident_detail.Suspect_Reg_Owner}}">
-                            <label for="" style="font-size: small;" class="text-muted">Registered Owner <span class="asterisk">*</span></label>
+                            <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
                         </div>
 
                         <div class="form-check mb-3 ms-1 mt-1">
@@ -780,7 +780,7 @@ function initMap() {
                             <div class="col-md">
                                 <div class="form-floating">
                                     <input type="date" name="sus_drl_exp" class="form-control form-control-sm" value="{{pasig_incident_detail.Suspect_Drl_Exp|date:'Y-m-d'}}">
-                                    <label for="" style="font-size: small;" class="text-muted">Expiration Date <span class="asterisk">*</span></label>
+                                    <label for="" style="font-size: small;" class="text-muted">Expiration Date</label>
                                 </div>
                             </div>
                             <div class="col-md">
@@ -872,7 +872,7 @@ function initMap() {
                                         <option value="Separated" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Separated' %} selected {% endifequal %}>Separated</option>
                                         <option value="Divorced" {% ifequal pasig_incident_detail.Victim_Civil_Status 'Divorced' %} selected {% endifequal %}>Divorced</option>
                                     </select>
-                                    <label for="" style="font-size: small;" class="text-muted">Civil Status <span class="asterisk">*</span></label>
+                                    <label for="" style="font-size: small;" class="text-muted">Civil Status</label>
                                 </div>
                             </div>
                             <div class="col-md">
@@ -945,7 +945,7 @@ function initMap() {
 
                         <div class="form-floating">
                             <input type="text" name="vic_reg_owner" id="vic_reg_owner" class="form-control form-control-smd" value="{{pasig_incident_detail.Victim_Reg_Owner}}">
-                            <label for="" style="font-size: small;" class="text-muted">Registered Owner <span class="asterisk">*</span></label>
+                            <label for="" style="font-size: small;" class="text-muted">Registered Owner</label>
                         </div>
 
                         <div class="form-check mb-3 ms-1 mt-1">

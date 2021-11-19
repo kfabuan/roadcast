@@ -959,6 +959,7 @@ def DashboardView (request):
     markers= Tbl_pasig_incidents.objects.filter(Date__year__gte=today.year, Date__year__lte=today.year).exclude(Q(Latitude__isnull=True) | Q(Longitude__isnull=True) | Q(Longitude ="None") | Q(Latitude ="None"))
     # Date__month__gte=today.month,
     # Date__month__lte=today.month,
+
     data = {
         "all_total": all_total,
         "this_week": this_week,
@@ -1047,16 +1048,29 @@ def get_data(request, *args, **kwargs):
     sex_count = []
 
     for sex in sex_distinct:
-        if sex == '':
-            sex = 'Others'
-            sex_labels.append(sex)
-            x = sex_combined.count('')
-            sex_count.append((x/sex_count_total)*100)
-
-        else:
+        if sex == 'Male':
             sex_labels.append(sex)
             x = sex_combined.count(sex)
             sex_count.append((x/sex_count_total)*100)
+
+        elif sex == 'Female': 
+            sex_labels.append(sex)
+            x = sex_combined.count(sex)
+            sex_count.append((x/sex_count_total)*100)
+
+        elif sex == 'Others':
+            sex_labels.append(sex)
+            x = sex_combined.count(sex)
+            sex_count.append((x/sex_count_total)*100)
+
+        else: pass
+
+    xx = sex_combined.count(None) 
+    yy = sex_combined.count('')
+    z = xx + yy
+    sex_count.append((z/sex_count_total)*100)
+    sex_labels.append('Unknown')
+    
 
 
     #Time Plot
@@ -1346,7 +1360,7 @@ def view_incidents (request):
 
         except:
             searched = request.POST['searched']
-            incident_model     = Tbl_pasig_incidents.objects.filter(Q(CrimeOffense__icontains = searched)|Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
+            incident_model     = Tbl_pasig_incidents.objects.filter(Q(Suspect_Vehicle__icontains = searched)|Q(Victim_Vehicle__icontains = searched)|Q(CrimeOffense__icontains = searched)|Q(Barangay_id_id__Barangay__icontains = searched)|Q(Incident_Type__icontains = searched)|Q(Suspect_Fname__icontains = searched)|Q(Suspect_Lname__icontains = searched)|Q(Victim_Fname__icontains = searched)|Q(Victim_Lname__icontains = searched)).filter(Case_Status = 'Solved').order_by('-id')
             
             paginator = Paginator(incident_model, 10) #ano at ilan ang ipapakita per page
             page_number = request.GET.get('page') #ganto talaga
@@ -2454,7 +2468,7 @@ def processEditIncident(request, incident_id):
 
     vic_sex = request.POST.get('v_sex')
     if vic_sex:
-        vic_sex = request.POST.get('vic_sex')
+        vic_sex = request.POST.get('v_sex')
     else:
         vic_sex = None
 
@@ -2789,8 +2803,8 @@ def monthly_report (request):
     sex_count = []
 
     for sex in sex_distinct:
-        if sex == '':
-            sex = 'blank'
+        if sex == '' or None:
+            sex = 'Unknown'
             sex_labels.append(sex)
             x = sex_combined.count('')
             sex_count.append((x/sex_count_total)*100)
