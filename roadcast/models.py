@@ -189,7 +189,7 @@ class tbl_genpub_users(models.Model):
     gen_valid_id    = models.CharField(max_length=50,blank=True,null=True)
     gen_upload_id   = models.ImageField(upload_to=image_path2, default='Public/default.jpg', blank=True, null=True)
     gen_profile     = models.ImageField(upload_to=image_path2, default='Public/default.jpg', blank=True, null=True)
-    date_signed_up  = models.DateTimeField(auto_now_add=True,blank=True, null=True)
+    date_signed_up  = models.DateField(auto_now_add=True,blank=True, null=True)
     date_edit       = models.DateField(blank=True, null=True) 
 
     #new

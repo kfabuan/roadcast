@@ -30,8 +30,6 @@ ALLOWED_HOSTS = ['*','www.roadcastpasig.live']
 
 ADMIN_ENABLED = True
 
-SMS_BACKEND = 'sms.backends.console.SmsBackend'
-
 # Application definition
 
 INSTALLED_APPS = [

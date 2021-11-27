@@ -6,6 +6,15 @@
 
 {% block title %} Submit Report {% endblock %}
 
+{% block design %}
+  <style>
+    .asterisk {
+            color: red;
+            font-weight: bold;
+        }
+  </style>
+{% endblock %}
+
 {% block content %}
 
 <!-- Login required and permission access of users (Should be placed after the opening block content) -->
@@ -109,17 +118,17 @@
     <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PLACE COMMITTED INFORMATION</label>
 
       <div class="col-md-6">
-        <label for="" class="form-label">City</label>
+        <label for="" class="form-label">City <span class="asterisk">*</span></label>
         <input type="text" name="city" value="Pasig" class="form-control" readonly>
       </div>
 
        <div class="col-md-6">
-        <label for="" class="form-label">District</label>
+        <label for="" class="form-label">District <span class="asterisk">*</span></label>
         <input type="text" id="district" name="district" value="" class="form-control" readonly>
       </div>
 
       <div class="col-md-12" style="margin-top: 9px;">
-        <label for="" class="col-sm-2 col-form-label">Barangay</label>
+        <label for="" class="col-sm-2 col-form-label">Barangay <span class="asterisk">*</span></label>
 
         <select name="Barangay" id="Barangay" class="form-select form-control" onchange="selectdistrict(event)" required>
             <option value="">Choose a barangay</option>
@@ -170,7 +179,7 @@
       </script>
 
     <div class="col-md-12">
-        <label for="" class="form-label" required>Address</label>
+        <label for="" class="form-label" required>Address <span class="asterisk">*</span></label>
         <input type="text" name ="address" id="address" class="form-control" required>
     </div>
 
@@ -189,7 +198,7 @@
 
     <input type="number" id="user_id" name="user_id" value="{{ request.session.authorized_id }}" class="form-control" hidden>
 
-    <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">NARRATIVE DESCRIPTION OF THE INCIDENT</label>
+    <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">NARRATIVE DESCRIPTION OF THE INCIDENT <span class="asterisk">*</span></label>
 
     <textarea class="form-control" name="narrative" placeholder="A brief description of what happened or its details. . ." style="height: 100px" required></textarea> 
 

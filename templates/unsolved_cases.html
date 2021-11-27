@@ -287,8 +287,8 @@
                 {% for a in all %}
                     {% ifequal a.id request.session.authorized_id %}
                         {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
-                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        <td>{{unsolved.Suspect_Fname}} {{unsolved.Suspect_Lname}}</td>
+                        <td>{{unsolved.Victim_Fname}} {{unsolved.Victim_Lname}}</td>
                         {% endif %}
                     {% endifequal %}
                 {% endfor %}  
@@ -407,8 +407,8 @@
                 {% for a in all %}
                     {% ifequal a.id request.session.authorized_id %}
                         {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
-                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        <td>{{unsolved_3.Suspect_Fname}} {{unsolved_3.Suspect_Lname}}</td>
+                        <td>{{unsolved_3.Victim_Fname}} {{unsolved_3.Victim_Lname}}</td>
                         {% endif %}
                     {% endifequal %}
                 {% endfor %}  
@@ -527,8 +527,8 @@
                 {% for a in all %}
                     {% ifequal a.id request.session.authorized_id %}
                         {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
-                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        <td>{{unsolved_4.Suspect_Fname}} {{unsolved_4.Suspect_Lname}}</td>
+                        <td>{{unsolved_4.Victim_Fname}} {{unsolved_4.Victim_Lname}}</td>
                         {% endif %}
                     {% endifequal %}
                 {% endfor %}  
@@ -640,8 +640,8 @@
                 {% for a in all %}
                     {% ifequal a.id request.session.authorized_id %}
                         {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
-                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
+                        <td>{{archive.Suspect_Fname}} {{archive.Suspect_Lname}}</td>
+                        <td>{{archive.Victim_Fname}} {{archive.Victim_Lname}}</td>
                         {% endif %}
                     {% endifequal %}
                 {% endfor %}  
