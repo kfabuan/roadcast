@@ -113,6 +113,55 @@ class Tbl_position(models.Model):
 
 
 class Tbl_add_members(models.Model):
+    
+    YES_NO = (
+        ('Yes', 'Yes'),
+        ('No', 'No')
+    )
+
+    DAY_OFF = (
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
+    )
+
+    BRGY =(
+        ('Bagong Ilog', 'Bagong Ilog'),
+        ('Bagong Katipunan', 'Bagong Katipunan'),
+        ('Bambang', 'Bambang'),
+        ('Buting', 'Buting'),
+        ('Caniogan', 'Caniogan'),
+        ('Dela Paz', 'Dela Paz'),
+        ('Kalawaan', 'Kalawaan'),
+        ('Kapasigan', 'Kapasigan'),
+        ('Kapitolyo', 'Kapitolyo'),
+        ('Malinao', 'Malinao'),
+        ('Manggahan', 'Manggahan'),
+        ('Maybunga', 'Maybunga'),
+        ('Oranbo', 'Oranbo'),
+        ('Palatiw', 'Palatiw'),
+        ('Pinagbuhatan', 'Pinagbuhatan'),
+        ('Pineda', 'Pineda'),
+        ('Rosario', 'Rosario'),
+        ('Sagad', 'Sagad'),
+        ('San Antonio', 'San Antonio'),
+        ('San Joaquin', 'San Joaquin'),
+        ('San Jose', 'San Jose'),
+        ('San Miguel', 'San Miguel'),
+        ('San Nicolas', 'San Nicolas'),
+        ('Santa Lucia', 'Santa Lucia'),
+        ('Santa Rosa', 'Santa Rosa'),
+        ('Santa Tomas', 'Santa Tomas'),
+        ('Santa Lucia', 'Santa Lucia'),
+        ('Santolan', 'Santolan'),
+        ('Sumilang', 'Sumilang'),
+        ('Ugong', 'Ugong'),
+    )
+
     id                  = models.AutoField(primary_key=True)
     Members_Dept        = models.ForeignKey(Tbl_add_departments, null=True, on_delete=models.SET_NULL) 
     Members_User        = models.ForeignKey(Tbl_member_type, null=True, on_delete=models.SET_NULL) #Admin/ Crime/ Subrep / Investigator
@@ -131,15 +180,15 @@ class Tbl_add_members(models.Model):
     Edit_By             = models.CharField(max_length=200, verbose_name='Edit By', default='Have not been edited yet', blank=True, null=True)
     Date_Edit           = models.DateField(verbose_name='Date Added', blank=True, null=True) 
 
-    Availability      = models.CharField(max_length=200, verbose_name='Availability', blank=True, null=True, default="Yes") 
-    Day_off           = models.CharField(max_length=200, verbose_name='Day Off', blank=True, null=True) 
-   
+    Availability      = models.CharField(max_length=200, verbose_name='Availability', blank=True, null=True, default="Yes", choices=YES_NO) 
+    Day_off           = models.IntegerField(verbose_name='Day Off (Mon(0) - Sun(6)',blank=True,null=True, choices=DAY_OFF)
+    Archived          = models.CharField(max_length=200, default="No", verbose_name='Archived', blank=True, null=True, choices=YES_NO)
+    
     nf_acc_activity   = models.BooleanField(default=True)
     nf_new_incident   = models.BooleanField(default=True)
-    nf_brgy   = models.CharField(max_length=50,blank=True,null=True)
+    nf_brgy   = models.CharField(max_length=50,blank=True,null=True, choices=BRGY)
 
-    
-    
+
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Members_Pic))
 

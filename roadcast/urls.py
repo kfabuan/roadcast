@@ -109,7 +109,9 @@ urlpatterns = [
     path('members/edit/<member_id>', views.edit_members, name='edit_members'),
     path('members/update/<member_id>', views.update_members, name='update_members'),
     path('members/delete/<member_id>', views.delete_member, name='delete_member'),
-    
+    path('members/archived', views.archived_members, name='archived_members'),    
+    path('members/unarchive/<member_id>', views.unarchive_member, name='unarchive_member'),
+
     path('departments/add', views.add_dept, name='add_dept'),
     path('departments/status', views.duplicate, name='duplicate'),
     path('departmentlist', views.admin_list_departments, name='admin_list_departments'),

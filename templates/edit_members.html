@@ -119,9 +119,23 @@
         </select>
       </div>
 
-        <div class="col-md-12">
+      <div class="col-md-6">
         <label for="" class="col-sm-2 col-form-label">District</label>
         <input class="form-control" name="Members_District" type="text" value="Pasig" readonly style="border-radius: 50px; height: 45px;">
+      </div>
+
+      <div class="col-md-6">
+        <label for="" class="col-sm-5 col-form-label">Day Off/Rest Day<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <select class="form-select" name="Day_off" required style="border-radius: 50px; height: 45px;">
+          <option selected="selected" disabled="disabled" value="None">Select a weekday</option>
+          <option value="0" {% ifequal members.Day_off 0 %} selected {% endifequal %}>Monday</option>
+          <option value="1" {% ifequal members.Day_off 1 %} selected {% endifequal %}>Tuesday</option>
+          <option value="2" {% ifequal members.Day_off 2 %} selected {% endifequal %}>Wednesday</option>
+          <option value="3" {% ifequal members.Day_off 3 %} selected {% endifequal %}>Thursday</option>
+          <option value="4" {% ifequal members.Day_off 4 %} selected {% endifequal %}>Friday</option>
+          <option value="5" {% ifequal members.Day_off 5 %} selected {% endifequal %}>Saturday</option>
+          <option value="6" {% ifequal members.Day_off 6 %} selected {% endifequal %}>Sunday</option>
+        </select>      
       </div>
 
 

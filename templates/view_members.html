@@ -69,10 +69,14 @@
         <div class="main-body">
               <div class="row gutters-sm">
                 <div class="col-md-4 mb-3">
-                  <div class="card">
+                  <div class="card" style="display: block;">
                     <div class="card-body">
                       <div class="d-flex flex-column align-items-center text-center">
-                        <section style="height: 85px"></section>
+                        {% ifequal members.Day_off NULL %}
+                        <section style="height: 80px"></section>
+                        {% else %}
+                        <section style="height: 75px"></section>
+                        {% endifequal %}
                         <img src="/media/{{members.Members_Pic}}" alt="Profile Picture" class="rounded-circle" style="width: 205px; height: 205px; object-fit: cover">
                         <div class="mt-3">
                           <h4>{{members.Members_Fname }} {{members.Members_Lname }}</h4>
@@ -83,12 +87,31 @@
                             {% else %} bg-custom3  
                             {% endif %}">{{members.Members_User }}</span>&nbsp; | &nbsp;{{members.Members_Position }}</p>
                           <p class="text-muted font-size-sm">@{{members.Members_Username }}</p>
-                          <section style="height: 60px"></section>
+
+                          {% ifnotequal members.Day_off NULL %}
+                          <i class="text-muted font-size-sm">
+                            *Not available during 
+                            {% ifequal members.Day_off 0 %} Mondays {% endifequal %}
+                            {% ifequal members.Day_off 1 %} Tuesdays {% endifequal %}
+                            {% ifequal members.Day_off 2 %} Wednesdays {% endifequal %}
+                            {% ifequal members.Day_off 3 %} Thursdays {% endifequal %}
+                            {% ifequal members.Day_off 4 %} Fridays {% endifequal %}
+                            {% ifequal members.Day_off 5 %} Saturdays {% endifequal %}
+                            {% ifequal members.Day_off 6 %} Sundays {% endifequal %}
+                          </i>
+                          {% endifnotequal %}
+
+                          {% ifequal members.Day_off NULL %}
+                          <section style="height: 65px"></section>
+                          {% else %}
+                          <section style="height: 50px"></section>
+                          {% endifequal %}
                         </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                
                 <div class="col-md-8">
                   <div class="card mb-3">
                     <div class="card-body" style="padding-left: 50px; padding-right: 50px; padding-top: 35px; padding-bottom: 35px;">
@@ -125,6 +148,22 @@
                           {{members.Members_District }} District
                         </div>
                       </div>
+
+                      <!-- <hr>
+                      <div class="row">
+                        <div class="col-sm-3">
+                          <h6 class="mb-0">Day Off</h6>
+                        </div>
+                        <div class="col-sm-9 text-secondary">
+                          {% ifequal members.Day_off 0 %} Monday {% endifequal %}
+                          {% ifequal members.Day_off 1 %} Tuesday {% endifequal %}
+                          {% ifequal members.Day_off 2 %} Wednesday {% endifequal %}
+                          {% ifequal members.Day_off 3 %} Thursday {% endifequal %}
+                          {% ifequal members.Day_off 4 %} Friday {% endifequal %}
+                          {% ifequal members.Day_off 5 %} Saturday {% endifequal %}
+                          {% ifequal members.Day_off 6 %} Sunday {% endifequal %}
+                        </div>
+                      </div> -->
 
                       <hr>
                       <div class="row">

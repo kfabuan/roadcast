@@ -1,6 +1,6 @@
 {% extends 'nav_admin.html' %}
 
-{% block title %} List of Members {% endblock %}
+{% block title %} Archived Members {% endblock %}
 {% block design %}
 <style>
     .table {
@@ -84,28 +84,9 @@
 {% endif %}
 
 <div class="container">
- 
-  <!-- Upper Section (Maayos spacing hehe) -->
-  <section style="height: 25px;"></section>
-
-  <div class="btn-group" role="group" aria-label="Basic radio toggle button group" style="float: right;">
-    <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off" onclick="location.href = '/memberlist'" checked>
-    <label class="btn btn-outline-primary" for="btnradio1">Members</label>
-    
-    <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off"  onclick="location.href = '/departmentlist'"> 
-    <label class="btn btn-outline-primary" for="btnradio2">Departments</label>
-  </div>
-
-    
   <div class="section">
-    
     <!-- Title section -->
-    <h3 style="font-family: Roboto, sans-serif;"><a href="{% url 'admin_list_members' %}" style="text-decoration: none; color: #1b5082;">Members&nbsp;</a>
-    <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_members' %}'">
-      + Add members
-    </button>
-    </h3>
-
+    <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Archived Members&nbsp;</h3>
 
   <section style="height: 35px;"></section>
 
@@ -115,13 +96,11 @@
       <input class="form-control me-2" name="searched" type="search" placeholder="Search a member" style="font-family: 'Roboto', sans-serif">
       <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
     </form>
-
   </div>
 
   <section style="height: 20px;"></section>
 
   <!-- Main Content -->
-
   <div class="table-responsive"> 
     <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
     <thead class="table-primary">
@@ -138,18 +117,14 @@
     <tr>
 
       <th scope="row">{{ forloop.counter }}</th>
-
       <td style="text-align: center;"><img src="media/{{ member.Members_Pic }}" alt="Profile Picture" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;"> </td> 
-
       <td><a href="{% url 'view_members' member.id %}" class="link-primary" style="text-decoration: none;">{{ member.Members_Fname }} {{ member.Members_Lname }}</a></td>
-
       <td><span class="badge rounded-pill 
         {% if member.Members_User.Member_Type  == 'Admin'%} bg-custom4 
         {% elif member.Members_User.Member_Type  == 'Crime Statistician'%} bg-custom2 
         {% elif member.Members_User.Member_Type  == 'Investigator'%} bg-custom 
         {% else %} bg-custom3  
         {% endif %}">{{member.Members_User}}</span></td>
-
       <td>{{ member.Members_Dept }}</td>
       <td>{{ member.Members_Substation }}</td>
      <td>
@@ -160,9 +135,7 @@
           </button>
           <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
             <li><a class="dropdown-item" href="{% url 'view_members' member.id %}">View profile</a></li>
-            <li><a class="dropdown-item" href="{% url 'edit_members' member.id %}">Edit member</a></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><a class="dropdown-item" href="{% url 'delete_member' member.id %}" style="color: #d9534f" onclick="return confirm('Are you sure you want to archive this member?');">Archive member</a></li>
+            <li><a class="dropdown-item" href="{% url 'unarchive_member' member.id %}" style="color: #d9534f" onclick="return confirm('Are you sure you want to unarchive this member?');">Unarchive member</a></li>
           </ul>
         </div>
       </td>
@@ -176,13 +149,13 @@
   </table>
 </div>
 
-<!-- Archived members (new) -->
+<!-- Unarchive members (new) -->
 <div>
-  <a href="{% url 'archived_members' %}" class="text-danger" style="float: right; text-decoration: none;">
-    <i class="fas fa-archive"></i>&nbsp;
-    <span>Archived Members</span>
-  </a> 
-</div>
+    <a href="{% url 'admin_list_members' %}" class="text-primary" style="float: right; text-decoration: none;">
+      <i class="fas fa-user-friends"></i>&nbsp;
+      <span>Back to Member List</span>
+    </a> 
+  </div>
 
   <ul class="pagination">
     {% if members.has_previous %}
@@ -258,5 +231,3 @@
 {% block jquery %} 
 
 {% endblock %}
-
-

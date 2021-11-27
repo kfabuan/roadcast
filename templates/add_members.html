@@ -93,6 +93,7 @@
      {% endfor %}
 {% endif %}
 
+
 <div class="container">
 
   <!-- Upper Section -->
@@ -143,11 +144,24 @@
         </select>
       </div>
 
-        <div class="col-md-12">
+      <div class="col-md-6">
         <label for="" class="col-sm-2 col-form-label">District</label>
         <input class="form-control" name="Members_District" type="text" value="Pasig" aria-label="" readonly style="border-radius: 50px; height: 45px;">
       </div>
 
+      <div class="col-md-6">
+        <label for="" class="col-sm-5 col-form-label">Day Off/Rest Day<span style="color: #dc3545; font-weight: bold;">*</span></label>
+        <select class="form-select" name="Day_off" required style="border-radius: 50px; height: 45px;">
+            <option selected="selected" disabled="disabled" value="None">Select a weekday</option>
+            <option value="0">Monday</option>
+            <option value="1">Tuesday</option>
+            <option value="2">Wednesday</option>
+            <option value="3">Thursday</option>
+            <option value="4">Friday</option>
+            <option value="5">Saturday</option>
+            <option value="6">Sunday</option>
+        </select>
+      </div>
 
       <section style="height: 15px;"></section>
       <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PERSONAL DETAILS</label>

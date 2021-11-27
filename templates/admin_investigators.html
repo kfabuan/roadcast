@@ -12,7 +12,6 @@
 
     .rad_tl { border-top-left-radius: 15px !important; }
     .rad_tr { border-top-right-radius: 15px !important; }
-    th { cursor: pointer; }
 
 </style>
 {% endblock %}
@@ -54,20 +53,19 @@
  <!-- Main Content -->
 
  <div class="table-responsive">
-    <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
+    <table class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
       <thead>
           <tr class="table-primary">
             <!-- <th scope="col">No.</th> -->
             <th class ="rad_tl">Photo</th>
-            <th onclick="sortTable(0)">Name</th>
-            <th onclick="sortTable(1)">Member Type</th>
-            <th onclick="sortTable(2)">Department</th>
-            <th onclick="sortTable(3)">Substation</th>
+            <th>Name</th>
+            <th>Member Type</th>
+            <th>Department</th>
+            <th>Substation</th>
             <th class ="rad_tr">Operation</th>
           </tr>
       </thead>
       <tbody>
-        {% if members %}
         {% for member in members %}
         <tr>
           {%  ifequal member.Members_User.Member_Type 'Investigator' %}
@@ -86,75 +84,68 @@
           <td>{{ member.Members_Dept }}</td>
           <td>{{ member.Members_Substation }}</td>
           <td>
-               <!-- Dropdown menu-->
-              <div class="btn-group">
-                <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
-                  More
-                </button>
-                <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
-                  <li><a class="dropdown-item" href="{% url 'admin_view_investigators' member.id %}">View profile</a></li>
-                  <li><a class="dropdown-item" href="{% url 'edit_members' member.id %}">Edit member</a></li>
-                  <li><hr class="dropdown-divider"></li>
-                  <li><a class="dropdown-item" href="{% url 'delete_member' member.id %}" style="color: #d9534f" onclick="return confirm('Are you sure you want to delete this member?');">Delete member</a></li>
-                </ul>
-              </div>
+          <!-- Dropdown menu-->
+        <div class="btn-group">
+          <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" style="width: 80px; border-radius: 50px;">
+            More
+          </button>
+          <ul class="dropdown-menu" style="width: 80px; font-size: 14px;">
+            <li><a class="dropdown-item" href="{% url 'admin_view_investigators' member.id %}">View profile</a></li>
+            <li><a class="dropdown-item" href="{% url 'edit_members' member.id %}">Edit member</a></li>
+            <!-- <li><hr class="dropdown-divider"></li> -->
+            <!-- <li><a class="dropdown-item" href="{% url 'delete_member' member.id %}" style="color: #d9534f" onclick="return confirm('Are you sure you want to delete this member?');">Delete member</a></li> -->
+          </ul>
+        </div>
           </td>
-        </tr>
-        {% endifequal %}
-        {% endfor %}
+          </tr>
+          <tr>
+            {% endifequal %}
 
-        {% else %}
-        <tr>
-            <td colspan="8" style="text-align: center;">Nothing to show! No records have been added yet.</td>
+            {% empty %} 
+          <td colspan="8" style="text-align: center;">Nothing to show! No records have been added yet.</td>
+          </tr>
         </tr>
-        {% endif %}
+        
+        {% endfor %}
+        
       </table>
 
       <section style="height: 50px;"></section>
 
-      <script>
-        function sortTable(n) {
-          var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-          table = document.getElementById("tbl_1");
-          switching = true;
-          dir = "asc"; 
-          
-          while (switching) {
-            switching = false;
-            rows = table.rows;
-            for (i = 1; i < (rows.length - 1); i++) {
-              shouldSwitch = false;
-              
-              x = rows[i].getElementsByTagName("TD")[n];
-              y = rows[i + 1].getElementsByTagName("TD")[n];
-              
-              if (dir == "asc") {
-                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                  shouldSwitch= true;
-                  break;
-                }
-              } else if (dir == "desc") {
-                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                  shouldSwitch = true;
-                  break;
-                }
-              }
-            }
-            if (shouldSwitch) {
-              rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-              switching = true;
-              switchcount ++;      
-            } else {
-              
-              if (switchcount == 0 && dir == "asc") {
-                dir = "desc";
-                switching = true;
-              }
-            }
+
+  <script type="text/javascript">
+    $(document).ready(function(){
+      $('.nav_btn').click(function(){
+        $('.mobile_nav_items').toggleClass('active');
+      });
+
+      $('#submit_form').click(function(){
+        var selected_offense = new Array();
+        var chk_tbl_offense = document.getElementById("tbl_offense");
+        var selchk = chk_tbl_offense.getElementsByTagName("input");
+
+        for (var i=0; i<selchk.length; i++) {
+          if(selchk[i].checked){
+            selected_offense.push(selchk[i].value);
           }
         }
+        if(selected_offense.length>0){
+          console.log(selected_offense);
+         // document.getElementById('display_offense').innerHTML=selected_offense;
+         var tryyyy =  document.getElementById('display_offense').value=selected_offense;
+
+          alert(selected_offense);
+          alert(tryyyy)
+        }
+
+        var incident_date = document.getElementById("DateCommitted").value;
+        alert(incident_date);
+
+        });
+
+    });
     </script>
-    
+  
     <script>
       var today = new Date();
       var time = today.getHours() + ":" + today.getMinutes();
@@ -166,7 +157,6 @@
 {% block jquery %} 
 
 {% endblock %}
-
 
 
 

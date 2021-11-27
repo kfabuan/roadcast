@@ -1621,6 +1621,12 @@ def processCreateIncidentReport(request, gen_pub_report_id):
                     archive      = "No" )
 
     incident_record.save()
+
+    #Investigator Update Availability
+    inv_member = Tbl_add_members.objects.get(id=inv_name)
+    inv_member.Availability  = 'Yes'
+    inv_member.save()
+
     messages.success(request, ("Incident report successfully created!"))
 
     created_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
@@ -3384,8 +3390,12 @@ def notif_public_report_detail (request, gen_pub_report_id):
             pub_info = tbl_genpub_users.objects.all()
     except:
         pass
+    
+    #new
+    weekday = today.weekday()
 
     data = {
+        'weekday': weekday,
         'public_reports_list': pasig_public_reports,
         'detail': unread_public_report,
         'unread_notif_count': unread_notif_count,
@@ -3412,6 +3422,12 @@ def processAssigning (request, report_id):
     public_report.Assigned_Investigator_id = investigator
     public_report.Substation_id = substation
     public_report.save()
+
+    #Investigator Update Availability
+    inv_member = Tbl_add_members.objects.get(id=investigator)
+    inv_member.Availability  = 'No'
+    inv_member.save()
+
     messages.success(request, "Your data has been saved!")
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
@@ -4551,6 +4567,7 @@ def add_members (request):
     except:
         pass
 
+    
     context         = {
         'departments': departments,
         'members': members,
@@ -4584,6 +4601,7 @@ def duplicate_members (request): #For checking of duplicates and saving members 
         Members_Username    = request.POST["Members_Username"]
         Members_Password    = request.POST["Members_Password"]
         Added_By            = request.POST["Added_By"]
+        Day_off            = request.POST["Day_off"] #new 11-27
 
         if request.FILES.get("Members_Pic"):
             Members_Pic     = request.FILES.get('Members_Pic')
@@ -4602,7 +4620,7 @@ def duplicate_members (request): #For checking of duplicates and saving members 
         else:
             submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District,
             Members_Fname = Members_Fname, Members_Lname = Members_Lname, Members_Position = Members_Position, Members_Email = Members_Email, Members_Username = Members_Username,
-            Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By)
+            Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By, Day_off = Day_off)
             submit.save()
             messages.success(request, ("You've added a new member!"))
             return HttpResponseRedirect(reverse('admin_list_members'))
@@ -4610,7 +4628,7 @@ def duplicate_members (request): #For checking of duplicates and saving members 
     except (KeyError, Tbl_add_members.DoesNotExist):
         submit = Tbl_add_members.objects.create(Members_Dept = Members_Dept, Members_User = Members_User, Members_Substation = Members_Substation, Members_District = Members_District,
         Members_Fname = Members_Fname, Members_Lname = Members_Lname, Members_Position = Members_Position, Members_Email = Members_Email, Members_Username = Members_Username,
-        Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By)
+        Members_Password = Members_Password, Members_Pic = Members_Pic, Added_By = Added_By, Day_off = Day_off)
         submit.save()
         messages.success(request, ("You've added a new member!"))
         return HttpResponseRedirect(reverse('admin_list_members'))
@@ -4821,6 +4839,7 @@ def update_members(request, member_id): #For updating the data and checking for 
         Members_Password    = request.POST['Members_Password']
         Edit_By             = request.POST['Edit_By']
         Date_Edit           = date.today() #changed
+        Day_off            = request.POST["Day_off"] #new 11-27
 
         if request.FILES.get("Members_Pic"):
             Members_Pic     = request.FILES.get('Members_Pic')
@@ -4847,6 +4866,7 @@ def update_members(request, member_id): #For updating the data and checking for 
             members.Members_Password    = Members_Password
             members.Edit_By             = Edit_By
             members.Date_Edit           = Date_Edit
+            members.Day_off             = Day_off #new 11-27
 
             if Members_Pic:
                 members.Members_Pic     = Members_Pic
@@ -4920,10 +4940,76 @@ def update_dept(request, dept_id): #For saving the data - edit_dept
             messages.success(request, ("Changes saved."))
             return HttpResponseRedirect(reverse('admin_list_departments'))
 
-def delete_member(request, member_id):
-    Tbl_add_members.objects.filter(id = member_id).delete()
-    messages.success(request, ("Member successfully deleted."))
-    return HttpResponseRedirect(reverse('admin_list_members'))
+def delete_member(request, member_id): #***
+    try:
+        members = Tbl_add_members.objects.get(id = member_id)
+        members.Archived="Yes"
+        members.save()
+        messages.success(request, ("Member successfully archived."))
+        return HttpResponseRedirect(reverse('admin_list_members'))
+
+    except Tbl_add_members.DoesNotExist:
+        messages.error(request, ("Failed to archive member. Member does not exit."))
+        return HttpResponseRedirect('admin_list_members')
+
+def unarchive_member(request, member_id): #***
+    try:
+        members = Tbl_add_members.objects.get(id = member_id)
+        members.Archived="No"
+        members.save()
+        messages.success(request, ("Member successfully unarchived."))
+        return HttpResponseRedirect(reverse('archived_members'))
+
+    except Tbl_add_members.DoesNotExist:
+        messages.error(request, ("Failed to unarchive member. Member does not exit."))
+        return HttpResponseRedirect('archived_members')
+
+def archived_members(request): #***
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+    except:
+        pass
+
+    if request.method == "POST":
+        searched      = request.POST['searched']
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched, Archived="Yes").order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched, Archived="Yes").order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched, Archived="Yes").order_by('-id') | Tbl_add_members.objects.filter(Members_Dept_id__Dept_Dept__icontains = searched, Archived="Yes").order_by('-id') | Tbl_add_members.objects.filter(Members_Substation_id__Substation__icontains = searched, Archived="Yes").order_by('-id')
+        paginator = Paginator(members, 10)
+        page_number = request.GET.get('page')
+        members = paginator.get_page(page_number)
+        return render (request, 'archived_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
+    else:
+        members       = Tbl_add_members.objects.filter(Q(Archived="Yes"))
+        paginator = Paginator(members, 10)
+        page_number = request.GET.get('page')
+        members = paginator.get_page(page_number)
+        return render (request, 'archived_members.html', {'members': members, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
 
 def delete_dept(request, dept_id):
     Tbl_add_departments.objects.filter(id = dept_id).delete()
@@ -5140,7 +5226,7 @@ def update_profile(request, prof_id): #For saving and validating public emails -
         messages.success(request, ("Changes saved."))
         return HttpResponseRedirect(reverse('user_profile'))
 
-def admin_list_members(request): #Show list of ALL the members (excluding gen pub)
+def admin_list_members(request): #Show list of ALL the members (excluding gen pub) #***
     #Sessions
     authorized = Tbl_add_members.objects.all()
     pub        = tbl_genpub_users.objects.all()
@@ -5176,11 +5262,9 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
     except:
         pass
 
-    members = Tbl_add_members.objects.all()
-
     if request.method == "POST":
         searched      = request.POST['searched']
-        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Dept_id__Dept_Dept__icontains = searched).order_by('-id') | Tbl_add_members.objects.filter(Members_Substation_id__Substation__icontains = searched).order_by('-id')
+        members       = Tbl_add_members.objects.filter(Members_Fname__icontains = searched, Archived = "No").order_by('-id') | Tbl_add_members.objects.filter(Members_Lname__icontains = searched, Archived = "No").order_by('-id')   | Tbl_add_members.objects.filter(Members_User__Member_Type__icontains = searched, Archived = "No").order_by('-id') | Tbl_add_members.objects.filter(Members_Dept_id__Dept_Dept__icontains = searched, Archived = "No").order_by('-id') | Tbl_add_members.objects.filter(Members_Substation_id__Substation__icontains = searched, Archived = "No").order_by('-id')
 
         paginator = Paginator(members, 10)
         page_number = request.GET.get('page')
@@ -5188,7 +5272,7 @@ def admin_list_members(request): #Show list of ALL the members (excluding gen pu
 
         return render (request, 'admin_list_members.html', {'members': members, 'searched': searched, "all": authorized, "pub": pub, 'unread_notif_count': unread_notif_count,})
     else:
-        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_tbl_add_members ORDER BY Members_Fname ASC')
+        members       = Tbl_add_members.objects.raw('SELECT * FROM roadcast_tbl_add_members WHERE Archived = "No" ORDER BY Members_Fname ASC')
 
         paginator = Paginator(members, 10)
         page_number = request.GET.get('page')
