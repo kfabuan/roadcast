@@ -113,7 +113,6 @@ class Tbl_position(models.Model):
 
 
 class Tbl_add_members(models.Model):
-    #Foreign keys
     id                  = models.AutoField(primary_key=True)
     Members_Dept        = models.ForeignKey(Tbl_add_departments, null=True, on_delete=models.SET_NULL) 
     Members_User        = models.ForeignKey(Tbl_member_type, null=True, on_delete=models.SET_NULL) #Admin/ Crime/ Subrep / Investigator
@@ -132,9 +131,14 @@ class Tbl_add_members(models.Model):
     Edit_By             = models.CharField(max_length=200, verbose_name='Edit By', default='Have not been edited yet', blank=True, null=True)
     Date_Edit           = models.DateField(verbose_name='Date Added', blank=True, null=True) 
 
+    Availability      = models.CharField(max_length=200, verbose_name='Availability', blank=True, null=True, default="Yes") 
+    Day_off           = models.CharField(max_length=200, verbose_name='Day Off', blank=True, null=True) 
+   
     nf_acc_activity   = models.BooleanField(default=True)
     nf_new_incident   = models.BooleanField(default=True)
     nf_brgy   = models.CharField(max_length=50,blank=True,null=True)
+
+    
     
     def image_tag(self):
             return mark_safe('<img src="/media/%s" width="50" height="50" />'%(self.Members_Pic))

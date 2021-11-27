@@ -89,6 +89,24 @@ def admin_login(request):
                 submit.save()
                 authorized_session = Tbl_add_members.objects.get(Members_Email=username, Members_Password = password)
                 request.session['authorized_id'] = authorized_session.id
+
+                #login email alert
+                if (authorized_session.nf_acc_activity == True):
+                    firstname = authorized_session.Members_Fname
+                    logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
+                    logged_in_date = str(date.today())
+                    from_ = '' #roadcast main email in settings.py
+                    to_ = [authorized_session.Members_Email]
+
+                    send_mail (
+                        'Roadcast: Login Notification',
+                        render_to_string('login_alert.html',{
+                        'firstname' : firstname,
+                        "logged_in_date" : logged_in_date,
+                        "logged_in_time" : logged_in_time,
+                        }),
+                        from_, to_,)
+
                 return HttpResponseRedirect(reverse('dashboard'))
             elif (members.Members_Email == username) and (members.Members_Password == password):
                 messages.warning(request, ("Oops! Only Admin accounts can login here."))
@@ -147,7 +165,22 @@ def login(request):
                 authorized_session = Tbl_add_members.objects.get(Members_Email=username, Members_Password = password)
 
                 request.session['authorized_id'] = authorized_session.id
+                #login email alert
+                if (authorized_session.nf_acc_activity == True):
+                    firstname = authorized_session.Members_Fname
+                    logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
+                    logged_in_date = str(date.today())
+                    from_ = '' #roadcast main email in settings.py
+                    to_ = [authorized_session.Members_Email]
 
+                    send_mail (
+                        'Roadcast: Login Notification',
+                        render_to_string('login_alert.html',{
+                        'firstname' : firstname,
+                        "logged_in_date" : logged_in_date,
+                        "logged_in_time" : logged_in_time,
+                        }),
+                        from_, to_,)
                 return HttpResponseRedirect(reverse('dashboard'))
             else:
                 messages.error(request, ("Oops! Please check your email or password."))
@@ -162,6 +195,23 @@ def login(request):
 
                         public_session = tbl_genpub_users.objects.get(gen_username=username, gen_pass= password)
                         request.session['public_id'] = public_session.id
+
+                        #login email alert
+                        if (public_session.nf_acc_activity == True):
+                            firstname = public_session.gen_fname
+                            logged_in_time =  datetime.datetime.now().strftime('%H:%M:%S')
+                            logged_in_date = str(date.today())
+                            from_ = '' #roadcast main email in settings.py
+                            to_ = [public_session.gen_username]
+
+                            send_mail (
+                                'Roadcast: Login Notification',
+                                render_to_string('login_alert.html',{
+                                'firstname' : firstname,
+                                "logged_in_date" : logged_in_date,
+                                "logged_in_time" : logged_in_time,
+                                }),
+                                from_, to_,)
                         return HttpResponseRedirect(reverse('dashboard'))
 
                     elif not public.is_verified:
