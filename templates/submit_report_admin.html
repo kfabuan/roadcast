@@ -104,7 +104,7 @@
   {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
   {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
-  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report &nbsp;</h3>
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report&nbsp;<i class="fas fa-paper-plane"></i></h3>
 
   <section style="height: 30px;"></section>
    
@@ -202,12 +202,36 @@
 
     <textarea class="form-control" name="narrative" placeholder="A brief description of what happened or its details. . ." style="height: 100px" required></textarea> 
 
-
+<!-- 
     <label class="mt-3" style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">PROOF OF INCIDENT</label>
-    <input type="file" class="form-control" name="image" id="image" accept="image/*" data-max-file-size="2M" > 
-    <section style="height: 15px;"></section>
-  
-    <center><button class="btn btn-success mb-5" id="submit_form" type="submit" value="">Submit Incident Report</button></center>
+    <input type="file" class="form-control" name="image" id="image" accept="image/*" data-max-file-size="2M" >  -->
+   
+    
+
+    <label style="text-transform: uppercase; font-size:11px; letter-spacing: 1px; font-weight: bold; color: #1b5082;">ASSIGN PERSONNEL</label>
+
+    <div class="col-md-6">
+      <label for="" class="form-label">Investigator <span class="asterisk">*</span></label>
+      <select name="select-investigator" class="form-select" aria-label=".form-select-sm example" required>
+        <option value="">Choose Investigator:</option>
+        {% for inv in investigators_list %}
+        <option value="{{ inv.id }}" {% ifequal inv.Availability 'No' %} disabled="disabled"{% endifequal %} {% ifequal inv.Archived 'Yes' %} disabled="disabled"{% endifequal %} {% ifequal inv.Day_off weekday %} disabled="disabled"{% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }} {% ifequal inv.Availability 'No' %} (N/A) {% endifequal %} {% ifequal inv.Day_off weekday %} (Day Off){% endifequal %}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+     <div class="col-md-6">
+      <label for="" class="form-label">Substation <span class="asterisk">*</span></label>
+      <select  name="select-substation" class="form-select" aria-label=".form-select-sm example" required>
+        <option value="">Forward to:</option>
+        {% for sub in substation_list %}
+            <option value="{{ sub.id }}">{{ sub.Substation }}</option>      
+        {% endfor %}
+      </select>
+    </div>
+   
+     <section style="height: 15px;"></section>
+    <center><button class="btn btn-success mb-5" id="submit_form" type="submit" value=""><i class="fas fa-paper-plane"></i> &nbsp;Create Incident Report</button></center>
 </form>
 
 

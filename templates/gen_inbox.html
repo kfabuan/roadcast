@@ -212,13 +212,18 @@ $(document).ready(function(){
                         <tr class =" {% ifequal reply.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
                             <!-- label -->
                             <td class="pl-3"  style="width: 3%;">
-                                <div class="custom-control custom-checkbox">
+                                <!-- <div class="custom-control custom-checkbox">
                                     <input type="checkbox" class="custom-control-input" id="cst1" />
                                     <label class="custom-control-label" for="cst1">&nbsp;</label>
-                                </div>
+                                </div> -->
+                                {% for info in admin_info %}
+                                    {% ifequal reply.Sender info.id %}
+                                    <img src="/media/{{ info.Members_Pic }}" alt="" style="width: 35px; height: 35px; object-fit: cover;" class="rounded-circle ms-2">
+                                    {% endifequal %}
+                                {% endfor %}
                             </td>
                             <!-- star -->
-                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <!-- <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td> -->
                             <td style="width: 15%;">
                                 {% for info in admin_info %}
                                     {% ifequal reply.Sender info.id %}
@@ -309,7 +314,27 @@ $(document).ready(function(){
                                 <a class="link text-decoration-none" href="{% url 'public_inbox_detail' report.id %}">
                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-secondary {% else %} bg-warning {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
-                                    <span class="badge rounded-pill text-white font-medium {% ifequal report.Report_Status 'Solved' %} bg-primary{% else %} bg-secondary {% endifequal %} me-2">{{ report.Report_Status }}</span>
+
+        
+                                    {% if report.Assigned_Investigator_id %}
+                                        {% ifequal report.Report_Status 'Solved' %}
+                                        <span class="badge rounded-pill text-white font-medium bg-success me-2">{{ report.Report_Status }}</span>
+                                        {% endifequal %}
+
+                                        {% ifequal report.Report_Status 'Unsolved' %}
+                                        <span class="badge rounded-pill text-white font-medium bg-primary me-2"> Ongoing</span>
+                                        {% endifequal %}
+
+                                    {% else %}
+
+                                        {% ifequal report.Report_Status 'Invalid' %}
+                                        <span class="badge rounded-pill text-white font-medium bg-danger me-2">{{ report.Report_Status }}</span>
+
+                                        {% else %}
+                                        <span class="badge rounded-pill text-white font-medium bg-secondary me-2">Unassigned</span>
+
+                                        {% endifequal %}
+                                    {% endif %}          
 
                                     <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
                                     <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>

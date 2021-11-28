@@ -100,7 +100,7 @@
   {% if error_message %}<p class="alert alert-danger"><strong>{{ error_message|safe }}</strong> </p>{% endif %}
   {% if messages %}{% for message in messages %}<p class="alert alert-danger"> <strong>{{ message|safe }}</strong></p>{% endfor %}{% endif%}
 
-  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report &nbsp;</h3>
+  <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Submit an Incident Report&nbsp;<i class="fas fa-paper-plane"></i></h3>
 
   <section style="height: 30px;"></section>
    
@@ -203,7 +203,7 @@
     <input type="file" class="form-control" name="image" id="image" accept="image/*" data-max-file-size="2M" required > <!-- change the size of image if needed-->
     <section style="height: 15px;"></section>
   
-    <center><button class="btn btn-success mb-5" id="submit_form" type="submit" value="">Submit Incident Report</button></center>
+    <center><button class="btn btn-success mb-5" id="submit_form" type="submit" value=""><i class="fas fa-paper-plane"></i> &nbsp;Submit Incident Report</button></center>
 </form>
 
 

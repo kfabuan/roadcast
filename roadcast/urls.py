@@ -73,6 +73,11 @@ urlpatterns = [
 
     #admin/encoder notif & inbox
     path('notification', views.notification, name='notification'),
+    path('notification/solved', views.notification_solved, name='notification_solved'), #filter 1
+    path('notification/ongoing', views.notification_ongoing, name='notification_ongoing'), #filter 2
+    path('notification/invalid', views.notification_invalid, name='notification_invalid'), #filter 3
+    path('notification/unassigned', views.notification_unassigned, name='notification_unassigned'), #filter 4
+
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
     path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
@@ -85,6 +90,9 @@ urlpatterns = [
 
     #sub-rep inbox
     path('substation/notification', views.sub_notification, name='sub_notification'),
+    path('substation/notification/solved', views.sub_notification_solved, name='sub_notification_solved'),
+    path('substation/notification/ongoing', views.sub_notification_ongoing, name='sub_notification_ongoing'),
+
     path('substation/notification/<int:report_id>', views.sub_notification_detail, name='sub_notification_detail'),
 
     #jew

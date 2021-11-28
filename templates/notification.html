@@ -68,6 +68,29 @@
         font-size: 18px;
     }
 
+    /* new 11-28 */
+    .star-legend {
+        text-transform: uppercase; 
+        font-size:11px; 
+        letter-spacing: 1px; 
+        font-weight: bold; 
+        color: #1b5082;
+    }
+
+    .list-group-item {
+       background-color: transparent !important; 
+       border: hidden !important;
+       cursor: pointer;
+    }
+
+    .report-message {
+      display:inline-block;
+      text-overflow:ellipsis;
+      overflow:hidden; 
+      white-space: nowrap;
+      width:70%;
+    }
+
     @media only screen and (max-width: 480px){
         .img-1 {
             border-radius: 50%;
@@ -253,6 +276,36 @@ $(document).ready(function(){
                 <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Read &nbsp;<i class="fas fa-envelope msg-icon"></i></a>
                 <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Unread &nbsp;<i class="fas fa-envelope-open msg-icon"></i></a>
             </div>
+
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Admin' %}
+                    <ul class="star-legend-list list-group list-group-horizontal-sm">
+                        <li class="list-group-item"><span class="star-legend">Legend: </span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/solved'"><i class="fa fa-star text-success"></i> <span class="star-legend">Solved</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/ongoing'"><i class="fa fa-star text-primary"></i> <span class="star-legend">Assigned / Ongoing</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/invalid'"><i class="fa fa-star text-danger"></i> <span class="star-legend">Invalid</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/unassigned'"><i class="fa fa-star text-warning"></i> <span class="star-legend">Unassigned</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification'"><i class="bi bi-eraser-fill text-secondary"></i> <span class="star-legend">Clear filter</span></li>
+                    </ul>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
+
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Crime Statistician' %}
+                    <ul class="star-legend-list list-group list-group-horizontal-sm">
+                        <li class="list-group-item"><span class="star-legend">Legend: </span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/solved'"><i class="fa fa-star text-success"></i> <span class="star-legend">Solved</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/ongoing'"><i class="fa fa-star text-primary"></i> <span class="star-legend">Assigned / Ongoing</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification'"><i class="bi bi-eraser-fill text-secondary"></i> <span class="star-legend">Clear filter</span></li>
+                    </ul>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
+
+           
              <!-- Mail list-->
              <div class="table-responsive mt-3">
                 <table class="table email-table no-wrap table-hover v-middle mb-0 font-14 table-responsive">
@@ -263,16 +316,43 @@ $(document).ready(function(){
                                 {% if a.Members_User.Member_Type == 'Admin' %}
                                     {% for report in public_reports_list %} 
                                         <!-- for admin: all public reports -->
-                                        <tr class =" {% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                                            <!-- label -->
-                                            <td class="pl-3"  style="width: 3%;">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="cst1" />
-                                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
-                                                </div>
-                                            </td>
+                                        <tr class ="{% ifequal report.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
+                                            
                                             <!-- star -->
-                                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                                            <td  style="width: 3%;">
+                                                <i class="fa fa-star ps-2
+  
+                                                {% if report.Assigned_Investigator_id %}
+                                                    {% ifequal report.Report_Status 'Solved' %}
+                                                        text-success
+                                                    {% endifequal %}
+    
+                                                    {% ifequal report.Report_Status 'Unsolved' %}
+                                                        text-primary
+                                                    {% endifequal %}
+    
+                                                {% else %}
+    
+                                                    {% ifequal report.Report_Status 'Invalid' %}
+                                                    text-danger
+    
+                                                    {% else %}
+                                                    text-warning
+    
+                                                    {% endifequal %}
+                                                {% endif %} 
+                                                "></i>
+                                            </td>
+
+                                            <!-- image -->
+                                            <td class="pl-3"  style="width: 3%;">
+                                                {% ifequal report.User_ID_id NULL %} 
+                                                    <img src="/media/{{ report.Admin_Sender.Members_Pic}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                                                {% else %} 
+                                                    <img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                                                {% endifequal %}
+                                            </td>
+
                                             <td style="width: 15%;">
                                                 <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}"> 
                                                     {% ifequal report.User_ID_id NULL %} 
@@ -283,12 +363,11 @@ $(document).ready(function(){
                                                 </span>
                                             </td>
                                             <!-- Message -->
-                                            <td class="text-truncate" style="width: 58%;">
+                                            <td class="text-truncate" style="max-width: 500px;">
                                                 <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
                                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
-                                                    <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                                    <span class="text-dark report-message">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
                                                 </a>
                                             </td>
                                             <!-- Attachment -->
@@ -304,15 +383,41 @@ $(document).ready(function(){
                                     
                                         <!-- for encoder: only assigned cases -->
                                         <tr class =" {% ifequal report.Read_by_encoder 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                                            <!-- label -->
-                                            <td class="pl-3"  style="width: 3%;">
-                                                <div class="custom-control custom-checkbox">
-                                                    <input type="checkbox" class="custom-control-input" id="cst1" />
-                                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
-                                                </div>
-                                            </td>
                                             <!-- star -->
-                                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                                            <td  style="width: 3%;">
+                                                <i class="fa fa-star ps-2
+  
+                                                {% if report.Assigned_Investigator_id %}
+                                                    {% ifequal report.Report_Status 'Solved' %}
+                                                        text-success
+                                                    {% endifequal %}
+    
+                                                    {% ifequal report.Report_Status 'Unsolved' %}
+                                                        text-primary
+                                                    {% endifequal %}
+    
+                                                {% else %}
+    
+                                                    {% ifequal report.Report_Status 'Invalid' %}
+                                                    text-danger
+    
+                                                    {% else %}
+                                                    text-warning
+    
+                                                    {% endifequal %}
+                                                {% endif %} "></i>
+                                            
+                                            </td>
+
+                                            <!-- image -->
+                                            <td class="pl-3"  style="width: 3%;">
+                                                {% ifequal report.User_ID_id NULL %} 
+                                                    <img src="/media/{{ report.Admin_Sender.Members_Pic}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                                                {% else %} 
+                                                    <img src="/media/{{ report.User_ID.gen_profile}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                                                {% endifequal %}
+                                            </td>
+
                                             <td style="width: 15%;">
                                                 <span class="mb-0 {% ifequal report.Read_by_encoder 'Yes' %} text-muted {% endifequal %}">
                                                 {% ifequal report.User_ID_id NULL %} 
@@ -323,14 +428,11 @@ $(document).ready(function(){
                                                 </span>
                                             </td>
                                             <!-- Message -->
-                                            <td class="text-truncate" style="width: 58%;">
+                                            <td class="text-truncate" style="max-width: 500px;">
                                                 <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' report.id %}">
                                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
-                                                    {% ifequal report.Report_Created 'Yes' %}
-                                                        <span class="badge rounded-pill text-white font-medium bg-custom me-2"> Recorded </span>
-                                                    {% endifequal %}
-                                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                                    <span class=" text-dark report-message">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
                                                 </a>
                                             </td>
                                             <!-- Attachment -->
@@ -388,20 +490,7 @@ $(document).ready(function(){
                 {% endfor %}
             {% endif %}
                 
-<!--                 
-                <ul class="pagination">
-            {% if public_reports_list.has_previous %}
 
-                <li class="page-item"><a class="page-link" href="?page=1">First</a></li>
-                <li class="page-item"><a class="page-link" href="?page= {{public_reports_list.previous_page_number}}">Previous</a></li>
-            {% endif %}
-
-            {% if public_reports_list.has_next %}
-                <li class="page-item"><a class="page-link" href="?page={{public_reports_list.next_page_number }}">Next</a></li>
-                <li class="page-item"><a class="page-link" href="?page={{public_reports_list.paginator.num_pages}}">Last</a></li>
-            {% endif %}
-
-            </ul> -->
             </div> <!--Close Mail-->
         
         </div>
@@ -431,21 +520,31 @@ $(document).ready(function(){
                         {% for reply in public_replies %}
                         <!-- row -->
                         <tr class =" {% ifequal reply.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                            <!-- label -->
-                            <td class="pl-3"  style="width: 3%;">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="cst1" />
-                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
-                                </div>
-                            </td>
+                            
                             <!-- star -->
-                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <td  style="width: 3%;"><i class="fa fa-star text-warning ps-2"></i></td>
+                            <!-- image -->
+                            <td class="pl-3"  style="width: 3%;">
+                                {% ifequal reply.Sender_Type 'Public' %}
+                                    {% for info in pub %}
+                                        {% ifequal reply.Sender info.id %}
+                                        <img src="/media/{{info.gen_profile}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                                        {% endifequal %} 
+                                    {% endfor %}
+                                {% else %}    
+                                    {% for a_ in all %}
+                                        {% ifequal reply.Sender a_.id %}
+                                        <img src="/media/{{a_.Members_Pic}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                                        {% endifequal %} 
+                                    {% endfor %}
+                                {% endifequal %}
+                            </td>
                             <td style="width: 15%;">
                                 {% ifequal reply.Sender_Type 'Public' %}
                                     {% for info in pub %}
                                         {% ifequal reply.Sender info.id %}
                                             <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">
-                                                From: {{ info.gen_fname }} {{ info.gen_surname }}
+                                                {{ info.gen_fname }} {{ info.gen_surname }}
                                             </span>
                                         {% endifequal %} 
                                     {% endfor %}
@@ -453,7 +552,7 @@ $(document).ready(function(){
                                     {% for a_ in all %}
                                         {% ifequal reply.Sender a_.id %}
                                             <span class="mb-0 {% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}">
-                                                From: {{ a_.Members_Fname }} {{ a_.Members_Lname }}
+                                                {{ a_.Members_Fname }} {{ a_.Members_Lname }}
                                             </span>
                                         {% endifequal %} 
                                     {% endfor %}
@@ -461,14 +560,14 @@ $(document).ready(function(){
                                 
                             </td>
                             <!-- Message -->
-                            <td class="text-truncate" style="width: 58%;">
+                            <td class="text-truncate" style="max-width: 500px;">
                                 <a class="link text-decoration-none" href="{% url 'notif_public_report_detail' reply.Report_id %}">
                                     {% for prev in public_reports_list %}
                                     {% ifequal reply.Report_id prev.id %}
                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ prev.Reported_City }}</span>
                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ prev.Reported_District }}</span>
                                     <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                    <span class=" text-dark">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
+                                    <span class=" text-dark report-message">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
                                 
                                     {% endifequal %}
 
@@ -532,15 +631,14 @@ $(document).ready(function(){
                         {% for validation in sign_up_validation %}
                         <!-- row -->
                         <tr class =" {% ifequal validation.Read_Status 'No' %} fw-bold {% else %} text-muted{% endifequal %}">
-                            <!-- label -->
-                            <td class="pl-3"  style="width: 3%;">
-                                <div class="custom-control custom-checkbox">
-                                    <input type="checkbox" class="custom-control-input" id="cst1" />
-                                    <label class="custom-control-label" for="cst1">&nbsp;</label>
-                                </div>
-                            </td>
+                            
                             <!-- star -->
-                            <td  style="width: 3%;"><i class="fa fa-star text-warning"></i></td>
+                            <td  style="width: 3%;"><i class="fa fa-star text-warning ps-2"></i></td>
+
+                            <!-- image -->
+                            <td class="pl-3"  style="width: 3%;">
+                                <img src="/media/{{validation.gen_profile}}" class="rounded-circle user-img" style="width: 35px; height: 35px; object-fit: cover;">
+                            </td>
                             <td style="width: 15%;">
                                 <span class="mb-0 {% ifequal validation.Read_Status 'Yes' %} text-muted {% endifequal %}"> {{ validation.gen_fname }} {{ validation.gen_surname }}</span>
                             </td>

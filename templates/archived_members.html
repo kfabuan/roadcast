@@ -117,7 +117,7 @@
     <tr>
 
       <th scope="row">{{ forloop.counter }}</th>
-      <td style="text-align: center;"><img src="media/{{ member.Members_Pic }}" alt="Profile Picture" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;"> </td> 
+      <td style="text-align: center;"><img src="/media/{{ member.Members_Pic }}" alt="Profile Picture" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;"> </td> 
       <td><a href="{% url 'view_members' member.id %}" class="link-primary" style="text-decoration: none;">{{ member.Members_Fname }} {{ member.Members_Lname }}</a></td>
       <td><span class="badge rounded-pill 
         {% if member.Members_User.Member_Type  == 'Admin'%} bg-custom4 

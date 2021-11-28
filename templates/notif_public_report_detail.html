@@ -584,12 +584,25 @@
 
                                             <div id="myDIV" class="showw">
                                                 <form action="{% url 'process_assigning' detail.id %}" method="POST">
+                                                    
                                                     {% csrf_token %}
+
+                                                    <!-- Automated reply get IDs -->
+                                                    {% if request.session.authorized_id %} 
+                                                    <input type="text" name="sender_id" id="sender_id" value="{{request.session.authorized_id}}" hidden>
+                
+                                                    {% ifequal detail.User_ID_id NULL %} 
+                                                        <input type="text" name="receiver_id" id="receiver_id" value="{{detail.Admin_Sender.id}}" hidden>
+                                                    {% else %} 
+                                                        <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
+                                                    {% endifequal %}
+                                                    {% endif %}
+
                                                     <p class="label-blue">Assign Investigator </p> 
                                                     <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" required>
                                                         <option value="">Choose Investigator</option>
                                                         {% for inv in investigators_list %}
-                                                            <option value="{{ inv.id }}" {% ifequal inv.Availability 'No' %} disabled="disabled"{% endifequal %} {% ifequal inv.Day_off weekday %} disabled="disabled"{% endifequal %} {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }} {% ifequal inv.Availability 'No' %} (N/A) {% endifequal %} {% ifequal inv.Day_off weekday %} (Day Off){% endifequal %}</option>
+                                                        <option value="{{ inv.id }}" {% ifequal inv.Availability 'No' %} disabled="disabled"{% endifequal %} {% ifequal inv.Archived 'Yes' %} disabled="disabled"{% endifequal %} {% ifequal inv.Day_off weekday %} disabled="disabled"{% endifequal %} {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }} {% ifequal inv.Availability 'No' %} (N/A) {% endifequal %} {% ifequal inv.Day_off weekday %} (Day Off){% endifequal %}</option>
                                                         {% endfor %}
                                                     </select>
             
@@ -602,6 +615,18 @@
                                                     </select>
                                                     <button type="submit" class="btn btn-primary btn-sm mt-3" onclick="return confirm('Are you sure you want to assign this case?');">Investigate Case</button>
                                                 </form>
+
+                                                <!-- Automated reply get IDs -->
+                                                {% if request.session.authorized_id %} 
+                                                <input type="text" name="sender_id" id="sender_id" value="{{request.session.authorized_id}}" hidden>
+            
+                                                {% ifequal detail.User_ID_id NULL %} 
+                                                    <input type="text" name="receiver_id" id="receiver_id" value="{{detail.Admin_Sender.id}}" hidden>
+                                                {% else %} 
+                                                    <input type="text" name="receiver_id" id="receiver_id" value="{{detail.User_ID.id}}" hidden>
+                                                {% endifequal %}
+                                                {% endif %}
+                                                
                                                 <a href="{% url 'process_mark_invalid' detail.id %}" onclick="return confirm('Are you sure you want to mark this case as invalid?');"> <p class="text-danger mt-2" style="font-size: 14px;"><i> Mark as invalid</i></p></a>
                                             </div>               
                                         </div>
@@ -622,7 +647,7 @@
                                                     <select name="select-investigator" class="form-select form-select-sm" aria-label=".form-select-sm example" readonly>
                                                         <option value="">Choose Investigator</option>
                                                         {% for inv in investigators_list %}
-                                                            <option value="{{ inv.id }}" {% ifequal inv.Availability 'Yes' %} disabled="disabled"{% endifequal %} {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }} {% ifequal inv.Availability 'No' %} {% endifequal %}</option>
+                                                        <option value="{{ inv.id }}" {% ifequal inv.Availability 'Yes' %} disabled="disabled"{% endifequal %} {% ifequal inv.Archived 'Yes' %} disabled="disabled"{% endifequal %} {% ifequal detail.Assigned_Investigator_id inv.id %} selected {% endifequal %}> {{ inv.Members_Fname }} {{ inv.Members_Lname }} {% ifequal inv.Availability 'No' %} {% endifequal %}</option>
                                                         {% endfor %}
                                                     </select>
             

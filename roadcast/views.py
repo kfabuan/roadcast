@@ -1631,6 +1631,7 @@ def processCreateIncidentReport(request, gen_pub_report_id):
 
     created_report = Tbl_public_report.objects.get(id=gen_pub_report_id)
     created_report.Report_Created = 'Yes' 
+    created_report.Report_Status = 'Solved'
     created_report.save()
     return HttpResponseRedirect('/incidents/view')
 
@@ -3317,6 +3318,605 @@ def notification (request):
         }
     return render (request, 'notification.html', data)
 
+def notification_solved (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    cursor=connection.cursor()
+    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
+    pasig_incident_list = cursor.fetchall()
+
+    #for signup validation
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    #for encoder
+    assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+    not_yet_recorded_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+
+    #for admin
+    public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+    public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+                pub_id = request.session['public_id']
+                unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+    except:
+        pass
+
+
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Report_Created='Yes').order_by('-Reported_Date')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Report_Created='Yes').order_by('-Reported_Date')
+        sign_up_validation = tbl_genpub_users.objects.filter(Q(gen_fname__icontains = searched)|Q(gen_surname__icontains = searched)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                public_replies = Tbl_public_report_response.objects.filter(Q(Response__icontains = searched) |Q(Report_id__Reported_Brgy_id__Barangay__icontains = searched) | Q(Report_id__User_ID__gen_fname__icontains = searched) | Q(Report_id__User_ID__gen_surname__icontains = searched) | Q(Report_id__Reported_Date__icontains = searched)| Q(Report_id__Admin_Sender_id__Members_Fname__icontains = searched)).order_by('-Response_id')
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+
+        
+        data = {
+
+            'searched': searched,
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'pasig_incident_list': pasig_incident_list,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+
+    else:
+        pasig_public_reports = Tbl_public_report.objects.all().filter(Report_Created='Yes').order_by('-id')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Report_Created='Yes').order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                # public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                public_replies = Tbl_public_report_response.objects.order_by('-Response_id')
+
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+     
+        
+        paginator = Paginator(pasig_public_reports, 10)
+        page_number = request.GET.get('page')
+        pasig_public_reports = paginator.get_page(page_number)
+
+        paginator2 = Paginator(sign_up_validation, 10)
+        page_number2 = request.GET.get('page2')
+        sign_up_validation = paginator2.get_page(page_number2)
+       
+        paginator3 = Paginator(public_replies, 10)
+        page_number3 = request.GET.get('page3')
+        public_replies = paginator3.get_page(page_number3)
+
+        paginator8 = Paginator(assigned_pasig_public_reports, 10)
+        page_number8 = request.GET.get('page8')
+        assigned_pasig_public_reports = paginator8.get_page(page_number8)
+        
+        data = {
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'pasig_incident_list': pasig_incident_list,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+    return render (request, 'notification.html', data)
+
+def notification_ongoing (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    cursor=connection.cursor()
+    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
+    pasig_incident_list = cursor.fetchall()
+
+    #for signup validation
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    #for encoder
+    assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+    not_yet_recorded_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+
+    #for admin
+    public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+    public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+                pub_id = request.session['public_id']
+                unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+    except:
+        pass
+
+
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-Reported_Date')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-Reported_Date')
+        sign_up_validation = tbl_genpub_users.objects.filter(Q(gen_fname__icontains = searched)|Q(gen_surname__icontains = searched)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                public_replies = Tbl_public_report_response.objects.filter(Q(Response__icontains = searched) |Q(Report_id__Reported_Brgy_id__Barangay__icontains = searched) | Q(Report_id__User_ID__gen_fname__icontains = searched) | Q(Report_id__User_ID__gen_surname__icontains = searched) | Q(Report_id__Reported_Date__icontains = searched)| Q(Report_id__Admin_Sender_id__Members_Fname__icontains = searched)).order_by('-Response_id')
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+
+        
+        data = {
+
+            'searched': searched,
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'pasig_incident_list': pasig_incident_list,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+
+    else:
+        pasig_public_reports = Tbl_public_report.objects.all().filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-id')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                # public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                public_replies = Tbl_public_report_response.objects.order_by('-Response_id')
+
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+     
+        
+        paginator = Paginator(pasig_public_reports, 10)
+        page_number = request.GET.get('page')
+        pasig_public_reports = paginator.get_page(page_number)
+
+        paginator2 = Paginator(sign_up_validation, 10)
+        page_number2 = request.GET.get('page2')
+        sign_up_validation = paginator2.get_page(page_number2)
+       
+        paginator3 = Paginator(public_replies, 10)
+        page_number3 = request.GET.get('page3')
+        public_replies = paginator3.get_page(page_number3)
+
+        paginator8 = Paginator(assigned_pasig_public_reports, 10)
+        page_number8 = request.GET.get('page8')
+        assigned_pasig_public_reports = paginator8.get_page(page_number8)
+        
+        data = {
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'pasig_incident_list': pasig_incident_list,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+    return render (request, 'notification.html', data)
+
+def notification_invalid (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    cursor=connection.cursor()
+    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
+    pasig_incident_list = cursor.fetchall()
+
+    #for signup validation
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    #for encoder
+    assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+    not_yet_recorded_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+
+    #for admin
+    public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+    public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+                pub_id = request.session['public_id']
+                unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+    except:
+        pass
+
+
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Report_Status='Invalid')).order_by('-Reported_Date')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Assigned_Investigator__isnull=False)).order_by('-Reported_Date')
+        sign_up_validation = tbl_genpub_users.objects.filter(Q(gen_fname__icontains = searched)|Q(gen_surname__icontains = searched)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                public_replies = Tbl_public_report_response.objects.filter(Q(Response__icontains = searched) |Q(Report_id__Reported_Brgy_id__Barangay__icontains = searched) | Q(Report_id__User_ID__gen_fname__icontains = searched) | Q(Report_id__User_ID__gen_surname__icontains = searched) | Q(Report_id__Reported_Date__icontains = searched)| Q(Report_id__Admin_Sender_id__Members_Fname__icontains = searched)).order_by('-Response_id')
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+
+        
+        data = {
+
+            'searched': searched,
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'pasig_incident_list': pasig_incident_list,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+
+    else:
+        pasig_public_reports = Tbl_public_report.objects.all().filter(Report_Status='Invalid').order_by('-id')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                # public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                public_replies = Tbl_public_report_response.objects.order_by('-Response_id')
+
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+     
+        
+        paginator = Paginator(pasig_public_reports, 10)
+        page_number = request.GET.get('page')
+        pasig_public_reports = paginator.get_page(page_number)
+
+        paginator2 = Paginator(sign_up_validation, 10)
+        page_number2 = request.GET.get('page2')
+        sign_up_validation = paginator2.get_page(page_number2)
+       
+        paginator3 = Paginator(public_replies, 10)
+        page_number3 = request.GET.get('page3')
+        public_replies = paginator3.get_page(page_number3)
+
+        paginator8 = Paginator(assigned_pasig_public_reports, 10)
+        page_number8 = request.GET.get('page8')
+        assigned_pasig_public_reports = paginator8.get_page(page_number8)
+        
+        data = {
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'pasig_incident_list': pasig_incident_list,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+    return render (request, 'notification.html', data)
+
+def notification_unassigned (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    cursor=connection.cursor()
+    cursor.execute("SELECT roadcast_tbl_pasig_incidents.* , roadcast_tbl_barangay.barangay FROM roadcast_tbl_pasig_incidents LEFT JOIN roadcast_tbl_barangay ON roadcast_tbl_pasig_incidents.Barangay_id_id=roadcast_tbl_barangay.id ORDER BY roadcast_tbl_pasig_incidents.id")
+    pasig_incident_list = cursor.fetchall()
+
+    #for signup validation
+    sign_up_validation = tbl_genpub_users.objects.all().order_by('-id')
+    unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+
+    #for encoder
+    assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+    not_yet_recorded_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+
+    #for admin
+    public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+    public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+                pub_id = request.session['public_id']
+                unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+    except:
+        pass
+
+
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        pasig_public_reports     = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=True) & Q(Substation_id__isnull=True)).order_by('-Reported_Date')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)|Q(Reported_Date__icontains = searched)|Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)).filter(Q(Assigned_Investigator__isnull=False)).order_by('-Reported_Date')
+        sign_up_validation = tbl_genpub_users.objects.filter(Q(gen_fname__icontains = searched)|Q(gen_surname__icontains = searched)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                public_replies = Tbl_public_report_response.objects.filter(Q(Response__icontains = searched) |Q(Report_id__Reported_Brgy_id__Barangay__icontains = searched) | Q(Report_id__User_ID__gen_fname__icontains = searched) | Q(Report_id__User_ID__gen_surname__icontains = searched) | Q(Report_id__Reported_Date__icontains = searched)| Q(Report_id__Admin_Sender_id__Members_Fname__icontains = searched)).order_by('-Response_id')
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+
+        
+        data = {
+
+            'searched': searched,
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'pasig_incident_list': pasig_incident_list,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+
+    else:
+        pasig_public_reports = Tbl_public_report.objects.all().filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=True) & Q(Substation_id__isnull=True)).order_by('-id')
+        assigned_pasig_public_reports = Tbl_public_report.objects.filter(Q(Assigned_Investigator__isnull=False)).order_by('-id')
+
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                # public_replies = Tbl_public_report_response.objects.filter(Receiver=auth_id).order_by('-Response_id')
+                public_replies = Tbl_public_report_response.objects.order_by('-Response_id')
+
+
+        except: pass
+
+        try:
+            if request.session['public_id']:
+                public_replies = None
+                public_report_count = None
+                public_replies_count = None
+
+        except: pass
+     
+        
+        paginator = Paginator(pasig_public_reports, 10)
+        page_number = request.GET.get('page')
+        pasig_public_reports = paginator.get_page(page_number)
+
+        paginator2 = Paginator(sign_up_validation, 10)
+        page_number2 = request.GET.get('page2')
+        sign_up_validation = paginator2.get_page(page_number2)
+       
+        paginator3 = Paginator(public_replies, 10)
+        page_number3 = request.GET.get('page3')
+        public_replies = paginator3.get_page(page_number3)
+
+        paginator8 = Paginator(assigned_pasig_public_reports, 10)
+        page_number8 = request.GET.get('page8')
+        assigned_pasig_public_reports = paginator8.get_page(page_number8)
+        
+        data = {
+            'not_yet_recorded_count':not_yet_recorded_count,
+            'pasig_incident_list': pasig_incident_list,
+            'assigned_pasig_public_reports':assigned_pasig_public_reports,
+            'public_reports_list': pasig_public_reports,
+            'public_replies':public_replies,
+
+            'public_report_count':public_report_count,
+            'public_replies_count': public_replies_count,
+            'unread_notif_count_signup':unread_notif_count_signup,
+            'unread_notif_count': unread_notif_count,
+
+            "all": authorized,
+            "pub": pub,
+            'sign_up_validation': sign_up_validation,
+        }
+    return render (request, 'notification.html', data)
 
 def notif_public_report_detail (request, gen_pub_report_id):
     #Sessions
@@ -3428,14 +4028,41 @@ def processAssigning (request, report_id):
     inv_member.Availability  = 'No'
     inv_member.save()
 
+    #automated reply
+    sender = request.POST.get('sender_id')
+    receiver = request.POST.get('receiver_id')
+    chat = "Good day! Your report has been reviewed and approved. Rest assured, the investigator is now on their way to the scene. Please keep safe! (This is an automated reply, you don't have to reply)"
+
+    auto_reply = Tbl_public_report_response.objects.create(
+        Sender_Type = 'Admin',
+            Sender    = sender,
+            Receiver = receiver,
+            Response  = chat,
+            Report_id = report_id,
+        )
+    auto_reply.save()
+
     messages.success(request, "Your data has been saved!")
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
 def processMarkingInvalid (request, report_id):
     public_report = Tbl_public_report.objects.get(id=report_id)
-
     public_report.Report_Status = 'Invalid'
     public_report.save()
+
+    #automated reply
+    sender = request.session['authorized_id']
+    receiver = public_report.User_ID.id
+    chat = "Good day! We don't think the report you've submitted is valid. Please follow the proper format and fill in all the required details then submit a report again. Please keep safe! (This is an automated reply, you don't have to reply)"
+
+    auto_reply = Tbl_public_report_response.objects.create(
+        Sender_Type = 'Admin',
+            Sender    = sender,
+            Receiver = receiver,
+            Response  = chat,
+            Report_id = report_id,
+        )
+    auto_reply.save()
     messages.success(request, "This report has been marked as invalid!")
     return HttpResponseRedirect(reverse('notif_public_report_detail', args=(report_id,)))
 
@@ -3521,6 +4148,170 @@ def sub_notification (request):
                 subrep_row = Tbl_add_members.objects.get(id=auth_id)
                 fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).order_by('-id')
                 inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).order_by('-id')
+        except:
+            pass
+        paginator = Paginator(fwd_reports, 10)
+        page_number = request.GET.get('page')
+        fwd_reports = paginator.get_page(page_number)
+
+        paginator2 = Paginator(inv_assigned, 10)
+        page_number2 = request.GET.get('page2')
+        inv_assigned = paginator2.get_page(page_number2)
+        context    = {
+            "unread_notif_count":unread_notif_count,
+            "fwd_reports": fwd_reports,
+            "inv_assigned":inv_assigned,
+            "all": authorized,
+            "pub": pub,
+        }
+    return render (request, 'sub_notification.html', context)
+
+def sub_notification_solved (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+            
+    except:
+        pass
+
+    fwd_reports = None
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                subrep_row = Tbl_add_members.objects.get(id=auth_id)
+                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)|Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).filter(Report_Created='Yes').order_by('-id')
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)|Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).filter(Report_Created='Yes').order_by('-id')
+        except:
+            pass
+
+        context    = {
+            'searched': searched,
+            "unread_notif_count":unread_notif_count,
+            "fwd_reports": fwd_reports,
+            "inv_assigned":inv_assigned,
+            "all": authorized,
+            "pub": pub,
+        }
+    else:
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                subrep_row = Tbl_add_members.objects.get(id=auth_id)
+                fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Report_Created='Yes').order_by('-id')
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Report_Created='Yes').order_by('-id')
+        except:
+            pass
+        paginator = Paginator(fwd_reports, 10)
+        page_number = request.GET.get('page')
+        fwd_reports = paginator.get_page(page_number)
+
+        paginator2 = Paginator(inv_assigned, 10)
+        page_number2 = request.GET.get('page2')
+        inv_assigned = paginator2.get_page(page_number2)
+        context    = {
+            "unread_notif_count":unread_notif_count,
+            "fwd_reports": fwd_reports,
+            "inv_assigned":inv_assigned,
+            "all": authorized,
+            "pub": pub,
+        }
+    return render (request, 'sub_notification.html', context)
+
+def sub_notification_ongoing (request):
+    #Sessions
+    authorized = Tbl_add_members.objects.all()
+    pub        = tbl_genpub_users.objects.all()
+
+    #notif count
+    unread_notif_count = None #if wala nakalogin -- DO NOT DELETE
+    try:
+        if request.session['public_id']:
+            pub_id = request.session['public_id']
+            unread_notif_count = Tbl_public_report_response.objects.filter(Q(Receiver=pub_id)& Q(Read_Status="No")).order_by('-Response_id').count()
+    except:
+        pass
+    try:
+        if request.session['authorized_id']:
+            auth_id = request.session['authorized_id']
+            auth_row = Tbl_add_members.objects.get(id=auth_id)
+            if (auth_row.Members_User_id == 1):
+                public_report_count = Tbl_public_report.objects.filter(Read_Status="No").count()
+                public_replies_count = Tbl_public_report_response.objects.filter(Q(Read_Status='No')).count()
+                unread_notif_count_signup = tbl_genpub_users.objects.filter(Read_Status="No").count()
+                #total
+                unread_notif_count = public_report_count + public_replies_count + unread_notif_count_signup
+
+            if (auth_row.Members_User_id == 2):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Report_Created="No") & Q(Assigned_Investigator__isnull=False)).count()
+               # unread_notif_count = Tbl_public_report.objects.filter(Read_by_encoder="No").count()
+
+            if (auth_row.Members_User_id == 3):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Substation_id = auth_row.Members_Substation_id)&Q(Read_by_subrep="No")).count()
+            
+            if (auth_row.Members_User_id == 4):
+                unread_notif_count = Tbl_public_report.objects.filter(Q(Assigned_Investigator_id = auth_row.id)&Q(Read_by_inv="No")).count()
+            
+    except:
+        pass
+
+    fwd_reports = None
+    if request.method   == "POST":
+        searched        = request.POST['searched']
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                subrep_row = Tbl_add_members.objects.get(id=auth_id)
+                fwd_reports     = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)|Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-id')
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Q(Admin_Sender__Members_Fname__icontains = searched)|Q(Admin_Sender__Members_Lname__icontains = searched)|Q(User_ID__gen_fname__icontains = searched)|Q(User_ID__gen_surname__icontains = searched)|Q(Reported_Brgy__Barangay__icontains = searched)|Q(Reported_Narrative__icontains = searched)|Q(Reported_Location__icontains = searched)|Q(Report_Status__icontains = searched)).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-id')
+        except:
+            pass
+
+        context    = {
+            'searched': searched,
+            "unread_notif_count":unread_notif_count,
+            "fwd_reports": fwd_reports,
+            "inv_assigned":inv_assigned,
+            "all": authorized,
+            "pub": pub,
+        }
+    else:
+        try:
+            if request.session['authorized_id']:
+                auth_id = request.session['authorized_id']
+                subrep_row = Tbl_add_members.objects.get(id=auth_id)
+                fwd_reports = Tbl_public_report.objects.filter(Substation_id = subrep_row.Members_Substation_id).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-id')
+                inv_assigned = Tbl_public_report.objects.filter(Assigned_Investigator_id = subrep_row.id).filter(Q(Report_Status='Unsolved') & Q(Assigned_Investigator__isnull=False) & Q(Substation_id__isnull=False)).order_by('-id')
         except:
             pass
         paginator = Paginator(fwd_reports, 10)
@@ -4068,7 +4859,14 @@ def submit_report_admin (request):
     # try:
     if request.session['authorized_id']:
         if request.method == "GET":
+
+            member_type = Tbl_member_type.objects.get(Member_Type='Investigator')
+            investigators_list = Tbl_add_members.objects.filter(Members_User_id=member_type.id)
+            substation_list = Tbl_substation.objects.all()
+
             context    = {
+                "investigators_list":investigators_list,
+                "substation_list":substation_list,
                 "all": authorized,
                 "pub": pub,
                 "unread_notif_count":unread_notif_count
@@ -4087,6 +4885,9 @@ def submit_report_admin (request):
             latitude = request.POST.get('lat')
             longitude = request.POST.get('lon')
             narrative = request.POST.get('narrative')
+            investigator = request.POST.get('select-investigator')
+            substation = request.POST.get('select-substation')
+
 
             if request.FILES.get('image'):
                 image_proof = request.FILES.get('image')
@@ -4108,10 +4909,17 @@ def submit_report_admin (request):
                             Report_Status = 'Unsolved',
                             Read_Status='No',
                             Recipient = 'Admin',
-                            Admin_Sender_id = user_id
+                            Admin_Sender_id = user_id,
+                            Assigned_Investigator_id = investigator,
+                            Substation_id = substation
                             )
 
             incident_report.save()
+
+            #Investigator Update Availability
+            inv_member = Tbl_add_members.objects.get(id=investigator)
+            inv_member.Availability  = 'No'
+            inv_member.save()
 
             auth_all = Tbl_add_members.objects.all()
             a_row = Tbl_add_members.objects.get(id=user_id)
@@ -4146,7 +4954,7 @@ def submit_report_admin (request):
                                 from_, to_,)
 
             context = {
-                'success_message':"Your report has been submitted!",
+                'success_message':"You successfully created a report!",
                 "all": authorized,
                 "pub": pub,
                 "unread_notif_count":unread_notif_count,
