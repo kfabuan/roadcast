@@ -4962,16 +4962,11 @@ def submit_report_admin (request):
 
             return render (request, 'submit_report_admin.html', context) #Submitted
 
-    # except: pass
+  
 
-    # context  = {
-    #         "all": authorized,
-    #         "pub": pub,
-    #         "unread_notif_count":unread_notif_count,
-    #         'success_message':"Your report has been submitted huh!",
-    #     }
-    # return render (request, 'submit_report_admin.html', context) #May error
-
+def policy (request):
+    return render(request, 'submit_with_policy.html')
+    
 #PUBLIC
 def submit_report (request):
     #Sessions

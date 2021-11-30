@@ -100,7 +100,7 @@
   <div class="section">
     
     <!-- Title section -->
-    <h3 style="font-family: Roboto, sans-serif;"><a href="{% url 'admin_list_members' %}" style="text-decoration: none; color: #1b5082;">Members&nbsp;</a>
+    <h3 style="font-family: Roboto, sans-serif;"><a href="{% url 'admin_list_members' %}" style="text-decoration: none; color: #1b5082;">Members&nbsp;<i class="bi bi-people-fill"></i></a>
     <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_members' %}'">
       + Add members
     </button>
@@ -126,7 +126,7 @@
     <table id="tbl_1" class="table table-hover table-borderless" style="font-family: 'Roboto',sans-serif; font-size: 15px;">
     <thead class="table-primary">
       <th scope="col" class="rad_tl" onclick="sortTable(0)">No.</th>
-      <th >Photo</th>
+      <th>Photo</th>
       <th onclick="sortTable(1)">Name <i class="fas fa-sort mt-1 ms-2"></i></th>
       <th onclick="sortTable(2)">Member Type <i class="fas fa-sort mt-1 ms-2"></i></th>
       <th onclick="sortTable(3)">Department <i class="fas fa-sort mt-1 ms-2"></i></th>
@@ -139,7 +139,7 @@
 
       <th scope="row">{{ forloop.counter }}</th>
 
-      <td style="text-align: center;"><img src="media/{{ member.Members_Pic }}" alt="Profile Picture" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;"> </td> 
+      <td style="text-align: center;"><img src="media/{{member.Members_Pic }}" alt="Profile Picture" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%;"> </td> 
 
       <td><a href="{% url 'view_members' member.id %}" class="link-primary" style="text-decoration: none;">{{ member.Members_Fname }} {{ member.Members_Lname }}</a></td>
 

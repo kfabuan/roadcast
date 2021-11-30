@@ -62,7 +62,7 @@ urlpatterns = [
     path('incident/<int:incident_id>/unarchiving', views.unarchiving_solved_cases, name='unarchiving_solved_cases'),
     path('incident/<int:incident_id>/delete', views.processDeleteIncident, name='processDeleteIncident'),
 
-
+    path('submitreportpolicy', views.policy, name='policy'),
     path('report/submit', views.submit_report, name='submit_report'),
     path('report/submit/admin', views.submit_report_admin, name='submit_report_admin'),
 

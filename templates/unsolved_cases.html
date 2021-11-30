@@ -65,7 +65,7 @@
     Remind Investigators
     </button> -->
     <div class="col-12">
-        <span class="me-2 fs-4 page-title"><a href="" style="text-decoration: none; color: #1b5082">Unsolved Cases</a> </span>
+        <span class="me-2 fs-4 page-title"><a href="" style="text-decoration: none; color: #1b5082">Unsolved Cases <i class='bx bxs-briefcase-alt-2' ></i></a> </span>
 
         {% for a in all %}
             {% ifequal a.id request.session.authorized_id %}
@@ -98,6 +98,9 @@
 
         <li class="nav-item" role="presentation">
             <button class="btn btn-outline-success btn-sm me-2 pe-4 ps-4" id="pills-level-5-tab" data-bs-toggle="pill" data-bs-target="#pills-level-5" type="button" role="tab" aria-controls="pills-level-5" aria-selected="false"><i class="bi bi-archive"></i>&nbsp;Archives</button>
+        </li>
+        <li class="nav-item" role="presentation">
+              <button style="float:right" id="downloadPdf" type="button" class="btn btn-sm btn-outline-primary ms-2">Download Report</button>
         </li>
     </ul>
 
@@ -292,6 +295,7 @@
                         {% endif %}
                     {% endifequal %}
                 {% endfor %}  
+                
                 <td>{{ unsolved.Case_Status }}</td>
                 <td>
                     <!-- Dropdown menu-->
@@ -640,8 +644,8 @@
                 {% for a in all %}
                     {% ifequal a.id request.session.authorized_id %}
                         {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician' %}
-                        <td>{{archive.Suspect_Fname}} {{archive.Suspect_Lname}}</td>
-                        <td>{{archive.Victim_Fname}} {{archive.Victim_Lname}}</td>
+                        <td>{{incident.Suspect_Fname}} {{incident.Suspect_Lname}}</td>
+                        <td>{{incident.Victim_Fname}} {{incident.Victim_Lname}}</td>
                         {% endif %}
                     {% endifequal %}
                 {% endfor %}  
@@ -721,6 +725,158 @@
     </script>
     
       <section style="height: 25px;"></section>
+      <script>
+// Table pdf
+  
+  
+  // create new pdf and add our new canvas as an image
+  $('#downloadPdf').click(function(event) { 
+  $("#tbl_1 th:last-child, #tbl_1 td:last-child").hide();
+  $("#tbl_2 th:last-child, #tbl_2 td:last-child").hide();
+  $("#tbl_3 th:last-child, #tbl_3 td:last-child").hide();
+  $("#tbl_4 th:last-child, #tbl_4 td:last-child").hide();
+  var doc = new jsPDF('p', 'pt', "legal");
 
+    doc.setLineWidth(2);  
+    doc.text(140,30,"PNP Pasig Headquarters Unsolved Cases Report"); 
+    doc.setFontSize(12);
+    doc.text(30,70,"Level 1 Cases (Less than 1 month)");  
+    doc.autoTable({  
+        html:  '#tbl_1',
+        startY: 90,  
+        margin: 30,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 20,  
+            },  
+            1: {  
+                cellWidth: 60,  
+            }, 
+            2: {  
+                cellWidth: 70,  
+            }, 
+            3: {  
+                cellWidth: 70,  
+            }, 
+            4: {  
+                cellWidth: 90,  
+            }, 
+            5: {  
+                cellWidth: 90,  
+            }, 
+            6: {  
+                cellWidth: 70,  
+            }, 
+             
+        },   
+    })  
+    doc.text(30,doc.lastAutoTable.finalY + 20,"Level 2 Cases (1 month - 6 months)");  
+    doc.autoTable({  
+        html:  '#tbl_2',
+        startY: doc.lastAutoTable.finalY + 40,  
+        margin: 30,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 20,  
+            },  
+            1: {  
+                cellWidth: 60,  
+            }, 
+            2: {  
+                cellWidth: 70,  
+            }, 
+            3: {  
+                cellWidth: 70,  
+            }, 
+            4: {  
+                cellWidth: 90,  
+            }, 
+            5: {  
+                cellWidth: 90,  
+            }, 
+            6: {  
+                cellWidth: 70,  
+            }, 
+             
+        },   
+    }) 
+    doc.text(30,doc.lastAutoTable.finalY + 20,"Level 3 Cases (6 months - 12 months)");  
+    doc.autoTable({  
+        html:  '#tbl_3',
+        startY: doc.lastAutoTable.finalY + 40,  
+        margin: 30,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 20,  
+            },  
+            1: {  
+                cellWidth: 60,  
+            }, 
+            2: {  
+                cellWidth: 70,  
+            }, 
+            3: {  
+                cellWidth: 70,  
+            }, 
+            4: {  
+                cellWidth: 90,  
+            }, 
+            5: {  
+                cellWidth: 90,  
+            }, 
+            6: {  
+                cellWidth: 70,  
+            }, 
+             
+        },   
+    }) 
+    doc.text(30,doc.lastAutoTable.finalY + 20,"Level 4 Cases (more than 12 months)");  
+    doc.autoTable({  
+        html:  '#tbl_4',
+        startY: doc.lastAutoTable.finalY + 40,  
+        margin: 30,
+        theme: 'grid',  
+        columnStyles: {  
+            0: {  
+                cellWidth: 20,  
+            },  
+            1: {  
+                cellWidth: 60,  
+            }, 
+            2: {  
+                cellWidth: 70,  
+            }, 
+            3: {  
+                cellWidth: 70,  
+            }, 
+            4: {  
+                cellWidth: 90,  
+            }, 
+            5: {  
+                cellWidth: 90,  
+            }, 
+            6: {  
+                cellWidth: 70,  
+            }, 
+             
+        },   
+    }) 
+    doc.setFontSize(9);
+    doc.setTextColor(40);
+    doc.setFontStyle('normal');
+    doc.text( '©  PNP Pasig Police Headquarters',
+              doc.internal.pageSize.width / 2,
+              doc.internal.pageSize.height - 20,
+              null, null, "center" );
+    doc.save ('report-unsolved-cases.pdf')
+    $("#tbl_1 th:last-child, #tbl_1 td:last-child").show();
+    $("#tbl_2 th:last-child, #tbl_2 td:last-child").show();
+    $("#tbl_3 th:last-child, #tbl_3 td:last-child").show();
+    $("#tbl_4 th:last-child, #tbl_4 td:last-child").show();
+  });
+    </script>
 </div>
 {% endblock %}

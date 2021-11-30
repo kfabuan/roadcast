@@ -1,18 +1,14 @@
 {% extends 'base_sign_up.html' %}
 {% block title %} Create an Account {% endblock %}
 {% block design %}
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css">
-
 <style>
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.1/font/bootstrap-icons.css");
-
-input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[type=password]::placeholder {
+input[type=text]::placeholder,
+select:invalid,
+input[type=date]:invalid,
+input[type=password]::placeholder{
     color: black;
 }
 
-.view-pass {
-  padding-top: 8px !important;
-}
 </style>
 {% endblock %}
 {% block content %}
@@ -39,7 +35,6 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
     var atposition = x.indexOf("@");
     var dotposition = x.lastIndexOf(".");
     var mobile = /^\d{11}$/;
-    var strong_pass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
       if ( document.myform.gen_fname.value == "" ) {
           alert ( "Oops! Can't submit form because a field is empty. Please enter your first name." );
@@ -95,10 +90,6 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
       }
       else if ( document.myform.gen_pass.value.length < 8) {
           alert ( "Oops! Can't submit form. Password length must be atleast 8 characters." );
-          return false;
-      }
-      else if ( strong_pass.test(document.myform.gen_pass.value.value) == false ) {
-          alert ( "Oops! Can't submit form. Password must be at least 8 characters, must contain a lowercase letters, uppercase letters, numbers, and special characters." );
           return false;
       }
       else if ( document.myform.gen_cpass.value == "" ) {
@@ -728,6 +719,10 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
                           {% endfor %}];
                         }
 
+
+
+
+                        
                         for (var option in optionArray){
                         var pair = optionArray[option].split("|");
                         var newOption= document.createElement("option");
@@ -754,13 +749,16 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
                   <div class="col">
                     <select id="province" name="gen_province" class="form-select" onchange=address2("province","city")>
                      <option value="" selected="true" disabled="disabled">Province</option>
-                    </select>
+                      
+                     
+                     
+                      </select>
                   </div>
-
                   <div class="col">
                   <select id="city" name="gen_city" class="form-select"  >
                     <option value="" selected="true" disabled="disabled">City</option>
-                  </select>
+                    
+                    </select>
                 </div>
               </div>
 
@@ -796,63 +794,25 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
                 <p class="password">Note: Email address must be unique and in a valid format (e.g. user@domain.com).</p>
               </div>
 
-              <section style="height: 4px;"></section>
+              <section style="height: 25px;"></section>
 
               <div class="row">
-                  <div class="input-group mb-3">
-                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control" style="border-radius: 20px 0 0 20px; height: 45px; padding-left: 20px !important;">
-                  <i class="view-pass btn btn-outline-secondary bi bi-eye-slash" id="eye" style="border-radius: 0 20px 20px 0; height: 45px;"></i>
+                <div class="col">
+                  <input type="password" name="gen_pass" id="password" placeholder="Password" class="form-control custom-form"  >
                 </div>
               </div>
 
               <div class="row">
-                  <div class="input-group mb-3">
-                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control" style="border-radius: 20px 0 0 20px; height: 45px; padding-left: 20px !important;">
-                  <i class="view-pass btn btn-outline-secondary bi bi-eye-slash" id="eye2" style="border-radius: 0 20px 20px 0; height: 45px;"></i>
+                <div class="col">
+                  <input type="password" name="gen_cpass" id="confirm_password" placeholder="Confirm password" class="form-control custom-form" >
                 </div>
               </div>
 
-              <!-- Toggle passwords-->
-              <script>
-              $(function(){
-                
-                $('#eye').click(function(){
-                      if($(this).hasClass('bi-eye-slash')){
-                        $(this).removeClass('bi-eye-slash');
-                        $(this).addClass('bi-eye');
-                        $('#password').attr('type','text');
-                          
-                      }else{
-                        $(this).removeClass('bi-eye');
-                        $(this).addClass('bi-eye-slash');  
-                        $('#password').attr('type','password');
-                      }
-                  });
-              });
-              </script>
-              <script>
-              $(function(){
-                
-                $('#eye2').click(function(){
-                      if($(this).hasClass('bi-eye-slash')){
-                        $(this).removeClass('bi-eye-slash');
-                        $(this).addClass('bi-eye');
-                        $('#confirm_password').attr('type','text');
-                          
-                      }else{
-                        $(this).removeClass('bi-eye');
-                        $(this).addClass('bi-eye-slash');  
-                        $('#confirm_password').attr('type','password');
-                      }
-                  });
-              });
-              </script>
-
               <div class="row">
-                  <p class="password">Note: Must contain at least one number, one uppercase and lowercase letter, and at least 8 or more characters.</p>              
+                <p class="password">Note: Passwords must be at least 8 characters long.</p>
               </div>
 
-              <section style="height: 45px;"></section>
+              <section style="height: 45.4px;"></section>
 
                 </div>
                 </section>
@@ -929,8 +889,8 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
               var uploadField = document.getElementById("file");
               
               uploadField.onchange = function() {
-                  if(this.files[0].size > 4194304){
-                     alert("File is too big. Please upload a file under 4MB.");
+                  if(this.files[0].size > 2200000){
+                     alert("File is too big. Please upload a file under 2MB.");
                      this.value = "";
                   };
               };
@@ -994,6 +954,7 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
           </div>
 
         <section style="height: 13px;"></section>
+        <section style="height: 13px;"></section>
 
         <div class="row">
         <center>
@@ -1021,12 +982,14 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
 <!--    </center>-->
 <!--    </div>-->
 
-                <section style="height: 30px;"></section>
+
+        <section style="height: 30px;"></section>
 
                 <center>
                 <div class="submit-btn">
                   <button class="btn btn-primary submit-form btn-lg" id="submit" type=“submit”>Create an Account</button>
                 </div>
+
                 </center>
                 </div>
                 </section>
@@ -1035,6 +998,7 @@ input[type=text]::placeholder, select:invalid, input[type=date]:invalid, input[t
     </div>
   </div>
 </div>
+
 
 <!-- Prevent submitting again when reloaded -->
     <script>

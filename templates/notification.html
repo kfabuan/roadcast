@@ -184,7 +184,7 @@ $(document).ready(function(){
 });
 </script>
 <div class="container"> 
-
+    <h3 style="font-family: Roboto, sans-serif; color: #1b5082;" class="mb-4">Notifications <i class='fas fa-bell'></i> </h3>
     <div class="row">
     <ul class="nav nav-pills mb-3 flex-row" id="pills-tab" role="tablist">
 
@@ -580,8 +580,9 @@ $(document).ready(function(){
                             <!-- Time -->
                             <td  style="width: 16%;"class="{% ifequal reply.Read_Status 'Yes' %} text-muted {% endifequal %}"><p style="float: right;">{{ reply.Response_Date }} {{ reply.Response_Time }}</p></td>
                         </tr>
-
+                       
                         {% endfor %}
+                        
                     </tbody>
                 </table>
                  <ul class="pagination">

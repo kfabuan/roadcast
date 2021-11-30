@@ -31,7 +31,7 @@
     
   <div class="section"><h3 style="font-family: Roboto, sans-serif; color: #1b5082;">
     <!-- Title section -->
-    <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Investigators&nbsp;
+    <h3 style="font-family: Roboto, sans-serif; color: #1b5082;">Investigators <i class='bx bx-glasses-alt'></i>
     <button type="button" class="btn btn-outline-success" style="font-size: 12px; border-radius: 50px; font-weight: bold;" onclick="location.href = '{% url 'add_members' %}'">
       + Add investigators
     </button>
@@ -42,8 +42,11 @@
     <!-- Search bar -->
     <form class="d-flex" method="POST">
       {% csrf_token %}
-      <input class="form-control me-2" name="searched" type="search" placeholder="Search an investigator" style="font-family: 'Roboto', sans-serif">
-      <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+      <div class="input-group mb-3 mt-3">
+          <span class="input-group-text" id="inputGroup-sizing-sm" style="background-color: white;"><i class="bi bi-search"></i></span>
+          <input class="form-control me-2" name="searched" type="search" placeholder="Search an investigator" style="font-family: 'Roboto', sans-serif">
+          <button class="btn btn-outline-success" type="submit" style="transition: 0.5s;">Search</button>
+      </div>
     </form>
 
   </div>
