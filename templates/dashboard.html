@@ -94,7 +94,7 @@
         opacity:1;
     }
 
-    
+
     .vl {
       border-left: 6px solid green;
       height: 500px;
@@ -110,7 +110,7 @@
     }
 
     .bi-info-circle-fill {
-        color: #1b5082; 
+        color: #1b5082;
         right: 15px;
         font-size: 19px;
         position: absolute;
@@ -214,7 +214,7 @@
             line-height: 1;
         }
     }
-    
+
     @media only screen and (max-width: 966px) and (min-width: 846px) {
         .tally-title {
             font-size: 12px;
@@ -225,7 +225,7 @@
             display: block;
         }
 
-        
+
     }
 
     @media only screen and (max-width: 846px)  {
@@ -300,7 +300,7 @@
                 day_count = data.day_count
 
                 setChart()
-    
+
             },
 
              error: function(error_data){
@@ -323,7 +323,7 @@
             var line_date_forecast = new Chart(line_date_forecast, {
                 type: 'line',
                 data: {
-                    labels: [ 
+                    labels: [
 
                     {%for i in datelist%}
                     '{{i.Date}}',
@@ -345,7 +345,7 @@
                         {
                             label: 'Forecasted',
                             data: [,,,,,,{%for k in reversed_datelist_values_forecast%}
-                                    {{k.Averages}},
+                                    Math.round({{k.Averages}}),
                                     {%endfor%}],
                             fill: false,
                             borderColor: '#4adede',
@@ -357,7 +357,7 @@
                     plugins: {
                         title: {
                             display: true,
-                            text: 'Weekly Forecasting'
+                            text: 'Daily Forecasting'
                         },
                     },
 
@@ -370,7 +370,7 @@
                             loop: false
                         }
                     },
-                    maintainAspectRatio: false,  
+                    maintainAspectRatio: false,
                     interaction: {
                         mode: 'index',
                         intersect: false,
@@ -405,10 +405,10 @@
                                 padding: {top: 30, left: 0, right: 0, bottom: 0}
                             }
                         }
-                    }      
+                    }
                 }
             });
-            
+
             var line_time = new Chart(line_time, {
                 type: 'line',
                 data: {
@@ -505,7 +505,7 @@
                         //fill: true, if line ang type
                     }]
                 },
-        
+
                 options: {
                     scaleShowValues: true,
                     indexAxis: 'x',
@@ -572,9 +572,9 @@
                                 padding: {top: 30, left: 0, right: 0, bottom: 0}
                             }
                         }
-                    }  
+                    }
                 },
-                
+
             });
 
             var myChart = new Chart(ctx3, {
@@ -660,7 +660,7 @@
                                 padding: {top: 30, left: 0, right: 0, bottom: 0}
                             }
                         }
-                    } 
+                    }
                 },
             });
 
@@ -675,14 +675,14 @@
 
                         '#4adede',
                         '#1f2f98',
-                        
+
                         // '#787ff6',
                          '#7BD5F5',
                         // '#1ca7ec',
                         ],
                         hoverOffset: 4
                     }]
-                }, 
+                },
                 options: {
                     plugins: {
                         legend: {
@@ -700,11 +700,11 @@
                         }
                     },
                     maintainAspectRatio: false,
-                    
+
                 }
             });
 
-            
+
 
             var bar_offense = new Chart(bar_offense, {
                 type: 'bar',
@@ -784,7 +784,7 @@
                                 padding: {top: 30, left: 0, right: 0, bottom: 0}
                             }
                         }
-                    }  
+                    }
                 }
             });
 
@@ -796,7 +796,7 @@
                         label: 'Yearly Severity',
                         data: severity_count,
                         backgroundColor: [
-                            
+
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)',
                             'rgba(255, 206, 86, 0.2)',
@@ -832,7 +832,7 @@
                             }
                         }
                     },
-                    maintainAspectRatio: false, 
+                    maintainAspectRatio: false,
                     interaction: {
                         mode: 'index',
                         intersect: false,
@@ -867,7 +867,7 @@
                                 padding: {top: 30, left: 0, right: 0, bottom: 0}
                             }
                         }
-                    }  
+                    }
                 }
             });
 
@@ -886,14 +886,14 @@
                 options: {
                     plugins: {
                         legend:{
-                            
+
                         },
                         title: {
                             display: true,
                             text: 'Day of the week',
                         }
                     },
-                    maintainAspectRatio: false, 
+                    maintainAspectRatio: false,
                     interaction: {
                         mode: 'index',
                         intersect: false,
@@ -928,14 +928,14 @@
                                 padding: {top: 30, left: 0, right: 0, bottom: 0}
                             }
                         }
-                    }  
+                    }
                 }
             });
 
 
-            
+
         } //close function
-        
+
     {% endblock %}
 </script>
 
@@ -945,7 +945,7 @@
 {% if request.session.authorized_id %}
     {% for a in all %}
         {% ifequal a.id request.session.authorized_id %}
-            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%} 
+            {% if a.Members_User.Member_Type == 'Admin' or a.Members_User.Member_Type == 'Crime Statistician'%}
                 <!-- body (no need to paste anything here) -->
             {% endif %}
         {% endifequal %}
@@ -954,7 +954,7 @@
 {% elif request.session.public_id %}
     {% if request.session.public_id %}
         {% for b in pub %}
-            {% ifequal b.id request.session.public_id %} 
+            {% ifequal b.id request.session.public_id %}
                 <!-- body (no need to paste anything here) -->
             {% endifequal %}
         {% endfor %}
@@ -964,10 +964,10 @@
             window.location.href = '{% url 'login_required' %}';
         </script>
     {% endif %}
-    
+
 {% else %}
     <script>
-        window.location.href = '{% url 'login_required' %}';  
+        window.location.href = '{% url 'login_required' %}';
     </script>
 {% endif %}
 
@@ -1101,38 +1101,38 @@
             </div>
         </div>
 
-       
 
-        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script> 
+
+        <script src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyACS7G3CoYRTEAOy4vAUdPq1H08ueUoDXI&callback=initMap"></script>
 
         <script type="text/javascript">
 
             var locations = [
-        
+
             {% for i in markers_json %}
-        
+
             ['{{i.Address}}',{{i.Latitude}},{{i.Longitude}}],
-        
+
             {% endfor %}
-        
+
             ]
             var img = new Image();
-            
+
             const marker_url = '{% static 'image/marker.png' %}';
-    
-            
-    
+
+
+
             var map = new google.maps.Map(document.getElementById('map'), {
               zoom: 13,
               center: new google.maps.LatLng(14.580466330345176, 121.09153585874454),
               mapTypeId: google.maps.MapTypeId.ROADMAP,
-               
+
             });
-        
+
             var infowindow = new google.maps.InfoWindow();
-        
+
             var marker, i;
-        
+
             for (i = 0; i < locations.length; i++) {
               marker = new google.maps.Marker({
                 position: new google.maps.LatLng(locations[i][1], locations[i][2]),
@@ -1144,7 +1144,7 @@
                         anchor: new google.maps.Point(0, 50)
                     }
               });
-        
+
               google.maps.event.addListener(marker, 'click', (function(marker, i) {
                 return function() {
                   infowindow.setContent(locations[i][0]);
@@ -1153,7 +1153,7 @@
               })(marker, i));
             }
           </script>
-        
+
 
 
 
@@ -1161,7 +1161,7 @@
         <div class="col-sm-6">
                 <div class="card mb-4">
                     <div class="card-body fwrapper" style="background-color: white;">
-                        <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="This chart shows the weekly forecasting of incidents. The blue line indicates the count of incidents for the past 7 days, while the light green line indicates the predicted number of incidents for the next 7 days." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
+                        <i class="bi bi-info-circle-fill"  id="forecast-tooltip" title="This chart shows the daily forecasting of incidents every week. The blue line indicates the count of incidents for the past 7 days, while the light green line indicates the predicted number of incidents for the next 7 days." data-bs-toggle="tooltip" data-bs-placement="left" ></i>
                         <canvas id="line_date_forecast" height="200" class="chart"></canvas>
                     </div>
                 </div>
@@ -1195,7 +1195,7 @@
         </div>
       </div>
 
-    
+
       <div class="row" style="border:0; margin:0; padding:0;">
         <div class="col-sm-4 mb-4">
             <div class="card wrapper">
@@ -1235,6 +1235,6 @@
             </div>
         </div>
     </div>
-    
+
 {% endblock content %}
 

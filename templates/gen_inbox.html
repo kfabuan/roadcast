@@ -68,6 +68,14 @@
         font-size: 18px;
     }
 
+    .report-message {
+      display:inline-block;
+      text-overflow:ellipsis;
+      overflow:hidden; 
+      white-space: nowrap;
+      width:70%;
+    }
+
     @media only screen and (max-width: 480px){
         .img-1 {
             border-radius: 50%;
@@ -232,14 +240,14 @@ $(document).ready(function(){
                                 {% endfor %}
                             </td>
                             <!-- Message -->
-                            <td class="text-truncate" style="width: 58%;">
+                            <td class="text-truncate" style="max-width: 500px;">
                                 <a class="link text-decoration-none" href="{% url 'public_inbox_detail' reply.Report_id %}">
                                 {% for prev in pub_inbox %}
                                     {% ifequal reply.Report_id prev.id %}
                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ prev.Reported_City }}</span>
                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-danger {% else %} bg-success {% endifequal %} me-2"> District {{ prev.Reported_District }}</span>
                                     <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                    <span class=" text-dark">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
+                                    <span class=" text-dark report-message">{{ prev.Reported_Brgy }}: {{ reply.Response }}</span>
                                     {% endifequal %}
                                 {% endfor %}
                                 </a>
@@ -310,7 +318,7 @@ $(document).ready(function(){
                                 <span class="mb-0 {% ifequal report.Read_Status 'Yes' %} text-muted {% endifequal %}">Sent by: {{ pub_info.gen_fname }} {{ pub_info.gen_surname }}</span>
                             </td>
                             <!-- Message -->
-                            <td class="text-truncate" style="width: 58%;">
+                            <td class="text-truncate" style="max-width: 500px;">
                                 <a class="link text-decoration-none" href="{% url 'public_inbox_detail' report.id %}">
                                     <span class="badge rounded-pill text-white font-medium bg-info me-2"> {{ report.Reported_City }}</span>
                                     <span class="badge rounded-pill text-white font-medium {% ifequal report.Reported_District '1' %} bg-secondary {% else %} bg-warning {% endifequal %} me-2"> District {{ report.Reported_District }}</span>
@@ -337,7 +345,7 @@ $(document).ready(function(){
                                     {% endif %}          
 
                                     <!-- <span class="badge rounded-pill text-white font-medium bg-secondary me-2">{{ report.Reported_Brgy.Barangay }}</span> -->
-                                    <span class=" text-dark">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
+                                    <span class=" text-dark report-message">{{ report.Reported_Brgy.Barangay }}: {{ report.Reported_Narrative }}</span>
                                 </a>
                             </td>
                             <!-- Attachment -->
