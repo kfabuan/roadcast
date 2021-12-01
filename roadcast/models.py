@@ -550,7 +550,7 @@ class Tbl_public_report_response (models.Model):
     Read_Status     = models.CharField(max_length=200, default="No", verbose_name='Read', blank=True, null=True) 
 
     def __str__(self):
-        return '{}-to-{}-{}'.format(self.Sender,self.Receiver,self.Reported_City)
+        return '{}-to-{}-{}'.format(self.Sender,self.Receiver,self.Response_Date)
 
 class Tbl_forecast(models.Model):
     Date = models.DateField(max_length=200, verbose_name='Dates', blank=True, primary_key=True)

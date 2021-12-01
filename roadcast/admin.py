@@ -23,7 +23,7 @@ class PasigBrgy(admin.ModelAdmin):
     list_display = ['id','Barangay', 'District_id']
 
 class PasigReportedIncidents(admin.ModelAdmin):
-    list_display = ['image_tag','id','User_ID', 'Reported_City', 'Reported_Brgy','Report_Status', 'Reported_Date', 'Reported_Time', 'Assigned_Investigator']
+    list_display = ['image_tag','id','User_ID', 'Reported_City', 'Reported_Brgy','Reported_Narrative','Report_Status', 'Reported_Date', 'Reported_Time', 'Assigned_Investigator']
    
 class PasigReportResponses(admin.ModelAdmin):
     list_display = ['Response_id','Report','Sender_Type', 'Sender', 'Receiver','Response', 'Response_Date', 'Response_Time', 'Read_Status']

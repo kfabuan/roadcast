@@ -508,10 +508,19 @@ $(document).ready(function(){
                 </div>
             </form>
         
-            <div style="" class="visually-hidden">
-                <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Read &nbsp;<i class="fas fa-envelope msg-icon"></i></a>
-                <a class="btn btn-secondary btn-sm" href="" role="button" aria-disabled="true"> Mark as Unread &nbsp;<i class="fas fa-envelope-open msg-icon"></i></a>
-            </div>
+            {% for a in all %}
+                {% ifequal a.id request.session.authorized_id %}
+                    {% if a.Members_User.Member_Type == 'Admin' %}
+                    <ul class="star-legend-list list-group list-group-horizontal-sm">
+                        <li class="list-group-item"><span class="star-legend">Legend: </span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/replies/admin'"><i class="fa fa-star text-warning"></i> <span class="star-legend">Sent by you</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification/replies/public'"><i class="fa fa-star text-primary"></i> <span class="star-legend">From the public</span></li>
+                        <li class="list-group-item" onclick="location.href = '/notification'"><i class="bi bi-eraser-fill text-secondary"></i> <span class="star-legend">Clear filter</span></li>
+                    </ul>
+                    {% endif %}
+                {% endifequal %}
+            {% endfor %}
+            
             {% if public_replies %}
             <!-- Main inbox-->
             <div class="table-responsive mt-3">

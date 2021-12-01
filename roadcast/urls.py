@@ -78,6 +78,9 @@ urlpatterns = [
     path('notification/invalid', views.notification_invalid, name='notification_invalid'), #filter 3
     path('notification/unassigned', views.notification_unassigned, name='notification_unassigned'), #filter 4
 
+    path('notification/replies/public', views.notif_replies_of_pub, name='notif_replies_of_pub'), #filter 4
+    path('notification/replies/admin', views.notif_replies_of_admin, name='notif_replies_of_admin'), #filter 4
+
     path('notification/public/<int:gen_pub_report_id>', views.notif_public_report_detail , name='notif_public_report_detail'),
     path('notification/public/<int:report_id>/assign', views.processAssigning , name='process_assigning'),
     path('notification/public/<int:report_id>/reply', views.processAdmin_Reply , name='process_admin_reply'),
